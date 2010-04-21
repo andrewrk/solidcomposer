@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Arena - {{ block.super }}{% endblock %}
+
+{% block extra_header %}
+    <script type="text/javascript" language="JavaScript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="{{ MEDIA_URL }}js/arena.js"></script>
+{% endblock %}
+
+
+{% block content %}
+    <h1>Arena</h1>
+{% endblock %}
