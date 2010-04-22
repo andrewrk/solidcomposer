@@ -94,11 +94,30 @@ def compare_file_date(in_file, out_file):
         out_file_modified = os.path.getmtime(out_file)
     return in_file_modified > out_file_modified
 
+watchlist = {}
+def examine_watchlist():
+    """
+    if any template files have changed since this function was last called,
+    return True and update the list
+    """
+    new_item = False
+    for template_dir in settings.TEMPLATE_DIRS:
+        for root, dirs, files in os.walk(template_dir):
+            for file in files:
+                full_path = os.path.join(root, file)
+                file_modified = os.path.getmtime(full_path)
+                if watchlist.has_key(full_path):
+                    if file_modified > watchlist[full_path]:
+                        new_item = True
+                watchlist[full_path] = file_modified
+
+    return new_item
+
 def compile_file(source, dest):
     """
     parse source and write to dest, only if source is newer
     """
-    if compare_file_date(source, dest):
+    if compare_file_date(source, dest) or examine_watchlist():
         print("Parsing %s." % file_title(source))
         file = open(dest, 'w')
         in_text = open(source, 'r').read().decode()
