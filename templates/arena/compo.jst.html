@@ -11,8 +11,8 @@
             </p>
         <% } else { %>
             <p>Listening party
-            (<%= minuteDisplaySince(compo.listening_party_start_date %> / 
-            <%= minuteDisplayUntil(compo.listening_party_end_date %>)</p>
+            (<%= minuteDisplaySince(compo.listening_party_start_date) %> / 
+            <%= minuteDisplayUntil(compo.listening_party_end_date) %>)</p>
         <% } %>
     <% } else if (secondsUntil(compo.vote_deadline) > 0) { %>
         <p>voting ends in <%= secondsUntil(compo.vote_deadline) %></p>
