@@ -108,12 +108,18 @@ TEMPLATE_DIRS = (
     absolute('templates'),
 )
 
-# where processed java script template files will be output to. folder structure
+# where processed java script files will be output to. folder structure
 # will be mirrored.
-JST_OUTPUT = os.path.join(MEDIA_ROOT, 'js', 'jst')
+PREPARSE_OUTPUT = os.path.join(MEDIA_ROOT, 'js', 'pre')
 
-# these will be processed one time and moved to the JST_OUTPUT folder
-JST_DIR = absolute(os.path.join('templates', 'jst'))
+# these will be processed with django's templating system and moved
+# to the PREPARSE_OUTPUT folder, mirroring folder structure.
+PREPARSE_DIR = os.path.join('templates', 'preparsed')
+
+# the dictionary that will be available to your preparsed code.
+PREPARSE_CONTEXT = {
+    
+}
 
 TEMPLATE_CONTEXT_PROCESSORS = (
 	'django.core.context_processors.auth',

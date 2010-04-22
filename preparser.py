@@ -17,8 +17,8 @@ def print_usage():
     """
     print("""Usage:
 
-To compile:
-%(program)s compile
+To parse:
+%(program)s parse
 
 To clean:
 %(program)s clean
@@ -47,15 +47,15 @@ def walk(compile_func):
         source file absolute path
         dest file absolute path
     """
-    for root, dirs, files in os.walk(settings.JST_DIR, followlinks=True):
-        relative = root.replace(settings.JST_DIR, "")
+    for root, dirs, files in os.walk(settings.PREPARSE_DIR, followlinks=True):
+        relative = root.replace(settings.PREPARSE_DIR, "")
         if len(relative) > 0 and relative[0] == os.sep:
             relative = relative[1:]
 
         for file in files:
             in_file = os.path.join(root, file)
             if not is_hidden(in_file):
-                out_file = os.path.join(settings.JST_OUTPUT, relative, file)
+                out_file = os.path.join(settings.PREPARSE_OUTPUT, relative, file)
                 compile_func(in_file, out_file)
 
 def compile_file(source, dest):
@@ -66,7 +66,10 @@ def compile_file(source, dest):
     file.close()
 
 def clean_file(source, dest):
-    os.remove(dest)
+    if os.path.exists(dest):
+        os.remove(dest)
+    else:
+        sys.stderr.write("path not found: %s\n" % dest)
 
 def compile():
     """
@@ -82,7 +85,7 @@ def clean():
 
 if __name__ == '__main__':
     funcs = {
-        'compile': compile,
+        'parse': compile,
         'clean': clean,
     }
     if len(sys.argv) < 2 or not funcs.has_key(sys.argv[1]):

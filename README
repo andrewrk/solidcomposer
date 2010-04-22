@@ -2,7 +2,7 @@
 
     http://github.com/superjoe30/jst-parser
 
- * Compiled Django templates into JavaScript:
+ * Preparsed Django templates (useful for JavaScript Templates):
 
     1. Put these into your settings.py
 
@@ -14,18 +14,32 @@
             """
             return os.path.join(os.path.dirname(__file__), relative_path)
 
-        # where processed java script template files will be output to. folder structure
+        # where processed java script files will be output to. folder structure
         # will be mirrored.
-        JST_OUTPUT = os.path.join(MEDIA_ROOT, 'js')
+        PREPARSE_OUTPUT = os.path.join(MEDIA_ROOT, 'js', 'pre')
 
-        # these will be processed one time and moved to the JST_OUTPUT folder
-        JST_DIR = absolute(os.path.join('templates', 'jst'))
+        # these will be processed with django's templating system and moved
+        # to the PREPARSE_OUTPUT folder, mirroring folder structure.
+        PREPARSE_DIR = os.path.join('templates', 'preparsed')
 
-    2. python jst.py compile
+        # the dictionary that will be available to your preparsed code.
+        PREPARSE_CONTEXT = {
+            'name': 'John',
+            'something': 'yarrr',
+        }
+
+    2. python preparser.py parse
+        
+        It sucks to have to remember this every time you modify a file that
+        needs to be preparsed, so you can use 
+
+        python preparser.py monitor
+
+        to make sure your preparsed
 
  * Deploying
 
     1. Upload code to website 
     2. Create a blank file in same folder as settings.py named RELEASE
     3. make sure database is synchronized
-    4. python jst.py compile
+    4. python preparser.py parse
