@@ -108,6 +108,13 @@ TEMPLATE_DIRS = (
     absolute('templates'),
 )
 
+# where processed java script template files will be output to. folder structure
+# will be mirrored.
+JST_OUTPUT = os.path.join(MEDIA_ROOT, 'js')
+
+# these will be processed one time and moved to the JST_OUTPUT folder
+JST_DIR = absolute(os.path.join('templates', 'jst'))
+
 TEMPLATE_CONTEXT_PROCESSORS = (
 	'django.core.context_processors.auth',
 	'django.core.context_processors.debug',

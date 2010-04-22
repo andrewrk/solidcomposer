@@ -2,12 +2,28 @@
 
 {% block title %}Arena - {{ block.super }}{% endblock %}
 
+{% block css %}arena.css{% endblock %}
+
 {% block extra_header %}
     <script type="text/javascript" language="JavaScript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="{{ MEDIA_URL }}js/jstparser_min.js"></script>
     <script type="text/javascript" language="JavaScript" src="{{ MEDIA_URL }}js/arena.js"></script>
 {% endblock %}
 
 
 {% block content %}
     <h1>Arena</h1>
+    <div id="create">
+        <a href="create/">Create a Competition</a>
+    </div>
+    <div id="login">
+    {% include 'loading.html' %}
+    </div>
+    <div id="available">
+    {% include 'loading.html' %}
+    </div>
+    <div id="owned">
+    {% include 'loading.html' %}
+    </div>
 {% endblock %}
+

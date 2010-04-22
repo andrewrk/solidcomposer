@@ -1,0 +1,25 @@
+ * JavaScript Templating System:
+
+    http://github.com/superjoe30/jst-parser
+
+ * Compiled Django templates into JavaScript:
+
+    1. Put these into your settings.py
+
+        import os
+
+        def absolute(relative_path):
+            """
+            make a relative path absolute
+            """
+            return os.path.join(os.path.dirname(__file__), relative_path)
+
+        # where processed java script template files will be output to. folder structure
+        # will be mirrored.
+        JST_OUTPUT = os.path.join(MEDIA_ROOT, 'js')
+
+        # these will be processed one time and moved to the JST_OUTPUT folder
+        JST_DIR = absolute(os.path.join('templates', 'jst'))
+
+    2. python jst.py compile
+

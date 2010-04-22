@@ -1,0 +1,10 @@
+<% if (user.is_authenticated) { %>
+    {% with level.author as profile %}
+    {% include 'username.html' %}
+    {% endwith %}
+    <a href="/account/">settings</a>
+    <a href="/logout/">sign out</a>
+<% } else { %>
+    
+<% } %>
+
