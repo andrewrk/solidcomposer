@@ -23,3 +23,9 @@
 
     2. python jst.py compile
 
+ * Deploying
+
+    1. Upload code to website 
+    2. Create a blank file in same folder as settings.py named RELEASE
+    3. make sure database is synchronized
+    4. python jst.py compile

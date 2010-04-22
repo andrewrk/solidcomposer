@@ -8,5 +8,7 @@ urlpatterns = patterns('',
     (r'^$', direct_to_template, {'template': 'home.html'}),
     (r'^arena/', include('opensourcemusic.competitions.urls')),
     (r'^admin/', include(admin.site.urls)),
+
+    (r'^ajax/login_state/$', 'opensourcemusic.main.views.ajax_login_state'),
 )
 
