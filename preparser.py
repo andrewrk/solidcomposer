@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 
 # set django environment
 from django.core.management import setup_environ
@@ -11,18 +12,43 @@ setup_environ(settings)
 from django.template import Template, Context
 from django.template.loader import *
 
+
 def print_usage():
     """
     display the help message to the user
     """
-    print("""Usage:
+    if len(sys.argv) >= 3 and sys.argv[1].lower() == 'help' and commands.has_key(sys.argv[2]):
+        # print doc string for method
+        args = {
+            'doc': commands[sys.argv[2]].__doc__,
+            'program': sys.argv[0],
+            'key': sys.argv[2],
+        }
+        print("""
+Usage for %(key)s:
 
-To parse:
-%(program)s parse
+%(program)s %(key)s
 
-To clean:
-%(program)s clean
-""" % {'program': sys.argv[0]})
+%(doc)s
+""" % args)
+    else:
+        sorted_keys = commands.keys()
+        sorted_keys.sort()
+        args = {
+            'program': sys.argv[0],
+            'commands': "\n".join(sorted_keys),
+        }
+
+        print("""Usage:
+
+%(program)s <command>
+
+Where <command> is:
+%(commands)s
+
+For extra help, type:
+%(program)s help <command>
+""" % args)
 
 def is_hidden(path):
     """
@@ -58,18 +84,33 @@ def walk(compile_func):
                 out_file = os.path.join(settings.PREPARSE_OUTPUT, relative, file)
                 compile_func(in_file, out_file)
 
+def compare_file_date(in_file, out_file):
+    """
+    standard file compare: if in_file is newer, return true
+    """
+    in_file_modified = os.path.getmtime(in_file)
+    out_file_modified = -1
+    if os.path.exists(out_file):
+        out_file_modified = os.path.getmtime(out_file)
+    return in_file_modified > out_file_modified
+
 def compile_file(source, dest):
-    file = open(dest, 'w')
-    in_text = open(source, 'r').read().decode()
-    template = Template(in_text)
-    file.write(template.render(Context()))
-    file.close()
+    """
+    parse source and write to dest, only if source is newer
+    """
+    if compare_file_date(source, dest):
+        print("Parsing %s." % file_title(source))
+        file = open(dest, 'w')
+        in_text = open(source, 'r').read().decode()
+        template = Template(in_text)
+        context = Context(settings.PREPARSE_CONTEXT)
+        file.write(template.render(context))
+        file.close()
 
 def clean_file(source, dest):
     if os.path.exists(dest):
         os.remove(dest)
-    else:
-        sys.stderr.write("path not found: %s\n" % dest)
+        print("removing %s" % dest)
 
 def compile():
     """
@@ -83,15 +124,31 @@ def clean():
     """
     walk(clean_file)
 
+def monitor():
+    """
+    Watches for new or changed files that are candidates for being preparsed,
+    and automatically re-parses them.
+    """
+    while True:
+        compile()
+        try:
+            time.sleep(0.1)
+        except KeyboardInterrupt:
+            sys.exit(0)
+
+
+commands = {
+    'help': print_usage,
+    'parse': compile,
+    'clean': clean,
+    'monitor': monitor,
+}
+
 if __name__ == '__main__':
-    funcs = {
-        'parse': compile,
-        'clean': clean,
-    }
-    if len(sys.argv) < 2 or not funcs.has_key(sys.argv[1]):
+    if len(sys.argv) < 2 or not commands.has_key(sys.argv[1]):
         print_usage();
         sys.exit(1)
     else:
-        funcs[sys.argv[1]]()
+        commands[sys.argv[1]]()
 
 
