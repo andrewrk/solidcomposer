@@ -1,5 +1,5 @@
 from django.db import models
-from opensourcemusic.main import Profile
+from opensourcemusic.main.models import Profile
 
 class Competition(models.Model):
     title = models.CharField(max_length=256)
@@ -19,6 +19,10 @@ class Competition(models.Model):
     # processing.
     listening_party_start_date = models.DateTimeField()
 
+    # this date is unknown until all entries are submitted and the
+    # processing is complete
+    listening_party_end_date = models.DateTimeField()
+
     # when this competition was created
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -27,6 +31,15 @@ class Competition(models.Model):
 
     # deadline for submitting entries
     submit_deadline = models.DateTimeField()
+
+    # deadline for casting votes. must be after listening party end time,
+    # which is undetermined. People must have at least 10 minutes to vote,
+    # so when the processing from the submit_deadline is finished, it will
+    # recalculate this value based on the then-known listening_party_end_date
+    vote_deadline = models.DateTimeField()
+
+    # the players that have bookmarked this competition
+    players_bookmarked = models.ManyToManyField(Profile, blank=True, related_name='players_bookmarked')
 
 class Entry(models.Model):
     """

@@ -1,5 +1,6 @@
 # Django settings for opensourcemusic project.
 import os
+import datetime
 
 def absolute(relative_path):
     """
@@ -51,7 +52,13 @@ else:
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Phoenix'
+
+# set this to None as soon as django supports it. America/Denver is the
+# server timezone of superjoesoftware.com
+if release_mode:
+    TIME_ZONE = 'America/Denver' 
+else:
+    TIME_ZONE = 'America/Phoenix'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -118,7 +125,7 @@ PREPARSE_DIR = os.path.join('templates', 'preparsed')
 
 # the dictionary that will be available to your preparsed code.
 PREPARSE_CONTEXT = {
-    
+    'server_time': datetime.datetime.today().strftime("%B %d, %Y %H:%M:%S"),
 }
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -127,6 +134,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 	'django.core.context_processors.i18n',
 	'django.core.context_processors.media',
     'django.core.context_processors.request',
+    'opensourcemusic.context.global_values',
 )
 
 INSTALLED_APPS = (
@@ -136,6 +144,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'opensourcemusic.main',
+    'opensourcemusic.competitions',
 )
 
 LOGIN_URL = "/login/"

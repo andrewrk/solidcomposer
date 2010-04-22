@@ -73,6 +73,7 @@ def walk(compile_func):
         source file absolute path
         dest file absolute path
     """
+    force = examine_watchlist()
     for root, dirs, files in os.walk(settings.PREPARSE_DIR, followlinks=True):
         relative = root.replace(settings.PREPARSE_DIR, "")
         if len(relative) > 0 and relative[0] == os.sep:
@@ -82,7 +83,7 @@ def walk(compile_func):
             in_file = os.path.join(root, file)
             if not is_hidden(in_file):
                 out_file = os.path.join(settings.PREPARSE_OUTPUT, relative, file)
-                compile_func(in_file, out_file)
+                compile_func(in_file, out_file, force)
 
 def compare_file_date(in_file, out_file):
     """
@@ -109,15 +110,18 @@ def examine_watchlist():
                 if watchlist.has_key(full_path):
                     if file_modified > watchlist[full_path]:
                         new_item = True
+                else:
+                    new_item = True
                 watchlist[full_path] = file_modified
 
     return new_item
 
-def compile_file(source, dest):
+def compile_file(source, dest, force):
     """
     parse source and write to dest, only if source is newer
+    force will make it definitely compile
     """
-    if compare_file_date(source, dest) or examine_watchlist():
+    if force or compare_file_date(source, dest):
         print("Parsing %s." % file_title(source))
         file = open(dest, 'w')
         in_text = open(source, 'r').read().decode()
@@ -126,7 +130,7 @@ def compile_file(source, dest):
         file.write(template.render(context))
         file.close()
 
-def clean_file(source, dest):
+def clean_file(source, dest, force):
     if os.path.exists(dest):
         os.remove(dest)
         print("removing %s" % dest)
@@ -151,7 +155,7 @@ def monitor():
     while True:
         compile()
         try:
-            time.sleep(0.1)
+            time.sleep(0.5)
         except KeyboardInterrupt:
             sys.exit(0)
 

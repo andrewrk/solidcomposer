@@ -1,0 +1,13 @@
+<h2>My Competions</h2>
+<h3>Upcoming</h3>
+<% for (var i=0; i<upcoming.length; ++i) { var compo = upcoming[i]; %>
+    {% include 'arena/compo.jst.html' %}
+<% } %>
+<h3>Ongoing</h3>
+<% for (var i=0; i<ongoing.length; ++i) { var compo = ongoing[i]; %>
+    {% include 'arena/compo.jst.html' %}
+<% } %>
+<h3>Closed</h3>
+<% for (var i=0; i<closed.length; ++i) { var compo = closed[i]; %>
+    {% include 'arena/compo.jst.html' %}
+<% } %>

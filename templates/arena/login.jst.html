@@ -3,9 +3,9 @@
     {% include 'username.jst.html' %}
     {% endwith %}
     <a href="/account/">settings</a>
-    <a href="/logout/">sign out</a>
+    <a href="#">sign out</a>
 <% } else { %>
     Not logged in.
-    <a href="/login/?next=<%= window.location %>">sign in</a>
-    <a href="/register/?next=<%= window.location %>">register</a>
+    <a href="#">sign in</a>
+    <a href="#">register</a>
 <% } %>
