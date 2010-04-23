@@ -10,5 +10,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 
     (r'^ajax/login_state/$', 'opensourcemusic.main.views.ajax_login_state'),
+    (r'^ajax/login/$', 'opensourcemusic.main.views.ajax_login'),
+    (r'^ajax/logout/$', 'opensourcemusic.main.views.ajax_logout'),
 )
 

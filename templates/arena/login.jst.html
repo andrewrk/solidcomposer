@@ -1,11 +1,27 @@
 <% if (user.is_authenticated) { %>
-    {% with level.author as profile %}
-    {% include 'username.jst.html' %}
-    {% endwith %}
-    <a href="/account/">settings</a>
-    <a href="#">sign out</a>
+    <div id="loginStatusDiv">
+        {% with level.author as profile %}
+        {% include 'username.jst.html' %}
+        {% endwith %}
+        <a href="/account/">settings</a>
+        <a href="#" id="signOut">sign out</a>
+    </div>
 <% } else { %>
-    Not logged in.
-    <a href="#">sign in</a>
-    <a href="#">register</a>
+    <div id="loginStatusDiv">
+        Not logged in.
+        <a href="#" id="signIn">sign in</a>
+        <a href="/register/">register</a>
+    </div>
+    <div id="loginFormDiv">
+        <form id="loginForm">
+            <label for="loginName" />username:</label>
+            <input type="text" id="loginName" value="" />
+            <br />
+            <label for="loginPassword" />password:</label>
+            <input type="password" id="loginPassword" value="" />
+            <br />
+            <a href="#" id="loginButton">submit</a>
+            <a href="#" id="cancelLoginButton">cancel</a>
+        </form>
+    </div>
 <% } %>

@@ -31,3 +31,10 @@ def ajax_login_state(request):
         data['user']['get_profile'] = model_to_dict(request.user.get_profile())
 
     return HttpResponse(json.dumps(data), mimetype="text/plain")
+
+def ajax_login(request):
+    
+    pass
+
+def ajax_logout(request):
+    pass
