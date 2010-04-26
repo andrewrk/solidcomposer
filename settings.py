@@ -145,6 +145,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'opensourcemusic.main',
     'opensourcemusic.competitions',
+    'south',
 )
 
 LOGIN_URL = "/login/"

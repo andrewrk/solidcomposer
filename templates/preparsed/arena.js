@@ -9,8 +9,90 @@ var state_login;
 var state_available;
 var state_owned;
 
+// convert ISO date to JS date
+Date.prototype.setISO8601 = function(dString){
+    var regexp = /(\d\d\d\d)(-)?(\d\d)(-)?(\d\d)(T)?(\d\d)(:)?(\d\d)(:)?(\d\d)(\.\d+)?(Z|([+-])(\d\d)(:)?(\d\d))/;
+     
+    if (dString.toString().match(new RegExp(regexp))) {
+        var d = dString.match(new RegExp(regexp));
+        var offset = 0;
+         
+        this.setUTCDate(1);
+        this.setUTCFullYear(parseInt(d[1],10));
+        this.setUTCMonth(parseInt(d[3],10) - 1);
+        this.setUTCDate(parseInt(d[5],10));
+        this.setUTCHours(parseInt(d[7],10));
+        this.setUTCMinutes(parseInt(d[9],10));
+        this.setUTCSeconds(parseInt(d[11],10));
+        if (d[12])
+            this.setUTCMilliseconds(parseFloat(d[12]) * 1000);
+        else
+            this.setUTCMilliseconds(0);
+        if (d[13] != 'Z') {
+            offset = (d[15] * 60) + parseInt(d[17],10);
+            offset *= ((d[14] == '-') ? -1 : 1);
+            this.setTime(this.getTime() - offset * 60 * 1000);
+        }
+    } else {
+        this.setTime(Date.parse(dString));
+    }
+    return this;
+};
+
+// pads an integer with a zero if necessary and returns a string
+function pad(num) {
+    return ((num < 10) ? "0" : "") + num;
+}
+
+// takes milliseconds and returns a nice display like 0:00
+function timeDisplay(ms) {
+    var sec = ms / 1000;
+    var min = sec / 60;
+    var hr = min / 60;
+
+    if (hr >= 1) {
+        hr = Math.floor(hr);
+        min = Math.floor(min - hr * 60);
+        sec = Math.floor(sec - (hr * 60 + min) * 60);
+        return hr + ":" + pad(min) + ":" + pad(sec);
+    } else {
+        min = Math.floor(min);
+        sec = Math.floor(sec - min * 60);
+        return min + ":" + pad(sec);
+    }
+}
+
+// return how many minutes until a server time in a nice display format
+function timeDisplayUntil(serverTime) {
+    var local = localTime(serverTime);
+    var now = new Date();
+    return timeDisplay(local - now);
+}
+
+// return how many minutes since a server time in a nice display format
+function timeDisplaySince(serverTime) {
+    var local = localTime(serverTime);
+    var now = new Date();
+    return timeDisplay(now - local);
+}
+
+// make sure parameter is converted to a date
+function coerceDate(date_or_string) {
+    if (date_or_string instanceof String) {
+        out = new Date();
+        out.setISO8601(date_or_string);
+        return out;
+    } else if (date_or_string instanceof Date) {
+        return date_or_string;
+    } else {
+        throw("Error (coerceDate): " + date_or_string + " is not a date or string.");
+    }
+}
+
 // convert a sever time to a local time
 function localTime(serverTime) {
+    serverTime = coerceDate(serverTime);
+
     // find the difference between the local and the server time
     var diff = server_time - local_time;
     // apply the differece to the input serverTime
@@ -41,6 +123,14 @@ function displayCorrectly(div, visible) {
         div.hide('fast');
 }
 
+function updateAvailable() {
+    $("#available").html(Jst.evaluate(template_available, state_available));
+}
+
+function updateOwned() {
+    $("#owned").html(Jst.evaluate(template_owned, state_owned));
+}
+
 function updateLogin() {
     // populate div with template parsed with json object
     $("#login").html(Jst.evaluate(template_login, state_login));
@@ -55,15 +145,13 @@ function updateLogin() {
         updateLogin();
     });
     $("#loginButton").click(function(){
-        loginFormDisplayed = false;
-        updateLogin();
         $.ajax({
             url: "/ajax/login/",
             type: 'POST',
             dataType: 'text',
             data: {
-                'user': $("#loginName").attr('value'),
-                'pass': $("#loginPassword").attr('value'),
+                'username': $("#loginName").attr('value'),
+                'password': $("#loginPassword").attr('value'),
             },
             success: function(){
                 ajaxRequest()
@@ -74,6 +162,8 @@ function updateLogin() {
                 ajaxRequest()
             }
         });
+        loginFormDisplayed = false;
+        updateLogin();
     });
     $("#cancelLoginButton").click(function(){
         loginFormDisplayed = false;
@@ -93,14 +183,20 @@ function ajaxRequest() {
 
     $.getJSON("/arena/ajax/available/",
         function(data){
-            if (data != null)
-                $("#available").html(Jst.evaluate(template_available, data));
+            if (data == null)
+                return;
+
+            state_available = data;
+            updateAvailable();
         });
 
     $.getJSON("/arena/ajax/owned/",
         function(data){
-            if (data != null)
-                $("#owned").html(Jst.evaluate(template_owned, data));
+            if (data == null)
+                return
+
+            state_owned = data;
+            updateOwned();
         });
 }
 
