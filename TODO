@@ -1,5 +1,5 @@
 = arena =
- * create a competition
+ * bug where server/local time are handled incorrectly
  * page that lists competitions
    - competition boxes with countdown timer
  * competition page
@@ -10,6 +10,11 @@
  * pressing enter in the password field should submit the form
  * editing a field when it refreshes
  * the ui glitch when it refreshes
+ * protect against h4xz0rz by adding a @method to views which do things like
+   login, logout, etc. The method would make sure the referrer was us and not
+   some other website.
+ * listening party date must be after submission deadline date - put that in
+   form validation check
 
 = project manager / band page =
 

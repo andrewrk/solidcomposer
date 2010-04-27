@@ -1,16 +1,22 @@
 <h2>Public Competitions</h2>
 <% if (upcoming.length > 0 || ongoing.length > 0 || closed.length > 0) { %>
-    <h3>Upcoming</h3>
-    <% for (var i=0; i<upcoming.length; ++i) { var compo = upcoming[i]; %>
-        {% include 'arena/compo.jst.html' %}
+    <% if (upcoming.length > 0) { %>
+        <h3>Upcoming</h3>
+        <% for (var i=0; i<upcoming.length; ++i) { var compo = upcoming[i]; %>
+            {% include 'arena/compo.jst.html' %}
+        <% } %>
     <% } %>
-    <h3>Ongoing</h3>
-    <% for (var i=0; i<ongoing.length; ++i) { var compo = ongoing[i]; %>
-        {% include 'arena/compo.jst.html' %}
+    <% if (ongoing.length > 0) { %>
+        <h3>Ongoing</h3>
+        <% for (var i=0; i<ongoing.length; ++i) { var compo = ongoing[i]; %>
+            {% include 'arena/compo.jst.html' %}
+        <% } %>
     <% } %>
-    <h3>Closed</h3>
-    <% for (var i=0; i<closed.length; ++i) { var compo = closed[i]; %>
-        {% include 'arena/compo.jst.html' %}
+    <% if (closed.length > 0) { %>
+        <h3>Closed</h3>
+        <% for (var i=0; i<closed.length; ++i) { var compo = closed[i]; %>
+            {% include 'arena/compo.jst.html' %}
+        <% } %>
     <% } %>
 <% } else { %>
     <p>Sorry, no competitions available right now.</p>

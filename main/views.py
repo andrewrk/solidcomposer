@@ -3,8 +3,9 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import model_to_dict
-from opensourcemusic.main.forms import *
+from django.shortcuts import render_to_response, get_object_or_404
 
+from opensourcemusic.main.forms import *
 from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT
 
 import simplejson as json
@@ -71,6 +72,27 @@ def ajax_login_state(request):
 
     return HttpResponse(json_dump(data), mimetype="text/plain")
 
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect(request.GET.get('next', '/'))
+
+def user_login(request):
+    err_msg = ''
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password'))
+            if user is not None:
+                if user.is_active and user.get_profile().activated:
+                    login(request, user)
+                    return HttpResponseRedirect(form.cleaned_data.get('next_url'))
+                else:
+                    err_msg = 'Your account is not activated.'
+            else:
+                err_msg = 'Invalid login.'
+    else:
+        form = LoginForm(initial={'next_url': request.GET.get('next', '/')})
+    return render_to_response('login.html', {'form': form, 'err_msg': err_msg }, context_instance=RequestContext(request))
 
 def ajax_login(request):
     err_msg = ''

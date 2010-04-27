@@ -1,0 +1,17 @@
+{% extends 'arena/arena_base.html' %}
+
+{% block title %}Create a Competition - {{ block.super }}{% endblock %}
+
+{% block css %}arena.css{% endblock %}
+
+{% block content %}
+    {% include 'login_area.html' %}
+    <h1>Arena</h1>
+    <h2>Create a Competition</h2>
+    <form id="competition-form" method="post">
+        <table>
+        {{ form.as_table }}
+        </table>
+        <input type="submit" value="Create Competition" />
+    </form>
+{% endblock %}

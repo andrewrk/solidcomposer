@@ -61,7 +61,11 @@ class Competition(models.Model):
     # which is undetermined. People must have at least 10 minutes to vote,
     # so when the processing from the submit_deadline is finished, it will
     # recalculate this value based on the then-known listening_party_end_date
-    vote_deadline = models.DateTimeField()
+    vote_deadline = models.DateTimeField(blank=True, null=True)
+
+    # length of the voting period in seconds. Used to calculate vote_deadline
+    # after listening party end date is computed.
+    vote_period_length = models.IntegerField()
 
     UNSAFE_KEYS = (
         'theme', # can only see theme if preview_theme

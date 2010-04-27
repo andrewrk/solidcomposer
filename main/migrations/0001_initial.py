@@ -31,7 +31,7 @@ class Migration(SchemaMigration):
         # Adding model 'Competition'
         db.create_table('main_competition', (
             ('have_listening_party', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
-            ('vote_deadline', self.gf('django.db.models.fields.DateTimeField')()),
+            ('vote_deadline', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=256)),
             ('rules', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('preview_rules', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
@@ -44,6 +44,7 @@ class Migration(SchemaMigration):
             ('listening_party_end_date', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('date_created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('vote_period_length', self.gf('django.db.models.fields.IntegerField')()),
         ))
         db.send_create_signal('main', ['Competition'])
 
@@ -162,7 +163,8 @@ class Migration(SchemaMigration):
             'submit_deadline': ('django.db.models.fields.DateTimeField', [], {}),
             'theme': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'vote_deadline': ('django.db.models.fields.DateTimeField', [], {})
+            'vote_deadline': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'vote_period_length': ('django.db.models.fields.IntegerField', [], {})
         },
         'main.entry': {
             'Meta': {'object_name': 'Entry'},

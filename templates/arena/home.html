@@ -1,0 +1,25 @@
+{% extends 'arena/arena_base.html' %}
+
+{% block title %}Arena - {{ block.super }}{% endblock %}
+
+{% block extra_header %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/arena.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h1>Arena</h1>
+    <div id="create">
+        <a href="/arena/create/">Create a Competition</a>
+    </div>
+    <div id="login">
+    {% include 'loading.html' %}
+    </div>
+    <div id="available">
+    {% include 'loading.html' %}
+    </div>
+    <div id="owned">
+    {% include 'loading.html' %}
+    </div>
+{% endblock %}
+

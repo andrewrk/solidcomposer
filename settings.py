@@ -34,13 +34,13 @@ if release_mode:
     DATABASE_PORT = ''
 else:
     # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_ENGINE = 'sqlite3'           
+    DATABASE_ENGINE = 'mysql'           
     # Or path to database file if using sqlite3.
-    DATABASE_NAME = absolute('db')
+    DATABASE_NAME = 'opensourcemusic'
     # Not used with sqlite3.
-    DATABASE_USER = ''             
+    DATABASE_USER = 'opensourcemusic'             
     # Not used with sqlite3.
-    DATABASE_PASSWORD = ''         
+    DATABASE_PASSWORD = 'dev'         
     # Set to empty string for localhost. Not used with sqlite3.
     DATABASE_HOST = ''             
     # Set to empty string for default. Not used with sqlite3.
