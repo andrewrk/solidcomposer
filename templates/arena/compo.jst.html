@@ -23,7 +23,11 @@
         <% } %>
     <% } %>
     <div>
-        <a href="#">view</a>
-        <a href="#">favorite</a>
+        <a href="/arena/compete/<%= compo.id %>/" id="compo-<%= compo.id %>-view">view</a>
+        <% if (compo.bookmarked) { %>
+            <a href="#" id="compo-<%= compo.id %>-remove">remove</a>
+        <% } else { %>
+            <a href="#" id="compo-<%= compo.id %>-bookmark">bookmark</a>
+        <% } %>
     </div>
 </div>

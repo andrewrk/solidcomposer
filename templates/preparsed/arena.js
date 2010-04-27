@@ -144,16 +144,73 @@ function displayCorrectly(div, visible) {
         div.hide('fast');
 }
 
+function addClicksToCompo(compo) {
+    $("#compo-" + compo.id + "-remove").click(function(){
+        $.ajax({
+            url: "/arena/ajax/remove/" + compo.id + "/",
+            type: 'GET',
+            success: function(){
+                ajaxRequest()
+            },
+            error: function(){
+                ajaxRequest()
+            }
+        });
+        return false;
+    });
+    $("#compo-" + compo.id + "-bookmark").click(function(){
+        $.ajax({
+            url: "/arena/ajax/bookmark/" + compo.id + "/",
+            type: 'GET',
+            success: function(){
+                ajaxRequest()
+            },
+            error: function(){
+                ajaxRequest()
+            }
+        });
+        return false;
+    });
+}
+
+function setBookmarkedProperty(data, value) {
+    for(var i=0; i<data.ongoing.length; ++i)
+        data.ongoing[i].bookmarked = value;
+
+    for(var i=0; i<data.closed.length; ++i)
+        data.closed[i].bookmarked = value;
+
+    for(var i=0; i<data.upcoming.length; ++i)
+        data.upcoming[i].bookmarked = value;
+}
+
+function addClicksToSection(data) {
+    for(var i=0; i<data.ongoing.length; ++i)
+        addClicksToCompo(data.ongoing[i]);
+
+    for(var i=0; i<data.closed.length; ++i)
+        addClicksToCompo(data.closed[i]);
+
+    for(var i=0; i<data.upcoming.length; ++i)
+        addClicksToCompo(data.upcoming[i]);
+}
+
 function updateAvailable() {
     if (state_available == null)
         return;
+
     $("#available").html(Jst.evaluate(template_available, state_available));
+
+    addClicksToSection(state_available);
 }
 
 function updateOwned() {
     if (state_owned == null)
         return;
+
     $("#owned").html(Jst.evaluate(template_owned, state_owned));
+
+    addClicksToSection(state_owned);
 }
 
 function updateLogin() {
@@ -166,11 +223,11 @@ function updateLogin() {
     displayCorrectly($("#loginFormDiv"), loginFormDisplayed);
     displayCorrectly($("#loginFormError"), loginFormError);
 
-    // replace links with ajax
     $("#signIn").click(function(){
         loginFormDisplayed = ! loginFormDisplayed;
         loginFormError = false;
         updateLogin();
+        return false;
     });
     $("#loginButton").click(function(){
         $.ajax({
@@ -192,17 +249,17 @@ function updateLogin() {
         });
         loginFormDisplayed = false;
         updateLogin();
+        return false;
     });
     $("#cancelLoginButton").click(function(){
         loginFormDisplayed = false;
         updateLogin();
+        return false;
     });
     $("#signOut").click(function(){
         $.ajax({
             url: "/ajax/logout/",
-            type: 'POST',
-            dataType: 'text',
-            data: {},
+            type: 'GET',
             success: function(){
                 ajaxRequest()
             },
@@ -212,6 +269,7 @@ function updateLogin() {
                 ajaxRequest()
             }
         });
+        return false;
     });
 }
 
@@ -231,6 +289,8 @@ function ajaxRequest() {
                 return;
 
             state_available = data;
+
+            setBookmarkedProperty(state_available, false);
             updateAvailable();
         });
 
@@ -240,6 +300,7 @@ function ajaxRequest() {
                 return
 
             state_owned = data;
+            setBookmarkedProperty(state_owned, true);
             updateOwned();
         });
 }

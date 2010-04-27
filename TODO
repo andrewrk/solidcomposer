@@ -1,10 +1,11 @@
 = arena =
- * page that lists competitions
-   - competition boxes with countdown timer
  * competition page
  * register
  * user account page
  * settings page
+ * make the gui pretty
+   - date/time widgets for competition form
+ * edit competition
 
  * pressing enter in the password field should submit the form
  * editing a field when it refreshes
@@ -14,6 +15,7 @@
    some other website.
  * listening party date must be after submission deadline date - put that in
    form validation check
+ * implement template caching in Jst parser
 
 = project manager / band page =
 

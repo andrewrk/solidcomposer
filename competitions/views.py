@@ -12,6 +12,28 @@ from opensourcemusic.competitions.forms import *
 
 from datetime import datetime
 
+def ajax_unbookmark(request, id):
+    data = {'success': False}
+    if request.user.is_authenticated():
+        comp = get_object_or_404(Competition, id=int(id))
+        prof = request.user.get_profile()
+        prof.competitions_bookmarked.remove(comp)
+        prof.save()
+        data['success'] = True
+
+    return HttpResponse(json_dump(data), mimetype="text/plain")
+
+def ajax_bookmark(request, id):
+    data = {'success': False}
+    if request.user.is_authenticated():
+        comp = get_object_or_404(Competition, id=int(id))
+        prof = request.user.get_profile()
+        prof.competitions_bookmarked.add(comp)
+        prof.save()
+        data['success'] = True
+
+    return HttpResponse(json_dump(data), mimetype="text/plain")
+
 def ajax_available(request):
     upcoming = filter_upcoming(Competition.objects)
     ongoing = filter_ongoing(Competition.objects)

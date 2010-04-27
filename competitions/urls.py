@@ -8,6 +8,8 @@ urlpatterns = patterns('',
 	url('^$', direct_to_template, {'template': 'arena/home.html'}),
     url('^ajax/available/$', 'opensourcemusic.competitions.views.ajax_available'),
     url('^ajax/owned/$', 'opensourcemusic.competitions.views.ajax_owned'),
+    url('^ajax/bookmark/(\d+)/$', 'opensourcemusic.competitions.views.ajax_bookmark'),
+    url('^ajax/remove/(\d+)/$', 'opensourcemusic.competitions.views.ajax_unbookmark'),
 
     url('^create/$', 'opensourcemusic.competitions.views.create'),
 )
