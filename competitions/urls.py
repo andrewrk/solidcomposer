@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url('^ajax/remove/(\d+)/$', 'opensourcemusic.competitions.views.ajax_unbookmark'),
 
     url('^create/$', 'opensourcemusic.competitions.views.create'),
+    url('^compete/(\d)/$', 'opensourcemusic.competitions.views.competition'),
 )

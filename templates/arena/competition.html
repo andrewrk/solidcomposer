@@ -1,0 +1,37 @@
+{% extends 'arena/arena_base.html' %}
+
+{% block title %}{{ competition.title }} - {{ block.super }}{% endblock %}
+
+{% block extra_header %}
+    {{ block.super }}
+    <script type="text/javascript">
+var competition_id = {{ competition.id }};
+    </script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/formatting.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/competition.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="login">
+    {% include 'loading.html' %}
+    </div>
+    <h1>Arena</h1>
+    <h2>{{ competition.title }}</h2>
+    <div id="status">
+    {% include 'loading.html' %}
+    </div>
+    <div id="vote-status">
+    {% include 'loading.html' %}
+    </div>
+    <div id="entry-area">
+    {% include 'loading.html' %}
+    </div>
+    <div id="chatroom">
+    {% include 'loading.html' %}
+    </div>
+    <div id="current-entry">
+    {% include 'loading.html' %}
+    </div>
+{% endblock %}
+

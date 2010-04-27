@@ -138,3 +138,8 @@ def create(request):
         form = CreateCompetitionForm()
     
     return render_to_response('arena/create.html', locals(), context_instance=RequestContext(request))
+
+def competition(request, id):
+    competition = get_object_or_404(Competition, id=int(id))
+    return render_to_response('arena/competition.html', locals(), context_instance=RequestContext(request))
+

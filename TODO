@@ -1,12 +1,19 @@
 = arena =
+ == to get a prototype working ==
  * competition page
+   - chat box
+   - entries list box
+   - basic page with javascript working
+   - replay listening party feature
+     > put an indicator on the page so you know whether it's live or replay
  * register
- * user account page
+ * user profile page
  * settings page
  * make the gui pretty
    - date/time widgets for competition form
  * edit competition
 
+ == improvements ==
  * pressing enter in the password field should submit the form
  * editing a field when it refreshes
  * the ui glitch when it refreshes
@@ -16,8 +23,23 @@
  * listening party date must be after submission deadline date - put that in
    form validation check
  * implement template caching in Jst parser
+ * paging on competitions. right now it sends them all.
+ * moderation tools for competitions
+ * obfuscate media URLs to protect people's stuff
 
 = project manager / band page =
 
 = fan page / interface with band page = 
 
+= musical tutorial blog =
+  == ideas for posts ==
+  * layering
+  * ducking / sidechaining
+  * cutting unecessary eq when mastering
+  * Free generators and effects you can get
+  * galloping bass
+  * reverse crash + crash + ducking sounds awesome
+  * recorded guitar chords + flanger + ducking sounds awesome
+  * unison / lmms plug
+  * project management plug
+  * vocoding drums
