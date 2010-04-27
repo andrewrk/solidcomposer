@@ -1,5 +1,4 @@
 = arena =
- * bug where server/local time are handled incorrectly
  * page that lists competitions
    - competition boxes with countdown timer
  * competition page

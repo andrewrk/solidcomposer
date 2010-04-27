@@ -5,39 +5,9 @@ var template_owned = (<r><![CDATA[{% include 'arena/owned.jst.html' %}]]></r>).t
 // true if we display the input text boxes
 var loginFormDisplayed = false;
 var loginFormError = false;
-var state_login;
-var state_available;
-var state_owned;
-
-// convert ISO date to JS date
-Date.prototype.setISO8601 = function(dString){
-    var regexp = /(\d\d\d\d)(-)?(\d\d)(-)?(\d\d)(T)?(\d\d)(:)?(\d\d)(:)?(\d\d)(\.\d+)?(Z|([+-])(\d\d)(:)?(\d\d))?/;
-     
-    if (dString.toString().match(new RegExp(regexp))) {
-        var d = dString.match(new RegExp(regexp));
-        var offset = 0;
-         
-        this.setUTCDate(1);
-        this.setUTCFullYear(parseInt(d[1],10));
-        this.setUTCMonth(parseInt(d[3],10) - 1);
-        this.setUTCDate(parseInt(d[5],10));
-        this.setUTCHours(parseInt(d[7],10));
-        this.setUTCMinutes(parseInt(d[9],10));
-        this.setUTCSeconds(parseInt(d[11],10));
-        if (d[12])
-            this.setUTCMilliseconds(parseFloat(d[12]) * 1000);
-        else
-            this.setUTCMilliseconds(0);
-        if (d[13] && d[13] != 'Z') {
-            offset = (d[15] * 60) + parseInt(d[17],10);
-            offset *= ((d[14] == '-') ? -1 : 1);
-            this.setTime(this.getTime() - offset * 60 * 1000);
-        }
-    } else {
-        this.setTime(Date.parse(dString));
-    }
-    return this;
-};
+var state_login = null;
+var state_available = null;
+var state_owned = null;
 
 // pads an integer with a zero if necessary and returns a string
 function pad(num) {
@@ -78,13 +48,10 @@ function timeDisplaySince(serverTime) {
 
 // make sure parameter is converted to a date
 function coerceDate(date_or_string) {
-    if (date_or_string instanceof Date) {
+    if (date_or_string instanceof Date)
         return date_or_string;
-    } else {
-        var out = new Date();
-        out.setISO8601(date_or_string);
-        return out;
-    }
+    else
+        return new Date(date_or_string);
 }
 
 // pretty print a datetime
@@ -102,6 +69,48 @@ function localTime(serverTime) {
     return new Date(serverTime - diff);
 }
 
+// return in a nice printable string how much time until then
+function printableTimeUntil(serverTime) {
+    return printableTimeDiff(secondsUntil(serverTime));
+}
+
+function printableTimeSince(serverTime) {
+    return printableTimeDiff(secondsSince(serverTime));
+}
+
+function printableTimeDiff(seconds) {
+    var minutes = seconds / 60;
+    var hours = minutes / 60;
+    var days = hours / 24;
+    var weeks = days / 7;
+    var months = days / 30;
+    var years = days / 365;
+
+    if (years >= 1)
+        return plural(Math.floor(years), "year", "years");
+
+    if (months >= 1)
+        return plural(Math.floor(months), "month", "months");
+
+    if (weeks >= 1)
+        return plural(Math.floor(weeks), "week", "weeks");
+
+    if (days >= 1)
+        return plural(Math.floor(days), "day", "days");
+
+    if (hours >= 1)
+        return plural(Math.floor(hours), "hour", "hours");
+
+    if (minutes >= 1)
+        return plural(Math.floor(minutes), "minute", "minutes");
+
+    return plural(Math.floor(seconds), "second", "seconds");
+}
+
+function plural(n, singular, plural) {
+    return n + " " + ((n == 1) ? singular : plural);
+}
+
 function secondsUntil(serverTime) {
     // convert to local time
     var local = localTime(serverTime);
@@ -109,6 +118,15 @@ function secondsUntil(serverTime) {
     var current = new Date();
     // return the difference
     return (local - current)/1000;
+}
+
+function secondsSince(serverTime) {
+    // convert to local time
+    var local = localTime(serverTime);
+    // get current time
+    var current = new Date();
+    // return the difference
+    return (current - local)/1000;
 }
 
 // return whether an element is visible or not
@@ -127,14 +145,21 @@ function displayCorrectly(div, visible) {
 }
 
 function updateAvailable() {
+    if (state_available == null)
+        return;
     $("#available").html(Jst.evaluate(template_available, state_available));
 }
 
 function updateOwned() {
+    if (state_owned == null)
+        return;
     $("#owned").html(Jst.evaluate(template_owned, state_owned));
 }
 
 function updateLogin() {
+    if (state_login == null)
+        return;
+
     // populate div with template parsed with json object
     $("#login").html(Jst.evaluate(template_login, state_login));
 
@@ -224,7 +249,14 @@ function ajaxRequestLoop() {
     setTimeout(ajaxRequestLoop, 10000);
 }
 
+function updateCompetitionsLoop() {
+    updateAvailable();
+    updateOwned();
+    setTimeout(updateCompetitionsLoop, 1000);
+}
+
 $(document).ready(function(){
     ajaxRequestLoop();
+    updateCompetitionsLoop();
 });
 

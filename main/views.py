@@ -40,7 +40,7 @@ def safe_model_to_dict(model_instance):
 
 def json_dthandler(obj):
     if isinstance(obj, datetime.datetime):
-        return obj.isoformat()
+        return obj.strftime('%B %d, %Y %H:%M:%S')
     else:
         return None
 

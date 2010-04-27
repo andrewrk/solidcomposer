@@ -1,13 +1,13 @@
 <div class="compo">
     <h4><%= compo.title %></h4>
     <% if (secondsUntil(compo.start_date) > 0) { %>
-        <p>starts in <%= secondsUntil(compo.start_time) %></p>
+        <p>starts in <%= printableTimeUntil(compo.start_date) %></p>
     <% } else if (secondsUntil(compo.submit_deadline) > 0) { %>
-        <p>submission deadline in <%= secondsUntil(compo.submit_deadline) %></p>
-    <% } else if (compo.have_listening_party) { %>
+        <p>submission deadline in <%= printableTimeUntil(compo.submit_deadline) %></p>
+    <% } else if (compo.have_listening_party && secondsUntil(compo.listening_party_end_date) > 0) { %>
         <% if (localTime(compo.listening_party_start_date) > (new Date())) { %> 
             <p>listening party starting in
-            <%= secondsUntil(compo.listening_party_start_date) %>
+            <%= printableTimeUntil(compo.listening_party_start_date) %>
             </p>
         <% } else { %>
             <p>Listening party
@@ -15,7 +15,7 @@
             <%= timeDisplayUntil(compo.listening_party_end_date) %>)</p>
         <% } %>
     <% } else if (secondsUntil(compo.vote_deadline) > 0) { %>
-        <p>voting ends in <%= secondsUntil(compo.vote_deadline) %></p>
+        <p>voting ends in <%= printableTimeUntil(compo.vote_deadline) %></p>
     <% } else { %>
         <p>ended on <%= formatDate(localTime(compo.submit_deadline)) %></p>
         <% if (compo.user_entered) { %>
