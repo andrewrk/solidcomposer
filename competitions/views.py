@@ -19,10 +19,10 @@ def ajax_available(request):
 
     # don't show bookmarked items
     if request.user.is_authenticated():
-        pkeys = request.user.get_profile().competitions_bookmarked.values_list('pk')
-        upcoming.exclude(pk__in=pkeys)
-        ongoing.exclude(pk__in=pkeys)
-        closed.exclude(pk__in=pkeys)
+        pkeys = request.user.get_profile().competitions_bookmarked.values_list('pk')[0]
+        upcoming = upcoming.exclude(pk__in=pkeys)
+        ongoing = ongoing.exclude(pk__in=pkeys)
+        closed = closed.exclude(pk__in=pkeys)
 
     # build the json object
     data = {
@@ -50,7 +50,7 @@ def ajax_owned(request):
 
     # only show bookmarked items
     now = datetime.now()
-    bookmarked = request.user.get_profile().competition_set
+    bookmarked = request.user.get_profile().competitions_bookmarked
 
     upcoming = filter_upcoming(bookmarked)
     ongoing = filter_ongoing(bookmarked)

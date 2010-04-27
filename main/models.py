@@ -13,8 +13,8 @@ class Profile(models.Model):
     competitions_bookmarked = models.ManyToManyField('Competition', blank=True, related_name='competitions_bookmarked')
 
     UNSAFE_KEYS = (
-        activate_code,
-        activated,
+        'activate_code',
+        'activated',
     )
 
     def __unicode__(self):
@@ -62,6 +62,11 @@ class Competition(models.Model):
     # so when the processing from the submit_deadline is finished, it will
     # recalculate this value based on the then-known listening_party_end_date
     vote_deadline = models.DateTimeField()
+
+    UNSAFE_KEYS = (
+        'theme', # can only see theme if preview_theme
+        'rules', # can only see rules if preview_rules
+    )
 
 class ThumbsUp(models.Model):
     """
