@@ -19,7 +19,7 @@ def ajax_available(request):
 
     # don't show bookmarked items
     if request.user.is_authenticated():
-        pkeys = request.user.get_profile().competitions_bookmarked.values_list('pk')[0]
+        pkeys = request.user.get_profile().competitions_bookmarked.values_list('pk')
         upcoming = upcoming.exclude(pk__in=pkeys)
         ongoing = ongoing.exclude(pk__in=pkeys)
         closed = closed.exclude(pk__in=pkeys)
@@ -46,6 +46,15 @@ def filter_closed(query_set):
     return query_set.filter(vote_deadline__lte=now).order_by('start_date')
 
 def ajax_owned(request):
+    data = {
+        'user': {
+            'is_authenticated': request.user.is_authenticated(),
+        },
+    }
+
+    if not request.user.is_authenticated():
+        return HttpResponse(json_dump(data), mimetype="text/plain")
+
     activeUser(request)
 
     # only show bookmarked items
@@ -57,10 +66,10 @@ def ajax_owned(request):
     closed = filter_closed(bookmarked)
 
     # build the json object
-    data = {
+    data.update({
         'upcoming': [safe_model_to_dict(x) for x in upcoming],
         'ongoing': [safe_model_to_dict(x) for x in ongoing],
         'closed': [safe_model_to_dict(x) for x in closed],
-    }
+    })
 
     return HttpResponse(json_dump(data), mimetype="text/plain")

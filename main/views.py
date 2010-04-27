@@ -102,4 +102,4 @@ def ajax_logout(request):
         'success': True,
     }
 
-    return HttpResponseRedirect(json_dump(data), mimetype="text/plain")
+    return HttpResponse(json_dump(data), mimetype="text/plain")

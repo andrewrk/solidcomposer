@@ -11,7 +11,7 @@ var state_owned;
 
 // convert ISO date to JS date
 Date.prototype.setISO8601 = function(dString){
-    var regexp = /(\d\d\d\d)(-)?(\d\d)(-)?(\d\d)(T)?(\d\d)(:)?(\d\d)(:)?(\d\d)(\.\d+)?(Z|([+-])(\d\d)(:)?(\d\d))/;
+    var regexp = /(\d\d\d\d)(-)?(\d\d)(-)?(\d\d)(T)?(\d\d)(:)?(\d\d)(:)?(\d\d)(\.\d+)?(Z|([+-])(\d\d)(:)?(\d\d))?/;
      
     if (dString.toString().match(new RegExp(regexp))) {
         var d = dString.match(new RegExp(regexp));
@@ -28,7 +28,7 @@ Date.prototype.setISO8601 = function(dString){
             this.setUTCMilliseconds(parseFloat(d[12]) * 1000);
         else
             this.setUTCMilliseconds(0);
-        if (d[13] != 'Z') {
+        if (d[13] && d[13] != 'Z') {
             offset = (d[15] * 60) + parseInt(d[17],10);
             offset *= ((d[14] == '-') ? -1 : 1);
             this.setTime(this.getTime() - offset * 60 * 1000);
@@ -78,15 +78,18 @@ function timeDisplaySince(serverTime) {
 
 // make sure parameter is converted to a date
 function coerceDate(date_or_string) {
-    if (date_or_string instanceof String) {
-        out = new Date();
-        out.setISO8601(date_or_string);
-        return out;
-    } else if (date_or_string instanceof Date) {
+    if (date_or_string instanceof Date) {
         return date_or_string;
     } else {
-        throw("Error (coerceDate): " + date_or_string + " is not a date or string.");
+        var out = new Date();
+        out.setISO8601(date_or_string);
+        return out;
     }
+}
+
+// pretty print a datetime
+function formatDate(datetime) {
+    return datetime.toString();
 }
 
 // convert a sever time to a local time
@@ -168,6 +171,22 @@ function updateLogin() {
     $("#cancelLoginButton").click(function(){
         loginFormDisplayed = false;
         updateLogin();
+    });
+    $("#signOut").click(function(){
+        $.ajax({
+            url: "/ajax/logout/",
+            type: 'POST',
+            dataType: 'text',
+            data: {},
+            success: function(){
+                ajaxRequest()
+            },
+            error: function(){
+                loginFormError = true;
+                updateLogin();
+                ajaxRequest()
+            }
+        });
     });
 }
 

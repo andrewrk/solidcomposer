@@ -1,9 +1,17 @@
- * sign out
+= arena =
  * create a competition
  * page that lists competitions
    - competition boxes with countdown timer
  * competition page
+ * register
+ * user account page
+ * settings page
 
  * pressing enter in the password field should submit the form
  * editing a field when it refreshes
  * the ui glitch when it refreshes
+
+= project manager / band page =
+
+= fan page / interface with band page = 
+
