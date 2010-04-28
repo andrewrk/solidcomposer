@@ -1,0 +1,8 @@
+<h4>Entries (<%= entries.length %> so far)</h4>
+<div id="entries">
+    <% for (var i=0; i<entries.length; ++i) { var entry = entries[i]; %>
+        <div class="entry">
+            <%= entry.owner.artist_name %> - <%= entry.song.title %>
+        </div>
+    <% } %>
+</div>

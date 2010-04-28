@@ -2,7 +2,11 @@
  == to get a prototype working ==
  * competition page
    - chat box
-   - entries list box
+   - pre-competition starting behavior
+   - in progress competition behavior
+   - listening party behavior
+   - voting behavior
+   - voting closed behavior
    - replay listening party feature
      > put an indicator on the page so you know whether it's live or replay
  * register
@@ -13,6 +17,8 @@
  * edit competition
  * protect against bad data with javascript
    - make Jst support auto escaping. can have special function for not escaping.
+ * re-implement safe_model_to_dict to make it safer. should probably have
+   explicit safe fields in models.
 
  == improvements ==
  * pressing enter in the password field should submit the form

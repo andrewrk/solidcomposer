@@ -1,14 +1,22 @@
 var template_status = (<r><![CDATA[{% include 'arena/compo_status.jst.html' %}]]></r>).toString();
 var template_info = (<r><![CDATA[{% include 'arena/compo_info.jst.html' %}]]></r>).toString();
 var template_vote_status = (<r><![CDATA[{% include 'arena/vote_status.jst.html' %}]]></r>).toString();
-var template_entries = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
-var template_chat = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
-var template_onliners = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
+var template_entries = (<r><![CDATA[{% include 'arena/entry_list.jst.html' %}]]></r>).toString();
+var template_chat = (<r><![CDATA[{% include 'chat/box.jst.html' %}]]></r>).toString();
+var template_onliners = (<r><![CDATA[{% include 'chat/onliners.jst.html' %}]]></r>).toString();
 
 var state_compo = null;
 var state_chat = null;
 
 var chat_last_update = null;
+
+// true if we are in the middle of a listening party
+function ongoingListeningParty(compo) {
+    return compo != null && secondsUntil(compo.vote_deadline) > 0 &&
+    ((compo.have_listening_party &&
+        secondsUntil(compo.listening_party_end_date) <= 0) ||
+        ! compo.have_listening_party);
+}
 
 function updateChat() {
     // TODO
@@ -28,6 +36,7 @@ function updateCompo() {
     updateStatus();
     $("#vote-status").html(Jst.evaluate(template_vote_status, state_compo));
     $("#info").html(Jst.evaluate(template_info, state_compo));
+    $("#entry-area").html(Jst.evaluate(template_entries, state_compo));
 }
 
 function ajaxRequest() {

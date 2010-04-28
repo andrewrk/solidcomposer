@@ -98,7 +98,7 @@ class Song(models.Model):
     mp3_file = models.CharField(max_length=500)
 
     # in case the artist was generous enough to provide source
-    source_file = models.CharField(max_length=500)
+    source_file = models.CharField(max_length=500, blank=True)
 
     # filename where generated waveform img can be found
     waveform_img = models.CharField(max_length=500, blank=True)

@@ -4,7 +4,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
-from django.core import serializers
 
 from opensourcemusic.competitions.models import *
 from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT
@@ -27,11 +26,18 @@ def ajax_compo(request, id):
     id = int(id)
     compo = get_object_or_404(Competition, id=id)
 
+    def add_to_entry(entry):
+        d = safe_model_to_dict(entry)
+        d['owner'] = safe_model_to_dict(entry.owner)
+        d['song'] = safe_model_to_dict(entry.song)
+        return d
+
     data = {
         'user': {
             'is_authenticated': False,
         },
         'compo': safe_model_to_dict(compo),
+        'entries': [add_to_entry(x) for x in compo.entry_set.all()],
     }
 
     data['compo']['have_theme'] = compo.theme != ''
@@ -53,7 +59,7 @@ def ajax_compo(request, id):
         data['user']['get_profile'] = request.user.get_profile()
         data['votes'] = {
             'max': max_votes,
-            'used': serializers.serialize("json", used_votes),
+            'used': [safe_model_to_dict(x) for x in used_votes],
             'left': max_votes - used_votes.count(),
         }
 
