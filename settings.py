@@ -143,9 +143,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    'south',
+    'django_cron',
     'opensourcemusic.main',
     'opensourcemusic.competitions',
-    'south',
 )
 
 LOGIN_URL = "/login/"
@@ -155,3 +156,5 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+# how many seconds to wait before generating leave messages for chatters
+CHAT_TIMEOUT = 15

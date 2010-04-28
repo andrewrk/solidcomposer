@@ -188,6 +188,24 @@ def ajax_chat(request):
         check_date = python_date(latest_check)
         data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, timestamp__gt=check_date).order_by('timestamp')]
 
+    if request.user.is_authenticated():
+        # mark an appearance in the ChatRoom
+        appearances = Appearance.objects.filter(person=request.user.get_profile(), room=room)
+        if appearances.count() > 0:
+            appearances[0].save() # update the timestamp
+        else:
+            new_appearance = Appearance()
+            new_appearance.room = room
+            new_appearance.person = request.user.get_profile()
+            new_appearance.save()
+
+            # join message
+            m = ChatMessage()
+            m.room=room
+            m.type=JOIN
+            m.author=request.user.get_profile()
+            m.save()
+
     return HttpResponse(json_dump(data), mimetype="text/plain")
 
 def ajax_say(request):

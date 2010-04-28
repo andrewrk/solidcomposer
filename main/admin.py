@@ -11,6 +11,7 @@ stuff = (
     SongComment,
     ChatRoom,
     ChatMessage,
+    Appearance,
 )
 
 map(lambda x: admin.site.register(x), stuff)

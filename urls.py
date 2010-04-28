@@ -1,8 +1,10 @@
 from django.conf.urls.defaults import *
 from django.views.generic.simple import direct_to_template
 from django.contrib import admin
+import django_cron
 
 admin.autodiscover()
+django_cron.autodiscover()
 
 urlpatterns = patterns('',
     (r'^$', direct_to_template, {'template': 'home.html'}),

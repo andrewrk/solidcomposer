@@ -1,0 +1,10 @@
+Dependencies:
+ * A good database system like postgresql or mysql so that the migration
+   stuff can work.
+ * south - http://south.aeracode.org/
+ * django-cron - http://code.google.com/p/django-cron/
+
+Procedure:
+ * copy django code to server
+ * touch a file called RELEASE to activate release mode in settings.py
+ * make sure database is migrated to latest version

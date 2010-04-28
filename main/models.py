@@ -177,6 +177,8 @@ class ChatRoom(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
 
+    def __unicode__(self):
+        return "ChatRoom %i" % self.id
 
 class ChatMessage(models.Model):
     """
@@ -214,3 +216,14 @@ class ChatMessage(models.Model):
         elif self.type == ACTION:
             return 'ACTION: %s > %s' % (self.author, self.message[:30])
         return self.message[:30]
+
+class Appearance(models.Model):
+    """
+    An Appearance tracks when a person was seen in a ChatRoom.
+    """
+    person = models.ForeignKey('Profile')
+    room = models.ForeignKey('ChatRoom')
+    timestamp = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return "%s in %s on %s" % (self.person, self.room, self.timestamp)
