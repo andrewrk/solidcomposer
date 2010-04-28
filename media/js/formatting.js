@@ -64,13 +64,23 @@ function formatDate(datetime) {
 }
 
 // convert a sever time to a local time
-function localTime(serverTime) {
-    serverTime = coerceDate(serverTime);
+function localTime(_serverTime) {
+    _serverTime = coerceDate(_serverTime);
 
     // find the difference between the local and the server time
     var diff = server_time - local_time;
-    // apply the differece to the input serverTime
-    return new Date(serverTime - diff);
+    // apply the differece to the input _serverTime
+    return new Date(_serverTime - diff);
+}
+
+// convert a local time to a server time
+function serverTime(_localTime) {
+    _localTime = coerceDate(_localTime);
+
+    // find the difference between the local and the server time
+    var diff = server_time - local_time;
+    // apply the differece to the input _localTime
+    return new Date(_localTime + diff);
 }
 
 // return in a nice printable string how much time until then

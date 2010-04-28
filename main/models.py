@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 SYSTEM, ACTION, MESSAGE, JOIN, LEAVE, NOTICE = range(6)
-WHITELIST, BLACKLIST = range(2)
+OPEN, WHITELIST, BLACKLIST = range(3)
 
 class Profile(models.Model):
     user = models.ForeignKey(User, unique=True)
@@ -159,6 +159,7 @@ class ChatRoom(models.Model):
     ChatRoom contains ChatMessages and manages who is allowed to be in it.
     """
     PERMISSION_TYPES = (
+        (OPEN, 'open'),
         (WHITELIST, 'whitelist'),
         (BLACKLIST, 'blacklist'),
     )

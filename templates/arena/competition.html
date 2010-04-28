@@ -6,6 +6,7 @@
     {{ block.super }}
     <script type="text/javascript">
 var competition_id = {{ competition.id }};
+var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{% else %}null{% endif %};
     </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/formatting.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
@@ -14,27 +15,26 @@ var competition_id = {{ competition.id }};
 
 {% block content %}
     <div id="login">
-    {% include 'loading.html' %}
+        {% include 'loading.html' %}
     </div>
     <h1>Arena</h1>
+    <p>Back to <a href="/arena/">Arena</a></p>
     <h2>{{ competition.title }}</h2>
     <div id="status">
-    {% include 'loading.html' %}
+        {% include 'loading.html' %}
     </div>
     <div id="info">
-    {% include 'loading.html' %}
+        {% include 'loading.html' %}
     </div>
     <div id="vote-status">
-    {% include 'loading.html' %}
+        {% include 'loading.html' %}
     </div>
     <div id="entry-area">
-    {% include 'loading.html' %}
+        {% include 'loading.html' %}
     </div>
-    <div id="chatroom">
-    {% include 'loading.html' %}
-    </div>
+    {% include 'chat/chatroom.html' %}
     <div id="current-entry">
-    {% include 'loading.html' %}
+        {% include 'loading.html' %}
     </div>
 {% endblock %}
 

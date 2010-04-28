@@ -125,3 +125,108 @@ def ajax_logout(request):
     }
 
     return HttpResponse(json_dump(data), mimetype="text/plain")
+
+def python_date(js_date):
+    """
+    convert a javascript date to a python date
+    format: Wed Apr 28 2010 04:20:43 GMT-0700 (MST)
+    """
+    return datetime.strptime(js_date[:24], "%a %b %d %Y %H:%M:%S %z (%Z)")
+
+def ajax_chat(request):
+    latest_check = request.GET.get('latest_check', 'null')
+    room_id = request.GET.get('room', 0)
+    try:
+        room_id = int(room_id)
+    except:
+        room_id = 0
+    room = get_object_or_404(ChatRoom, id=room_id)
+
+    # make sure user has permission to be in this room
+    data = {
+        'user': {
+            'is_authenticated': request.user.is_authenticated(),
+            'has_permission': False,
+        },
+    }
+
+    if request.user.is_authenticated():
+        data['user']['get_profile'] = safe_model_to_dict(request.user.get_profile())
+        data['user']['username'] = request.user.username
+
+    if room.permission_type == OPEN:
+        data['user']['has_permission'] = True
+    else:
+        # user has to be signed in
+        if not request.user.is_authenticated():
+            return HttpResponse(json_dump(data), mimetype="text/plain")
+
+        if room.permission_type == WHITELIST:
+            # user has to be on the whitelist
+            if not request.user.get_profile().id in room.whitelist.values():
+                return HttpResponse(json_dump(data), mimetype="text/plain")
+        elif room.permission_type == BLACKLIST:
+            # user is blocked if he is on the blacklist 
+            if request.user.get_profile().id in room.blacklist.values():
+                return HttpResponse(json_dump(data), mimetype="text/plain")
+
+        data['user']['has_permission'] = True
+
+    def add_to_message(msg):
+        d = safe_model_to_dict(msg)
+        d['author'] = safe_model_to_dict(msg.author)
+        d['author']['username'] = msg.author.user.username
+        return d
+
+    if latest_check == 'null':
+        # get entire log for this chat.
+        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room).order_by('timestamp')]
+    else:
+        check_date = python_date(latest_check)
+        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, timestamp__gt=check_date).order_by('timestamp')]
+
+    return HttpResponse(json_dump(data), mimetype="text/plain")
+
+def ajax_say(request):
+    room_id = request.POST.get('room', 0)
+    try:
+        room_id = int(room_id)
+    except:
+        room_id = 0
+    room = get_object_or_404(ChatRoom, id=room_id)
+
+    data = {
+        'user': {
+            'is_authenticated': request.user.is_authenticated(),
+            'has_permission': False,
+        },
+    }
+
+    message = request.POST.get('message', '')
+
+    if message == "" or not request.user.is_authenticated():
+        return HttpResponse(json_dump(data), mimetype="text/plain")
+
+    if room.permission_type == OPEN:
+        data['user']['has_permission'] = True
+    else:
+        if room.permission_type == WHITELIST:
+            # user has to be on the whitelist
+            if not request.user.get_profile().id in room.whitelist.values():
+                return HttpResponse(json_dump(data), mimetype="text/plain")
+        elif room.permission_type == BLACKLIST:
+            # user is blocked if he is on the blacklist 
+            if request.user.get_profile().id in room.blacklist.values():
+                return HttpResponse(json_dump(data), mimetype="text/plain")
+
+        data['user']['has_permission'] = True
+
+    # we're clear. add the message
+    m = ChatMessage()
+    m.room = room
+    m.type = MESSAGE
+    m.author = request.user.get_profile()
+    m.message = message
+    m.save()
+
+    return HttpResponse(json_dump(data), mimetype="text/plain")
