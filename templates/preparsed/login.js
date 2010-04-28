@@ -1,5 +1,7 @@
 var template_login = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
 
+var template_login_s = null;
+
 // true if we display the input text boxes
 var loginFormDisplayed = false;
 
@@ -26,7 +28,7 @@ function updateLogin() {
         return;
 
     // populate div with template parsed with json object
-    $("#login").html(Jst.evaluate(template_login, state_login));
+    $("#login").html(Jst.evaluateCompiled(template_login_s, state_login));
 
     displayCorrectly($("#loginFormDiv"), loginFormDisplayed);
     displayCorrectly($("#loginFormError"), loginFormError);
@@ -89,4 +91,8 @@ function loginAjaxRequest() {
         state_login = data;
         updateLogin();
     });
+}
+
+function compileLoginTemplates() {
+    template_login_s = Jst.compile(template_login);
 }

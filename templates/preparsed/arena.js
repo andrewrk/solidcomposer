@@ -1,6 +1,9 @@
 var template_available = (<r><![CDATA[{% include 'arena/available.jst.html' %}]]></r>).toString();
 var template_owned = (<r><![CDATA[{% include 'arena/owned.jst.html' %}]]></r>).toString();
 
+var template_available_s = null;
+var template_owned_s = null;
+
 var state_available = null;
 var state_owned = null;
 
@@ -60,7 +63,7 @@ function updateAvailable() {
     if (state_available == null)
         return;
 
-    $("#available").html(Jst.evaluate(template_available, state_available));
+    $("#available").html(Jst.evaluateCompiled(template_available_s, state_available));
 
     addClicksToSection(state_available);
 }
@@ -69,7 +72,7 @@ function updateOwned() {
     if (state_owned == null)
         return;
 
-    $("#owned").html(Jst.evaluate(template_owned, state_owned));
+    $("#owned").html(Jst.evaluateCompiled(template_owned_s, state_owned));
 
     if (state_owned.user.is_authenticated)
         addClicksToSection(state_owned);
@@ -109,7 +112,14 @@ function updateCompetitionsLoop() {
     setTimeout(updateCompetitionsLoop, 1000);
 }
 
+function compileTemplates() {
+    template_available_s = Jst.compile(template_available);
+    template_owned_s = Jst.compile(template_owned);
+    compileLoginTemplates();
+}
+
 $(document).ready(function(){
+    compileTemplates();
     ajaxRequestLoop();
     updateCompetitionsLoop();
 });
