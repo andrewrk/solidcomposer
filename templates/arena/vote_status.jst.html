@@ -1,0 +1,6 @@
+<% if (secondsUntil(compo.vote_deadline) > 0 &&
+    ((compo.have_listening_party &&
+        secondsUntil(compo.listening_party_end_date) <= 0) ||
+        ! compo.have_listening_party)) { %>
+<p>You have <%= plural(votes.left, "vote", "votes") %> to give.</p>
+<% } %>

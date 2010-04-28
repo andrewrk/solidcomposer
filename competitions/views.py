@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
+from django.core import serializers
 
 from opensourcemusic.competitions.models import *
 from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT
@@ -12,10 +13,57 @@ from opensourcemusic.competitions.forms import *
 
 from datetime import datetime
 
+def max_vote_count(entry_count):
+    """
+    given how many entrants there are, compute how many votes each person gets.
+    """
+    x = int(entry_count / 3)
+    if x < 1:
+        x = 1
+
+    return x
+
+def ajax_compo(request, id):
+    id = int(id)
+    compo = get_object_or_404(Competition, id=id)
+
+    data = {
+        'user': {
+            'is_authenticated': False,
+        },
+        'compo': safe_model_to_dict(compo),
+    }
+
+    data['compo']['have_theme'] = compo.theme != ''
+    data['compo']['have_rules'] = compo.rules != ''
+
+    # send the rules and theme if it's time
+    now = datetime.now()
+    compo_started = compo.start_date <= now
+    if compo_started or compo.preview_theme:
+        data['compo']['theme'] = compo.theme
+    if compo_started or compo.preview_rules:
+        data['compo']['rules'] = compo.rules
+
+    if request.user.is_authenticated():
+        max_votes = max_vote_count(compo.entry_set.count())
+        used_votes = ThumbsUp.objects.filter(owner=request.user.get_profile(), entry__competition=compo)
+
+        data['user'] = safe_model_to_dict(request.user)
+        data['user']['get_profile'] = request.user.get_profile()
+        data['votes'] = {
+            'max': max_votes,
+            'used': serializers.serialize("json", used_votes),
+            'left': max_votes - used_votes.count(),
+        }
+
+    return HttpResponse(json_dump(data), mimetype="text/plain")
+
 def ajax_unbookmark(request, id):
+    id = int(id)
     data = {'success': False}
     if request.user.is_authenticated():
-        comp = get_object_or_404(Competition, id=int(id))
+        comp = get_object_or_404(Competition, id=id)
         prof = request.user.get_profile()
         prof.competitions_bookmarked.remove(comp)
         prof.save()

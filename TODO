@@ -3,7 +3,6 @@
  * competition page
    - chat box
    - entries list box
-   - basic page with javascript working
    - replay listening party feature
      > put an indicator on the page so you know whether it's live or replay
  * register
@@ -12,6 +11,8 @@
  * make the gui pretty
    - date/time widgets for competition form
  * edit competition
+ * protect against bad data with javascript
+   - make Jst support auto escaping. can have special function for not escaping.
 
  == improvements ==
  * pressing enter in the password field should submit the form
@@ -26,6 +27,7 @@
  * paging on competitions. right now it sends them all.
  * moderation tools for competitions
  * obfuscate media URLs to protect people's stuff
+ * provide some way to format themes, rules, comments, etc
 
 = project manager / band page =
 

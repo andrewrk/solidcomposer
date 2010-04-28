@@ -1,5 +1,6 @@
-var template_status = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
-var template_vote_status = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
+var template_status = (<r><![CDATA[{% include 'arena/compo_status.jst.html' %}]]></r>).toString();
+var template_info = (<r><![CDATA[{% include 'arena/compo_info.jst.html' %}]]></r>).toString();
+var template_vote_status = (<r><![CDATA[{% include 'arena/vote_status.jst.html' %}]]></r>).toString();
 var template_entries = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
 var template_chat = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
 var template_onliners = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
@@ -9,8 +10,24 @@ var state_chat = null;
 
 var chat_last_update = null;
 
-function updateEverything() {
-    //{'compo': state_compo, 'chat': state_chat}
+function updateChat() {
+    // TODO
+}
+
+function updateStatus() {
+    if (state_compo == null)
+        return;
+
+    $("#status").html(Jst.evaluate(template_status, state_compo));
+}
+
+function updateCompo() {
+    if (state_compo == null)
+        return;
+
+    updateStatus();
+    $("#vote-status").html(Jst.evaluate(template_vote_status, state_compo));
+    $("#info").html(Jst.evaluate(template_info, state_compo));
 }
 
 function ajaxRequest() {
@@ -22,7 +39,7 @@ function ajaxRequest() {
 
         state_compo = data;
 
-        updateEverything();
+        updateCompo();
     });
 
     $.getJSON("/ajax/chat/",
@@ -33,11 +50,9 @@ function ajaxRequest() {
             if (data == null)
                 return;
 
-            state_owned = data;
-            if (data.user.is_authenticated)
-                setBookmarkedProperty(state_owned, true);
+            state_chat = data;
 
-            updateOwned();
+            updateChat();
         });
 }
 
@@ -46,7 +61,13 @@ function ajaxRequestLoop() {
     setTimeout(ajaxRequestLoop, 10000);
 }
 
+function updateDatesLoop() {
+    updateStatus();
+    setTimeout(updateDatesLoop, 1000);
+}
+
 $(document).ready(function(){
     ajaxRequestLoop();
+    updateDatesLoop();
 });
 

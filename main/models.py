@@ -38,12 +38,12 @@ class Competition(models.Model):
     host = models.ForeignKey(Profile)
 
     # optional
-    theme = models.TextField(null=True, blank=True)
+    theme = models.TextField(blank=True)
     # can entrants view the theme before it starts?
     preview_theme = models.BooleanField()
 
     # optional
-    rules = models.TextField(null=True, blank=True)
+    rules = models.TextField(blank=True)
     # can entrants view the rules before it starts?
     preview_rules = models.BooleanField()
 
@@ -101,7 +101,7 @@ class Song(models.Model):
     source_file = models.CharField(max_length=500)
 
     # filename where generated waveform img can be found
-    waveform_img = models.CharField(max_length=500, null=True, blank=True)
+    waveform_img = models.CharField(max_length=500, blank=True)
 
     # track data
     owner = models.ForeignKey('Profile')
@@ -189,7 +189,7 @@ class ChatMessage(models.Model):
     room = models.ForeignKey('ChatRoom')
     type = models.IntegerField(choices=MESSAGE_TYPES)
     author = models.ForeignKey('Profile', blank=True, null=True)
-    message = models.CharField(max_length=255, blank=True, null=True)
+    message = models.CharField(max_length=255, blank=True)
     timestamp = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):

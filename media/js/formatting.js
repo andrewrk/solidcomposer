@@ -93,24 +93,24 @@ function printableTimeDiff(seconds) {
     var years = days / 365;
 
     if (years >= 1)
-        return plural(Math.floor(years), "year", "years");
+        return plural(Math.ceil(years), "year", "years");
 
     if (months >= 1)
-        return plural(Math.floor(months), "month", "months");
+        return plural(Math.ceil(months), "month", "months");
 
     if (weeks >= 1)
-        return plural(Math.floor(weeks), "week", "weeks");
+        return plural(Math.ceil(weeks), "week", "weeks");
 
     if (days >= 1)
-        return plural(Math.floor(days), "day", "days");
+        return plural(Math.ceil(days), "day", "days");
 
     if (hours >= 1)
-        return plural(Math.floor(hours), "hour", "hours");
+        return plural(Math.ceil(hours), "hour", "hours");
 
     if (minutes >= 1)
-        return plural(Math.floor(minutes), "minute", "minutes");
+        return plural(Math.ceil(minutes), "minute", "minutes");
 
-    return plural(Math.floor(seconds), "second", "seconds");
+    return plural(Math.ceil(seconds), "second", "seconds");
 }
 
 function plural(n, singular, plural) {
