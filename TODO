@@ -2,6 +2,7 @@
  == to get a prototype working ==
  * competition page
    - chat box
+     > it's not utilizing latest_check
      > quick updating without disdurbing typing
      > chat: show timestamps for messages
      > chat: show join/part messages

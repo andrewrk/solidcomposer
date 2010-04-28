@@ -133,6 +133,25 @@ def python_date(js_date):
     """
     return datetime.strptime(js_date[:24], "%a %b %d %Y %H:%M:%S %z (%Z)")
 
+def user_can_chat(room, user):
+    if room.permission_type == OPEN:
+        return True
+    else:
+        # user has to be signed in
+        if not user.is_authenticated():
+            return False
+
+        if room.permission_type == WHITELIST:
+            # user has to be on the whitelist
+            if room.whitelist.filter(pk=user.get_profile().id).count() != 1:
+                return False
+        elif room.permission_type == BLACKLIST:
+            # user is blocked if he is on the blacklist 
+            if room.blacklist.filter(pk=user.get_profile().id).count() == 1:
+                return False
+
+        return True
+
 def ajax_chat(request):
     latest_check = request.GET.get('latest_check', 'null')
     room_id = request.GET.get('room', 0)
@@ -154,23 +173,7 @@ def ajax_chat(request):
         data['user']['get_profile'] = safe_model_to_dict(request.user.get_profile())
         data['user']['username'] = request.user.username
 
-    if room.permission_type == OPEN:
-        data['user']['has_permission'] = True
-    else:
-        # user has to be signed in
-        if not request.user.is_authenticated():
-            return HttpResponse(json_dump(data), mimetype="text/plain")
-
-        if room.permission_type == WHITELIST:
-            # user has to be on the whitelist
-            if not request.user.get_profile().id in room.whitelist.values():
-                return HttpResponse(json_dump(data), mimetype="text/plain")
-        elif room.permission_type == BLACKLIST:
-            # user is blocked if he is on the blacklist 
-            if request.user.get_profile().id in room.blacklist.values():
-                return HttpResponse(json_dump(data), mimetype="text/plain")
-
-        data['user']['has_permission'] = True
+    data['user']['has_permission'] = user_can_chat(room, request.user)
 
     def add_to_message(msg):
         d = safe_model_to_dict(msg)
@@ -207,19 +210,9 @@ def ajax_say(request):
     if message == "" or not request.user.is_authenticated():
         return HttpResponse(json_dump(data), mimetype="text/plain")
 
-    if room.permission_type == OPEN:
-        data['user']['has_permission'] = True
-    else:
-        if room.permission_type == WHITELIST:
-            # user has to be on the whitelist
-            if not request.user.get_profile().id in room.whitelist.values():
-                return HttpResponse(json_dump(data), mimetype="text/plain")
-        elif room.permission_type == BLACKLIST:
-            # user is blocked if he is on the blacklist 
-            if request.user.get_profile().id in room.blacklist.values():
-                return HttpResponse(json_dump(data), mimetype="text/plain")
-
-        data['user']['has_permission'] = True
+    data['user']['has_permission'] = user_can_chat(room, request.user)
+    if not data['user']['has_permission']:
+        return HttpResponse(json_dump(data), mimetype="text/plain")
 
     # we're clear. add the message
     m = ChatMessage()

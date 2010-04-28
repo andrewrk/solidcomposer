@@ -164,6 +164,11 @@ class ChatRoom(models.Model):
         (BLACKLIST, 'blacklist'),
     )
 
+    UNSAFE_KEYS = (
+        'whitelist',
+        'blacklist',
+    )
+
     permission_type = models.IntegerField(choices=PERMISSION_TYPES)
     whitelist = models.ManyToManyField('Profile', null=True, blank=True, related_name="whitelisted_users")
     blacklist = models.ManyToManyField('Profile', null=True, blank=True, related_name="blacklisted_users")
