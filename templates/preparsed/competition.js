@@ -6,11 +6,20 @@ var template_entries = (<r><![CDATA[{% include 'arena/entry_list.jst.html' %}]]>
 var template_chat = (<r><![CDATA[{% include 'chat/box.jst.html' %}]]></r>).toString();
 var template_onliners = (<r><![CDATA[{% include 'chat/onliners.jst.html' %}]]></r>).toString();
 
+// pre-compiled templates
+var template_status_s = null;
+var template_info_s = null;
+var template_vote_status_s = null;
+var template_entries_s = null;
+var template_chat_s = null;
+var template_onliners_s = null;
+
 var state_compo = null;
 var state_chat = null;
 
 var SYSTEM = 0, ACTION = 1, MESSAGE = 2, JOIN = 3, LEAVE = 4, NOTICE = 5;
 var chat_last_update = null;
+var chat_temp_msg_count = 0;
 
 // true if we are in the middle of a listening party
 function ongoingListeningParty(compo) {
@@ -24,7 +33,14 @@ function updateChat() {
     if (state_chat == null)
         return;
     
-    $("#chatroom-outer-box").html(Jst.evaluate(template_chat, state_chat));
+    // the user may be typing in the box. check if it has focus
+    var textFocused = (document.activeElement.id == "chat-say-text");
+    var textValue = $("#chat-say-text").attr('value');
+    
+    $("#chatroom-outer-box").html(Jst.evaluateCompiled(template_chat_s, state_chat));
+    $("#chat-say-text").attr('value', textValue);
+    if (textFocused)
+        $("#chat-say-text").focus();
     $("#chat-say-text").keydown(function(event){
         if (event.keyCode == 13) {
             // say something in chat
@@ -51,6 +67,7 @@ function updateChat() {
                     };
                     new_message.author.username = state_chat.user.username;
                     state_chat.messages.push(new_message);
+                    ++chat_temp_msg_count;
                     updateChat();
                     
                     // set focus to this widget again
@@ -63,14 +80,14 @@ function updateChat() {
         }
     });
 
-    $("#chatroom-outer-onliners").html(Jst.evaluate(template_onliners, state_chat));
+    $("#chatroom-outer-onliners").html(Jst.evaluateCompiled(template_onliners_s, state_chat));
 }
 
 function updateStatus() {
     if (state_compo == null)
         return;
 
-    $("#status").html(Jst.evaluate(template_status, state_compo));
+    $("#status").html(Jst.evaluateCompiled(template_status_s, state_compo));
 }
 
 function updateCompo() {
@@ -78,9 +95,9 @@ function updateCompo() {
         return;
 
     updateStatus();
-    $("#vote-status").html(Jst.evaluate(template_vote_status, state_compo));
-    $("#info").html(Jst.evaluate(template_info, state_compo));
-    $("#entry-area").html(Jst.evaluate(template_entries, state_compo));
+    $("#vote-status").html(Jst.evaluateCompiled(template_vote_status_s, state_compo));
+    $("#info").html(Jst.evaluateCompiled(template_info_s, state_compo));
+    $("#entry-area").html(Jst.evaluateCompiled(template_entries_s, state_compo));
 }
 
 function ajaxRequest() {
@@ -94,7 +111,9 @@ function ajaxRequest() {
 
         updateCompo();
     });
+}
 
+function chatAjaxRequest() {
     $.getJSON("/ajax/chat/",
         {
             "latest_check": chat_last_update,
@@ -104,10 +123,23 @@ function ajaxRequest() {
             if (data == null)
                 return;
 
-            state_chat = data;
+            if (state_chat == null) {
+                state_chat = data;
+            } else {
+                // clear temporary messages
+                while (chat_temp_msg_count > 0) {
+                    state_chat.messages.pop();
+                    --chat_temp_msg_count;
+                }
+
+                state_chat.user = data.user;
+                for (var i=0; i<data.messages.length; ++i)
+                    state_chat.messages.push(data.messages[i]);
+            }
 
             updateChat();
         });
+    chat_last_update = serverTime(new Date()).toString();
 }
 
 function ajaxRequestLoop() {
@@ -120,8 +152,24 @@ function updateDatesLoop() {
     setTimeout(updateDatesLoop, 1000);
 }
 
+function chatAjaxRequestLoop() {
+    chatAjaxRequest();
+    setTimeout(chatAjaxRequestLoop, 2000);
+}
+
+function compileTemplates() {
+    template_status_s = Jst.compile(template_status);
+    template_info_s = Jst.compile(template_info);
+    template_vote_status_s = Jst.compile(template_vote_status);
+    template_entries_s = Jst.compile(template_entries);
+    template_chat_s = Jst.compile(template_chat);
+    template_onliners_s = Jst.compile(template_onliners);
+}
+
 $(document).ready(function(){
+    compileTemplates();
     ajaxRequestLoop();
     updateDatesLoop();
+    chatAjaxRequestLoop();
 });
 

@@ -1,35 +1,33 @@
 <h4>Competition Chat</h4>
-<% if (user.has_permission) { %>
-    <div id="chat-box">
-        <% for (var i=0; i<messages.length; ++i) { var msg = messages[i]; %>
-            <% if (msg.type == MESSAGE) { %>
-                <div class="msg">
-                    <%= msg.author.username %>: <%= msg.message %>
-                </div>
-            <% } else if (msg.type == JOIN) { %>
-                <div class="join">
-                    <%= msg.author.username %> has joined.
-                </div>
-            <% } else if (msg.type == LEAVE) { %>
-                <div class="leave">
-                    <%= msg.author.username %> has left.
-                </div>
-            <% } else if (msg.type == ACTION) { %>
-                <div class="action">
-                    * <%= msg.author.username %> <%= msg.message %>
-                </div>
-            <% } %>
+<div id="chat-box">
+    <% for (var i=0; i<messages.length; ++i) { var msg = messages[i]; %>
+        <% if (msg.type == MESSAGE) { %>
+            <div class="msg">
+                <%= msg.author.username %>: <%= msg.message %>
+            </div>
+        <% } else if (msg.type == JOIN) { %>
+            <div class="join">
+                <%= msg.author.username %> has joined.
+            </div>
+        <% } else if (msg.type == LEAVE) { %>
+            <div class="leave">
+                <%= msg.author.username %> has left.
+            </div>
+        <% } else if (msg.type == ACTION) { %>
+            <div class="action">
+                * <%= msg.author.username %> <%= msg.message %>
+            </div>
         <% } %>
-    </div>
-    <% if (user.is_authenticated) { %>
-        <div id="chat-say">
-            <%= user.username %>: <input type="text" id="chat-say-text" />
-        </div>
-    <% } else { %>
-        <div id="chat-say">
-            <p>Log in to participate in chat.</p>
-        </div>
     <% } %>
-<% } else { %>
-    <p>You don't have access to this chat room.</p>
-<% } %>
+</div>
+<div id="chat-say">
+    <% if (user.is_authenticated) { %>
+        <% if (user.has_permission) { %>
+            <%= user.username %>: <input type="text" id="chat-say-text" />
+        <% } else { %>
+            <p>You may only observe in this chat room.</p>
+        <% } %>
+    <% } else { %>
+        <p>Log in to participate in chat.</p>
+    <% } %>
+</div>

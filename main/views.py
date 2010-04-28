@@ -9,7 +9,7 @@ from opensourcemusic.main.forms import *
 from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT
 
 import simplejson as json
-import datetime
+from datetime import datetime
 
 def remove_unsafe_keys(hash, model):
     """
@@ -39,7 +39,7 @@ def safe_model_to_dict(model_instance):
     return hash
 
 def json_dthandler(obj):
-    if isinstance(obj, datetime.datetime):
+    if isinstance(obj, datetime):
         return obj.strftime('%B %d, %Y %H:%M:%S')
     else:
         return None
@@ -131,7 +131,7 @@ def python_date(js_date):
     convert a javascript date to a python date
     format: Wed Apr 28 2010 04:20:43 GMT-0700 (MST)
     """
-    return datetime.strptime(js_date[:24], "%a %b %d %Y %H:%M:%S %z (%Z)")
+    return datetime.strptime(js_date[:24], "%a %b %d %Y %H:%M:%S")
 
 def user_can_chat(room, user):
     if room.permission_type == OPEN:

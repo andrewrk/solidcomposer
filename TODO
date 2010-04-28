@@ -2,8 +2,7 @@
  == to get a prototype working ==
  * competition page
    - chat box
-     > it's not utilizing latest_check
-     > quick updating without disdurbing typing
+     > chat: show online users
      > chat: show timestamps for messages
      > chat: show join/part messages
      > creating a competition needs to create the room and add it to the compo

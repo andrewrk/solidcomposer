@@ -78,9 +78,9 @@ function serverTime(_localTime) {
     _localTime = coerceDate(_localTime);
 
     // find the difference between the local and the server time
-    var diff = server_time - local_time;
+    var diff = local_time - server_time;
     // apply the differece to the input _localTime
-    return new Date(_localTime + diff);
+    return new Date(_localTime - diff);
 }
 
 // return in a nice printable string how much time until then
