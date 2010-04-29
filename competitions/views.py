@@ -47,9 +47,9 @@ def ajax_submit_entry(request):
     data = {
         'user': {
             'is_authenticated': request.user.is_authenticated(),
-            'success': False,
-            'reason': 'Not authenticated.',
         },
+        'success': False,
+        'reason': 'Not authenticated',
     }
     if not request.user.is_authenticated():
         return json_response(data)
@@ -60,7 +60,7 @@ def ajax_submit_entry(request):
 
     compo_id = request.POST.get('compo', 0)
     try:
-        compo_id = int(compo)
+        compo_id = int(compo_id)
     except:
         compo_id = 0
     
@@ -80,97 +80,102 @@ def ajax_submit_entry(request):
         data['reason'] = 'Competition has not yet begun.'
         return json_response(data)
 
-    form = SubmitEntryForm(request.POST, request.FILES)
-    if form.is_valid():
-        title = form.cleaned_data.get('entry-title')
-        comments = form.cleaned_data.get('entry-comments')
-        mp3_file = request.FILES.get('entry-file-mp3')
-        source_file = request.FILES.get('entry-file-source')
+    title = request.POST.get('entry-title','')
+    comments = request.POST.get('entry-comments')
+    mp3_file = request.FILES.get('entry-file-mp3')
+    source_file = request.FILES.get('entry-file-source')
 
-        # upload mp3_file to temp folder
-        handle = tempfile.NamedTemporaryFile(suffix='mp3', delete=False)
-        upload_file_h(mp3_file, handle)
-        handle.close()
+    if title == '':
+        data['reason'] = 'Entry title is required.'
+        return json_response(data)
 
-        # read the length tag
-        audio = MP3(handle.name, ID3=EasyID3)
-        audio_length = audio.info.length
+    if mp3_file is None:
+        data['reason'] = 'MP3 file submission is required.'
+        return json_response(data)
 
-        # reject if too long or invalid
-        if audio.info.sketchy:
-            data['reason'] = 'Sketchy MP3 file.'
+    # upload mp3_file to temp folder
+    handle = tempfile.NamedTemporaryFile(suffix='mp3', delete=False)
+    upload_file_h(mp3_file, handle)
+    handle.close()
 
-        if audio.info.length > COMPO_ENTRY_MAX_LEN:
-            data['reason'] = 'Song is too long.'
+    # read the length tag
+    audio = MP3(handle.name, ID3=EasyID3)
+    audio_length = audio.info.length
 
-        # enforce ID3 tags
-        audio['title'] = title
-        audio['album'] = compo.title
-        audio['artist'] = request.user.get_profile().artist_name
-        audio.save()
+    # reject if too long or invalid
+    if audio.info.sketchy:
+        data['reason'] = 'Sketchy MP3 file.'
 
-        # pick a nice safe unique path for mp3_file and source_file
-        mp3_file_title = "%s - %s (%).mp3" % (request.user.get_profile().artist_name, title, compo.title)
-        mp3_safe_path, mp3_safe_title = safe_file(os.path.join(MEDIA_ROOT, 'compo', 'mp3'), mp3_file_title)
-        mp3_safe_path_relative = os.path.join('compo','mp3',mp3_safe_title)
+    if audio.info.length > COMPO_ENTRY_MAX_LEN:
+        data['reason'] = 'Song is too long.'
 
-        # move the mp3 file
-        shutil.move(handle.name, mp3_safe_path)
+    # enforce ID3 tags
+    audio['title'] = title
+    audio['album'] = compo.title
+    audio['artist'] = request.user.get_profile().artist_name
+    audio.save()
 
-        entries = Entry.objects.filter(owner=request.user.get_profile(), competition=compo)
-        if entries.count() > 0:
-            # resubmitting. edit old entry and song
-            entry = entries[0]
-            entry.song.delete()
-            old_length = song.length
-        else:
-            # create new entry
-            entry = Entry()
-            old_length = 0
-        song = Song()
+    # pick a nice safe unique path for mp3_file and source_file
+    mp3_file_title = "%s - %s (%s).mp3" % (request.user.get_profile().artist_name, title, compo.title)
+    mp3_safe_path, mp3_safe_title = safe_file(os.path.join(MEDIA_ROOT, 'compo', 'mp3'), mp3_file_title)
+    mp3_safe_path_relative = os.path.join('compo','mp3',mp3_safe_title)
 
-        # upload the source file
-        if not source_file is None:
-            # extension of the source file
-            parts = source_file.split('.')
-            if len(parts) > 0:
-                source_ext = parts[-1]
-                source_file_title = "%s - %s (%).%s" % (request.user.get_profile().artist_name, title, compo.title, source_ext)
-            else:
-                source_file_title = "%s - %s (%)" % (request.user.get_profile().artist_name, title, compo.title)
-            source_safe_path, source_safe_file_title = safe_file(os.path.join(MEDIA_ROOT, 'compo', 'mp3'), source_file_title)
-            source_safe_path_relative = os.path.join('compo','mp3',source_safe_file_title)
+    # move the mp3 file
+    shutil.move(handle.name, mp3_safe_path)
 
-            upload_file(source_file, out_path)
-            song.source_file = source_safe_path_relative
-
-        song.mp3_file = mp3_safe_path_relative
-        song.owner = request.user.get_profile()
-        song.title = title
-        song.length = audio_length
-        song.save()
-
-        entry.competition = compo
-        entry.owner = request.user.get_profile()
-        entry.song = song
-        entry.save()
-
-        # update competition dates based on this newfound length 
-        vote_period_delta = timedelta(seconds=compo.vote_period_length)
-        if compo.have_listening_party:
-            compo.listening_party_end_date += timedelta(seconds=(new_length-old_length))
-            compo.vote_deadline = compo.listening_party_end_date + vote_period_delta
-        else:
-            compo.vote_deadline = compo.submit_deadline + vote_period_delta
-        compo.save()
-
-        chatroom = compo.chat_room
-        chatroom.end_date = compo.vote_deadline + timedelta(hours=1)
-        chatroom.save()
-
-        data['success'] = True
+    entries = Entry.objects.filter(owner=request.user.get_profile(), competition=compo)
+    if entries.count() > 0:
+        # resubmitting. edit old entry and song
+        entry = entries[0]
+        old_length = entry.song.length
+        entry.song.delete()
     else:
-        data['reason'] = 'Invalid form submission.'
+        # create new entry
+        entry = Entry()
+        old_length = 0
+    song = Song()
+
+    # upload the source file
+    if not source_file is None:
+        # extension of the source file
+        parts = source_file.split('.')
+        if len(parts) > 0:
+            source_ext = parts[-1]
+            source_file_title = "%s - %s (%s).%s" % (request.user.get_profile().artist_name, title, compo.title, source_ext)
+        else:
+            source_file_title = "%s - %s (%s)" % (request.user.get_profile().artist_name, title, compo.title)
+        source_safe_path, source_safe_file_title = safe_file(os.path.join(MEDIA_ROOT, 'compo', 'mp3'), source_file_title)
+        source_safe_path_relative = os.path.join('compo','mp3',source_safe_file_title)
+
+        upload_file(source_file, out_path)
+        song.source_file = source_safe_path_relative
+
+    song.mp3_file = mp3_safe_path_relative
+    song.owner = request.user.get_profile()
+    song.title = title
+    song.length = audio_length
+    song.save()
+
+    entry.competition = compo
+    entry.owner = request.user.get_profile()
+    entry.song = song
+    entry.save()
+
+    # update competition dates based on this newfound length 
+    vote_period_delta = timedelta(seconds=compo.vote_period_length)
+    if compo.have_listening_party:
+        compo.listening_party_end_date += timedelta(seconds=(audio_length-old_length))
+        compo.vote_deadline = compo.listening_party_end_date + vote_period_delta
+    else:
+        compo.vote_deadline = compo.submit_deadline + vote_period_delta
+    compo.save()
+
+    chatroom = compo.chat_room
+    chatroom.end_date = compo.vote_deadline + timedelta(hours=1)
+    chatroom.save()
+
+    data['success'] = True
+    del data['reason']
 
     return json_response(data)
 

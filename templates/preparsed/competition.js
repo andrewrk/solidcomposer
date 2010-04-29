@@ -20,7 +20,13 @@ function submitEntryStartCallback() {
 }
 
 function submitEntryCompleteCallback(response) {
-
+    if (response.indexOf('<pre>') === 0)
+        response = response.substr(5, response.length-'<pre>'.length-'</pre>'.length);
+    
+    result = eval('(' + response + ')');
+    if (result.success == false) {
+        alert("Unable to submit:\n\n" + result.reason);
+    }
 }
 
 // true if we are in the middle of a listening party

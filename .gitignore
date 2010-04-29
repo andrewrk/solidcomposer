@@ -1,4 +1,4 @@
 *.pyc
 *.swp
 media/js/pre
-db
+media/compo/mp3/*
