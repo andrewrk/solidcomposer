@@ -1,7 +1,6 @@
 = arena =
  == to get a prototype working ==
  * competition page
-   - put submit entry form in a location that doesn't get overwritten 
    - debug and test entry submission
    - in progress competition behavior
    - listening party behavior

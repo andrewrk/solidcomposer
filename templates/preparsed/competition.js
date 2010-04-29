@@ -47,6 +47,14 @@ function updateCompo() {
     $("#info").html(Jst.evaluateCompiled(template_info_s, state_compo));
     $("#entry-area").html(Jst.evaluateCompiled(template_entries_s, state_compo));
     $("#current-entry").html(Jst.evaluateCompiled(template_current_entry_s, state_compo));
+
+    var show_submission_form =
+        secondsUntil(state_compo.compo.submit_deadline) > 0 &&
+        secondsUntil(state_compo.compo.start_date) < 0;
+    if (show_submission_form)
+        $("#submission").show('fast');
+    else
+        $("#submission").hide('fast');
 }
 
 function ajaxRequest() {

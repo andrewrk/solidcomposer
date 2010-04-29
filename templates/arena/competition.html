@@ -33,6 +33,21 @@ var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{%
         {% include 'loading.html' %}
     </div>
     {% include 'chat/chatroom.html' %}
+    <div style="display: none;" id="submission">
+        <h4>Your entry</h4>
+        <div id="submit-entry">
+            <form method="post" enctype="multipart/form-data" action="/arena/ajax/submit-entry/" onsubmit="return AIM.submit(this, {'onStart': submitEntryStartCallback, 'onComplete': submitEntryCompleteCallback})">
+                <input type="hidden" name="compo" value="{{ competition.id }}" />
+                Your rendered song, in mp3 format: <input type="file" name="entry-file-mp3" id="entry-file-mp3" /><br/>
+                (optional) Source project file: <input type="file" name="entry-file-source" id="entry-file-source" /><br/>
+                Song Title: <input type="text" id="entry-title" name="entry-title" value="" maxlength="100" /><br/>
+                (optional) Author's Comments:
+                <textarea name="entry-comments" id="entry-comments"></textarea>
+                <br />
+                <input type="submit" value="submit" />
+            </form>
+        </div>
+    </div>
     <div id="current-entry">
         {% include 'loading.html' %}
     </div>

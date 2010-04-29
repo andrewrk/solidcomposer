@@ -62,6 +62,17 @@ function updateChat() {
     if (state_chat == null)
         return;
     
+    var new_chat_can_say = chatRoomActive(state_chat.room) &&
+        state_chat.user.is_authenticated &&
+        state_chat.user.has_permission;
+    var different = new_chat_can_say != chat_can_say;
+    chat_can_say = new_chat_can_say;
+    if (different) {
+        $("#chatroom-say").html(Jst.evaluateCompiled(template_say_s, state_chat));
+        chatAddClicksToSay();
+        $("#chatroom-cannot-say").html(Jst.evaluateCompiled(template_cannot_say_s, state_chat));
+    }
+
     $("#chatroom-outer-box").html(Jst.evaluateCompiled(template_chat_s, state_chat));
     if (chat_can_say) {
         $("#chatroom-cannot-say").hide();
@@ -161,17 +172,6 @@ function chatAjaxRequest() {
 
             if (beforeChatRoomActive(state_chat.room))
                 chat_last_update = null;
-
-            var new_chat_can_say = chatRoomActive(state_chat.room) &&
-                state_chat.user.is_authenticated &&
-                state_chat.user.has_permission;
-            var different = new_chat_can_say != chat_can_say;
-            chat_can_say = new_chat_can_say;
-            if (different) {
-                $("#chatroom-say").html(Jst.evaluateCompiled(template_say_s, state_chat));
-                chatAddClicksToSay();
-                $("#chatroom-cannot-say").html(Jst.evaluateCompiled(template_cannot_say_s, state_chat));
-            }
 
             updateChat();
         });
