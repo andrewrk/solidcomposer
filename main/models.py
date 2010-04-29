@@ -122,6 +122,7 @@ class Entry(models.Model):
     owner = models.ForeignKey(Profile)
     song = models.ForeignKey(Song)
     submit_date = models.DateTimeField(auto_now_add=True)
+    edit_date = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return "%s in %s" % (self.song, self.competition)

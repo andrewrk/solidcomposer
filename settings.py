@@ -158,3 +158,7 @@ AUTHENTICATION_BACKENDS = (
 
 # how many seconds to wait before generating leave messages for chatters
 CHAT_TIMEOUT = 15
+
+# maximum length of competition tracks in seconds
+COMPO_ENTRY_MAX_LEN = 10 * 60
+

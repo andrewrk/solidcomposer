@@ -11,6 +11,9 @@ from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT, CHAT_TIMEOUT
 import simplejson as json
 from datetime import datetime, timedelta
 
+def json_response(data):
+    return HttpResponse(json_dump(data), mimetype="text/plain")
+
 def remove_unsafe_keys(hash, model):
     """
     look for UNSAFE_KEYS in the model. if it exists, delete all those entries
@@ -70,7 +73,7 @@ def ajax_login_state(request):
         data['user']['get_profile'] = safe_model_to_dict(request.user.get_profile())
         data['user']['get_profile']['get_points'] = request.user.get_profile().get_points()
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 def user_logout(request):
     logout(request)
@@ -115,7 +118,7 @@ def ajax_login(request):
         'err_msg': err_msg,
     }
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 def ajax_logout(request):
     logout(request)
@@ -124,7 +127,7 @@ def ajax_logout(request):
         'success': True,
     }
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 def python_date(js_date):
     """
@@ -209,7 +212,7 @@ def ajax_chat(request):
             m.author=request.user.get_profile()
             m.save()
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 def ajax_say(request):
     room_id = request.POST.get('room', 0)
@@ -220,7 +223,7 @@ def ajax_say(request):
     room = get_object_or_404(ChatRoom, id=room_id)
 
     if not chatroom_is_active(room):
-        return HttpResponse(json_dump({}), mimetype="text/plain")
+        return json_response({})
 
     data = {
         'user': {
@@ -232,11 +235,11 @@ def ajax_say(request):
     message = request.POST.get('message', '')
 
     if message == "" or not request.user.is_authenticated():
-        return HttpResponse(json_dump(data), mimetype="text/plain")
+        return json_response(data)
 
     data['user']['has_permission'] = user_can_chat(room, request.user)
     if not data['user']['has_permission']:
-        return HttpResponse(json_dump(data), mimetype="text/plain")
+        return json_response(data)
 
     # we're clear. add the message
     m = ChatMessage()
@@ -246,7 +249,7 @@ def ajax_say(request):
     m.message = message
     m.save()
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 def chatroom_is_active(room):
     now = datetime.now()
@@ -267,10 +270,10 @@ def ajax_onliners(request):
     room = get_object_or_404(ChatRoom, id=room_id)
 
     if not chatroom_is_active(room):
-        return HttpResponse(json_dump({}), mimetype="text/plain")
+        return json_response({})
 
     expire_date = datetime.now() - timedelta(seconds=CHAT_TIMEOUT)
     data = [x.person.user.username for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 

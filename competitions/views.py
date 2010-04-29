@@ -6,11 +6,173 @@ from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
 
 from opensourcemusic.competitions.models import *
-from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT
-from opensourcemusic.main.views import activeUser, safe_model_to_dict, json_dump
+from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT, COMPO_ENTRY_MAX_LEN
+from opensourcemusic.main.views import safe_model_to_dict, json_response
 from opensourcemusic.competitions.forms import *
 
 from datetime import datetime, timedelta
+import tempfile
+import os
+import string
+
+def upload_file(f, new_name):
+    handle = open(new_name, 'wb+')
+    upload_file_h(f, handle)
+    handle.close()
+
+def upload_file_h(f, handle):
+    for chunk in f.chunks():
+        handle.write(chunk)
+
+def safe_file(path, title):
+    """
+    returns a tuple (title joined with path, only title). paths are guaranteed
+    to be unique and safe.
+    """
+    allowed = string.letters + string.digits + "_-."
+    clean = ""
+    for c in title:
+        if c in allowed:
+            clean += c
+        else:
+            clean += "_"
+
+    return (os.path.join(path,clean), clean)
+
+def ajax_submit_entry(request):
+    from mutagen.easyid3 import EasyID3
+    from mutagen.mp3 import MP3
+    import shutil
+
+    data = {
+        'user': {
+            'is_authenticated': request.user.is_authenticated(),
+            'success': False,
+            'reason': 'Not authenticated.',
+        },
+    }
+    if not request.user.is_authenticated():
+        return json_response(data)
+
+    if request.method != 'POST':
+        data['reason'] = 'Must submit via POST.'
+        return json_response(data)
+
+    compo_id = request.POST.get('compo', 0)
+    try:
+        compo_id = int(compo)
+    except:
+        compo_id = 0
+    
+    try:
+        compo = Competition.objects.get(pk=compo_id)
+    except Competition.DoesNotExist:
+        data['reason'] = 'Competition not found'
+        return json_response(data)
+
+    # make sure it's still submission time
+    now = datetime.now()
+    if now >= compo.submit_deadline:
+        data['reason'] = 'Past submission deadline.'
+        return json_response(data)
+
+    if now <= compo.start_date:
+        data['reason'] = 'Competition has not yet begun.'
+        return json_response(data)
+
+    form = SubmitEntryForm(request.POST, request.FILES)
+    if form.is_valid():
+        title = form.cleaned_data.get('entry-title')
+        comments = form.cleaned_data.get('entry-comments')
+        mp3_file = request.FILES.get('entry-file-mp3')
+        source_file = request.FILES.get('entry-file-source')
+
+        # upload mp3_file to temp folder
+        handle = tempfile.NamedTemporaryFile(suffix='mp3', delete=False)
+        upload_file_h(mp3_file, handle)
+        handle.close()
+
+        # read the length tag
+        audio = MP3(handle.name, ID3=EasyID3)
+        audio_length = audio.info.length
+
+        # reject if too long or invalid
+        if audio.info.sketchy:
+            data['reason'] = 'Sketchy MP3 file.'
+
+        if audio.info.length > COMPO_ENTRY_MAX_LEN:
+            data['reason'] = 'Song is too long.'
+
+        # enforce ID3 tags
+        audio['title'] = title
+        audio['album'] = compo.title
+        audio['artist'] = request.user.get_profile().artist_name
+        audio.save()
+
+        # pick a nice safe unique path for mp3_file and source_file
+        mp3_file_title = "%s - %s (%).mp3" % (request.user.get_profile().artist_name, title, compo.title)
+        mp3_safe_path, mp3_safe_title = safe_file(os.path.join(MEDIA_ROOT, 'compo', 'mp3'), mp3_file_title)
+        mp3_safe_path_relative = os.path.join('compo','mp3',mp3_safe_title)
+
+        # move the mp3 file
+        shutil.move(handle.name, mp3_safe_path)
+
+        entries = Entry.objects.filter(owner=request.user.get_profile(), competition=compo)
+        if entries.count() > 0:
+            # resubmitting. edit old entry and song
+            entry = entries[0]
+            entry.song.delete()
+            old_length = song.length
+        else:
+            # create new entry
+            entry = Entry()
+            old_length = 0
+        song = Song()
+
+        # upload the source file
+        if not source_file is None:
+            # extension of the source file
+            parts = source_file.split('.')
+            if len(parts) > 0:
+                source_ext = parts[-1]
+                source_file_title = "%s - %s (%).%s" % (request.user.get_profile().artist_name, title, compo.title, source_ext)
+            else:
+                source_file_title = "%s - %s (%)" % (request.user.get_profile().artist_name, title, compo.title)
+            source_safe_path, source_safe_file_title = safe_file(os.path.join(MEDIA_ROOT, 'compo', 'mp3'), source_file_title)
+            source_safe_path_relative = os.path.join('compo','mp3',source_safe_file_title)
+
+            upload_file(source_file, out_path)
+            song.source_file = source_safe_path_relative
+
+        song.mp3_file = mp3_safe_path_relative
+        song.owner = request.user.get_profile()
+        song.title = title
+        song.length = audio_length
+        song.save()
+
+        entry.competition = compo
+        entry.owner = request.user.get_profile()
+        entry.song = song
+        entry.save()
+
+        # update competition dates based on this newfound length 
+        vote_period_delta = timedelta(seconds=compo.vote_period_length)
+        if compo.have_listening_party:
+            compo.listening_party_end_date += timedelta(seconds=(new_length-old_length))
+            compo.vote_deadline = compo.listening_party_end_date + vote_period_delta
+        else:
+            compo.vote_deadline = compo.submit_deadline + vote_period_delta
+        compo.save()
+
+        chatroom = compo.chat_room
+        chatroom.end_date = compo.vote_deadline + timedelta(hours=1)
+        chatroom.save()
+
+        data['success'] = True
+    else:
+        data['reason'] = 'Invalid form submission.'
+
+    return json_response(data)
 
 def max_vote_count(entry_count):
     """
@@ -63,7 +225,7 @@ def ajax_compo(request, id):
             'left': max_votes - used_votes.count(),
         }
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 def ajax_unbookmark(request, id):
     id = int(id)
@@ -75,7 +237,7 @@ def ajax_unbookmark(request, id):
         prof.save()
         data['success'] = True
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 def ajax_bookmark(request, id):
     data = {'success': False}
@@ -86,7 +248,7 @@ def ajax_bookmark(request, id):
         prof.save()
         data['success'] = True
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 def ajax_available(request):
     upcoming = filter_upcoming(Competition.objects)
@@ -107,7 +269,7 @@ def ajax_available(request):
         'closed': [safe_model_to_dict(x) for x in closed],
     }
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 def filter_upcoming(query_set):
     now = datetime.now()
@@ -129,7 +291,7 @@ def ajax_owned(request):
     }
 
     if not request.user.is_authenticated():
-        return HttpResponse(json_dump(data), mimetype="text/plain")
+        return json_response(data)
 
     # only show bookmarked items
     now = datetime.now()
@@ -146,7 +308,7 @@ def ajax_owned(request):
         'closed': [safe_model_to_dict(x) for x in closed],
     })
 
-    return HttpResponse(json_dump(data), mimetype="text/plain")
+    return json_response(data)
 
 @login_required
 def create(request):

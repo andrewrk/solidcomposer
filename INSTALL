@@ -1,8 +1,9 @@
 Dependencies:
  * A good database system like postgresql or mysql so that the migration
-   stuff can work.
+   stuff (south) can work.
  * south - http://south.aeracode.org/
  * django-cron - http://code.google.com/p/django-cron/
+ * mugaten - http://code.google.com/p/mutagen/
 
 Procedure:
  * copy django code to server

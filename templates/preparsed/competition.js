@@ -23,6 +23,15 @@ var SYSTEM = 0, ACTION = 1, MESSAGE = 2, JOIN = 3, LEAVE = 4, NOTICE = 5;
 var chat_last_update = null;
 var chat_temp_msg_count = 0;
 
+// functions called when submitting upload entry form.
+function submitEntryStartCallback() {
+
+}
+
+function submitEntryCompleteCallback(response) {
+
+}
+
 // true if we are in the middle of a listening party
 function ongoingListeningParty(compo) {
     return compo != null && secondsUntil(compo.vote_deadline) > 0 &&

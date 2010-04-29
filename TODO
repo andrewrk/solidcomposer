@@ -1,9 +1,10 @@
 = arena =
  == to get a prototype working ==
  * competition page
+   - put chat input box in a location that doesn't get overwritten on a timer.
+   - put submit entry form in a location that doesn't get overwritten 
+   - debug and test entry submission
    - in progress competition behavior
-     > when the person submits an entry, re-calculate listening party end date,
-       voting deadline, and chat room close date.
    - listening party behavior
    - voting behavior
    - voting closed behavior
@@ -20,6 +21,8 @@
  * re-implement safe_model_to_dict to make it safer. should probably have
    explicit safe fields in models.
  * put whitelist/blacklist/open in the create competition page. default open.
+ * put a cap on file size of uploaded things
+ * buff up safe_file to make unique files as advertised
 
  == improvements ==
  * pressing enter in the password field should submit the form
@@ -38,6 +41,9 @@
  * chat colors
  * display error when chat message doesn't go through
  * chat: display how many invisible observers there are
+ * color the time differently when there isn't much time left so that 
+   people know they're running out of time
+ * competition entry max length per competition
 
 = project manager / band page =
 

@@ -4,6 +4,20 @@ from opensourcemusic.competitions.models import *
 
 HOURS, DAYS, WEEKS = range(3)
 
+class SubmitEntryForm(forms.Form):
+    title = forms.CharField(max_length=100)
+    comments = forms.CharField(max_length=1000, required=False, widget=forms.Textarea)
+    file_mp3 = forms.FileField()
+    file_source = forms.FileField(required=False)
+
+    def clean_file_mp3(self):
+        filename = self.cleaned_data['file_mp3']
+
+        if filename[:3].lower() != 'mp3':
+            raise forms.ValidationError("Uploaded file must be an mp3.")
+
+        return filename
+
 class CreateCompetitionForm(forms.Form):
     TIME_QUANTIFIERS = (
         (HOURS, "hours"),
