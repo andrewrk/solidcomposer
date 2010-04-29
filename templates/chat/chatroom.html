@@ -1,6 +1,15 @@
+<h4>Competition Chat</h4>
 <div id="chatroom">
-    <div id="chatroom-outer-box">
-        {% include 'loading.html' %}
+    <div id="chatroom-messages">
+        <div id="chatroom-outer-box">
+            {% include 'loading.html' %}
+        </div>
+        <div style="display: none;" id="chatroom-say">
+            {% include 'loading.html' %}
+        </div>
+        <div style="display: none;" id="chatroom-cannot-say">
+            {% include 'loading.html' %}
+        </div>
     </div>
     <div id="chatroom-outer-onliners">
         {% include 'loading.html' %}

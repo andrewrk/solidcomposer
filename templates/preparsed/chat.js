@@ -13,11 +13,16 @@
 
 var template_chat = (<r><![CDATA[{% include 'chat/box.jst.html' %}]]></r>).toString();
 var template_onliners = (<r><![CDATA[{% include 'chat/onliners.jst.html' %}]]></r>).toString();
+var template_cannot_say = (<r><![CDATA[{% include 'chat/cannot_say.jst.html' %}]]></r>).toString();
+var template_say = (<r><![CDATA[{% include 'chat/say.jst.html' %}]]></r>).toString();
 
 var template_chat_s = null;
 var template_onliners_s = null;
+var template_cannot_say_s = null;
+var template_say_s = null;
 
 var state_chat = null;
+var chat_can_say = null;
 
 var SYSTEM = 0, ACTION = 1, MESSAGE = 2, JOIN = 3, LEAVE = 4, NOTICE = 5;
 var chat_last_update = null;
@@ -58,6 +63,13 @@ function updateChat() {
         return;
     
     $("#chatroom-outer-box").html(Jst.evaluateCompiled(template_chat_s, state_chat));
+    if (chat_can_say) {
+        $("#chatroom-cannot-say").hide();
+        $("#chatroom-say").show();
+    } else {
+        $("#chatroom-cannot-say").show();
+        $("#chatroom-say").hide();
+    }
     $("#chat-say-text").keydown(function(event){
         if (event.keyCode == 13) {
             // say something in chat
@@ -147,6 +159,16 @@ function chatAjaxRequest() {
             if (beforeChatRoomActive(state_chat.room))
                 chat_last_update = null;
 
+            var new_chat_can_say = chatRoomActive(state_chat.room) &&
+                state_chat.user.is_authenticated &&
+                state_chat.user.has_permission;
+            var different = new_chat_can_say != chat_can_say;
+            chat_can_say = new_chat_can_say;
+            if (different) {
+                $("#chatroom-say").html(Jst.evaluateCompiled(template_say_s, state_chat));
+                $("#chatroom-cannot-say").html(Jst.evaluateCompiled(template_cannot_say_s, state_chat));
+            }
+
             updateChat();
         });
     chat_last_update = serverTime(new Date()).toString();
@@ -164,6 +186,9 @@ function chatOnlinersAjaxRequestLoop() {
 
 function chatCompileTemplates() {
     template_chat_s = Jst.compile(template_chat);
+    template_onliners_s = Jst.compile(template_onliners);
+    template_cannot_say_s = Jst.compile(template_cannot_say);
+    template_say_s = Jst.compile(template_say);
 }
 
 function chatInitialize() {

@@ -1,0 +1,13 @@
+<% if (chatRoomActive(room)) { %>
+    <% if (user.is_authenticated) { %>
+        <% if (user.has_permission) { %>
+            
+        <% } else { %>
+            <p>You may only observe in this chat room.</p>
+        <% } %>
+    <% } else { %>
+        <p>Log in to participate in chat.</p>
+    <% } %>
+<% } else if (afterChatRoomActive(room)) { %>
+    <p>This chat room closed on <%= formatDate(localTime(room.end_date)) %></p>
+<% } %>
