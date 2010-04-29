@@ -70,6 +70,31 @@ function updateChat() {
         $("#chatroom-cannot-say").show();
         $("#chatroom-say").hide();
     }
+
+}
+
+function updateChatOnliners() {
+    $("#chatroom-outer-onliners").html(Jst.evaluateCompiled(template_onliners_s, state_chat));
+}
+
+function chatOnlinersAjaxRequest() {
+    $.getJSON("/ajax/chat/online/",
+        {
+            "room": chatroom_id,
+        },
+        function(data){
+            if (data == null)
+                return;
+
+            if (state_chat == null)
+                state_chat = {'user': null, 'messages': []}
+
+            state_chat.onliners = data;
+            updateChatOnliners();
+        });
+}
+
+function chatAddClicksToSay() {
     $("#chat-say-text").keydown(function(event){
         if (event.keyCode == 13) {
             // say something in chat
@@ -108,28 +133,6 @@ function updateChat() {
             });
         }
     });
-
-}
-
-function updateChatOnliners() {
-    $("#chatroom-outer-onliners").html(Jst.evaluateCompiled(template_onliners_s, state_chat));
-}
-
-function chatOnlinersAjaxRequest() {
-    $.getJSON("/ajax/chat/online/",
-        {
-            "room": chatroom_id,
-        },
-        function(data){
-            if (data == null)
-                return;
-
-            if (state_chat == null)
-                state_chat = {'user': null, 'messages': []}
-
-            state_chat.onliners = data;
-            updateChatOnliners();
-        });
 }
 
 function chatAjaxRequest() {
@@ -166,6 +169,7 @@ function chatAjaxRequest() {
             chat_can_say = new_chat_can_say;
             if (different) {
                 $("#chatroom-say").html(Jst.evaluateCompiled(template_say_s, state_chat));
+                chatAddClicksToSay();
                 $("#chatroom-cannot-say").html(Jst.evaluateCompiled(template_cannot_say_s, state_chat));
             }
 
