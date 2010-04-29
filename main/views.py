@@ -6,10 +6,10 @@ from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
 
 from opensourcemusic.main.forms import *
-from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT
+from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT, CHAT_TIMEOUT
 
 import simplejson as json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def remove_unsafe_keys(hash, model):
     """
@@ -241,3 +241,17 @@ def ajax_say(request):
     m.save()
 
     return HttpResponse(json_dump(data), mimetype="text/plain")
+
+def ajax_onliners(request):
+    room_id = request.GET.get('room', 0)
+    try:
+        room_id = int(room_id)
+    except:
+        room_id = 0
+    room = get_object_or_404(ChatRoom, id=room_id)
+
+    expire_date = datetime.now() - timedelta(seconds=CHAT_TIMEOUT)
+    data = [x.person.user.username for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]
+
+    return HttpResponse(json_dump(data), mimetype="text/plain")
+

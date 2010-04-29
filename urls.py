@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     (r'^ajax/logout/$', 'opensourcemusic.main.views.ajax_logout'),
     (r'^ajax/chat/$', 'opensourcemusic.main.views.ajax_chat'),
     (r'^ajax/chat/say/$', 'opensourcemusic.main.views.ajax_say'),
+    (r'^ajax/chat/online/$', 'opensourcemusic.main.views.ajax_onliners'),
 
     (r'^login/$', 'opensourcemusic.main.views.user_login'),
     (r'^logout/$', 'opensourcemusic.main.views.user_logout'),

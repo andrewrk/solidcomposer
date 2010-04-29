@@ -2,9 +2,7 @@
  == to get a prototype working ==
  * competition page
    - chat box
-     > chat: show online users
      > chat: show timestamps for messages
-     > chat: show join/part messages
      > creating a competition needs to create the room and add it to the compo
    - pre-competition starting behavior
    - in progress competition behavior

@@ -80,7 +80,6 @@ function updateChat() {
         }
     });
 
-    $("#chatroom-outer-onliners").html(Jst.evaluateCompiled(template_onliners_s, state_chat));
 }
 
 function updateStatus() {
@@ -113,6 +112,27 @@ function ajaxRequest() {
     });
 }
 
+function updateChatOnliners() {
+    $("#chatroom-outer-onliners").html(Jst.evaluateCompiled(template_onliners_s, state_chat));
+}
+
+function chatOnlinersAjaxRequest() {
+    $.getJSON("/ajax/chat/online/",
+        {
+            "room": chatroom_id,
+        },
+        function(data){
+            if (data == null)
+                return;
+
+            if (state_chat == null)
+                state_chat = {'user': null, 'messages': []}
+
+            state_chat.onliners = data;
+            updateChatOnliners();
+        });
+}
+
 function chatAjaxRequest() {
     $.getJSON("/ajax/chat/",
         {
@@ -123,19 +143,18 @@ function chatAjaxRequest() {
             if (data == null)
                 return;
 
-            if (state_chat == null) {
-                state_chat = data;
-            } else {
-                // clear temporary messages
-                while (chat_temp_msg_count > 0) {
-                    state_chat.messages.pop();
-                    --chat_temp_msg_count;
-                }
+            if (state_chat == null)
+                state_chat = {'user': null, 'messages': []}
 
-                state_chat.user = data.user;
-                for (var i=0; i<data.messages.length; ++i)
-                    state_chat.messages.push(data.messages[i]);
+            // clear temporary messages
+            while (chat_temp_msg_count > 0) {
+                state_chat.messages.pop();
+                --chat_temp_msg_count;
             }
+
+            state_chat.user = data.user;
+            for (var i=0; i<data.messages.length; ++i)
+                state_chat.messages.push(data.messages[i]);
 
             updateChat();
         });
@@ -157,6 +176,11 @@ function chatAjaxRequestLoop() {
     setTimeout(chatAjaxRequestLoop, 2000);
 }
 
+function chatOnlinersAjaxRequestLoop() {
+    chatOnlinersAjaxRequest();
+    setTimeout(chatOnlinersAjaxRequest, 10000);
+}
+
 function compileTemplates() {
     template_status_s = Jst.compile(template_status);
     template_info_s = Jst.compile(template_info);
@@ -171,5 +195,6 @@ $(document).ready(function(){
     ajaxRequestLoop();
     updateDatesLoop();
     chatAjaxRequestLoop();
+    chatOnlinersAjaxRequestLoop();
 });
 
