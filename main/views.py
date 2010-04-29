@@ -167,6 +167,8 @@ def ajax_chat(request):
             'is_authenticated': request.user.is_authenticated(),
             'has_permission': False,
         },
+        'room': safe_model_to_dict(room),
+        'messages': [],
     }
 
     if request.user.is_authenticated():
@@ -217,6 +219,9 @@ def ajax_say(request):
         room_id = 0
     room = get_object_or_404(ChatRoom, id=room_id)
 
+    if not chatroom_is_active(room):
+        return HttpResponse(json_dump({}), mimetype="text/plain")
+
     data = {
         'user': {
             'is_authenticated': request.user.is_authenticated(),
@@ -243,6 +248,16 @@ def ajax_say(request):
 
     return HttpResponse(json_dump(data), mimetype="text/plain")
 
+def chatroom_is_active(room):
+    now = datetime.now()
+    if not room.start_date is None:
+        if room.start_date > now:
+            return False
+    if not room.end_date is None:
+        if room.end_date < now:
+            return False
+    return True
+
 def ajax_onliners(request):
     room_id = request.GET.get('room', 0)
     try:
@@ -250,6 +265,9 @@ def ajax_onliners(request):
     except:
         room_id = 0
     room = get_object_or_404(ChatRoom, id=room_id)
+
+    if not chatroom_is_active(room):
+        return HttpResponse(json_dump({}), mimetype="text/plain")
 
     expire_date = datetime.now() - timedelta(seconds=CHAT_TIMEOUT)
     data = [x.person.user.username for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]

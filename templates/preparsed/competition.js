@@ -2,6 +2,7 @@ var template_status = (<r><![CDATA[{% include 'arena/compo_status.jst.html' %}]]
 var template_info = (<r><![CDATA[{% include 'arena/compo_info.jst.html' %}]]></r>).toString();
 var template_vote_status = (<r><![CDATA[{% include 'arena/vote_status.jst.html' %}]]></r>).toString();
 var template_entries = (<r><![CDATA[{% include 'arena/entry_list.jst.html' %}]]></r>).toString();
+var template_current_entry = (<r><![CDATA[{% include 'arena/current_entry.jst.html' %}]]></r>).toString();
 
 var template_chat = (<r><![CDATA[{% include 'chat/box.jst.html' %}]]></r>).toString();
 var template_onliners = (<r><![CDATA[{% include 'chat/onliners.jst.html' %}]]></r>).toString();
@@ -13,6 +14,7 @@ var template_vote_status_s = null;
 var template_entries_s = null;
 var template_chat_s = null;
 var template_onliners_s = null;
+var template_current_entry_s = null;
 
 var state_compo = null;
 var state_chat = null;
@@ -27,6 +29,36 @@ function ongoingListeningParty(compo) {
     ((compo.have_listening_party &&
         secondsUntil(compo.listening_party_end_date) <= 0) ||
         ! compo.have_listening_party);
+}
+
+function chatRoomActive(room) {
+    var now = new Date();
+
+    if (room.start_date != null) {
+        var local = localTime(room.start_date);
+        if (local > now)
+            return false;
+    }
+
+    if (room.end_date != null) {
+        var local = localTime(room.end_date);
+        if (local < now)
+            return false;
+    }
+
+    return true;
+}
+
+function beforeChatRoomActive(room) {
+    if (room.start_date == null)
+        return false;
+    return (new Date()) < localTime(room.start_date);
+}
+
+function afterChatRoomActive(room) {
+    if (room.end_date == null)
+        return false;
+    return (new Date()) > localTime(room.end_date);
 }
 
 function updateChat() {
@@ -97,6 +129,7 @@ function updateCompo() {
     $("#vote-status").html(Jst.evaluateCompiled(template_vote_status_s, state_compo));
     $("#info").html(Jst.evaluateCompiled(template_info_s, state_compo));
     $("#entry-area").html(Jst.evaluateCompiled(template_entries_s, state_compo));
+    $("#current-entry").html(Jst.evaluateCompiled(template_current_entry_s, state_compo));
 }
 
 function ajaxRequest() {
@@ -152,9 +185,13 @@ function chatAjaxRequest() {
                 --chat_temp_msg_count;
             }
 
+            state_chat.room = data.room;
             state_chat.user = data.user;
             for (var i=0; i<data.messages.length; ++i)
                 state_chat.messages.push(data.messages[i]);
+
+            if (beforeChatRoomActive(state_chat.room))
+                chat_last_update = null;
 
             updateChat();
         });
@@ -188,6 +225,7 @@ function compileTemplates() {
     template_entries_s = Jst.compile(template_entries);
     template_chat_s = Jst.compile(template_chat);
     template_onliners_s = Jst.compile(template_onliners);
+    template_current_entry_s = Jst.compile(template_current_entry);
 }
 
 $(document).ready(function(){
