@@ -18,6 +18,23 @@ function pad(num) {
     return ((num < 10) ? "0" : "") + num;
 }
 
+// display a server time prettily, discard date
+function prettyTime(serverTime) {
+    var local = localTime(serverTime);
+
+    var hour = local.getHours();
+    var min = pad(local.getMinutes());
+    var sec = pad(local.getSeconds());
+
+    var ampm = "am";
+    if (hour > 12) {
+        hour -= 12;
+        ampm = "pm";
+    }
+
+    return hour + ":" + min + ":" + sec + " " + ampm;
+}
+
 // takes milliseconds and returns a nice display like 0:00
 function timeDisplay(ms) {
     var sec = ms / 1000;

@@ -179,6 +179,7 @@ def ajax_chat(request):
         d = safe_model_to_dict(msg)
         d['author'] = safe_model_to_dict(msg.author)
         d['author']['username'] = msg.author.user.username
+        d['timestamp'] = msg.timestamp
         return d
 
     if latest_check == 'null':

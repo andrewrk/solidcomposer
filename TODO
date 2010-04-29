@@ -2,7 +2,6 @@
  == to get a prototype working ==
  * competition page
    - chat box
-     > chat: show timestamps for messages
      > creating a competition needs to create the room and add it to the compo
    - pre-competition starting behavior
    - in progress competition behavior
@@ -39,6 +38,7 @@
  * provide some way to format themes, rules, comments, etc
  * chat colors
  * display error when chat message doesn't go through
+ * chat: display how many invisible observers there are
 
 = project manager / band page =
 

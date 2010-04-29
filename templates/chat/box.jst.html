@@ -3,19 +3,19 @@
     <% for (var i=0; i<messages.length; ++i) { var msg = messages[i]; %>
         <% if (msg.type == MESSAGE) { %>
             <div class="msg">
-                <%= msg.author.username %>: <%= msg.message %>
+                <%= prettyTime(msg.timestamp) %> <%= msg.author.username %>: <%= msg.message %>
             </div>
         <% } else if (msg.type == JOIN) { %>
             <div class="join">
-                <%= msg.author.username %> has joined.
+                <%= prettyTime(msg.timestamp) %> <%= msg.author.username %> has joined.
             </div>
         <% } else if (msg.type == LEAVE) { %>
             <div class="leave">
-                <%= msg.author.username %> has left.
+                <%= prettyTime(msg.timestamp) %> <%= msg.author.username %> has left.
             </div>
         <% } else if (msg.type == ACTION) { %>
             <div class="action">
-                * <%= msg.author.username %> <%= msg.message %>
+                <%= prettyTime(msg.timestamp) %> * <%= msg.author.username %> <%= msg.message %>
             </div>
         <% } %>
     <% } %>
