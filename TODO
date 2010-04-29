@@ -1,7 +1,6 @@
 = arena =
  == to get a prototype working ==
  * competition page
-   - put login input box in a location that doesn't get overwritten.
    - put chat input box in a location that doesn't get overwritten on a timer.
    - put submit entry form in a location that doesn't get overwritten 
    - debug and test entry submission

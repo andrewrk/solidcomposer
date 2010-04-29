@@ -16,9 +16,7 @@ var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{%
 {% endblock %}
 
 {% block content %}
-    <div id="login">
-        {% include 'loading.html' %}
-    </div>
+    {% include 'login_div.html' %}
     <h1>Arena</h1>
     <p>Back to <a href="/arena/">Arena</a></p>
     <h2>{{ competition.title }}</h2>

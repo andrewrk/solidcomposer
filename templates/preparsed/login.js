@@ -49,35 +49,6 @@ function updateLogin() {
         updateLogin();
         return false;
     });
-    $("#loginButton").click(function(){
-        $.ajax({
-            url: "/ajax/login/",
-            type: 'POST',
-            dataType: 'text',
-            data: {
-                'username': $("#loginName").attr('value'),
-                'password': $("#loginPassword").attr('value'),
-            },
-            success: function(){
-                ajaxRequest();
-                loginAjaxRequest();
-            },
-            error: function(){
-                loginFormError = true;
-                updateLogin();
-                ajaxRequest();
-                loginAjaxRequest();
-            }
-        });
-        loginFormDisplayed = false;
-        updateLogin();
-        return false;
-    });
-    $("#cancelLoginButton").click(function(){
-        loginFormDisplayed = false;
-        updateLogin();
-        return false;
-    });
     $("#signOut").click(function(){
         $.ajax({
             url: "/ajax/logout/",
@@ -119,4 +90,35 @@ function loginAjaxRequestLoop() {
 function loginInitialize() {
     compileLoginTemplates();
     loginAjaxRequestLoop();
+
+    $("#loginButton").click(function(){
+        $.ajax({
+            url: "/ajax/login/",
+            type: 'POST',
+            dataType: 'text',
+            data: {
+                'username': $("#loginName").attr('value'),
+                'password': $("#loginPassword").attr('value'),
+            },
+            success: function(){
+                ajaxRequest();
+                loginAjaxRequest();
+            },
+            error: function(){
+                loginFormError = true;
+                updateLogin();
+                ajaxRequest();
+                loginAjaxRequest();
+            }
+        });
+        loginFormDisplayed = false;
+        updateLogin();
+        return false;
+    });
+
+    $("#cancelLoginButton").click(function(){
+        loginFormDisplayed = false;
+        updateLogin();
+        return false;
+    });
 }
