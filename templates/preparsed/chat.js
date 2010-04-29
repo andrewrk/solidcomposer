@@ -1,0 +1,173 @@
+/*
+ * chat.js - include this if you have a chat room on the page.
+ *
+ * depends on:
+ *
+ * <script type="text/javascript">
+ * var chatroom_id = {{ competition.chat_room.id }}; // null if no chat room
+ * </script>
+ *
+ * make one call to chatInitialize() on document ready.
+ *
+ */
+
+var template_chat = (<r><![CDATA[{% include 'chat/box.jst.html' %}]]></r>).toString();
+var template_onliners = (<r><![CDATA[{% include 'chat/onliners.jst.html' %}]]></r>).toString();
+
+var template_chat_s = null;
+var template_onliners_s = null;
+
+var state_chat = null;
+
+var SYSTEM = 0, ACTION = 1, MESSAGE = 2, JOIN = 3, LEAVE = 4, NOTICE = 5;
+var chat_last_update = null;
+var chat_temp_msg_count = 0;
+
+function chatRoomActive(room) {
+    var now = new Date();
+
+    if (room.start_date != null) {
+        var local = localTime(room.start_date);
+        if (local > now)
+            return false;
+    }
+
+    if (room.end_date != null) {
+        var local = localTime(room.end_date);
+        if (local < now)
+            return false;
+    }
+
+    return true;
+}
+
+function beforeChatRoomActive(room) {
+    if (room.start_date == null)
+        return false;
+    return (new Date()) < localTime(room.start_date);
+}
+
+function afterChatRoomActive(room) {
+    if (room.end_date == null)
+        return false;
+    return (new Date()) > localTime(room.end_date);
+}
+
+function updateChat() {
+    if (state_chat == null)
+        return;
+    
+    $("#chatroom-outer-box").html(Jst.evaluateCompiled(template_chat_s, state_chat));
+    $("#chat-say-text").keydown(function(event){
+        if (event.keyCode == 13) {
+            // say something in chat
+            var msg_to_post = $("#chat-say-text").attr('value');
+            if (msg_to_post == '')
+                return;
+            $("#chat-say-text").attr('value','');
+            $.ajax({
+                url: "/ajax/chat/say/",
+                type: 'POST',
+                dataType: 'text',
+                data: {
+                    'room': chatroom_id,
+                    'message': msg_to_post,
+                },
+                success: function(){
+                    // add the message and clear the box
+                    var new_message = {
+                        'room': chatroom_id,
+                        'type': MESSAGE,
+                        'author': state_chat.user.get_profile,
+                        'message': msg_to_post,
+                        'timestamp': serverTime(new Date()),
+                    };
+                    new_message.author.username = state_chat.user.username;
+                    state_chat.messages.push(new_message);
+                    ++chat_temp_msg_count;
+                    updateChat();
+                    
+                    // set focus to this widget again
+                    $("#chat-say-text").focus();
+                },
+                error: function(){
+                    // TODO: show some kind of error message
+                },
+            });
+        }
+    });
+
+}
+
+function updateChatOnliners() {
+    $("#chatroom-outer-onliners").html(Jst.evaluateCompiled(template_onliners_s, state_chat));
+}
+
+function chatOnlinersAjaxRequest() {
+    $.getJSON("/ajax/chat/online/",
+        {
+            "room": chatroom_id,
+        },
+        function(data){
+            if (data == null)
+                return;
+
+            if (state_chat == null)
+                state_chat = {'user': null, 'messages': []}
+
+            state_chat.onliners = data;
+            updateChatOnliners();
+        });
+}
+
+function chatAjaxRequest() {
+    $.getJSON("/ajax/chat/",
+        {
+            "latest_check": chat_last_update,
+            "room": chatroom_id,
+        },
+        function(data){
+            if (data == null)
+                return;
+
+            if (state_chat == null)
+                state_chat = {'user': null, 'messages': []}
+
+            // clear temporary messages
+            while (chat_temp_msg_count > 0) {
+                state_chat.messages.pop();
+                --chat_temp_msg_count;
+            }
+
+            state_chat.room = data.room;
+            state_chat.user = data.user;
+            for (var i=0; i<data.messages.length; ++i)
+                state_chat.messages.push(data.messages[i]);
+
+            if (beforeChatRoomActive(state_chat.room))
+                chat_last_update = null;
+
+            updateChat();
+        });
+    chat_last_update = serverTime(new Date()).toString();
+}
+
+function chatAjaxRequestLoop() {
+    chatAjaxRequest();
+    setTimeout(chatAjaxRequestLoop, 2000);
+}
+
+function chatOnlinersAjaxRequestLoop() {
+    chatOnlinersAjaxRequest();
+    setTimeout(chatOnlinersAjaxRequest, 10000);
+}
+
+function chatCompileTemplates() {
+    template_chat_s = Jst.compile(template_chat);
+}
+
+function chatInitialize() {
+    chatCompileTemplates();
+    chatAjaxRequestLoop();
+    chatOnlinersAjaxRequestLoop();
+}

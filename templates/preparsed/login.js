@@ -1,3 +1,13 @@
+/*
+ * login.js
+ *
+ *
+ * make one call to initializeLogin() on document ready.
+ *
+ * ajaxRequest() will be called when someone logs in or out.
+ *
+ */
+
 var template_login = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
 
 var template_login_s = null;
@@ -49,12 +59,14 @@ function updateLogin() {
                 'password': $("#loginPassword").attr('value'),
             },
             success: function(){
-                ajaxRequest()
+                ajaxRequest();
+                loginAjaxRequest();
             },
             error: function(){
                 loginFormError = true;
                 updateLogin();
-                ajaxRequest()
+                ajaxRequest();
+                loginAjaxRequest();
             }
         });
         loginFormDisplayed = false;
@@ -71,12 +83,14 @@ function updateLogin() {
             url: "/ajax/logout/",
             type: 'GET',
             success: function(){
-                ajaxRequest()
+                ajaxRequest();
+                loginAjaxRequest();
             },
             error: function(){
                 loginFormError = true;
                 updateLogin();
-                ajaxRequest()
+                ajaxRequest();
+                loginAjaxRequest();
             }
         });
         return false;
@@ -95,4 +109,14 @@ function loginAjaxRequest() {
 
 function compileLoginTemplates() {
     template_login_s = Jst.compile(template_login);
+}
+
+function loginAjaxRequestLoop() {
+    loginAjaxRequest();
+    setTimeout(loginAjaxRequestLoop, 10000);
+}
+
+function loginInitialize() {
+    compileLoginTemplates();
+    loginAjaxRequestLoop();
 }

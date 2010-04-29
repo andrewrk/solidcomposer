@@ -79,7 +79,6 @@ function updateOwned() {
 }
 
 function ajaxRequest() {
-    loginAjaxRequest();
     $.getJSON("/arena/ajax/available/", function(data){
         if (data == null)
             return;
@@ -115,12 +114,12 @@ function updateCompetitionsLoop() {
 function compileTemplates() {
     template_available_s = Jst.compile(template_available);
     template_owned_s = Jst.compile(template_owned);
-    compileLoginTemplates();
 }
 
 $(document).ready(function(){
     compileTemplates();
     ajaxRequestLoop();
     updateCompetitionsLoop();
+    loginInitialize();
 });
 
