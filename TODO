@@ -2,6 +2,8 @@
  == to get a prototype working ==
  * competition page
    - in progress competition behavior
+     > when the person submits an entry, re-calculate listening party end date,
+       voting deadline, and chat room close date.
    - listening party behavior
    - voting behavior
    - voting closed behavior

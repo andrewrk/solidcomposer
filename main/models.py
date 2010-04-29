@@ -47,15 +47,6 @@ class Competition(models.Model):
     # can entrants view the rules before it starts?
     preview_rules = models.BooleanField()
 
-    have_listening_party = models.BooleanField()
-    # must be after submit_deadline, with enough time for
-    # processing.
-    listening_party_start_date = models.DateTimeField(blank=True, null=True)
-
-    # this date is unknown until all entries are submitted and the
-    # processing is complete
-    listening_party_end_date = models.DateTimeField(blank=True, null=True)
-
     # when this competition was created
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -64,6 +55,15 @@ class Competition(models.Model):
 
     # deadline for submitting entries
     submit_deadline = models.DateTimeField()
+
+    have_listening_party = models.BooleanField()
+    # must be after submit_deadline, with enough time for
+    # processing.
+    listening_party_start_date = models.DateTimeField(blank=True, null=True)
+
+    # this date is unknown until all entries are submitted and the
+    # processing is complete
+    listening_party_end_date = models.DateTimeField(blank=True, null=True)
 
     # deadline for casting votes. must be after listening party end time,
     # which is undetermined. People must have at least 10 minutes to vote,

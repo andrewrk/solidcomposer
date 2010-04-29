@@ -10,7 +10,7 @@ from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT
 from opensourcemusic.main.views import activeUser, safe_model_to_dict, json_dump
 from opensourcemusic.competitions.forms import *
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def max_vote_count(entry_count):
     """
@@ -167,17 +167,9 @@ def create(request):
             if form.cleaned_data.get('have_rules', False):
                 comp.rules = form.cleaned_data.get('rules', '')
 
-            comp.have_listening_party = form.cleaned_data.get('have_listening_party', True)
-            if comp.have_listening_party:
-                comp.listening_party_start_date = form.cleaned_data.get('listening_party_date')
 
             comp.start_date = form.cleaned_data.get('start_date')
             comp.submit_deadline = form.cleaned_data.get('submission_deadline_date')
-            # create a chatroom for it
-            chatroom = ChatRoom()
-            chatroom.permission_type = OPEN
-            chatroom.save()
-            comp.chat_room = chatroom;
 
             # calculate vote deadline 
             quantity = int(form.cleaned_data.get('vote_time_quantity'))
@@ -190,6 +182,29 @@ def create(request):
             }
             
             comp.vote_period_length = quantity * multiplier[quantifier]
+            vote_period_delta = timedelta(seconds=comp.vote_period_length)
+
+            comp.have_listening_party = form.cleaned_data.get('have_listening_party', True)
+            if comp.have_listening_party:
+                comp.listening_party_start_date = form.cleaned_data.get('listening_party_date')
+                # initialize end date to start date. we make modifications to it
+                # when entries are submitted.
+                comp.listening_party_end_date = comp.listening_party_start_date
+
+                # this changes whenever listening_party_end_date changes.
+                comp.vote_deadline = comp.listening_party_end_date + vote_period_delta
+            else:
+                comp.vote_deadline = comp.submit_deadline + vote_period_delta
+
+            # create a chatroom for it
+            chatroom = ChatRoom()
+            chatroom.permission_type = OPEN
+            # open the chat room an hour before the competition
+            chatroom.start_date = comp.start_date - timedelta(hours=1)
+            # chat room is open an hour before and after competition
+            chatroom.end_date = comp.vote_deadline + timedelta(hours=1)
+            chatroom.save()
+            comp.chat_room = chatroom;
 
             comp.save()
 
