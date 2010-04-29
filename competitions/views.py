@@ -173,6 +173,12 @@ def create(request):
 
             comp.start_date = form.cleaned_data.get('start_date')
             comp.submit_deadline = form.cleaned_data.get('submission_deadline_date')
+            # create a chatroom for it
+            chatroom = ChatRoom()
+            chatroom.permission_type = OPEN
+            chatroom.save()
+            comp.chat_room = chatroom;
+
             # calculate vote deadline 
             quantity = int(form.cleaned_data.get('vote_time_quantity'))
             quantifier = int(form.cleaned_data.get('vote_time_measurement'))

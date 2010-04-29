@@ -1,8 +1,6 @@
 = arena =
  == to get a prototype working ==
  * competition page
-   - chat box
-     > creating a competition needs to create the room and add it to the compo
    - pre-competition starting behavior
    - in progress competition behavior
    - listening party behavior
