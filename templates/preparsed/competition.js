@@ -27,6 +27,8 @@ function submitEntryCompleteCallback(response) {
     if (result.success == false) {
         alert("Unable to submit:\n\n" + result.reason);
     }
+
+    ajaxRequest();
 }
 
 // true if we are in the middle of a listening party

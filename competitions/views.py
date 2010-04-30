@@ -138,7 +138,7 @@ def ajax_submit_entry(request):
     # upload the source file
     if not source_file is None:
         # extension of the source file
-        parts = source_file.split('.')
+        parts = source_file.name.split('.')
         if len(parts) > 0:
             source_ext = parts[-1]
             source_file_title = "%s - %s (%s).%s" % (request.user.get_profile().artist_name, title, compo.title, source_ext)
@@ -147,7 +147,7 @@ def ajax_submit_entry(request):
         source_safe_path, source_safe_file_title = safe_file(os.path.join(MEDIA_ROOT, 'compo', 'mp3'), source_file_title)
         source_safe_path_relative = os.path.join('compo','mp3',source_safe_file_title)
 
-        upload_file(source_file, out_path)
+        upload_file(source_file, source_safe_path)
         song.source_file = source_safe_path_relative
 
     song.mp3_file = mp3_safe_path_relative
