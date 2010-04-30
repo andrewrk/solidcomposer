@@ -1,10 +1,6 @@
 = arena =
  == to get a prototype working ==
  * competition page
-   - in progress competition behavior
-     > when you've submitted a song, hide the submission form
-     > highlight your own song in the entry list and provide an edit button
-     > support resubmission
    - listening party behavior
    - voting behavior
    - voting closed behavior
@@ -46,6 +42,8 @@
    people know they're running out of time
  * competition entry max length per competition
  * better feedback for a failed submission than an alert box.
+ * make the gui experience of clicking edit on a submission and then
+   deciding not to better.
 
 = project manager / band page =
 

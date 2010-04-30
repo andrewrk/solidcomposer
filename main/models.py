@@ -109,6 +109,9 @@ class Song(models.Model):
     # length in seconds, grabbed from mp3_file metadata
     length = models.FloatField()
 
+    # author comments
+    comments = models.TextField(blank=True)
+
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

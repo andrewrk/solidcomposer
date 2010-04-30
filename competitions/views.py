@@ -99,21 +99,31 @@ def ajax_submit_entry(request):
     handle.close()
 
     # read the length tag
-    audio = MP3(handle.name, ID3=EasyID3)
-    audio_length = audio.info.length
+    try:
+        audio = MP3(handle.name, ID3=EasyID3)
+        audio_length = audio.info.length
+    except:
+        data['reason'] = 'Invalid MP3 file.'
+        return json_response(data)
 
     # reject if too long or invalid
     if audio.info.sketchy:
         data['reason'] = 'Sketchy MP3 file.'
+        return json_response(data)
 
     if audio.info.length > COMPO_ENTRY_MAX_LEN:
         data['reason'] = 'Song is too long.'
+        return json_response(data)
 
     # enforce ID3 tags
     audio['title'] = title
     audio['album'] = compo.title
     audio['artist'] = request.user.get_profile().artist_name
-    audio.save()
+    try:
+        audio.save()
+    except:
+        data['reason'] = 'Unable to save ID3 tags.'
+        return json_response(data)
 
     # pick a nice safe unique path for mp3_file and source_file
     mp3_file_title = "%s - %s (%s).mp3" % (request.user.get_profile().artist_name, title, compo.title)
@@ -154,6 +164,7 @@ def ajax_submit_entry(request):
     song.owner = request.user.get_profile()
     song.title = title
     song.length = audio_length
+    song.comments = comments
     song.save()
 
     entry.competition = compo
@@ -229,6 +240,10 @@ def ajax_compo(request, id):
             'used': [safe_model_to_dict(x) for x in used_votes],
             'left': max_votes - used_votes.count(),
         }
+        user_entries = Entry.objects.filter(competition=compo, owner=request.user.get_profile())
+        data['submitted'] = (user_entries.count() > 0)
+        if user_entries.count() > 0:
+            data['user_entry'] = safe_model_to_dict(user_entries[0].song)
 
     return json_response(data)
 

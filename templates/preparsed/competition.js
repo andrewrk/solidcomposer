@@ -12,6 +12,7 @@ var template_entries_s = null;
 var template_current_entry_s = null;
 
 var state_compo = null;
+var resubmitting = false;
 
 
 // functions called when submitting upload entry form.
@@ -27,6 +28,8 @@ function submitEntryCompleteCallback(response) {
     if (result.success == false) {
         alert("Unable to submit:\n\n" + result.reason);
     }
+
+    resubmitting = false;
 
     ajaxRequest();
 }
@@ -52,6 +55,11 @@ function votingActive(compo) {
        secondsSince(voteStartDate(compo)) > 0;
 }
 
+function submissionActive() {
+    return secondsUntil(state_compo.compo.submit_deadline) > 0 &&
+        secondsSince(state_compo.compo.start_date) > 0;
+}
+
 function updateStatus() {
     if (state_compo == null)
         return;
@@ -69,9 +77,18 @@ function updateCompo() {
     $("#entry-area").html(Jst.evaluateCompiled(template_entries_s, state_compo));
     $("#current-entry").html(Jst.evaluateCompiled(template_current_entry_s, state_compo));
 
-    var show_submission_form =
-        secondsUntil(state_compo.compo.submit_deadline) > 0 &&
-        secondsUntil(state_compo.compo.start_date) < 0;
+    // clicks for entry-area
+    $("#resubmit").click(function(){
+        resubmitting = ! resubmitting;
+        $("#entry-title").attr('value', state_compo.user_entry.title);
+        $("#entry-comments").attr('value', state_compo.user_entry.comments);
+        updateCompo();
+        return false;
+    });
+
+    // show/hide submission form
+    var show_submission_form = submissionActive() &&
+        (! state_compo.submitted || resubmitting);
     if (show_submission_form)
         $("#submission").show('fast');
     else
