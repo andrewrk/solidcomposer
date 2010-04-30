@@ -47,6 +47,8 @@ function updateLogin() {
         loginFormDisplayed = ! loginFormDisplayed;
         loginFormError = false;
         updateLogin();
+        if (loginFormDisplayed)
+            $("#loginName").focus();
         return false;
     });
     $("#signOut").click(function(){
@@ -87,33 +89,53 @@ function loginAjaxRequestLoop() {
     setTimeout(loginAjaxRequestLoop, 10000);
 }
 
+function sendLoginRequest() {
+    $.ajax({
+        url: "/ajax/login/",
+        type: 'POST',
+        dataType: 'text',
+        data: {
+            'username': $("#loginName").attr('value'),
+            'password': $("#loginPassword").attr('value'),
+        },
+        success: function(){
+            $("#loginName").attr('value','');
+            $("#loginPassword").attr('value','');
+            ajaxRequest();
+            loginAjaxRequest();
+        },
+        error: function(){
+            loginFormError = true;
+            updateLogin();
+            ajaxRequest();
+            loginAjaxRequest();
+        }
+    });
+    loginFormDisplayed = false;
+    updateLogin();
+    return false;
+}
+
 function loginInitialize() {
     compileLoginTemplates();
     loginAjaxRequestLoop();
 
-    $("#loginButton").click(function(){
-        $.ajax({
-            url: "/ajax/login/",
-            type: 'POST',
-            dataType: 'text',
-            data: {
-                'username': $("#loginName").attr('value'),
-                'password': $("#loginPassword").attr('value'),
-            },
-            success: function(){
-                ajaxRequest();
-                loginAjaxRequest();
-            },
-            error: function(){
-                loginFormError = true;
-                updateLogin();
-                ajaxRequest();
-                loginAjaxRequest();
-            }
-        });
-        loginFormDisplayed = false;
-        updateLogin();
-        return false;
+    $("#loginButton").click(sendLoginRequest);
+    $("#loginName").keydown(function(event){
+        if (event.keyCode == 13)
+            sendLoginRequest();
+        if (event.keyCode == 27) {
+            loginFormDisplayed = false;
+            updateLogin();
+        }
+    });
+    $("#loginPassword").keydown(function(event){
+        if (event.keyCode == 13)
+            sendLoginRequest();
+        if (event.keyCode == 27) {
+            loginFormDisplayed = false;
+            updateLogin();
+        }
     });
 
     $("#cancelLoginButton").click(function(){

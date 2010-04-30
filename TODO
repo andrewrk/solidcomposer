@@ -1,6 +1,5 @@
 = arena =
  == to get a prototype working ==
- * when you sign in or sign out it should clear the username/pass box
  * uploading an entry should clear that form
  * the online users is sketchy at best
  * competition page
