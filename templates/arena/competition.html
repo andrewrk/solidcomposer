@@ -5,9 +5,11 @@
 {% block extra_header %}
     {{ block.super }}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/webtoolkit.aim.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.jplayer-1.1.1.min.js"></script>
     <script type="text/javascript">
 var competition_id = {{ competition.id }};
 var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{% else %}null{% endif %};
+var MEDIA_URL = "{{ MEDIA_URL }}";
     </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/formatting.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
@@ -16,6 +18,7 @@ var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{%
 {% endblock %}
 
 {% block content %}
+    <div id="jplayer"></div>
     {% include 'login_div.html' %}
     <h1>Arena</h1>
     <p>Back to <a href="/arena/">Arena</a></p>

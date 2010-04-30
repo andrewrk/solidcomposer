@@ -1,10 +1,19 @@
 = arena =
  == to get a prototype working ==
+ * automatically bookmark competitions the user creates
+ * when you sign in or sign out it should clear the username/pass box
+ * uploading an entry should clear that form
+ * the online users is sketchy at best
  * competition page
    - listening party behavior
-     > make sure who is online is refreshing
+     > 5 seconds buffertime before every track
+     > mute button on player
+     > make song comments during chat during listening party
    - voting behavior
-   - voting closed behavior
+   - competition closed behavior
+     > reveal votes
+     > sort the entries by votes
+     > each entry is a simple link to the page for the song
    - when the compo goes from one state to another, refresh via ajax
    - handle join/part messages by removing them or adding them to the array
  * register
@@ -21,6 +30,8 @@
  * test with a messed up clock
  * instead of serverTime(new Date()) for latest_check, use the timestamp from
    the last received message.
+ * support some kind of formatting for author comments and such. minimum:
+   honor line breaks. maximum: a bb-like system or markdown.
 
  == improvements ==
  * pressing enter in the password field should submit the form

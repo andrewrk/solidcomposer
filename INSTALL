@@ -9,3 +9,5 @@ Procedure:
  * copy django code to server
  * touch a file called RELEASE to activate release mode in settings.py
  * make sure database is migrated to latest version
+ * configure files in the /static/* URL to be served statically, bypassing
+   django. the files that are served here should be a softlink to media/static/.

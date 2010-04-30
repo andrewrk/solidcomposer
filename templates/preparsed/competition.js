@@ -15,6 +15,21 @@ var state_compo = null;
 var resubmitting = false;
 
 
+// if we're not playing any song, and we should be,
+// skip to where we should be and play.
+// if we're not playing any song but will be soon,
+// pre-load it.
+function checkIfShouldPlaySong() {
+    if (ongoingListeningParty(state_compo.compo)) {
+        // figure out what currently playing song should be
+        if (! $("#jplayer").jPlayer("getData", "diag.isPlaying")) {
+            $("#jplayer").jPlayer("setFile", MEDIA_URL+state_compo.party.entry.song.mp3_file);
+            $("#jplayer").jPlayer("playHeadTime", state_compo.party.track_position*1000);
+            $("#jplayer").jPlayer("play");
+        }
+    }
+}
+
 // functions called when submitting upload entry form.
 function submitEntryStartCallback() {
 
@@ -44,16 +59,17 @@ function computeListeningPartyState() {
         pos += state_compo.entries[i].song.length;
         ++i;
     }
-    state_compo.party = {};
-    state_compo.party.index = i-1;
-    state_compo.party.entry = state_compo.entries[i-1];
-    state_compo.party.track_position = position - last_start;
+    state_compo.party = {
+        index: i-1,
+        entry: state_compo.entries[i-1],
+        track_position: position - last_start,
+    };
 }
 
 // true if we are in the middle of a listening party
 function ongoingListeningParty(compo) {
     return compo != null && compo.have_listening_party &&
-        secondsSince(compo.listening_party_start_date > 0) &&
+        secondsSince(compo.listening_party_start_date) > 0 &&
         secondsUntil(compo.listening_party_end_date) > 0;
 }
 
@@ -84,8 +100,6 @@ function updateStatus() {
 function updateCurrentEntry() {
     if (state_compo == null)
         return;
-    if (ongoingListeningParty(state_compo.compo))
-        computeListeningPartyState();
     $("#current-entry").html(Jst.evaluate(template_current_entry_s, state_compo));
 }
 
@@ -115,6 +129,7 @@ function updateCompo() {
         $("#submission").show('fast');
     else
         $("#submission").hide('fast');
+
 }
 
 function ajaxRequest() {
@@ -124,6 +139,8 @@ function ajaxRequest() {
 
         state_compo = data;
 
+        if (ongoingListeningParty(state_compo.compo))
+            computeListeningPartyState();
         updateCompo();
     });
 }
@@ -134,8 +151,15 @@ function ajaxRequestLoop() {
 }
 
 function updateDatesLoop() {
-    updateStatus();
-    updateCurrentEntry();
+    if (state_compo != null) {
+        if (ongoingListeningParty(state_compo.compo))
+            computeListeningPartyState();
+
+        updateStatus();
+        updateCurrentEntry();
+        checkIfShouldPlaySong();
+    }
+
     setTimeout(updateDatesLoop, 1000);
 }
 
@@ -153,5 +177,15 @@ $(document).ready(function(){
     updateDatesLoop();
     chatInitialize();
     loginInitialize();
+
+    $("#jplayer").jPlayer({
+        ready: function(){
+            checkIfShouldPlaySong();
+            this.element.jPlayer("onSoundComplete", function(){
+                checkIfShouldPlaySong();
+            });
+        },
+        swfPath: "/static",
+    });
 });
 

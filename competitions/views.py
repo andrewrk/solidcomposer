@@ -13,12 +13,14 @@ from opensourcemusic.competitions.forms import *
 from datetime import datetime, timedelta
 import tempfile
 import os
+import stat
 import string
 
 def upload_file(f, new_name):
     handle = open(new_name, 'wb+')
     upload_file_h(f, handle)
     handle.close()
+    os.chmod(new_name, stat.S_IRUSR|stat.S_IRGRP|stat.S_IROTH)
 
 def upload_file_h(f, handle):
     for chunk in f.chunks():
@@ -132,6 +134,8 @@ def ajax_submit_entry(request):
 
     # move the mp3 file
     shutil.move(handle.name, mp3_safe_path)
+    # give it read permissions
+    os.chmod(mp3_safe_path, stat.S_IWUSR|stat.S_IRUSR|stat.S_IRGRP|stat.S_IROTH)
 
     entries = Entry.objects.filter(owner=request.user.get_profile(), competition=compo)
     if entries.count() > 0:

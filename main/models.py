@@ -10,7 +10,6 @@ class Profile(models.Model):
     activated = models.BooleanField()
     activate_code = models.CharField(max_length=256)
     date_activity = models.DateTimeField(auto_now=True)
-    logon_count = models.IntegerField()
 
     # the competitions the player has bookmarked
     competitions_bookmarked = models.ManyToManyField('Competition', blank=True, related_name='competitions_bookmarked')

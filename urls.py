@@ -1,10 +1,13 @@
 from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
+from django.views.generic.simple import direct_to_template, redirect_to
 from django.contrib import admin
 import django_cron
+import os
 
 admin.autodiscover()
 django_cron.autodiscover()
+
+from opensourcemusic import settings
 
 urlpatterns = patterns('',
     (r'^$', direct_to_template, {'template': 'home.html'}),
@@ -20,5 +23,12 @@ urlpatterns = patterns('',
 
     (r'^login/$', 'opensourcemusic.main.views.user_login'),
     (r'^logout/$', 'opensourcemusic.main.views.user_logout'),
+
 )
+# exceptions to media url
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        (r'^static/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': os.path.join(settings.MEDIA_ROOT, 'static')}),
+    )
 
