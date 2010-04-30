@@ -39,6 +39,19 @@ function ongoingListeningParty(compo) {
         ! compo.have_listening_party);
 }
 
+// return the server time of when voting is allowed
+function voteStartDate(compo) {
+    return compo.have_listening_party ?
+        compo.listening_party_end_date :
+        compo.submit_deadline;
+}
+
+// true if people can vote right now
+function votingActive(compo) {
+    return secondsUntil(compo.vote_deadline) > 0 &&
+       secondsSince(voteStartDate(compo)) > 0;
+}
+
 function updateStatus() {
     if (state_compo == null)
         return;
