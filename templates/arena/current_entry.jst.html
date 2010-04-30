@@ -1,0 +1,15 @@
+<% if (ongoingListeningParty(compo)) { %>
+    <div id="track">
+        Currently playing: <%= party.entry.owner.artist_name %> - <%= party.entry.song.title  %>
+        <%= timeDisplay(party.track_position) %> / 
+        <%= timeDisplay(party.entry.song.length) %>
+    </div>
+    <% if (party.entry.song.comments) { %>
+        <div id="track-info">
+            <h4>Author Comments</h4>
+            <p>
+                <%= party.entry.song.comments %>
+            </p>
+        </div>
+    <% } %>
+<% } %>

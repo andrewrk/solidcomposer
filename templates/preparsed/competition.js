@@ -34,12 +34,27 @@ function submitEntryCompleteCallback(response) {
     ajaxRequest();
 }
 
+function computeListeningPartyState() {
+    var position = secondsSince(state_compo.compo.listening_party_start_date);
+    var i = 0;
+    var pos = 0;
+    var last_start = 0;
+    while (pos < position && i < state_compo.entries.length) {
+        last_start = pos;
+        pos += state_compo.entries[i].song.length;
+        ++i;
+    }
+    state_compo.party = {};
+    state_compo.party.index = i-1;
+    state_compo.party.entry = state_compo.entries[i-1];
+    state_compo.party.track_position = position - last_start;
+}
+
 // true if we are in the middle of a listening party
 function ongoingListeningParty(compo) {
-    return compo != null && secondsUntil(compo.vote_deadline) > 0 &&
-    ((compo.have_listening_party &&
-        secondsUntil(compo.listening_party_end_date) <= 0) ||
-        ! compo.have_listening_party);
+    return compo != null && compo.have_listening_party &&
+        secondsSince(compo.listening_party_start_date > 0) &&
+        secondsUntil(compo.listening_party_end_date) > 0;
 }
 
 // return the server time of when voting is allowed
@@ -63,8 +78,15 @@ function submissionActive() {
 function updateStatus() {
     if (state_compo == null)
         return;
-
     $("#status").html(Jst.evaluate(template_status_s, state_compo));
+}
+
+function updateCurrentEntry() {
+    if (state_compo == null)
+        return;
+    if (ongoingListeningParty(state_compo.compo))
+        computeListeningPartyState();
+    $("#current-entry").html(Jst.evaluate(template_current_entry_s, state_compo));
 }
 
 function updateCompo() {
@@ -72,10 +94,10 @@ function updateCompo() {
         return;
 
     updateStatus();
+    updateCurrentEntry();
     $("#vote-status").html(Jst.evaluate(template_vote_status_s, state_compo));
     $("#info").html(Jst.evaluate(template_info_s, state_compo));
     $("#entry-area").html(Jst.evaluate(template_entries_s, state_compo));
-    $("#current-entry").html(Jst.evaluate(template_current_entry_s, state_compo));
 
     // clicks for entry-area
     $("#resubmit").click(function(){
@@ -113,6 +135,7 @@ function ajaxRequestLoop() {
 
 function updateDatesLoop() {
     updateStatus();
+    updateCurrentEntry();
     setTimeout(updateDatesLoop, 1000);
 }
 
@@ -121,7 +144,6 @@ function compileTemplates() {
     template_info_s = Jst.compile(template_info);
     template_vote_status_s = Jst.compile(template_vote_status);
     template_entries_s = Jst.compile(template_entries);
-    template_onliners_s = Jst.compile(template_onliners);
     template_current_entry_s = Jst.compile(template_current_entry);
 }
 

@@ -2,11 +2,11 @@
  == to get a prototype working ==
  * competition page
    - listening party behavior
+     > make sure who is online is refreshing
    - voting behavior
    - voting closed behavior
-   - replay listening party feature
-     > put an indicator on the page so you know whether it's live or replay
    - when the compo goes from one state to another, refresh via ajax
+   - handle join/part messages by removing them or adding them to the array
  * register
  * user profile page
  * settings page
@@ -18,6 +18,9 @@
  * put whitelist/blacklist/open in the create competition page. default open.
  * put a cap on file size of uploaded things
  * buff up safe_file to make unique files as advertised
+ * test with a messed up clock
+ * instead of serverTime(new Date()) for latest_check, use the timestamp from
+   the last received message.
 
  == improvements ==
  * pressing enter in the password field should submit the form
@@ -42,6 +45,8 @@
  * better feedback for a failed submission than an alert box.
  * make the gui experience of clicking edit on a submission and then
    deciding not to better.
+ * replay listening party feature
+  - put an indicator on the page so you know whether it's live or replay
 
 = project manager / band page =
 

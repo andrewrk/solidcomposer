@@ -1,17 +1,26 @@
 <h4>Entries (<%= entries.length %> so far)</h4>
 <div id="entries">
     <% for (var i=0; i<entries.length; ++i) { var entry = entries[i]; %>
-        <% if (entry.owner.user == user.id) { %>
-            <div class="entry-user">
+        <% if (ongoingListeningParty(compo) && i == party.index) { %>
+            <div class="entry-playing">
                 <%= entry.owner.artist_name %> - <%= entry.song.title %>
-                <% if (submissionActive()) { %>
-                    (<a href="#" id="resubmit">edit</a>)
-                <% } %>
+                (<%= timeDisplay(entry.song.length) %>)
             </div>
         <% } else { %>
-            <div class="entry">
-                <%= entry.owner.artist_name %> - <%= entry.song.title %>
-            </div>
+            <% if (entry.owner.user == user.id) { %>
+                <div class="entry-user">
+                    <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                    (<%= timeDisplay(entry.song.length) %>)
+                    <% if (submissionActive()) { %>
+                        (<a href="#" id="resubmit">edit</a>)
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div class="entry">
+                    <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                    (<%= timeDisplay(entry.song.length) %>)
+                </div>
+            <% } %>
         <% } %>
     <% } %>
 </div>

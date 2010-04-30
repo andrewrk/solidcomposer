@@ -35,9 +35,8 @@ function prettyTime(serverTime) {
     return hour + ":" + min + ":" + sec + " " + ampm;
 }
 
-// takes milliseconds and returns a nice display like 0:00
-function timeDisplay(ms) {
-    var sec = ms / 1000;
+// takes seconds and returns a nice display like 0:00
+function timeDisplay(sec) {
     var min = sec / 60;
     var hr = min / 60;
 
@@ -57,14 +56,14 @@ function timeDisplay(ms) {
 function timeDisplayUntil(serverTime) {
     var local = localTime(serverTime);
     var now = new Date();
-    return timeDisplay(local - now);
+    return timeDisplay((local - now)/1000);
 }
 
 // return how many minutes since a server time in a nice display format
 function timeDisplaySince(serverTime) {
     var local = localTime(serverTime);
     var now = new Date();
-    return timeDisplay(now - local);
+    return timeDisplay((now - local)/1000);
 }
 
 // make sure parameter is converted to a date
