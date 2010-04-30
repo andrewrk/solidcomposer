@@ -1,6 +1,5 @@
 = arena =
  == to get a prototype working ==
- * automatically bookmark competitions the user creates
  * when you sign in or sign out it should clear the username/pass box
  * uploading an entry should clear that form
  * the online users is sketchy at best
@@ -21,6 +20,8 @@
  * settings page
  * make the gui pretty
    - date/time widgets for competition form
+ * validate dates when making a new competition (deadline can't be before
+   start_date, etc)
  * edit competition
  * re-implement safe_model_to_dict to make it safer. should probably have
    explicit safe fields in models.

@@ -336,6 +336,7 @@ def ajax_owned(request):
 
 @login_required
 def create(request):
+    prof = request.user.get_profile()
     err_msg = ""
     if request.method == 'POST':
         form = CreateCompetitionForm(request.POST)
@@ -343,7 +344,7 @@ def create(request):
             # create and save the Competition
             comp = Competition()
             comp.title = form.cleaned_data.get('title')
-            comp.host = request.user.get_profile()
+            comp.host = prof
 
             comp.preview_theme = form.cleaned_data.get('preview_theme', False)
             if form.cleaned_data.get('have_theme', False):
@@ -393,6 +394,11 @@ def create(request):
             comp.chat_room = chatroom;
 
             comp.save()
+
+
+            # automatically bookmark it
+            prof.competitions_bookmarked.add(comp)
+            prof.save();
 
             return HttpResponseRedirect('/arena/')
     else:
