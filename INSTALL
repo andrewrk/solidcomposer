@@ -11,3 +11,5 @@ Procedure:
  * make sure database is migrated to latest version
  * configure files in the /static/* URL to be served statically, bypassing
    django. the files that are served here should be a softlink to media/static/.
+ * verify that the cron.py thing is working. if it's not, you need to set up
+   a cron job manually to do the task it was going to do.

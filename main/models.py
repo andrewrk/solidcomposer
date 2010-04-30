@@ -6,7 +6,7 @@ OPEN, WHITELIST, BLACKLIST = range(3)
 
 class Profile(models.Model):
     user = models.ForeignKey(User, unique=True)
-    artist_name = models.CharField(max_length=256)
+    artist_name = models.CharField(max_length=100)
     activated = models.BooleanField()
     activate_code = models.CharField(max_length=256)
     date_activity = models.DateTimeField(auto_now=True)

@@ -8,8 +8,9 @@ class LoginForm(forms.Form):
     next_url = forms.CharField(max_length=256, widget=forms.HiddenInput)
 
 class RegisterForm(forms.Form):
-    username = forms.CharField(max_length=24)
-    email = forms.EmailField(max_length=32)
+    username = forms.CharField(max_length=30)
+    artist_name = forms.CharField(max_length=80)
+    email = forms.EmailField(max_length=80)
     password = forms.CharField(max_length=50, widget=forms.widgets.PasswordInput())
     confirm_password = forms.CharField(max_length=50, widget=forms.widgets.PasswordInput())
     

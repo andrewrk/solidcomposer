@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Create an account - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h2>Create an account</h2>
+    {% if err_msg %}
+    <p>{{ err_msg }}</p>
+    {% endif %}
+    <form action="." method="post">
+        <table class="form-table">
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Register" />
+    </form>
+    <h2>Already have an account?</h2>
+    <a href="/login/">Log in.</a>
+{% endblock %}
