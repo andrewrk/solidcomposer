@@ -63,7 +63,7 @@ function updateAvailable() {
     if (state_available == null)
         return;
 
-    $("#available").html(Jst.evaluateCompiled(template_available_s, state_available));
+    $("#available").html(Jst.evaluate(template_available_s, state_available));
 
     addClicksToSection(state_available);
 }
@@ -72,7 +72,7 @@ function updateOwned() {
     if (state_owned == null)
         return;
 
-    $("#owned").html(Jst.evaluateCompiled(template_owned_s, state_owned));
+    $("#owned").html(Jst.evaluate(template_owned_s, state_owned));
 
     if (state_owned.user.is_authenticated)
         addClicksToSection(state_owned);

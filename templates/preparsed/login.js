@@ -38,7 +38,7 @@ function updateLogin() {
         return;
 
     // populate div with template parsed with json object
-    $("#login").html(Jst.evaluateCompiled(template_login_s, state_login));
+    $("#login").html(Jst.evaluate(template_login_s, state_login));
 
     displayCorrectly($("#loginFormDiv"), loginFormDisplayed);
     displayCorrectly($("#loginFormError"), loginFormError);

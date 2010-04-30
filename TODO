@@ -13,8 +13,6 @@
  * make the gui pretty
    - date/time widgets for competition form
  * edit competition
- * protect against bad data with javascript
-   - make Jst support auto escaping. can have special function for not escaping.
  * re-implement safe_model_to_dict to make it safer. should probably have
    explicit safe fields in models.
  * put whitelist/blacklist/open in the create competition page. default open.

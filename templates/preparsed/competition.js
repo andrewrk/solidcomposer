@@ -64,7 +64,7 @@ function updateStatus() {
     if (state_compo == null)
         return;
 
-    $("#status").html(Jst.evaluateCompiled(template_status_s, state_compo));
+    $("#status").html(Jst.evaluate(template_status_s, state_compo));
 }
 
 function updateCompo() {
@@ -72,10 +72,10 @@ function updateCompo() {
         return;
 
     updateStatus();
-    $("#vote-status").html(Jst.evaluateCompiled(template_vote_status_s, state_compo));
-    $("#info").html(Jst.evaluateCompiled(template_info_s, state_compo));
-    $("#entry-area").html(Jst.evaluateCompiled(template_entries_s, state_compo));
-    $("#current-entry").html(Jst.evaluateCompiled(template_current_entry_s, state_compo));
+    $("#vote-status").html(Jst.evaluate(template_vote_status_s, state_compo));
+    $("#info").html(Jst.evaluate(template_info_s, state_compo));
+    $("#entry-area").html(Jst.evaluate(template_entries_s, state_compo));
+    $("#current-entry").html(Jst.evaluate(template_current_entry_s, state_compo));
 
     // clicks for entry-area
     $("#resubmit").click(function(){
