@@ -22,8 +22,6 @@
    - possibly use ajax to improve offset calculation between server and local.
  * instead of serverTime(new Date()) for latest_check, use the timestamp from
    the last received message.
- * support some kind of formatting for author comments and such. minimum:
-   honor line breaks. maximum: a bb-like system or markdown.
 
  == improvements ==
  * protect against h4xz0rz by adding a @method to views which do things like
@@ -62,6 +60,8 @@
  * cron job to delete users who register and don't activate after a certain
    period of time. or just allow their accounts to be overwritten if they
    are old.
+ * support some kind of formatting for author comments and such. minimum:
+   honor line breaks. maximum: a bb-like system or markdown.
 
 == next gen ==
  * google map integration
