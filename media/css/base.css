@@ -5,9 +5,25 @@ body {
     padding: 0;
 }
 
+h1 {
+    font-size: 20px;
+    margin: 0; 
+    padding: 0;
+}
+
+h2 {
+    font-size: 18px;
+    margin: 0; 
+    padding: 12px 0;
+}
+
 p {
     margin: 0;
     padding: 10px;
+}
+
+img {
+    border: none;
 }
 
 #css-login {
@@ -32,7 +48,7 @@ td.label {
 #logo {
     background: #ffffff url('../img/logo3.png') no-repeat center;
     height: 108px;
-    margin: 0 auto -10px auto;
+    margin: 0 auto 0 auto;
     padding: 0;
     font-size: 12px;
 }
@@ -59,4 +75,8 @@ td.label {
     background: #ffffff url(../img/blurrystaff.jpg) no-repeat center top;
 }
 
-
+.points {
+    background: url('../img/star.png') no-repeat center center;
+    margin: 0;
+    padding: 2px 8px;
+}

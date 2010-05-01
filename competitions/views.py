@@ -319,7 +319,7 @@ def ajax_bookmark(request, id):
 
 def compo_to_dict(compo, user):
     data = safe_model_to_dict(compo)
-    if user.is_authenticated:
+    if user.is_authenticated():
         # see if the user entered the compo
         entries = Entry.objects.filter(owner=user.get_profile(), competition=compo)
         if entries.count() > 0:
