@@ -18,7 +18,7 @@
             </p>
         </div>
     <% } %>
-<% } else if (votingActive(compo)) { %>
+<% } else if (votingActive(compo) || compoClosed(compo)) { %>
     <% if (playback_current_track.entry) { %>
         <div id="track">
             Currently playing: <%= playback_current_track.entry.owner.artist_name %> -

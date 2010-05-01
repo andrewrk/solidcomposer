@@ -266,7 +266,9 @@ $(document).ready(function(){
                     {
                         this.element.jPlayer("pause");
                     }
-                } else if (votingActive(state_compo.compo)) {
+                } else if (votingActive(state_compo.compo) || 
+                    compoClosed(state_compo.compo))
+                {
                     playback_current_track.track_position = playedTime/1000;
                     updateCurrentEntry();
                 }
