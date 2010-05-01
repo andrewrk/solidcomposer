@@ -17,8 +17,11 @@ var MEDIA_URL = "{{ MEDIA_URL }}";
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/competition.js"></script>
 {% endblock %}
 
-{% block content %}
+{% block extra_body %}
     <div id="jplayer"></div>
+{% endblock %}
+
+{% block content %}
     {% include 'login_div.html' %}
     <h1>Arena</h1>
     <p>Back to <a href="/arena/">Arena</a></p>

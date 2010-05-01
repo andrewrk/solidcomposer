@@ -1,0 +1,41 @@
+body {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+}
+
+#logo {
+    background: #ffffff url('../img/logo3.png') no-repeat center;
+    height: 108px;
+    margin: 0 auto 0 auto;
+    padding: 0;
+    font-size: 12px;
+}
+
+#logo img {
+    margin: 0 0 0 0;
+    padding: 0;
+}
+
+#logo p {
+    margin: 0;
+    padding: 4px 0 0 4px;
+}
+
+#footer {
+    text-align: center;
+    font-size: 10px;
+}
+
+#wrapper {
+    margin: 0;
+    padding: 0 0 0 100px;
+    text-align: left;
+    background: #ffffff url(../img/blurrystaff.jpg) no-repeat center top;
+}
+
+p {
+    margin: 0;
+    padding: 10px;
+}
