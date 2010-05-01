@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
+from django.db.models import Count
 
 from opensourcemusic.competitions.models import *
 from opensourcemusic import settings
@@ -216,22 +217,28 @@ def ajax_compo(request, id):
         d['song'] = safe_model_to_dict(entry.song)
         return d
 
+    now = datetime.now()
     data = {
         'user': {
             'is_authenticated': False,
         },
         'compo': safe_model_to_dict(compo),
-        'entries': [add_to_entry(x) for x in compo.entry_set.all()],
         'party': {
             'buffer_time': settings.LISTENING_PARTY_BUFFER_TIME,
         }
     }
 
+    # entries. if competition is closed, sort by vote count.
+    if now > compo.vote_deadline:
+        entries = compo.entry_set.annotate(vote_count=Count('thumbsup')).order_by('-vote_count')
+    else:
+        entries = compo.entry_set.order_by('submit_date')
+    data['entries'] = [add_to_entry(x) for x in entries]
+
     data['compo']['have_theme'] = compo.theme != ''
     data['compo']['have_rules'] = compo.rules != ''
 
     # send the rules and theme if it's time
-    now = datetime.now()
     compo_started = compo.start_date <= now
     if compo_started or compo.preview_theme:
         data['compo']['theme'] = compo.theme
