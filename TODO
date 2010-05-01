@@ -1,7 +1,7 @@
 = arena =
  == to get a prototype working ==
  * competition page
-   - when the compo goes from one state to another, refresh via ajax
+   - disallow voting for yourself
  * make the gui usable
    - date/time widgets for competition form
  * validate dates when making a new competition (deadline can't be before

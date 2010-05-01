@@ -17,6 +17,35 @@ var playback_current_track = {
     index: -1,
     entry: null,
 };
+// states:
+// 0 - waiting for compo to start
+// 1 - waiting for submission deadline
+// 2 - waiting for listening party start
+// 3 - ongoing listening party
+// 4 - voting
+// 5 - competition closed
+var current_state = null;
+
+// figure out what state we're on based on dates and state_compo
+function getCurrentState() {
+    if (secondsUntil(state_compo.compo.start_date) > 0) {
+        return 0;
+    } else if (secondsUntil(state_compo.compo.submit_deadline) > 0) {
+        return 1;
+    }
+    if (state_compo.compo.have_listening_party) {
+        if (secondsUntil(state_compo.compo.listening_party_start_date) > 0) {
+            return 2;
+        } else if (secondsUntil(state_compo.compo.listening_party_end_date) > 0) {
+            return 3;
+        }
+    }
+    if (secondsUntil(state_compo.compo.vote_deadline) > 0) {
+        return 4;
+    } else {
+        return 5;
+    }
+}
 
 // if we're not playing any song, and we should be,
 // skip to where we should be and play.
@@ -200,6 +229,7 @@ function ajaxRequest() {
 
         state_compo = data;
 
+        current_state = getCurrentState();
         if (ongoingListeningParty(state_compo.compo))
             computeListeningPartyState();
         if (votingActive(state_compo.compo)) {
@@ -224,6 +254,11 @@ function ajaxRequestLoop() {
 
 function updateDatesLoop() {
     if (state_compo != null) {
+        var new_state = getCurrentState();
+        if (new_state != current_state)
+            ajaxRequest();
+        current_state = new_state;
+
         if (ongoingListeningParty(state_compo.compo))
             computeListeningPartyState();
 
