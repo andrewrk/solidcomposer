@@ -13,6 +13,21 @@
  *
  */
 
+var month_names_full = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+];
+
 // pads an integer with a zero if necessary and returns a string
 function pad(num) {
     return ((num < 10) ? "0" : "") + num;
@@ -76,7 +91,10 @@ function coerceDate(date_or_string) {
 
 // pretty print a datetime
 function formatDate(datetime) {
-    return datetime.toString();
+    return month_names_full[datetime.getMonth()] + " " +
+        datetime.getDate() + ", " +
+        datetime.getFullYear() + " at " +
+        datetime.toLocaleTimeString();
 }
 
 // convert a sever time to a local time

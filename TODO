@@ -1,8 +1,6 @@
 = arena =
  == to get a prototype working ==
  * competition page
-   - listening party behavior
-     > make song comments during chat during listening party
    - voting behavior
    - competition closed behavior
      > reveal votes
@@ -22,6 +20,10 @@
  * instead of serverTime(new Date()) for latest_check, use the timestamp from
    the last received message.
  * paging on competitions. right now it sends them all.
+ * make sure it works in 
+   - IE 8
+   - chrome
+   - safari
 
  == improvements ==
  * protect against h4xz0rz by adding a @method to views which do things like
@@ -63,6 +65,7 @@
    honor line breaks. maximum: a bb-like system or markdown.
  * compo owner gets skip song controls
  * compo owner can make other people moderators too
+ * listening party - make song comments during chat during listening party
 
 == next gen ==
  * google map integration
