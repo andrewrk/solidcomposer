@@ -214,8 +214,8 @@ function updateCompo() {
     updateEntryArea();
 
     // show/hide submission form
-    var show_submission_form = submissionActive() &&
-        (! state_compo.submitted || resubmitting);
+    var show_submission_form = state_compo.user.is_authenticated &&
+        submissionActive() && (! state_compo.submitted || resubmitting);
     if (show_submission_form)
         $("#submission").show('fast');
     else

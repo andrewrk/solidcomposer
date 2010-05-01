@@ -1,9 +1,7 @@
 = arena =
  == to get a prototype working ==
- * chat use last received message id instead of date
- * make the gui usable
-   > competition page
  * deploy
+ * chat use last received message id instead of date
  * make the gui pretty
    > award star with a number in it next to person's name instead of parens
    > thumbs ups instead of voting
