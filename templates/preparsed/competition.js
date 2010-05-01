@@ -18,10 +18,6 @@ var playback_current_track = {
     entry: null,
 };
 
-function pauseJPlayer() {
-    $("#jplayer").jPlayer("pause");
-}
-
 // if we're not playing any song, and we should be,
 // skip to where we should be and play.
 // if we're not playing any song but will be soon,
@@ -36,8 +32,7 @@ function checkIfShouldPlaySong() {
                 // pre-load
                 jp.jPlayer("setFile", current_url);
                 jp.jPlayer("play");
-                // we have to call pause on a timer otherwise it will play
-                //setTimeout(pauseJPlayer, 1000);
+                // the onProgress handler will pause it when it starts playing.
             }
             if (state_compo.party.track_position >= 0) {
                 jp.jPlayer("playHeadTime", state_compo.party.track_position*1000);
@@ -100,6 +95,10 @@ function voteStartDate(compo) {
 function votingActive(compo) {
     return secondsUntil(compo.vote_deadline) > 0 &&
        secondsSince(voteStartDate(compo)) > 0;
+}
+
+function compoClosed(compo) {
+    return secondsSince(compo.vote_deadline) > 0;
 }
 
 function submissionActive() {

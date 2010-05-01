@@ -211,13 +211,6 @@ def ajax_compo(request, id):
     id = int(id)
     compo = get_object_or_404(Competition, id=id)
 
-    def add_to_entry(entry):
-        d = safe_model_to_dict(entry)
-        d['owner'] = safe_model_to_dict(entry.owner)
-        d['song'] = safe_model_to_dict(entry.song)
-        return d
-
-    now = datetime.now()
     data = {
         'user': {
             'is_authenticated': False,
@@ -229,7 +222,17 @@ def ajax_compo(request, id):
     }
 
     # entries. if competition is closed, sort by vote count.
-    if now > compo.vote_deadline:
+    now = datetime.now()
+    compo_closed = (now > compo.vote_deadline)
+    def add_to_entry(entry):
+        d = safe_model_to_dict(entry)
+        d['owner'] = safe_model_to_dict(entry.owner)
+        d['song'] = safe_model_to_dict(entry.song)
+        if compo_closed:
+            d['vote_count'] = ThumbsUp.objects.filter(entry=entry).count()
+        return d
+
+    if compo_closed:
         entries = compo.entry_set.annotate(vote_count=Count('thumbsup')).order_by('-vote_count')
     else:
         entries = compo.entry_set.order_by('submit_date')
