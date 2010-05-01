@@ -126,7 +126,14 @@ def compile_file(source, dest, force):
         file = open(dest, 'w')
         in_text = open(source, 'r').read().decode()
         template = Template(in_text)
-        context = Context(settings.PREPARSE_CONTEXT)
+
+        # manually add settings from settings.py :(
+        hash = settings.PREPARSE_CONTEXT
+        hash.update({
+            'MEDIA_URL': settings.MEDIA_URL,
+        })
+        
+        context = Context(hash)
         file.write(template.render(context))
         file.close()
 

@@ -317,41 +317,38 @@ def ajax_bookmark(request, id):
 
     return json_response(data)
 
+def compo_to_dict(compo, user):
+    data = safe_model_to_dict(compo)
+    if user.is_authenticated:
+        # see if the user entered the compo
+        entries = Entry.objects.filter(owner=user.get_profile(), competition=compo)
+        if entries.count() > 0:
+            data['user_entered'] = True
+            entry = entries[0]
+            data['vote_count'] = ThumbsUp.objects.filter(entry=entry).count()
+    return data
+
 def ajax_available(request):
-    upcoming = filter_upcoming(Competition.objects)
-    ongoing = filter_ongoing(Competition.objects)
-    closed = filter_closed(Competition.objects)
+    compos = Competition.objects
 
     # don't show bookmarked items
     if request.user.is_authenticated():
         pkeys = request.user.get_profile().competitions_bookmarked.values_list('pk')
-        upcoming = upcoming.exclude(pk__in=pkeys)
-        ongoing = ongoing.exclude(pk__in=pkeys)
-        closed = closed.exclude(pk__in=pkeys)
+        compos = compos.exclude(pk__in=pkeys)
+    else:
+        compos = compos
+
+    compos = compos.order_by('-start_date')
 
     # build the json object
     data = {
-        'upcoming': [safe_model_to_dict(x) for x in upcoming],
-        'ongoing': [safe_model_to_dict(x) for x in ongoing],
-        'closed': [safe_model_to_dict(x) for x in closed],
+        'compos': [compo_to_dict(x, request.user) for x in compos],
         'user': {
             'is_authenticated': request.user.is_authenticated(),
         },
     }
 
     return json_response(data)
-
-def filter_upcoming(query_set):
-    now = datetime.now()
-    return query_set.filter(start_date__gt=now).order_by('start_date')
-
-def filter_ongoing(query_set):
-    now = datetime.now()
-    return query_set.filter(start_date__lte=now).filter(vote_deadline__gt=now).order_by('start_date')
-
-def filter_closed(query_set):
-    now = datetime.now()
-    return query_set.filter(vote_deadline__lte=now).order_by('start_date')
 
 def ajax_owned(request):
     data = {
@@ -364,19 +361,8 @@ def ajax_owned(request):
         return json_response(data)
 
     # only show bookmarked items
-    now = datetime.now()
-    bookmarked = request.user.get_profile().competitions_bookmarked
-
-    upcoming = filter_upcoming(bookmarked)
-    ongoing = filter_ongoing(bookmarked)
-    closed = filter_closed(bookmarked)
-
-    # build the json object
-    data.update({
-        'upcoming': [safe_model_to_dict(x) for x in upcoming],
-        'ongoing': [safe_model_to_dict(x) for x in ongoing],
-        'closed': [safe_model_to_dict(x) for x in closed],
-    })
+    compos = request.user.get_profile().competitions_bookmarked.order_by('start_date')
+    data['compos'] = [compo_to_dict(x, request.user) for x in compos]
 
     return json_response(data)
 

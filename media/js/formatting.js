@@ -89,11 +89,16 @@ function coerceDate(date_or_string) {
         return new Date(date_or_string);
 }
 
+// pretty print only a date
+function formatDate(theDate) {
+    return month_names_full[theDate.getMonth()] + " " +
+        theDate.getDate() + ", " +
+        theDate.getFullYear();
+}
+
 // pretty print a datetime
-function formatDate(datetime) {
-    return month_names_full[datetime.getMonth()] + " " +
-        datetime.getDate() + ", " +
-        datetime.getFullYear() + " at " +
+function formatDateTime(datetime) {
+    return formatDate(datetime) + " at " +
         datetime.toLocaleTimeString();
 }
 

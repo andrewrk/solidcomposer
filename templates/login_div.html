@@ -3,22 +3,23 @@
     {% include 'loading.html' %}
     </div>
     <div style="display: none;" id="loginFormDiv">
-        <form id="loginForm">
+        <form id="loginForm" action="/login/">
             <table>
                 <tr>
-                <td class="label">
-                    <label for="loginName" />username:</label>
-                </td>
-                <td>
-                    <input type="text" id="loginName" value="" />
-                </td>
+                    <td class="label">
+                        <label for="loginName">username:</label>
+                    </td>
+                    <td>
+                        <input type="text" id="loginName" value="" />
+                    </td>
                 </tr>
-                <td class="label">
-                    <label for="loginPassword" />password:</label>
-                </td>
-                <td>
-                    <input type="password" id="loginPassword" value="" />
-                </td>
+                <tr>
+                    <td class="label">
+                        <label for="loginPassword">password:</label>
+                    </td>
+                    <td>
+                        <input type="password" id="loginPassword" value="" />
+                    </td>
                 </tr>
             </table>
             <div id="login-buttons">

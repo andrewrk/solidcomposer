@@ -1,25 +1,14 @@
 <% if (user.is_authenticated) { %>
-    <h2>My Competions</h2>
-    <% if (upcoming.length > 0 || ongoing.length > 0 || closed.length > 0) { %>
-        <% if (upcoming.length > 0) { %>
-            <h3>Upcoming</h3>
-            <% for (var i=0; i<upcoming.length; ++i) { var compo = upcoming[i]; %>
-                {% include 'arena/compo_block.jst.html' %}
+    <div id="my-competitions">
+        <h2>My Competions</h2>
+        <% if (compos.length > 0) { %>
+            <% if (compos.length > 0) { %>
+                <% for (var i=0; i<compos.length; ++i) { var compo = compos[i]; %>
+                    {% include 'arena/compo_block.jst.html' %}
+                <% } %>
             <% } %>
+        <% } else { %>
+            <p>You have not entered or bookmarked any competitions.</p>
         <% } %>
-        <% if (ongoing.length > 0) { %>
-            <h3>Ongoing</h3>
-            <% for (var i=0; i<ongoing.length; ++i) { var compo = ongoing[i]; %>
-                {% include 'arena/compo_block.jst.html' %}
-            <% } %>
-        <% } %>
-        <% if (closed.length > 0) { %>
-            <h3>Closed</h3>
-            <% for (var i=0; i<closed.length; ++i) { var compo = closed[i]; %>
-                {% include 'arena/compo_block.jst.html' %}
-            <% } %>
-        <% } %>
-    <% } else { %>
-        <p>You have not entered or bookmarked any competitions.</p>
-    <% } %>
+    </div>
 <% } %>

@@ -1,3 +1,53 @@
 @import "base.css";
 
+div.compo {
+    background: #415d85;
+    width: 300px;
+    margin: 0 0 12px 0;
+    padding: 8px;
+    color: #ffffff;
+}
 
+.compo h4 {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+}
+
+.compo p {
+    margin: 0;
+    padding: 0;
+}
+
+.compo-links {
+    text-align: right;
+    margin: 0;
+    padding: 0;
+}
+
+.compo a {
+    color: #ffad46;
+    margin: 0;
+    padding: 0;
+}
+
+#my-competitions {
+    float: right;
+    clear: none;
+    margin: 0 100px 0 0;
+}
+
+.clear {
+    clear: both;
+}
+
+.vote-count {
+    float: right;
+    font-size: 24px;
+}
+
+.vote-count img {
+    margin: 0 4px 0 0;
+    padding: 0;
+}

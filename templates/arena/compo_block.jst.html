@@ -1,4 +1,9 @@
 <div class="compo">
+    <% if (compo.user_entered) { %>
+        <span class="vote-count">
+            <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="+" /><%= compo.vote_count %>
+        </span>
+    <% } %>
     <h4><%= compo.title %></h4>
     <% if (secondsUntil(compo.start_date) > 0) { %>
         <p>starts in <%= printableTimeUntil(compo.start_date) %></p>
@@ -18,11 +23,8 @@
         <p>voting ends in <%= printableTimeUntil(compo.vote_deadline) %></p>
     <% } else { %>
         <p>ended on <%= formatDate(localTime(compo.submit_deadline)) %></p>
-        <% if (compo.user_entered) { %>
-            <p>you got <%= compo.vote_count %> votes</p>
-        <% } %>
     <% } %>
-    <div>
+    <div class="compo-links">
         <a href="/arena/compete/<%= compo.id %>/" id="compo-<%= compo.id %>-view">view</a>
         <% if (user.is_authenticated) { %>
             <% if (compo.bookmarked) { %>

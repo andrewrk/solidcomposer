@@ -15,7 +15,7 @@
 <% } else if (secondsUntil(compo.vote_deadline) > 0) { %>
     <p>voting ends in <%= printableTimeUntil(compo.vote_deadline) %></p>
 <% } else { %>
-    <p>ended on <%= formatDate(localTime(compo.submit_deadline)) %></p>
+    <p>ended on <%= formatDateTime(localTime(compo.submit_deadline)) %></p>
     <% if (compo.user_entered) { %>
         <p>you got <%= compo.vote_count %> votes</p>
     <% } %>

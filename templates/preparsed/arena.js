@@ -40,25 +40,13 @@ function addClicksToCompo(compo) {
 }
 
 function setBookmarkedProperty(data, value) {
-    for(var i=0; i<data.ongoing.length; ++i)
-        data.ongoing[i].bookmarked = value;
-
-    for(var i=0; i<data.closed.length; ++i)
-        data.closed[i].bookmarked = value;
-
-    for(var i=0; i<data.upcoming.length; ++i)
-        data.upcoming[i].bookmarked = value;
+    for(var i=0; i<data.compos.length; ++i)
+        data.compos[i].bookmarked = value;
 }
 
 function addClicksToSection(data) {
-    for(var i=0; i<data.ongoing.length; ++i)
-        addClicksToCompo(data.ongoing[i]);
-
-    for(var i=0; i<data.closed.length; ++i)
-        addClicksToCompo(data.closed[i]);
-
-    for(var i=0; i<data.upcoming.length; ++i)
-        addClicksToCompo(data.upcoming[i]);
+    for(var i=0; i<data.compos.length; ++i)
+        addClicksToCompo(data.compos[i]);
 }
 
 function updateAvailable() {

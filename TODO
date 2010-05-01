@@ -28,6 +28,7 @@
  * compo owner can make other people moderators too
  * listening party - make song comments during chat during listening party
  * use === instead of ==
+ * better competition ordering in arena
 
  * protect against h4xz0rz by adding a @method to views which do things like
    login, logout, etc. The method would make sure the referrer was us and not
