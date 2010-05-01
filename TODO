@@ -1,11 +1,5 @@
 = arena =
  == to get a prototype working ==
- * not signed in on competition page on LOL has issues
- * make sure it works in 
-   - IE 8
-   - chrome
-     > doesn't update the now playing time
-   - safari
  * make the gui usable
 
  == improvements ==
