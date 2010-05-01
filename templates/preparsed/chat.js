@@ -167,6 +167,10 @@ function chatAjaxRequest() {
                 --chat_temp_msg_count;
             }
 
+            // see if we're at the bottom of the div
+            var container = $("#chatroom-messages");
+            var scroll = (container.scrollTop() == container.attr('scrollHeight') - container.height());
+
             state_chat.room = data.room;
             state_chat.user = data.user;
             for (var i=0; i<data.messages.length; ++i)
@@ -178,6 +182,10 @@ function chatAjaxRequest() {
                 chat_last_update = null;
 
             updateChat();
+
+            if (scroll) {
+                $("#chatroom-messages").animate({ scrollTop: $("#chatroom-messages").attr('scrollHeight')}, 500);
+            }
         });
 }
 
