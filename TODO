@@ -1,9 +1,6 @@
 = arena =
  == to get a prototype working ==
  * make the gui usable
- * re-implement safe_model_to_dict to make it safer. should probably have
-   explicit safe fields in models.
- * put a cap on file size of uploaded things
  * buff up safe_file to make unique files as advertised
  * test with a messed up clock in windows
    - possibly use ajax to improve offset calculation between server and local.

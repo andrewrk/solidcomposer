@@ -88,6 +88,15 @@ def ajax_submit_entry(request):
     mp3_file = request.FILES.get('entry-file-mp3')
     source_file = request.FILES.get('entry-file-source')
 
+    # make sure files are small enough
+    if mp3_file.size > settings.FILE_UPLOAD_SIZE_CAP:
+        data['reason'] = 'MP3 file is too large.'
+        return json_response(data)
+
+    if source_file.size > settings.FILE_UPLOAD_SIZE_CAP:
+        data['reason'] = 'Project source file is too large.'
+        return json_response(data)
+
     if title == '':
         data['reason'] = 'Entry title is required.'
         return json_response(data)

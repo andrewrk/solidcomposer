@@ -164,3 +164,6 @@ COMPO_ENTRY_MAX_LEN = 10 * 60
 
 # how many seconds to wait between tracks in listening party for buffering
 LISTENING_PARTY_BUFFER_TIME = 10
+
+# how many bytes to limit uploads to
+FILE_UPLOAD_SIZE_CAP = 1024 * 1024 * 10  # 20 MB
