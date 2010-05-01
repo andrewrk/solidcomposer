@@ -38,10 +38,6 @@ div.compo {
     margin: 0 100px 0 0;
 }
 
-.clear {
-    clear: both;
-}
-
 .vote-count {
     float: right;
     font-size: 24px;

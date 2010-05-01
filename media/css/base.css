@@ -98,3 +98,8 @@ form th {
     font-weight: normal;
     text-align: right;
 }
+
+.clear {
+    clear: both;
+}
+

@@ -2,6 +2,8 @@
 
 {% block title %}{{ competition.title }} - {{ block.super }}{% endblock %}
 
+{% block css %}competition.css{% endblock %}
+
 {% block extra_header %}
     {{ block.super }}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/webtoolkit.aim.js"></script>
@@ -23,34 +25,52 @@ var MEDIA_URL = "{{ MEDIA_URL }}";
 
 {% block content %}
     {% include 'login_div.html' %}
-    <h1>Arena</h1>
     <p>Back to <a href="/arena/">Arena</a></p>
-    <h2>{{ competition.title }}</h2>
-    <div id="status">
-        {% include 'loading.html' %}
+    <div id="css-status">
+        <h2>{{ competition.title }}</h2>
+        <div id="status">
+            {% include 'loading.html' %}
+        </div>
+        <div id="vote-status">
+            {% include 'loading.html' %}
+        </div>
     </div>
     <div id="info">
         {% include 'loading.html' %}
     </div>
-    <div id="vote-status">
-        {% include 'loading.html' %}
-    </div>
+    <div class="clear"></div>
     <div id="entry-area">
         {% include 'loading.html' %}
     </div>
     {% include 'chat/chatroom.html' %}
+    <div class="clear"></div>
     <div style="display: none;" id="submission">
         <h4>Your entry</h4>
         <div id="submit-entry">
             <form method="post" enctype="multipart/form-data" action="/arena/ajax/submit-entry/" onsubmit="return AIM.submit(this, {'onStart': submitEntryStartCallback, 'onComplete': submitEntryCompleteCallback})">
-                <input type="hidden" name="compo" value="{{ competition.id }}" />
-                Your rendered song, in mp3 format: <input type="file" name="entry-file-mp3" id="entry-file-mp3" /><br/>
-                (optional) Source project file: <input type="file" name="entry-file-source" id="entry-file-source" /><br/>
-                Song Title: <input type="text" id="entry-title" name="entry-title" value="" maxlength="100" /><br/>
-                (optional) Author's Comments:
-                <textarea name="entry-comments" id="entry-comments"></textarea>
-                <br />
-                <input type="submit" value="submit" />
+            <input type="hidden" name="compo" value="{{ competition.id }}" />
+                <table>
+                <tr>
+                <th><label for="entry-file-mp3">Your rendered song, in mp3 format:</label></th>
+                <td><input type="file" name="entry-file-mp3" id="entry-file-mp3" /></td>
+                </tr>
+                <tr>
+                <th><label for="entry-file-source">(optional) Source project file:</label></th>
+                <td><input type="file" name="entry-file-source" id="entry-file-source" /></td>
+                </tr>
+                <tr>
+                <th><label for="entry-title">Song Title:</label></th>
+                <td><input type="text" id="entry-title" name="entry-title" value="" maxlength="100" /></td>
+                </tr>
+                <tr>
+                <th><label for="entry-comments">(optional) Author's Comments:</label></th>
+                <td><textarea name="entry-comments" id="entry-comments"></textarea></td>
+                </tr>
+                <tr>
+                <td></td>
+                <td <input type="submit" value="submit" /></td>
+                </tr>
+                </table>
             </form>
         </div>
     </div>

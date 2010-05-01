@@ -1,5 +1,7 @@
 = arena =
  == to get a prototype working ==
+ * chat scroll down when other people talk only if the scroll bar is at the 
+   bottom.
  * make the gui usable
    > competition page
  * deploy
