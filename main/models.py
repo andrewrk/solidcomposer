@@ -5,6 +5,12 @@ SYSTEM, ACTION, MESSAGE, JOIN, LEAVE, NOTICE = range(6)
 OPEN, WHITELIST, BLACKLIST = range(3)
 
 class Profile(models.Model):
+    UNSAFE_KEYS = (
+        'activate_code',
+        'activated',
+        'competitions_bookmarked',
+    )
+
     user = models.ForeignKey(User, unique=True)
     artist_name = models.CharField(max_length=100)
     activated = models.BooleanField()
@@ -13,11 +19,6 @@ class Profile(models.Model):
 
     # the competitions the player has bookmarked
     competitions_bookmarked = models.ManyToManyField('Competition', blank=True, related_name='competitions_bookmarked')
-
-    UNSAFE_KEYS = (
-        'activate_code',
-        'activated',
-    )
 
     def __unicode__(self):
         return self.user.username

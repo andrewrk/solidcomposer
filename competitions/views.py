@@ -253,7 +253,7 @@ def ajax_compo(request, id):
         used_votes = ThumbsUp.objects.filter(owner=request.user.get_profile(), entry__competition=compo)
 
         data['user'] = safe_model_to_dict(request.user)
-        data['user']['get_profile'] = request.user.get_profile()
+        data['user']['get_profile'] = safe_model_to_dict(request.user.get_profile())
         data['user']['is_authenticated'] = True
         data['votes'] = {
             'max': max_votes,

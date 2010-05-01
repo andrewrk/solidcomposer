@@ -23,7 +23,7 @@ def remove_unsafe_keys(hash, model):
     look for UNSAFE_KEYS in the model. if it exists, delete all those entries
     from the hash.
     """
-    if isinstance(model, User):
+    if issubclass(model, User):
         check = (
             'password',
             'user_permissions',
