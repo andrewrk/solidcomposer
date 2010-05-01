@@ -1,18 +1,15 @@
 = arena =
  == to get a prototype working ==
- * make the gui usable
- * buff up safe_file to make unique files as advertised
- * test with a messed up clock in windows
-   - possibly use ajax to improve offset calculation between server and local.
  * instead of serverTime(new Date()) for latest_check, use the timestamp from
    the last received message.
- * paging on competitions. right now it sends them all.
  * make sure it works in 
    - IE 8
    - chrome
    - safari
+ * make the gui usable
 
  == improvements ==
+ * paging on competitions. right now it sends them all.
  * protect against h4xz0rz by adding a @method to views which do things like
    login, logout, etc. The method would make sure the referrer was us and not
    some other website.
@@ -55,6 +52,8 @@
  * listening party - make song comments during chat during listening party
  * use === instead of ==
  * have a robust song player and use it during competitions
+ * test with a messed up clock in windows
+   - possibly use ajax to improve offset calculation between server and local.
 
 == next gen ==
  * google map integration

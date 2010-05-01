@@ -40,7 +40,24 @@ def safe_file(path, title):
         else:
             clean += "_"
 
-    return (os.path.join(path,clean), clean)
+    # break into title and extension
+    parts = clean.split(".")
+    if len(parts) > 0:
+        clean = ".".join(parts[:-1])
+        ext = "." + parts[-1]
+    else:
+        ext = ""
+    
+    if os.path.exists(os.path.join(path, clean + ext)):
+        # use digits
+        suffix = 2
+        while os.path.exists(os.path.join(path, clean + str(suffix) + ext)):
+            suffix += 1
+        unique = clean + str(suffix) + ext
+    else:
+        unique = clean + ext
+
+    return (os.path.join(path,unique), unique)
 
 def ajax_submit_entry(request):
     from mutagen.easyid3 import EasyID3
@@ -93,9 +110,10 @@ def ajax_submit_entry(request):
         data['reason'] = 'MP3 file is too large.'
         return json_response(data)
 
-    if source_file.size > settings.FILE_UPLOAD_SIZE_CAP:
-        data['reason'] = 'Project source file is too large.'
-        return json_response(data)
+    if not source_file is None:
+        if source_file.size > settings.FILE_UPLOAD_SIZE_CAP:
+            data['reason'] = 'Project source file is too large.'
+            return json_response(data)
 
     if title == '':
         data['reason'] = 'Entry title is required.'
