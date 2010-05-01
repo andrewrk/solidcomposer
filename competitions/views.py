@@ -334,6 +334,9 @@ def ajax_available(request):
         'upcoming': [safe_model_to_dict(x) for x in upcoming],
         'ongoing': [safe_model_to_dict(x) for x in ongoing],
         'closed': [safe_model_to_dict(x) for x in closed],
+        'user': {
+            'is_authenticated': request.user.is_authenticated(),
+        },
     }
 
     return json_response(data)
