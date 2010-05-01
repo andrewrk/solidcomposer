@@ -439,6 +439,11 @@ def ajax_vote(request, entry_id):
         data['reason'] = "Not authenticated."
         return json_response(data)
 
+    # can't vote for yourself
+    if entry.owner == request.user.get_profile():
+        data['reason'] = "Can't vote for yourself."
+        return json_response(data)
+
     # how many thumbs up should they have
     max_votes = max_vote_count(entry.competition.entry_set.count())
     used_votes = ThumbsUp.objects.filter(owner=request.user.get_profile(), entry__competition=entry.competition).count()

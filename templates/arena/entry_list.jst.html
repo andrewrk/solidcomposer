@@ -10,7 +10,7 @@
                     <% if (entry.voted_for) { %>
                         <a href="#" id="unvote-<%= i %>">unvote</a>
                     <% } else { %>
-                        <% if (votes.left > 0) { %>
+                        <% if (votes.left > 0 && entry.owner.id != user.id) { %>
                             <a href="#" id="vote-<%= i %>">vote</a>
                         <% } %>
                     <% } %>
