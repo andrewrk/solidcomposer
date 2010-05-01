@@ -5,10 +5,34 @@ body {
     padding: 0;
 }
 
+p {
+    margin: 0;
+    padding: 10px;
+}
+
+#css-login {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#loginFormDiv {
+    background: #dadada;
+    padding: 12px;
+}
+
+#login-buttons {
+    text-align: right;
+}
+
+td.label {
+    text-align: right;
+}
+
 #logo {
     background: #ffffff url('../img/logo3.png') no-repeat center;
     height: 108px;
-    margin: 0 auto 0 auto;
+    margin: 0 auto -10px auto;
     padding: 0;
     font-size: 12px;
 }
@@ -35,7 +59,4 @@ body {
     background: #ffffff url(../img/blurrystaff.jpg) no-repeat center top;
 }
 
-p {
-    margin: 0;
-    padding: 10px;
-}
+

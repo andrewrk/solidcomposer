@@ -1,15 +1,30 @@
-<div id="login">
-{% include 'loading.html' %}
-</div>
-<div style="display: none;" id="loginFormDiv">
-    <form id="loginForm">
-        <label for="loginName" />username:</label>
-        <input type="text" id="loginName" value="" />
-        <br />
-        <label for="loginPassword" />password:</label>
-        <input type="password" id="loginPassword" value="" />
-        <br />
-        <a href="#" id="loginButton">submit</a>
-        <a href="#" id="cancelLoginButton">cancel</a>
-    </form>
+<div id="css-login">
+    <div id="login">
+    {% include 'loading.html' %}
+    </div>
+    <div style="display: none;" id="loginFormDiv">
+        <form id="loginForm">
+            <table>
+                <tr>
+                <td class="label">
+                    <label for="loginName" />username:</label>
+                </td>
+                <td>
+                    <input type="text" id="loginName" value="" />
+                </td>
+                </tr>
+                <td class="label">
+                    <label for="loginPassword" />password:</label>
+                </td>
+                <td>
+                    <input type="password" id="loginPassword" value="" />
+                </td>
+                </tr>
+            </table>
+            <div id="login-buttons">
+                <a href="#" id="loginButton">submit</a>
+                <a href="#" id="cancelLoginButton">cancel</a>
+            </div>
+        </form>
+    </div>
 </div>
