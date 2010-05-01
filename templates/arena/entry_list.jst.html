@@ -2,21 +2,18 @@
 <div id="entries">
     <% for (var i=0; i<entries.length; ++i) { var entry = entries[i]; %>
         <% if (votingActive(compo)) { %>
-            <% if (playback_current_track.index == i) { %>
-                <div class="entry-playing">
-                    <a href="#" id="entry-<%= i %>">
-                    <%= entry.owner.artist_name %> - <%= entry.song.title %>
-                    (<%= timeDisplay(entry.song.length) %>)
-                    </a>
-                </div>
-            <% } else { %>
-                <div class="entry">
-                    <a href="#" id="entry-<%= i %>">
-                    <%= entry.owner.artist_name %> - <%= entry.song.title %>
-                    (<%= timeDisplay(entry.song.length) %>)
-                    </a>
-                </div>
-            <% } %>
+            <div class="<% if (playback_current_track.index == i) { %>entry-playing<% } else { %>entry<% } %>">
+                <a href="#" id="entry-<%= i %>">
+                <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                (<%= timeDisplay(entry.song.length) %>)</a>
+                <% if (entry.voted_for) { %>
+                    <a href="#" id="unvote-<%= i %>">unvote</a>
+                <% } else { %>
+                    <% if (votes.left > 0) { %>
+                        <a href="#" id="vote-<%= i %>">vote</a>
+                    <% } %>
+                <% } %>
+            </div>
         <% } else { %>
             <% if (ongoingListeningParty(compo) && i == party.index) { %>
                 <div class="entry-playing">

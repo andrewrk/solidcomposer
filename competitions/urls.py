@@ -11,6 +11,8 @@ urlpatterns = patterns('',
     url('^ajax/bookmark/(\d+)/$', 'opensourcemusic.competitions.views.ajax_bookmark'),
     url('^ajax/remove/(\d+)/$', 'opensourcemusic.competitions.views.ajax_unbookmark'),
     url('^ajax/compo/(\d+)/$', 'opensourcemusic.competitions.views.ajax_compo'),
+    url('^ajax/vote/(\d+)/$', 'opensourcemusic.competitions.views.ajax_vote'),
+    url('^ajax/unvote/(\d+)/$', 'opensourcemusic.competitions.views.ajax_unvote'),
     url('^ajax/submit-entry/$', 'opensourcemusic.competitions.views.ajax_submit_entry'),
 
     url('^create/$', 'opensourcemusic.competitions.views.create'),

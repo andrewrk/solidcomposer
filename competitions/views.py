@@ -416,3 +416,53 @@ def competition(request, id):
     competition = get_object_or_404(Competition, id=int(id))
     return render_to_response('arena/competition.html', locals(), context_instance=RequestContext(request))
 
+def ajax_vote(request, entry_id):
+    data = {'success': False}
+
+    try:
+        entry_id = int(entry_id)
+    except:
+        entry_id = 0
+    entry = get_object_or_404(Entry, id=entry_id)
+
+    if not request.user.is_authenticated():
+        data['reason'] = "Not authenticated."
+        return json_response(data)
+
+    # how many thumbs up should they have
+    max_votes = max_vote_count(entry.competition.entry_set.count())
+    used_votes = ThumbsUp.objects.filter(owner=request.user.get_profile(), entry__competition=entry.competition).count()
+
+    if used_votes < max_votes:
+        # OK! spend a vote on this entry
+        vote = ThumbsUp()
+        vote.owner = request.user.get_profile()
+        vote.entry = entry
+        vote.save()
+
+        data['success'] = True
+    else:
+        data['reason'] = "No votes left."
+
+    return json_response(data)
+
+def ajax_unvote(request, entry_id):
+    data = {'success': False}
+
+    try:
+        entry_id = int(entry_id)
+    except:
+        entry_id = 0
+    entry = get_object_or_404(Entry, id=entry_id)
+
+    if not request.user.is_authenticated():
+        data['reason'] = "Not authenticated."
+        return json_response(data)
+
+    votes = ThumbsUp.objects.filter(owner=request.user.get_profile(), entry=entry)
+    if votes.count() > 0:
+        votes[0].delete()
+
+    data['success'] = True
+    return json_response(data)
+

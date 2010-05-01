@@ -2,9 +2,6 @@
  == to get a prototype working ==
  * competition page
    - voting behavior
-     > give a thumbs up button in current entry
-     > show thumbs up icon next to entries in the list that were voted for
-       # button to take it back
    - competition closed behavior
      > reveal votes
      > sort the entries by votes

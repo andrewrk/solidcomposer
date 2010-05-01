@@ -141,11 +141,36 @@ function updateEntryArea() {
             playback_current_track.index = index;
             playback_current_track.entry = state_compo.entries[index];
             playback_current_track.track_position = 0;
-            $("#jplayer").jPlayer("setFile", MEDIA_URL+playback_current_track.entry.song.mp3_file);
+            $("#jplayer").jPlayer("setFile",
+                MEDIA_URL+playback_current_track.entry.song.mp3_file);
             $("#jplayer").jPlayer("play");
             updateCurrentEntry();
             return false;
         });
+        var vote_link = $("#vote-"+i);
+        if (vote_link) {
+            vote_link.attr('entry_index', i);
+            vote_link.click(function(){
+                var index = $(this).attr('entry_index');
+                var entry = state_compo.entries[index];
+                $.getJSON("/arena/ajax/vote/" + entry.id + "/", function(data){
+                    ajaxRequest();
+                });
+                return false;
+            });
+        }
+        var unvote_link = $("#unvote-"+i);
+        if (unvote_link) {
+            unvote_link.attr('entry_index', i);
+            unvote_link.click(function(){
+                var index = $(this).attr('entry_index');
+                var entry = state_compo.entries[index];
+                $.getJSON("/arena/ajax/unvote/" + entry.id + "/",function(data){
+                    ajaxRequest();
+                });
+                return false;
+            });
+        }
     }
 }
 
@@ -178,6 +203,17 @@ function ajaxRequest() {
 
         if (ongoingListeningParty(state_compo.compo))
             computeListeningPartyState();
+        if (votingActive(state_compo.compo)) {
+            for (var i=0; i<state_compo.votes.used.length; ++i) {
+                for (var j=0; j<state_compo.entries.length; ++j) {
+                    if (state_compo.entries[j].id === state_compo.votes.used[i].entry)
+                    {
+                        state_compo.entries[j].voted_for = true;
+                        break;
+                    }
+                }
+            }
+        }
         updateCompo();
     });
 }
