@@ -233,7 +233,9 @@ function ajaxRequest() {
         current_state = getCurrentState();
         if (ongoingListeningParty(state_compo.compo))
             computeListeningPartyState();
-        if (votingActive(state_compo.compo)) {
+        if (votingActive(state_compo.compo) &&
+            state_compo.user.is_authenticated)
+        {
             for (var i=0; i<state_compo.votes.used.length; ++i) {
                 for (var j=0; j<state_compo.entries.length; ++j) {
                     if (state_compo.entries[j].id === state_compo.votes.used[i].entry)

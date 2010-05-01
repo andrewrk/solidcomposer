@@ -7,11 +7,13 @@
                 <%= entry.owner.artist_name %> - <%= entry.song.title %>
                 (<%= timeDisplay(entry.song.length) %>)</a>
                 <% if (votingActive(compo)) { %>
-                    <% if (entry.voted_for) { %>
-                        <a href="#" id="unvote-<%= i %>">unvote</a>
-                    <% } else { %>
-                        <% if (votes.left > 0 && entry.owner.id != user.id) { %>
-                            <a href="#" id="vote-<%= i %>">vote</a>
+                    <% if (user.is_authenticated) { %>
+                        <% if (entry.voted_for) { %>
+                            <a href="#" id="unvote-<%= i %>">unvote</a>
+                        <% } else { %>
+                            <% if (votes.left > 0 && entry.owner.id != user.id) { %>
+                                <a href="#" id="vote-<%= i %>">vote</a>
+                            <% } %>
                         <% } %>
                     <% } %>
                 <% } else { %>

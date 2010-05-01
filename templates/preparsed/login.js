@@ -95,18 +95,23 @@ function sendLoginRequest() {
     $.ajax({
         url: "/ajax/login/",
         type: 'POST',
-        dataType: 'text',
+        dataType: 'json',
         data: {
             'username': $("#loginName").attr('value'),
             'password': $("#loginPassword").attr('value'),
         },
-        success: function(){
-            $("#loginName").attr('value','');
-            $("#loginPassword").attr('value','');
-            ajaxRequest();
-            loginAjaxRequest();
+        success: function(data){
+            if (data.success) {
+                $("#loginName").attr('value','');
+                $("#loginPassword").attr('value','');
+                ajaxRequest();
+                loginAjaxRequest();
+            } else {
+                alert("Unable to log in:\n" + data.err_msg);
+            }
         },
         error: function(){
+            alert("Error logging in.");
             loginFormError = true;
             updateLogin();
             ajaxRequest();

@@ -1,13 +1,15 @@
 = arena =
  == to get a prototype working ==
+ * not signed in on competition page on LOL has issues
  * make sure it works in 
    - IE 8
    - chrome
+     > can't log in with ajax
+     > doesn't update the now playing time
    - safari
  * make the gui usable
 
  == improvements ==
- * login: better notification that you failed to login
  * uploading an entry should clear that form
  * paging on competitions. right now it sends them all.
  * display error when chat message doesn't go through
