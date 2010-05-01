@@ -1,3 +1,5 @@
+{% load jst %}
+
 /*
  * login.js
  *
@@ -8,7 +10,7 @@
  *
  */
 
-var template_login = (<r><![CDATA[{% include 'login_area.jst.html' %}]]></r>).toString();
+var template_login = "{% filter jst_escape %}{% include 'login_area.jst.html' %}{% endfilter %}";
 
 var template_login_s = null;
 

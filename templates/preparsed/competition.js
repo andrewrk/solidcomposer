@@ -1,8 +1,9 @@
-var template_status = (<r><![CDATA[{% include 'arena/compo_status.jst.html' %}]]></r>).toString();
-var template_info = (<r><![CDATA[{% include 'arena/compo_info.jst.html' %}]]></r>).toString();
-var template_vote_status = (<r><![CDATA[{% include 'arena/vote_status.jst.html' %}]]></r>).toString();
-var template_entries = (<r><![CDATA[{% include 'arena/entry_list.jst.html' %}]]></r>).toString();
-var template_current_entry = (<r><![CDATA[{% include 'arena/current_entry.jst.html' %}]]></r>).toString();
+{% load jst %}
+var template_status = "{% filter jst_escape %}{% include 'arena/compo_status.jst.html' %}{% endfilter %}";
+var template_info = "{% filter jst_escape %}{% include 'arena/compo_info.jst.html' %}{% endfilter %}";
+var template_vote_status = "{% filter jst_escape %}{% include 'arena/vote_status.jst.html' %}{% endfilter %}";
+var template_entries = "{% filter jst_escape %}{% include 'arena/entry_list.jst.html' %}{% endfilter %}";
+var template_current_entry = "{% filter jst_escape %}{% include 'arena/current_entry.jst.html' %}{% endfilter %}";
 
 // pre-compiled templates
 var template_status_s = null;

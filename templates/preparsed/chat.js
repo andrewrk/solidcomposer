@@ -1,3 +1,4 @@
+{% load jst %}
 /*
  * chat.js - include this if you have a chat room on the page.
  *
@@ -11,10 +12,10 @@
  *
  */
 
-var template_chat = (<r><![CDATA[{% include 'chat/box.jst.html' %}]]></r>).toString();
-var template_onliners = (<r><![CDATA[{% include 'chat/onliners.jst.html' %}]]></r>).toString();
-var template_cannot_say = (<r><![CDATA[{% include 'chat/cannot_say.jst.html' %}]]></r>).toString();
-var template_say = (<r><![CDATA[{% include 'chat/say.jst.html' %}]]></r>).toString();
+var template_chat = "{% filter jst_escape %}{% include 'chat/box.jst.html' %}{% endfilter %}";
+var template_onliners = "{% filter jst_escape %}{% include 'chat/onliners.jst.html' %}{% endfilter %}";
+var template_cannot_say = "{% filter jst_escape %}{% include 'chat/cannot_say.jst.html' %}{% endfilter %}";
+var template_say = "{% filter jst_escape %}{% include 'chat/say.jst.html' %}{% endfilter %}";
 
 var template_chat_s = null;
 var template_onliners_s = null;

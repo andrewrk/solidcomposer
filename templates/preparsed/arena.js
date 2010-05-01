@@ -1,5 +1,7 @@
-var template_available = (<r><![CDATA[{% include 'arena/available.jst.html' %}]]></r>).toString();
-var template_owned = (<r><![CDATA[{% include 'arena/owned.jst.html' %}]]></r>).toString();
+{% load jst %}
+
+var template_available = "{% filter jst_escape %}{% include 'arena/available.jst.html' %}{% endfilter %}";
+var template_owned = "{% filter jst_escape %}{% include 'arena/owned.jst.html' %}{% endfilter %}";
 
 var template_available_s = null;
 var template_owned_s = null;
