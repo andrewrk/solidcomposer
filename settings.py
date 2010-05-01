@@ -80,7 +80,7 @@ MEDIA_ROOT = absolute('media')
 if release_mode:
     MEDIA_URL = 'http://superjoesoftware.com/djangomedia/opensourcemusic/'
 else:
-    MEDIA_URL = 'http://192.168.1.196:8080/django/opensourcemusic/'
+    MEDIA_URL = 'http://localhost:8080/django/opensourcemusic/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
