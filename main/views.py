@@ -140,6 +140,13 @@ def python_date(js_date):
     """
     return datetime.strptime(js_date[:24], "%a %b %d %Y %H:%M:%S")
 
+def my_date(js_date):
+    """
+    convert a javascript date to a python date
+    format: May 01, 2010 02:30:54
+    """
+    return datetime.strptime(js_date[:24], "%B %d, %Y %H:%M:%S")
+
 def user_can_chat(room, user):
     if room.permission_type == OPEN:
         return True
@@ -195,7 +202,7 @@ def ajax_chat(request):
         # get entire log for this chat.
         data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room).order_by('timestamp')]
     else:
-        check_date = python_date(latest_check)
+        check_date = my_date(latest_check)
         data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, timestamp__gt=check_date).order_by('timestamp')]
 
     if request.user.is_authenticated():

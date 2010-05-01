@@ -1,7 +1,5 @@
 = arena =
  == to get a prototype working ==
- * instead of serverTime(new Date()) for latest_check, use the timestamp from
-   the last received message.
  * make sure it works in 
    - IE 8
    - chrome
@@ -9,53 +7,48 @@
  * make the gui usable
 
  == improvements ==
- * paging on competitions. right now it sends them all.
- * protect against h4xz0rz by adding a @method to views which do things like
-   login, logout, etc. The method would make sure the referrer was us and not
-   some other website.
- * listening party date must be after submission deadline date - put that in
-   form validation check
- * implement template caching in Jst parser
- * moderation tools for competitions
- * obfuscate media URLs to protect people's stuff
- * provide some way to format themes, rules, comments, etc
- * chat colors
- * display error when chat message doesn't go through
- * chat: display how many invisible observers there are
- * color the time differently when there isn't much time left so that 
-   people know they're running out of time
- * competition entry max length per competition
- * better feedback for a failed submission than an alert box.
- * make the gui experience of clicking edit on a submission and then
-   deciding not to better.
- * replay listening party feature
-  - put an indicator on the page so you know whether it's live or replay
+ * login: better notification that you failed to login
  * uploading an entry should clear that form
+ * paging on competitions. right now it sends them all.
+ * display error when chat message doesn't go through
  * the online users is sketchy at best
+ * have a robust song player and use it during competitions
  * mute button on player
  * chat: handle join/part messages by removing them or adding them from
    the onliners list
- * settings page
- * edit competition
- * user profile page
-   - show their competition entries
- * login: better notification that you failed to login
- * make the gui pretty
- * put whitelist/blacklist/open in the create competition page. default open.
  * cron job to delete users who register and don't activate after a certain
    period of time. or just allow their accounts to be overwritten if they
    are old.
+ * user profile page
+   - show their competition entries
+ * edit competition
+ * make the gui pretty
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
  * compo owner gets skip song controls
  * compo owner can make other people moderators too
  * listening party - make song comments during chat during listening party
  * use === instead of ==
- * have a robust song player and use it during competitions
+
+ * protect against h4xz0rz by adding a @method to views which do things like
+   login, logout, etc. The method would make sure the referrer was us and not
+   some other website.
+ * moderation tools for competitions
+ * obfuscate media URLs to protect people's stuff
+ * provide some way to format themes, rules, comments, etc
+ * chat colors
+ * chat: display how many invisible observers there are
+ * color the time differently when there isn't much time left so that 
+   people know they're running out of time
+ * better feedback for a failed submission than an alert box.
+ * make the gui experience of clicking edit on a submission and then
+   deciding not to better.
+ * replay listening party feature
+  - put an indicator on the page so you know whether it's live or replay
+ * settings page
+ * put whitelist/blacklist/open in the create competition page. default open.
  * test with a messed up clock in windows
    - possibly use ajax to improve offset calculation between server and local.
-
-== next gen ==
  * google map integration
  * rss feed for competitions
  * show and allow posting comments on songs on user pages

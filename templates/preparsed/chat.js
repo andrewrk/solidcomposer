@@ -169,13 +169,14 @@ function chatAjaxRequest() {
             state_chat.user = data.user;
             for (var i=0; i<data.messages.length; ++i)
                 state_chat.messages.push(data.messages[i]);
+            if (data.messages.length > 0)
+                chat_last_update = data.messages[data.messages.length-1].timestamp
 
             if (beforeChatRoomActive(state_chat.room))
                 chat_last_update = null;
 
             updateChat();
         });
-    chat_last_update = serverTime(new Date()).toString();
 }
 
 function chatAjaxRequestLoop() {
