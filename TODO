@@ -1,7 +1,10 @@
 = arena =
  == to get a prototype working ==
- * deploy
+ * error when submitting a source file
  * chat use last received message id instead of date
+ * chat doesn't scroll properly
+ * buffering playing and not stopping
+ * have a robust song player and use it during competitions
  * make the gui pretty
    > award star with a number in it next to person's name instead of parens
    > thumbs ups instead of voting
@@ -13,7 +16,6 @@
  * paging on competitions. right now it sends them all.
  * display error when chat message doesn't go through
  * the online users is sketchy at best
- * have a robust song player and use it during competitions
  * mute button on player
  * chat: handle join/part messages by removing them or adding them from
    the onliners list
