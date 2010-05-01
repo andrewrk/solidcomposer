@@ -23,11 +23,11 @@ if release_mode:
     # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     DATABASE_ENGINE = 'mysql'           
     # Or path to database file if using sqlite3.
-    DATABASE_NAME = 'server_db_name'             
+    DATABASE_NAME = 'superjoe_solidcomposer'             
     # Not used with sqlite3.
-    DATABASE_USER = 'server_db_user'
+    DATABASE_USER = 'superjoe_solidco'
     # Not used with sqlite3.
-    DATABASE_PASSWORD = 'server_db_password'
+    DATABASE_PASSWORD = 'rf;MOJ*fM){?'
     # Set to empty string for localhost. Not used with sqlite3.
     DATABASE_HOST = ''
     # Set to empty string for default. Not used with sqlite3.
@@ -86,7 +86,7 @@ else:
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 if release_mode:
-    ADMIN_MEDIA_PREFIX= 'http://superjoesoftware.com/opensourcemusic/admin/'
+    ADMIN_MEDIA_PREFIX= 'http://superjoesoftware.com/djangomedia/opensourcemusic/admin/'
 else:
     ADMIN_MEDIA_PREFIX = 'http://localhost:8080/django/opensourcemusic/admin/'
 
