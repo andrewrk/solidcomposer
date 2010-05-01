@@ -41,6 +41,7 @@ class CreateCompetitionForm(forms.Form):
     submission_deadline_date = forms.DateTimeField()
 
     have_listening_party = forms.BooleanField(required=False)
+    party_immediately = forms.BooleanField(required=False)
     listening_party_date = forms.DateTimeField(required=False)
 
     vote_time_quantity = forms.IntegerField(max_value=12, min_value=1, initial=1)
@@ -60,12 +61,12 @@ class CreateCompetitionForm(forms.Form):
         return in_deadline
 
     def clean_listening_party_date(self):
-        if not self.cleaned_data.has_key('submission_deadline_date'):
+        if self.cleaned_data['party_immediately'] or not self.cleaned_data.has_key('submission_deadline_date'):
             return self.cleaned_data['listening_party_date']
         in_date = self.cleaned_data['listening_party_date']
         in_have_party = self.cleaned_data['have_listening_party']
         in_deadline = self.cleaned_data['submission_deadline_date']
-        if self.in_have_party:
+        if in_have_party:
             if in_date is None:
                 raise forms.ValidationError("If you want a listening party, you need to set a date.")
             if in_date < in_deadline:

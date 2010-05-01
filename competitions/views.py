@@ -405,7 +405,10 @@ def create(request):
 
             comp.have_listening_party = form.cleaned_data.get('have_listening_party', True)
             if comp.have_listening_party:
-                comp.listening_party_start_date = form.cleaned_data.get('listening_party_date')
+                if form.cleaned_data.get('party_immediately'):
+                    comp.listening_party_start_date = comp.submit_deadline
+                else:
+                    comp.listening_party_start_date = form.cleaned_data.get('listening_party_date')
                 # initialize end date to start date. we make modifications to it
                 # when entries are submitted.
                 comp.listening_party_end_date = comp.listening_party_start_date
@@ -434,7 +437,15 @@ def create(request):
 
             return HttpResponseRedirect('/arena/')
     else:
-        form = CreateCompetitionForm()
+        initial = {
+            'have_theme': True,
+            'have_rules': True,
+            'preview_rules': True,
+            'have_listening_party': True,
+            'vote_time_quantity': 1,
+            'vote_time_measurement': WEEKS,
+        }
+        form = CreateCompetitionForm(initial=initial)
     
     return render_to_response('arena/create.html', locals(), context_instance=RequestContext(request))
 

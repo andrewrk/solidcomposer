@@ -1,10 +1,12 @@
 = arena =
  == to get a prototype working ==
  * make the gui usable
+   > competition page
  * deploy
  * make the gui pretty
    > award star with a number in it next to person's name instead of parens
    > thumbs ups instead of voting
+ * dummy about, policy, settings pages
 
  == improvements ==
  * uploading an entry should clear that form

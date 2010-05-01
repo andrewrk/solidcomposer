@@ -3,6 +3,7 @@ body {
     font-size: 14px;
     margin: 0;
     padding: 0;
+    color: #000000;
 }
 
 h1 {
@@ -15,6 +16,17 @@ h2 {
     font-size: 18px;
     margin: 0; 
     padding: 12px 0;
+}
+
+form h3 {
+    font-size: 14px;
+    background: #ececec;
+    border: 1px solid #e0e0e0;
+    border-left: none;
+    border-right: none;
+    margin: 0; 
+    padding: 12px 0;
+    text-align: center;
 }
 
 p {
@@ -79,4 +91,10 @@ td.label {
     background: url('../img/star.png') no-repeat center center;
     margin: 0;
     padding: 2px 8px;
+}
+
+form th {
+    font-size: 12px;
+    font-weight: normal;
+    text-align: right;
 }
