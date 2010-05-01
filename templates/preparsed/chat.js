@@ -143,6 +143,7 @@ function chatAddClicksToSay() {
                     // TODO: show some kind of error message
                 },
             });
+            return false;
         }
     });
 }

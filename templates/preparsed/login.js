@@ -129,19 +129,25 @@ function loginInitialize() {
 
     $("#loginButton").click(sendLoginRequest);
     $("#loginName").keydown(function(event){
-        if (event.keyCode == 13)
+        if (event.keyCode == 13) {
             sendLoginRequest();
+            return false;
+        }
         if (event.keyCode == 27) {
             loginFormDisplayed = false;
             updateLogin();
+            return false;
         }
     });
     $("#loginPassword").keydown(function(event){
-        if (event.keyCode == 13)
+        if (event.keyCode == 13) {
             sendLoginRequest();
+            return false;
+        }
         if (event.keyCode == 27) {
             loginFormDisplayed = false;
             updateLogin();
+            return false;
         }
     });
 

@@ -4,7 +4,6 @@
  * make sure it works in 
    - IE 8
    - chrome
-     > can't log in with ajax
      > doesn't update the now playing time
    - safari
  * make the gui usable
