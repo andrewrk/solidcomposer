@@ -18,4 +18,21 @@
             </p>
         </div>
     <% } %>
+<% } else if (votingActive(compo)) { %>
+    <% if (playback_current_track.entry) { %>
+        <div id="track">
+            Currently playing: <%= playback_current_track.entry.owner.artist_name %> -
+            <%= playback_current_track.entry.song.title  %>
+            <%= timeDisplay(playback_current_track.track_position) %> / 
+            <%= timeDisplay(playback_current_track.entry.song.length) %>
+        </div>
+        <% if (playback_current_track.entry.song.comments) { %>
+            <div id="track-info">
+                <h4>Author Comments</h4>
+                <p>
+                    <%= playback_current_track.entry.song.comments %>
+                </p>
+            </div>
+        <% } %>
+    <% } %>
 <% } %>

@@ -13,7 +13,10 @@ var template_current_entry_s = null;
 
 var state_compo = null;
 var resubmitting = false;
-
+var playback_current_track = {
+    index: -1,
+    entry: null,
+};
 
 function pauseJPlayer() {
     $("#jplayer").jPlayer("pause");
@@ -116,14 +119,10 @@ function updateCurrentEntry() {
     $("#current-entry").html(Jst.evaluate(template_current_entry_s, state_compo));
 }
 
-function updateCompo() {
+function updateEntryArea() {
     if (state_compo == null)
         return;
 
-    updateStatus();
-    updateCurrentEntry();
-    $("#vote-status").html(Jst.evaluate(template_vote_status_s, state_compo));
-    $("#info").html(Jst.evaluate(template_info_s, state_compo));
     $("#entry-area").html(Jst.evaluate(template_entries_s, state_compo));
 
     // clicks for entry-area
@@ -134,6 +133,31 @@ function updateCompo() {
         updateCompo();
         return false;
     });
+
+    for (var i=0; i<state_compo.entries.length; ++i) {
+        $("#entry-"+i).attr('entry_index', i);
+        $("#entry-"+i).click(function(){
+            var index = $(this).attr('entry_index');
+            playback_current_track.index = index;
+            playback_current_track.entry = state_compo.entries[index];
+            playback_current_track.track_position = 0;
+            $("#jplayer").jPlayer("setFile", MEDIA_URL+playback_current_track.entry.song.mp3_file);
+            $("#jplayer").jPlayer("play");
+            updateCurrentEntry();
+            return false;
+        });
+    }
+}
+
+function updateCompo() {
+    if (state_compo == null)
+        return;
+
+    updateStatus();
+    updateCurrentEntry();
+    $("#vote-status").html(Jst.evaluate(template_vote_status_s, state_compo));
+    $("#info").html(Jst.evaluate(template_info_s, state_compo));
+    updateEntryArea();
 
     // show/hide submission form
     var show_submission_form = submissionActive() &&
@@ -207,6 +231,9 @@ $(document).ready(function(){
                     {
                         this.element.jPlayer("pause");
                     }
+                } else if (votingActive(state_compo.compo)) {
+                    playback_current_track.track_position = playedTime/1000;
+                    updateCurrentEntry();
                 }
             });
         },

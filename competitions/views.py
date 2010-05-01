@@ -244,6 +244,7 @@ def ajax_compo(request, id):
 
         data['user'] = safe_model_to_dict(request.user)
         data['user']['get_profile'] = request.user.get_profile()
+        data['user']['is_authenticated'] = True
         data['votes'] = {
             'max': max_votes,
             'used': [safe_model_to_dict(x) for x in used_votes],

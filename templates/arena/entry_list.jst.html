@@ -1,25 +1,43 @@
 <h4>Entries (<%= entries.length %> so far)</h4>
 <div id="entries">
     <% for (var i=0; i<entries.length; ++i) { var entry = entries[i]; %>
-        <% if (ongoingListeningParty(compo) && i == party.index) { %>
-            <div class="entry-playing">
-                <%= entry.owner.artist_name %> - <%= entry.song.title %>
-                (<%= timeDisplay(entry.song.length) %>)
-            </div>
-        <% } else { %>
-            <% if (entry.owner.user == user.id) { %>
-                <div class="entry-user">
+        <% if (votingActive(compo)) { %>
+            <% if (playback_current_track.index == i) { %>
+                <div class="entry-playing">
+                    <a href="#" id="entry-<%= i %>">
                     <%= entry.owner.artist_name %> - <%= entry.song.title %>
                     (<%= timeDisplay(entry.song.length) %>)
-                    <% if (submissionActive()) { %>
-                        (<a href="#" id="resubmit">edit</a>)
-                    <% } %>
+                    </a>
                 </div>
             <% } else { %>
                 <div class="entry">
+                    <a href="#" id="entry-<%= i %>">
+                    <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                    (<%= timeDisplay(entry.song.length) %>)
+                    </a>
+                </div>
+            <% } %>
+        <% } else { %>
+            <% if (ongoingListeningParty(compo) && i == party.index) { %>
+                <div class="entry-playing">
                     <%= entry.owner.artist_name %> - <%= entry.song.title %>
                     (<%= timeDisplay(entry.song.length) %>)
                 </div>
+            <% } else { %>
+                <% if (entry.owner.user == user.id) { %>
+                    <div class="entry-user">
+                        <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                        (<%= timeDisplay(entry.song.length) %>)
+                        <% if (submissionActive()) { %>
+                            (<a href="#" id="resubmit">edit</a>)
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <div class="entry">
+                        <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                        (<%= timeDisplay(entry.song.length) %>)
+                    </div>
+                <% } %>
             <% } %>
         <% } %>
     <% } %>
