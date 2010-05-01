@@ -15,6 +15,10 @@ var state_compo = null;
 var resubmitting = false;
 
 
+function pauseJPlayer() {
+    $("#jplayer").jPlayer("pause");
+}
+
 // if we're not playing any song, and we should be,
 // skip to where we should be and play.
 // if we're not playing any song but will be soon,
@@ -22,10 +26,20 @@ var resubmitting = false;
 function checkIfShouldPlaySong() {
     if (ongoingListeningParty(state_compo.compo)) {
         // figure out what currently playing song should be
-        if (! $("#jplayer").jPlayer("getData", "diag.isPlaying")) {
-            $("#jplayer").jPlayer("setFile", MEDIA_URL+state_compo.party.entry.song.mp3_file);
-            $("#jplayer").jPlayer("playHeadTime", state_compo.party.track_position*1000);
-            $("#jplayer").jPlayer("play");
+        var jp = $("#jplayer");
+        if (! jp.jPlayer("getData", "diag.isPlaying")) {
+            var current_url = MEDIA_URL+state_compo.party.entry.song.mp3_file;
+            if (jp.jPlayer("getData", "diag.src") != current_url) {
+                // pre-load
+                jp.jPlayer("setFile", current_url);
+                jp.jPlayer("play");
+                // we have to call pause on a timer otherwise it will play
+                //setTimeout(pauseJPlayer, 1000);
+            }
+            if (state_compo.party.track_position >= 0) {
+                jp.jPlayer("playHeadTime", state_compo.party.track_position*1000);
+                jp.jPlayer("play");
+            }
         }
     }
 }
@@ -55,15 +69,14 @@ function computeListeningPartyState() {
     var pos = 0;
     var last_start = 0;
     while (pos < position && i < state_compo.entries.length) {
+        pos += state_compo.party.buffer_time;
         last_start = pos;
         pos += state_compo.entries[i].song.length;
         ++i;
     }
-    state_compo.party = {
-        index: i-1,
-        entry: state_compo.entries[i-1],
-        track_position: position - last_start,
-    };
+    state_compo.party.index = i-1;
+    state_compo.party.entry = state_compo.entries[i-1];
+    state_compo.party.track_position = position - last_start;
 }
 
 // true if we are in the middle of a listening party
@@ -183,6 +196,18 @@ $(document).ready(function(){
             checkIfShouldPlaySong();
             this.element.jPlayer("onSoundComplete", function(){
                 checkIfShouldPlaySong();
+            });
+            this.element.jPlayer("onProgressChange", function(loadPercent,
+            playedPercentRelative,playedPercentAbsolute,playedTime,totalTime){
+                if (ongoingListeningParty(state_compo.compo)) {
+                    var current_url = MEDIA_URL+state_compo.party.entry.song.mp3_file;
+                    var actually_playing = this.element.jPlayer("getData", "diag.src");
+                    if (state_compo.party.track_position < 0 &&
+                        current_url == actually_playing)
+                    {
+                        this.element.jPlayer("pause");
+                    }
+                }
             });
         },
         swfPath: "/static",

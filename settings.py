@@ -162,3 +162,5 @@ CHAT_TIMEOUT = 15
 # maximum length of competition tracks in seconds
 COMPO_ENTRY_MAX_LEN = 10 * 60
 
+# how many seconds to wait between tracks in listening party for buffering
+LISTENING_PARTY_BUFFER_TIME = 10

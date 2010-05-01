@@ -1,9 +1,15 @@
 <% if (ongoingListeningParty(compo)) { %>
-    <div id="track">
-        Currently playing: <%= party.entry.owner.artist_name %> - <%= party.entry.song.title  %>
-        <%= timeDisplay(party.track_position) %> / 
-        <%= timeDisplay(party.entry.song.length) %>
-    </div>
+    <% if (party.track_position < 0) { %>
+        <div id="track">
+            Buffering... <%= party.entry.owner.artist_name %> - <%= party.entry.song.title  %> - <%= -Math.ceil(party.track_position) %>s
+        </div>
+    <% } else { %>
+        <div id="track">
+            Currently playing: <%= party.entry.owner.artist_name %> - <%= party.entry.song.title  %>
+            <%= timeDisplay(party.track_position) %> / 
+            <%= timeDisplay(party.entry.song.length) %>
+        </div>
+    <% } %>
     <% if (party.entry.song.comments) { %>
         <div id="track-info">
             <h4>Author Comments</h4>

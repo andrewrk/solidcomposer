@@ -6,7 +6,7 @@ from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
 
 from opensourcemusic.competitions.models import *
-from opensourcemusic.settings import MEDIA_URL, MEDIA_ROOT, COMPO_ENTRY_MAX_LEN
+from opensourcemusic import settings
 from opensourcemusic.main.views import safe_model_to_dict, json_response
 from opensourcemusic.competitions.forms import *
 
@@ -113,7 +113,7 @@ def ajax_submit_entry(request):
         data['reason'] = 'Sketchy MP3 file.'
         return json_response(data)
 
-    if audio.info.length > COMPO_ENTRY_MAX_LEN:
+    if audio.info.length > settings.COMPO_ENTRY_MAX_LEN:
         data['reason'] = 'Song is too long.'
         return json_response(data)
 
@@ -129,7 +129,7 @@ def ajax_submit_entry(request):
 
     # pick a nice safe unique path for mp3_file and source_file
     mp3_file_title = "%s - %s (%s).mp3" % (request.user.get_profile().artist_name, title, compo.title)
-    mp3_safe_path, mp3_safe_title = safe_file(os.path.join(MEDIA_ROOT, 'compo', 'mp3'), mp3_file_title)
+    mp3_safe_path, mp3_safe_title = safe_file(os.path.join(settings.MEDIA_ROOT, 'compo', 'mp3'), mp3_file_title)
     mp3_safe_path_relative = os.path.join('compo','mp3',mp3_safe_title)
 
     # move the mp3 file
@@ -142,11 +142,13 @@ def ajax_submit_entry(request):
         # resubmitting. edit old entry and song
         entry = entries[0]
         old_length = entry.song.length
+        buffer_time = 0
         entry.song.delete()
     else:
         # create new entry
         entry = Entry()
         old_length = 0
+        buffer_time = settings.LISTENING_PARTY_BUFFER_TIME
     song = Song()
 
     # upload the source file
@@ -158,7 +160,7 @@ def ajax_submit_entry(request):
             source_file_title = "%s - %s (%s).%s" % (request.user.get_profile().artist_name, title, compo.title, source_ext)
         else:
             source_file_title = "%s - %s (%s)" % (request.user.get_profile().artist_name, title, compo.title)
-        source_safe_path, source_safe_file_title = safe_file(os.path.join(MEDIA_ROOT, 'compo', 'mp3'), source_file_title)
+        source_safe_path, source_safe_file_title = safe_file(os.path.join(settings.MEDIA_ROOT, 'compo', 'mp3'), source_file_title)
         source_safe_path_relative = os.path.join('compo','mp3',source_safe_file_title)
 
         upload_file(source_file, source_safe_path)
@@ -179,7 +181,7 @@ def ajax_submit_entry(request):
     # update competition dates based on this newfound length 
     vote_period_delta = timedelta(seconds=compo.vote_period_length)
     if compo.have_listening_party:
-        compo.listening_party_end_date += timedelta(seconds=(audio_length-old_length))
+        compo.listening_party_end_date += timedelta(seconds=(audio_length-old_length+buffer_time))
         compo.vote_deadline = compo.listening_party_end_date + vote_period_delta
     else:
         compo.vote_deadline = compo.submit_deadline + vote_period_delta
@@ -220,6 +222,9 @@ def ajax_compo(request, id):
         },
         'compo': safe_model_to_dict(compo),
         'entries': [add_to_entry(x) for x in compo.entry_set.all()],
+        'party': {
+            'buffer_time': settings.LISTENING_PARTY_BUFFER_TIME,
+        }
     }
 
     data['compo']['have_theme'] = compo.theme != ''

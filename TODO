@@ -2,7 +2,6 @@
  == to get a prototype working ==
  * competition page
    - listening party behavior
-     > 5 seconds buffertime before every track
      > make song comments during chat during listening party
    - voting behavior
    - competition closed behavior
@@ -22,6 +21,7 @@
    - possibly use ajax to improve offset calculation between server and local.
  * instead of serverTime(new Date()) for latest_check, use the timestamp from
    the last received message.
+ * paging on competitions. right now it sends them all.
 
  == improvements ==
  * protect against h4xz0rz by adding a @method to views which do things like
@@ -30,7 +30,6 @@
  * listening party date must be after submission deadline date - put that in
    form validation check
  * implement template caching in Jst parser
- * paging on competitions. right now it sends them all.
  * moderation tools for competitions
  * obfuscate media URLs to protect people's stuff
  * provide some way to format themes, rules, comments, etc
@@ -62,6 +61,8 @@
    are old.
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
+ * compo owner gets skip song controls
+ * compo owner can make other people moderators too
 
 == next gen ==
  * google map integration
