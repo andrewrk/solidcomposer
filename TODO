@@ -1,9 +1,6 @@
 = arena =
  == to get a prototype working ==
  * make the gui usable
-   - date/time widgets for competition form
- * validate dates when making a new competition (deadline can't be before
-   start_date, etc)
  * re-implement safe_model_to_dict to make it safer. should probably have
    explicit safe fields in models.
  * put a cap on file size of uploaded things

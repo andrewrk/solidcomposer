@@ -46,6 +46,9 @@ class CreateCompetitionForm(forms.Form):
     vote_time_quantity = forms.IntegerField(max_value=12, min_value=1, initial=1)
     vote_time_measurement = forms.ChoiceField(choices=TIME_QUANTIFIERS, initial=WEEKS)
 
+    # add this many hours to the times to get the correct value
+    tz_offset = forms.IntegerField(widget=forms.HiddenInput())
+
     def clean_submission_deadline_date(self):
         in_start_date = self.cleaned_data['start_date']
         in_deadline = self.cleaned_data['submission_deadline_date']

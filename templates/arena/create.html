@@ -4,6 +4,14 @@
 
 {% block css %}arena.css{% endblock %}
 
+{% block extra_header %}
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/anytimec.css" />
+    {{ block.super }}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/anytimec.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/formatting.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/create_competition.js"></script>
+{% endblock %}
+
 {% block content %}
     {% include 'login_area.html' %}
     <h1>Arena</h1>
