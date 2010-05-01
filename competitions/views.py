@@ -386,9 +386,11 @@ def create(request):
             if form.cleaned_data.get('have_rules', False):
                 comp.rules = form.cleaned_data.get('rules', '')
 
+            tz_offset = form.cleaned_data.get('tz_offset')
+            tz_delta = timedelta(hours=tz_offset)
 
-            comp.start_date = form.cleaned_data.get('start_date')
-            comp.submit_deadline = form.cleaned_data.get('submission_deadline_date')
+            comp.start_date = form.cleaned_data.get('start_date') + tz_delta
+            comp.submit_deadline = form.cleaned_data.get('submission_deadline_date') + tz_delta
 
             # calculate vote deadline 
             quantity = int(form.cleaned_data.get('vote_time_quantity'))
@@ -408,7 +410,7 @@ def create(request):
                 if form.cleaned_data.get('party_immediately'):
                     comp.listening_party_start_date = comp.submit_deadline
                 else:
-                    comp.listening_party_start_date = form.cleaned_data.get('listening_party_date')
+                    comp.listening_party_start_date = form.cleaned_data.get('listening_party_date') + tz_delta
                 # initialize end date to start date. we make modifications to it
                 # when entries are submitted.
                 comp.listening_party_end_date = comp.listening_party_start_date
