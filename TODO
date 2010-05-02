@@ -1,5 +1,7 @@
 = arena =
  == to get a prototype working ==
+ * it's impossible to select things in chat
+ * set chat refresh to 4s and part message to double
  * error when submitting a source file
  * chat use last received message id instead of date
  * chat doesn't scroll properly
@@ -33,6 +35,7 @@
  * listening party - make song comments during chat during listening party
  * use === instead of ==
  * better competition ordering in arena
+ * ability to have private compo by invitation
 
  * protect against h4xz0rz by adding a @method to views which do things like
    login, logout, etc. The method would make sure the referrer was us and not
