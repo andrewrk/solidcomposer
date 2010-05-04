@@ -1,4 +1,5 @@
 Dependencies:
+ * django
  * A good database system like postgresql or mysql so that the migration
    stuff (south) can work.
  * south - http://south.aeracode.org/
