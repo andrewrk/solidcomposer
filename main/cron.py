@@ -11,7 +11,7 @@ class CreateLeaveMessages(Job):
     """
 
     # run every 20 seconds
-    run_every = 20
+    run_every = 30
 
     def job(self):
         expire_date = datetime.now() - timedelta(seconds=CHAT_TIMEOUT)
