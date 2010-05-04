@@ -43,3 +43,20 @@
     2. Create a blank file in same folder as settings.py named RELEASE
     3. make sure database is synchronized
     4. python preparser.py parse
+
+ * Developing
+
+    1. Install the dependencies from the INSTALL file.
+    2. Create a web server to serve media. I recommend lighttpd or apache.
+       Configure the server to honor softlinks and softlink media/ to
+       some place in your web server so that MEDIA_URL in settings.py
+       resolves correctly.
+    3. Go through settings.py and make sure the variables in there
+       will work for you. If not, don't change settings.py but instead
+       create settings_user.py and override the variables there.
+
+       This step may involve setting up a sql database if you decide not
+       to use sqlite3. sqlite3 is probably A-OK for just doing design work.
+    4. ./manage.py runserver should work and you can visit the url that
+       it prints to the screen to test it out. If you don't see images or
+       css then your media serving isn't configured correctly.

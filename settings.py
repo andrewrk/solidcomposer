@@ -1,4 +1,7 @@
 # Django settings for opensourcemusic project.
+# you can override any of this with settings_user.py, which does not get
+# committed to source control.
+
 import os
 import datetime
 
@@ -8,9 +11,7 @@ def absolute(relative_path):
     """
     return os.path.join(os.path.dirname(__file__), relative_path)
 
-release_mode = os.path.exists(absolute("RELEASE"))
-
-DEBUG = not release_mode
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -19,32 +20,19 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-if release_mode:
-    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_ENGINE = 'mysql'           
-    # Or path to database file if using sqlite3.
-    DATABASE_NAME = 'superjoe_solidcomposer'             
-    # Not used with sqlite3.
-    DATABASE_USER = 'superjoe_solidco'
-    # Not used with sqlite3.
-    DATABASE_PASSWORD = 'rf;MOJ*fM){?'
-    # Set to empty string for localhost. Not used with sqlite3.
-    DATABASE_HOST = ''
-    # Set to empty string for default. Not used with sqlite3.
-    DATABASE_PORT = ''
-else:
-    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_ENGINE = 'mysql'           
-    # Or path to database file if using sqlite3.
-    DATABASE_NAME = 'opensourcemusic'
-    # Not used with sqlite3.
-    DATABASE_USER = 'opensourcemusic'             
-    # Not used with sqlite3.
-    DATABASE_PASSWORD = 'dev'         
-    # Set to empty string for localhost. Not used with sqlite3.
-    DATABASE_HOST = ''             
-    # Set to empty string for default. Not used with sqlite3.
-    DATABASE_PORT = ''             
+# this is something you may want to override in settings_user.py
+# 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_ENGINE = 'mysql'           
+# Or path to database file if using sqlite3.
+DATABASE_NAME = 'opensourcemusic'
+# Not used with sqlite3.
+DATABASE_USER = 'opensourcemusic'             
+# Not used with sqlite3.
+DATABASE_PASSWORD = 'dev'         
+# Set to empty string for localhost. Not used with sqlite3.
+DATABASE_HOST = ''             
+# Set to empty string for default. Not used with sqlite3.
+DATABASE_PORT = ''             
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -53,12 +41,9 @@ else:
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
 
-# set this to None as soon as django supports it. America/Denver is the
-# server timezone of superjoesoftware.com
-if release_mode:
-    TIME_ZONE = 'America/Denver' 
-else:
-    TIME_ZONE = 'America/Phoenix'
+# set this to None as soon as django supports it.
+# this is something you may want to override in settings_user.py
+TIME_ZONE = 'America/Phoenix'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -77,18 +62,14 @@ MEDIA_ROOT = absolute('media')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-if release_mode:
-    MEDIA_URL = 'http://superjoesoftware.com/djangomedia/opensourcemusic/'
-else:
-    MEDIA_URL = 'http://localhost:8080/django/opensourcemusic/'
+# this is something you may want to override in settings_user.py
+MEDIA_URL = 'http://localhost:8080/django/opensourcemusic/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-if release_mode:
-    ADMIN_MEDIA_PREFIX= 'http://superjoesoftware.com/djangomedia/opensourcemusic/admin/'
-else:
-    ADMIN_MEDIA_PREFIX = 'http://localhost:8080/django/opensourcemusic/admin/'
+# this is something you may want to override in settings_user.py
+ADMIN_MEDIA_PREFIX = 'http://localhost:8080/django/opensourcemusic/admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '2_l-92-j(^)a=vsynmsw1d(efi!w@w#j#v@ucv^2i7cfsk=!8='
@@ -167,3 +148,7 @@ LISTENING_PARTY_BUFFER_TIME = 10
 
 # how many bytes to limit uploads to
 FILE_UPLOAD_SIZE_CAP = 1024 * 1024 * 10  # 20 MB
+
+if os.path.exists("settings_user.py"):
+    from settings_user import *
+
