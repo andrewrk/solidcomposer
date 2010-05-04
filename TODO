@@ -1,7 +1,7 @@
 = arena =
  == to get a prototype working ==
- * it's impossible to select things in chat
  * set chat refresh to 4s and part message to double
+ * it's impossible to select things in chat
  * error when submitting a source file
  * chat use last received message id instead of date
  * chat doesn't scroll properly
