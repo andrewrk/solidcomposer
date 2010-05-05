@@ -4,6 +4,10 @@
         <% for (var i=0; i<compos.length; ++i) { var compo = compos[i]; %>
             {% include 'arena/compo_block.jst.html' %}
         <% } %>
+        <% var pagination = {count: page_count, number: page_number}; %>
+        <div id="public-nav">
+            {% include 'page_nav.jst.html' %}
+        </div>
     <% } else { %>
         <p>Sorry, no competitions available right now.</p>
     <% } %>

@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
 from django.db.models import Count
+from django.core.paginator import Paginator
 
 from opensourcemusic.competitions.models import *
 from opensourcemusic import settings
@@ -328,6 +329,27 @@ def compo_to_dict(compo, user):
             data['vote_count'] = ThumbsUp.objects.filter(entry=entry).count()
     return data
 
+def compoRequest(request, compos):
+    page_str = request.GET.get('page', 1) 
+    try:
+        page_number = int(page_str)
+    except:
+        page_number = 1
+
+    paginator = Paginator(compos, settings.ITEMS_PER_PAGE)
+
+    # build the json object
+    data = {
+        'compos': [compo_to_dict(x, request.user) for x in paginator.page(page_number).object_list],
+        'page_count': paginator.num_pages,
+        'page_number': page_number,
+        'user': {
+            'is_authenticated': request.user.is_authenticated(),
+        },
+    }
+
+    return json_response(data)
+
 def ajax_available(request):
     compos = Competition.objects
 
@@ -335,20 +357,10 @@ def ajax_available(request):
     if request.user.is_authenticated():
         pkeys = request.user.get_profile().competitions_bookmarked.values_list('pk')
         compos = compos.exclude(pk__in=pkeys)
-    else:
-        compos = compos
 
     compos = compos.order_by('-start_date')
 
-    # build the json object
-    data = {
-        'compos': [compo_to_dict(x, request.user) for x in compos],
-        'user': {
-            'is_authenticated': request.user.is_authenticated(),
-        },
-    }
-
-    return json_response(data)
+    return compoRequest(request, compos)
 
 def ajax_owned(request):
     data = {
@@ -362,9 +374,7 @@ def ajax_owned(request):
 
     # only show bookmarked items
     compos = request.user.get_profile().competitions_bookmarked.order_by('start_date')
-    data['compos'] = [compo_to_dict(x, request.user) for x in compos]
-
-    return json_response(data)
+    return compoRequest(request, compos)
 
 @login_required
 def create(request):

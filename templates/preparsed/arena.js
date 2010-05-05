@@ -15,8 +15,11 @@ var SCArena = function () {
 
     var state = {
         available: null,
-        owned: null,
+        owned: null
     }
+
+    var available_page = 1;
+    var owned_page = 1;
     
     // private functions
     function addClicksToCompo(compo) {
@@ -47,6 +50,7 @@ var SCArena = function () {
             });
             return false;
         });
+        
     }
 
     function setBookmarkedProperty(data, value) {
@@ -69,6 +73,13 @@ var SCArena = function () {
         $("#available").html(Jst.evaluate(template_available_s, state.available));
 
         addClicksToSection(state.available);
+
+        // page navigation
+        $("#public-nav a").click(function(){
+            available_page = $(this).attr('page');
+            ajaxRequestAvailable();
+            return false;
+        });
     }
 
     function updateOwned() {
@@ -80,7 +91,15 @@ var SCArena = function () {
 
         if (state.owned.user.is_authenticated) {
             addClicksToSection(state.owned);
+
+            // page navigation
+            $("#owned-nav a").click(function(){
+                owned_page = $(this).attr('page');
+                ajaxRequestOwned();
+                return false;
+            });
         }
+
     }
 
     function ajaxRequestLoop() {
@@ -99,6 +118,45 @@ var SCArena = function () {
         template_owned_s = Jst.compile(template_owned);
     }
 
+    function ajaxRequestAvailable() {
+        $.getJSON(
+            "/arena/ajax/available/",
+            {
+                page: available_page
+            },
+            function(data){
+                if (data === null) {
+                    return;
+                }
+
+                state.available = data;
+
+                setBookmarkedProperty(state.available, false);
+                updateAvailable();
+            }
+        );
+    }
+
+    function ajaxRequestOwned() {
+        $.getJSON(
+            "/arena/ajax/owned/",
+            {
+                page: owned_page
+            },
+            function(data){
+                if (data === null) {
+                    return;
+                }
+
+                state.owned = data;
+                if (data.user.is_authenticated) {
+                    setBookmarkedProperty(state.owned, true);
+                }
+                updateOwned();
+            }
+        );
+    }
+
     that = {
         // public variables
         
@@ -110,28 +168,8 @@ var SCArena = function () {
         },
         
         ajaxRequest: function () {
-            $.getJSON("/arena/ajax/available/", function(data){
-                if (data === null) {
-                    return;
-                }
-
-                state.available = data;
-
-                setBookmarkedProperty(state.available, false);
-                updateAvailable();
-            });
-
-            $.getJSON("/arena/ajax/owned/", function(data){
-                if (data === null) {
-                    return;
-                }
-
-                state.owned = data;
-                if (data.user.is_authenticated) {
-                    setBookmarkedProperty(state.owned, true);
-                }
-                updateOwned();
-            });
+            ajaxRequestAvailable();
+            ajaxRequestOwned();
         }
     };
     return that;

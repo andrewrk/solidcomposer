@@ -149,6 +149,10 @@ LISTENING_PARTY_BUFFER_TIME = 10
 # how many bytes to limit uploads to
 FILE_UPLOAD_SIZE_CAP = 1024 * 1024 * 10  # 20 MB
 
+# for pagination
+ITEMS_PER_PAGE = 5
+
+
+# leave this at the very end
 if os.path.exists("settings_user.py"):
     from settings_user import *
-

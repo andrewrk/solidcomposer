@@ -2,11 +2,13 @@
     <div id="my-competitions">
         <h2>My Competions</h2>
         <% if (compos.length > 0) { %>
-            <% if (compos.length > 0) { %>
-                <% for (var i=0; i<compos.length; ++i) { var compo = compos[i]; %>
-                    {% include 'arena/compo_block.jst.html' %}
-                <% } %>
+            <% for (var i=0; i<compos.length; ++i) { var compo = compos[i]; %>
+                {% include 'arena/compo_block.jst.html' %}
             <% } %>
+            <% var pagination = {count: page_count, number: page_number}; %>
+            <div id="owned-nav">
+                {% include 'page_nav.jst.html' %}
+            </div>
         <% } else { %>
             <p>You have not entered or bookmarked any competitions.</p>
         <% } %>

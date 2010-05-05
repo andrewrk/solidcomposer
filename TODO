@@ -1,6 +1,7 @@
 = arena =
  == Release Thursday May 6 2010 ==
- * paging on competitions. right now it sends them all.
+ * arena - the competitions aren't updating on a second based timer
+   > make it a second-based timer but not suck to click the link
  * cron job to delete users who register and don't activate after a certain
    period of time. or just allow their accounts to be overwritten if they
    are old.
