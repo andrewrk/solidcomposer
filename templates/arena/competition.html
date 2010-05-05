@@ -48,6 +48,7 @@ var MEDIA_URL = "{{ MEDIA_URL }}";
         <h4>Your entry</h4>
         <div id="submit-entry">
             <form method="post" enctype="multipart/form-data" action="/arena/ajax/submit-entry/" onsubmit="return AIM.submit(this, {'onStart': SCCompo.submitEntryStartCallback, 'onComplete': SCCompo.submitEntryCompleteCallback})">
+            <fieldset>
             <input type="hidden" name="compo" value="{{ competition.id }}" />
                 <table>
                 <tr>
@@ -64,13 +65,14 @@ var MEDIA_URL = "{{ MEDIA_URL }}";
                 </tr>
                 <tr>
                 <th><label for="entry-comments">(optional) Author's Comments:</label></th>
-                <td><textarea name="entry-comments" id="entry-comments"></textarea></td>
+                <td><textarea rows="10" cols="80" name="entry-comments" id="entry-comments"></textarea></td>
                 </tr>
                 <tr>
                 <td></td>
-                <td <input type="submit" value="submit" /></td>
+                <td><input type="submit" value="submit" /></td>
                 </tr>
                 </table>
+            </fieldset>
             </form>
         </div>
     </div>

@@ -103,3 +103,8 @@ form th {
     clear: both;
 }
 
+fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}

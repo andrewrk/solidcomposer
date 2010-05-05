@@ -141,7 +141,7 @@ var SCCompo = function () {
             state.resubmitting = ! state.resubmitting;
             $("#entry-title").attr('value', state.json.user_entry.title);
             $("#entry-comments").attr('value', state.json.user_entry.comments);
-            that.updateCompo();
+            updateCompo();
             return false;
         });
 
