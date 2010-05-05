@@ -42,13 +42,42 @@ var Chat = function() {
     var chatroom_id;
 
     // private functions:
+    function scrollToLastMessage() {
+        $("#chatroom-outer-box").animate({ scrollTop: $("#chatroom-outer-box").attr('scrollHeight')}, 500);
+    }
+
+    function say(msg_to_post) {
+        // add the message and clear the box
+        var new_message = {
+            'room': chatroom_id,
+            'type': that.message_type.MESSAGE,
+            'author': state_chat.user.get_profile,
+            'message': msg_to_post,
+            'timestamp': Time.serverTime(new Date())
+        };
+        var container = $("#chatroom-outer-box");
+        var scroll = (container.scrollTop() === container.attr('scrollHeight') - container.height());
+
+        new_message.author.username = state_chat.user.username;
+        state_chat.messages.push(new_message);
+        ++chat_temp_msg_count;
+        updateChat();
+
+        if (scroll) {
+            scrollToLastMessage();
+        }
+        
+        // set focus to this widget again
+        //$("#chat-say-text").focus();
+    }
+
     function chatAddClicksToSay() {
         $("#chat-say-text").keydown(function(event){
             if (event.keyCode === 13) {
                 // say something in chat
                 var msg_to_post = $("#chat-say-text").attr('value');
                 if (msg_to_post === '') {
-                    return;
+                    return false;
                 }
                 $("#chat-say-text").attr('value','');
                 $.ajax({
@@ -60,26 +89,12 @@ var Chat = function() {
                         'message': msg_to_post
                     },
                     success: function(){
-                        // add the message and clear the box
-                        var new_message = {
-                            'room': chatroom_id,
-                            'type': that.message_type.MESSAGE,
-                            'author': state_chat.user.get_profile,
-                            'message': msg_to_post,
-                            'timestamp': Time.serverTime(new Date())
-                        };
-                        new_message.author.username = state_chat.user.username;
-                        state_chat.messages.push(new_message);
-                        ++chat_temp_msg_count;
-                        updateChat();
-                        
-                        // set focus to this widget again
-                        $("#chat-say-text").focus();
                     },
                     error: function(){
                         // TODO: show some kind of error message
                     }
                 });
+                say(msg_to_post);
                 return false;
             }
         });
@@ -163,7 +178,7 @@ var Chat = function() {
                 }
 
                 // see if we're at the bottom of the div
-                container = $("#chatroom-messages");
+                container = $("#chatroom-outer-box");
                 scroll = (container.scrollTop() === container.attr('scrollHeight') - container.height());
 
                 state_chat.room = data.room;
@@ -182,7 +197,7 @@ var Chat = function() {
                 updateChat();
 
                 if (scroll) {
-                    $("#chatroom-messages").animate({ scrollTop: $("#chatroom-messages").attr('scrollHeight')}, 500);
+                    scrollToLastMessage();
                 }
             });
     }
