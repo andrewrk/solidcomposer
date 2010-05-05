@@ -29,6 +29,7 @@ urlpatterns = patterns('',
 
     (r'^about/$', direct_to_template, {'template': 'about.html'}),
     (r'^policy/$', direct_to_template, {'template': 'policy.html'}),
+    (r'^account/$', direct_to_template, {'template': 'account.html'}),
 )
 # exceptions to media url
 if settings.DEBUG:

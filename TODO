@@ -1,4 +1,15 @@
 = arena =
+ == Release Thursday May 6 2010 ==
+ * paging on competitions. right now it sends them all.
+ * cron job to delete users who register and don't activate after a certain
+   period of time. or just allow their accounts to be overwritten if they
+   are old.
+ * the online users is sketchy at best
+   > chat: handle join/part messages by removing them or adding them from
+     the onliners list
+ * edit competition
+ * if creating a competition fails, have a message at the top saying
+   "please correct these errors."
  * have a robust song player and use it during competitions
    > song wave form
    > have a mute button during competitions but not pause/play
@@ -6,28 +17,19 @@
  * make the gui pretty
    > thumbs ups instead of voting
    > chat colors
- * paging on competitions. right now it sends them all.
- * the online users is sketchy at best
-   > chat: handle join/part messages by removing them or adding them from
-     the onliners list
- * cron job to delete users who register and don't activate after a certain
-   period of time. or just allow their accounts to be overwritten if they
-   are old.
- * edit competition
- * if creating a competition fails, have a message at the top saying
-   "please correct these errors."
- * when they click resubmit, scroll down the page to see the form.
-
- * display error when chat message doesn't go through
  * user profile page
    - show their competition entries
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
+
+ * when they click resubmit, scroll down the page to see the form.
+ * display error when chat message doesn't go through
  * listening party - make song comments during chat during listening party
  * better competition ordering in arena
- * ability to have private compo by invitation
-
+ * put whitelist/blacklist/open in the create competition page. default open.
+   - invitation system based on passwords
+   - ability to have private compo by invitation
  * protect against h4xz0rz by adding a @method to views which do things like
    login, logout, etc. The method would make sure the referrer was us and not
    some other website.
@@ -42,10 +44,7 @@
  * make the gui experience of clicking edit on a submission and then
    deciding not to better.
  * replay listening party feature
-  - put an indicator on the page so you know whether it's live or replay
- * settings page
- * put whitelist/blacklist/open in the create competition page. default open.
-   - invitation system based on passwords
+   - put an indicator on the page so you know whether it's live or replay
  * test with a messed up clock in windows
    - possibly use ajax to improve offset calculation between server and local.
  * google map integration
