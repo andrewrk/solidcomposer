@@ -36,7 +36,7 @@ var Chat = function() {
     var state_chat = null;
     var chat_can_say = null;
 
-    var chat_last_update = null;
+    var last_message_id = null;
     var chat_temp_msg_count = 0;
     
     var chatroom_id;
@@ -140,7 +140,7 @@ var Chat = function() {
     function chatAjaxRequest() {
         $.getJSON("/ajax/chat/",
             {
-                "latest_check": chat_last_update,
+                "last_message": last_message_id,
                 "room": chatroom_id
             },
             function(data){
@@ -172,11 +172,11 @@ var Chat = function() {
                     state_chat.messages.push(data.messages[i]);
                 }
                 if (data.messages.length > 0) {
-                    chat_last_update = data.messages[data.messages.length-1].timestamp;
+                    last_message_id = data.messages[data.messages.length-1].id;
                 }
 
                 if (that.beforeChatRoomActive(state_chat.room)) {
-                    chat_last_update = null;
+                    last_message_id = null;
                 }
 
                 updateChat();

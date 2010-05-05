@@ -133,20 +133,6 @@ def ajax_logout(request):
 
     return json_response(data)
 
-def python_date(js_date):
-    """
-    convert a javascript date to a python date
-    format: Wed Apr 28 2010 04:20:43 GMT-0700 (MST)
-    """
-    return datetime.strptime(js_date[:24], "%a %b %d %Y %H:%M:%S")
-
-def my_date(js_date):
-    """
-    convert a javascript date to a python date
-    format: May 01, 2010 02:30:54
-    """
-    return datetime.strptime(js_date[:24], "%B %d, %Y %H:%M:%S")
-
 def user_can_chat(room, user):
     if room.permission_type == OPEN:
         return True
@@ -167,7 +153,7 @@ def user_can_chat(room, user):
         return True
 
 def ajax_chat(request):
-    latest_check = request.GET.get('latest_check', 'null')
+    last_message_str = request.GET.get('last_message', 'null')
     room_id = request.GET.get('room', 0)
     try:
         room_id = int(room_id)
@@ -198,12 +184,17 @@ def ajax_chat(request):
         d['timestamp'] = msg.timestamp
         return d
 
-    if latest_check == 'null':
+    if last_message_str == 'null':
         # get entire log for this chat.
         data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room).order_by('timestamp')]
     else:
-        check_date = my_date(latest_check)
-        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, timestamp__gt=check_date).order_by('timestamp')]
+        try:
+            last_message_id = int(last_message_str)
+        except:
+            last_message_id = 0
+
+        last_message = get_object_or_404(ChatMessage, id=last_message_id)
+        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, id__gt=last_message_id).order_by('timestamp')]
 
     if request.user.is_authenticated():
         # mark an appearance in the ChatRoom

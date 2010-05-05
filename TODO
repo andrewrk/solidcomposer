@@ -1,5 +1,4 @@
 = arena =
- * chat use last received message id instead of date
  * display chat input box outside scroll area
  * chat doesn't scroll for outgoing messages
  * have a robust song player and use it during competitions
