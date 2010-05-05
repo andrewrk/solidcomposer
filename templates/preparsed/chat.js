@@ -46,6 +46,12 @@ var Chat = function() {
         $("#chatroom-outer-box").animate({ scrollTop: $("#chatroom-outer-box").attr('scrollHeight')}, 500);
     }
 
+    // returns true if chat box is scrolled to the bottom
+    function scrolledToBottom() {
+        var container = $("#chatroom-outer-box");
+        return (container.scrollTop() === container.attr('scrollHeight') - container.height());
+    }
+
     function say(msg_to_post) {
         // add the message and clear the box
         var new_message = {
@@ -55,8 +61,7 @@ var Chat = function() {
             'message': msg_to_post,
             'timestamp': Time.serverTime(new Date())
         };
-        var container = $("#chatroom-outer-box");
-        var scroll = (container.scrollTop() === container.attr('scrollHeight') - container.height());
+        var scroll = scrolledToBottom();
 
         new_message.author.username = state_chat.user.username;
         state_chat.messages.push(new_message);
@@ -119,7 +124,10 @@ var Chat = function() {
             $("#chatroom-cannot-say").html(Jst.evaluate(template_cannot_say_s, state_chat));
         }
 
-        $("#chatroom-outer-box").html(Jst.evaluate(template_chat_s, state_chat));
+        if (scrolledToBottom()) {
+            $("#chatroom-outer-box").html(Jst.evaluate(template_chat_s, state_chat));
+        }
+
         if (chat_can_say) {
             $("#chatroom-cannot-say").hide();
             $("#chatroom-say").show();
@@ -159,7 +167,6 @@ var Chat = function() {
                 "room": chatroom_id
             },
             function(data){
-                var container;
                 var scroll;
                 var i;
                 
@@ -178,8 +185,7 @@ var Chat = function() {
                 }
 
                 // see if we're at the bottom of the div
-                container = $("#chatroom-outer-box");
-                scroll = (container.scrollTop() === container.attr('scrollHeight') - container.height());
+                scroll = scrolledToBottom();
 
                 state_chat.room = data.room;
                 state_chat.user = data.user;

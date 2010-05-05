@@ -1,4 +1,7 @@
 = arena =
+ * dummy about, policy, settings pages
+ * login on the home page
+   > dummy content on the home page
  * have a robust song player and use it during competitions
    > song wave form
    > have a mute button during competitions but not pause/play
@@ -6,10 +9,6 @@
  * make the gui pretty
    > thumbs ups instead of voting
    > chat colors
- * dummy about, policy, settings pages
- * login on the home page
-   > dummy content on the home page
- * it's impossible to select things in chat
  * uploading an entry should clear that form
  * paging on competitions. right now it sends them all.
  * the online users is sketchy at best
