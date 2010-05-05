@@ -1,39 +1,41 @@
 = arena =
- == to get a prototype working ==
+ * improve javascript
+     * don't make a function inside a for loop
  * set chat refresh to 4s and part message to double
- * it's impossible to select things in chat
+ * buffering playing and not stopping
  * error when submitting a source file
  * chat use last received message id instead of date
  * chat doesn't scroll properly
- * buffering playing and not stopping
+ * display chat input box outside scroll area
  * have a robust song player and use it during competitions
+   > song wave form
+   > have a mute button during competitions but not pause/play
  * make the gui pretty
-   > award star with a number in it next to person's name instead of parens
    > thumbs ups instead of voting
+   > chat colors
  * dummy about, policy, settings pages
  * login on the home page
-
- == improvements ==
+   > dummy content on the home page
+ * it's impossible to select things in chat
  * uploading an entry should clear that form
  * paging on competitions. right now it sends them all.
- * display error when chat message doesn't go through
  * the online users is sketchy at best
- * mute button on player
- * chat: handle join/part messages by removing them or adding them from
-   the onliners list
+   > chat: handle join/part messages by removing them or adding them from
+     the onliners list
  * cron job to delete users who register and don't activate after a certain
    period of time. or just allow their accounts to be overwritten if they
    are old.
+ * edit competition
+ * if creating a competition fails, have a message at the top saying
+   "please correct these errors."
+
+ * display error when chat message doesn't go through
  * user profile page
    - show their competition entries
- * edit competition
- * make the gui pretty
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
- * compo owner gets skip song controls
- * compo owner can make other people moderators too
+     * provide some way to format themes, rules, comments, etc
  * listening party - make song comments during chat during listening party
- * use === instead of ==
  * better competition ordering in arena
  * ability to have private compo by invitation
 
@@ -41,9 +43,9 @@
    login, logout, etc. The method would make sure the referrer was us and not
    some other website.
  * moderation tools for competitions
+     * compo owner gets skip song controls
+     * compo owner can make other people moderators too
  * obfuscate media URLs to protect people's stuff
- * provide some way to format themes, rules, comments, etc
- * chat colors
  * chat: display how many invisible observers there are
  * color the time differently when there isn't much time left so that 
    people know they're running out of time
@@ -54,12 +56,12 @@
   - put an indicator on the page so you know whether it's live or replay
  * settings page
  * put whitelist/blacklist/open in the create competition page. default open.
+   - invitation system based on passwords
  * test with a messed up clock in windows
    - possibly use ajax to improve offset calculation between server and local.
  * google map integration
  * rss feed for competitions
  * show and allow posting comments on songs on user pages
- * song wave form
 
 = project manager / band page =
 

@@ -1,4 +1,4 @@
-<% if (chatRoomActive(room)) { %>
+<% if (Chat.chatRoomActive(room)) { %>
     <% if (user.is_authenticated) { %>
         <% if (user.has_permission) { %>
             
@@ -8,6 +8,6 @@
     <% } else { %>
         <p>Log in to participate in chat.</p>
     <% } %>
-<% } else if (afterChatRoomActive(room)) { %>
-    <p>This chat room closed on <%= formatDate(localTime(room.end_date)) %></p>
+<% } else if (Chat.afterChatRoomActive(room)) { %>
+    <p>This chat room closed on <%= Time.formatDate(Time.localTime(room.end_date)) %></p>
 <% } %>

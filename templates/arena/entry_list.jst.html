@@ -1,44 +1,44 @@
-<h4>Entries (<%= entries.length %> so far)</h4>
+<h4>Entries (<%= json.entries.length %> so far)</h4>
 <div id="entries">
-    <% for (var i=0; i<entries.length; ++i) { var entry = entries[i]; %>
-        <% if (votingActive(compo) || compoClosed(compo)) { %>
-            <div class="<% if (playback_current_track.index == i) { %>entry-playing<% } else { %>entry<% } %>">
+    <% for (var i=0; i<json.entries.length; ++i) { var entry = json.entries[i]; %>
+        <% if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
+            <div class="<% if (current_track.index == i) { %>entry-playing<% } else { %>entry<% } %>">
                 <a href="#" id="entry-<%= i %>">
                 <%= entry.owner.artist_name %> - <%= entry.song.title %>
-                (<%= timeDisplay(entry.song.length) %>)</a>
-                <% if (votingActive(compo)) { %>
-                    <% if (user.is_authenticated) { %>
+                (<%= Time.timeDisplay(entry.song.length) %>)</a>
+                <% if (SCCompo.votingActive()) { %>
+                    <% if (json.user.is_authenticated) { %>
                         <% if (entry.voted_for) { %>
                             <a href="#" id="unvote-<%= i %>">unvote</a>
                         <% } else { %>
-                            <% if (votes.left > 0 && entry.owner.id != user.id) { %>
+                            <% if (json.votes.left > 0 && entry.owner.id != json.user.id) { %>
                                 <a href="#" id="vote-<%= i %>">vote</a>
                             <% } %>
                         <% } %>
                     <% } %>
                 <% } else { %>
-                    <%= plural(entry.vote_count, "vote", "votes") %>
+                    <%= Time.plural(entry.vote_count, "vote", "votes") %>
                 <% } %>
             </div>
         <% } else { %>
-            <% if (ongoingListeningParty(compo) && i == party.index) { %>
+            <% if (SCCompo.ongoingListeningParty() && i == json.party.index) { %>
                 <div class="entry-playing">
                     <%= entry.owner.artist_name %> - <%= entry.song.title %>
-                    (<%= timeDisplay(entry.song.length) %>)
+                    (<%= Time.timeDisplay(entry.song.length) %>)
                 </div>
             <% } else { %>
-                <% if (entry.owner.user == user.id) { %>
+                <% if (entry.owner.user == json.user.id) { %>
                     <div class="entry-user">
                         <%= entry.owner.artist_name %> - <%= entry.song.title %>
-                        (<%= timeDisplay(entry.song.length) %>)
-                        <% if (submissionActive()) { %>
+                        (<%= Time.timeDisplay(entry.song.length) %>)
+                        <% if (SCCompo.submissionActive()) { %>
                             (<a href="#" id="resubmit">edit</a>)
                         <% } %>
                     </div>
                 <% } else { %>
                     <div class="entry">
                         <%= entry.owner.artist_name %> - <%= entry.song.title %>
-                        (<%= timeDisplay(entry.song.length) %>)
+                        (<%= Time.timeDisplay(entry.song.length) %>)
                     </div>
                 <% } %>
             <% } %>

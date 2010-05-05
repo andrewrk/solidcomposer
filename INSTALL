@@ -14,3 +14,5 @@ Procedure:
    django. the files that are served here should be a softlink to media/static/.
  * verify that the cron.py thing is working. if it's not, you need to set up
    a cron job manually to do the task it was going to do.
+ * preparser.py parse
+   this needs to be re-run any time you change any templates or settings.py

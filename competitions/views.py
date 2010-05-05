@@ -444,6 +444,7 @@ def create(request):
             'have_rules': True,
             'preview_rules': True,
             'have_listening_party': True,
+            'party_immediately': True,
             'vote_time_quantity': 1,
             'vote_time_measurement': WEEKS,
         }

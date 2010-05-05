@@ -1,31 +1,31 @@
-<% if (compo.have_theme) { %>
+<% if (json.compo.have_theme) { %>
     <div id="theme">
         <h3>Theme</h3>
-        <% if (compo.preview_theme) { %>
-            <p><%= compo.theme %></p>
+        <% if (json.compo.preview_theme) { %>
+            <p><%= json.compo.theme %></p>
         <% } else { %>
-            <% if (secondsUntil(compo.start_date) > 0) { %>
+            <% if (Time.secondsUntil(json.compo.start_date) > 0) { %>
                 <p>
                 The theme will be announced as soon as the competition starts.
                 </p>
             <% } else { %>
-                <p><%= compo.theme %></p>
+                <p><%= json.compo.theme %></p>
             <% } %>
         <% } %>
     </div>
 <% } %>
-<% if (compo.have_rules) { %>
+<% if (json.compo.have_rules) { %>
     <div id="rules">
         <h3>Rules</h3>
-        <% if (compo.preview_rules) { %>
-            <p><%= compo.rules %></p>
+        <% if (json.compo.preview_rules) { %>
+            <p><%= json.compo.rules %></p>
         <% } else { %>
-            <% if (secondsUntil(compo.start_date) > 0) { %>
+            <% if (Time.secondsUntil(json.compo.start_date) > 0) { %>
                 <p>
                 The rules will be announced as soon as the competition starts.
                 </p>
             <% } else { %>
-                <p><%= compo.rules %></p>
+                <p><%= json.compo.rules %></p>
             <% } %>
         <% } %>
     </div>

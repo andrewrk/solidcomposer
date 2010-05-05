@@ -5,24 +5,24 @@
         </span>
     <% } %>
     <h4><%= compo.title %></h4>
-    <% if (secondsUntil(compo.start_date) > 0) { %>
-        <p>starts in <%= printableTimeUntil(compo.start_date) %></p>
-    <% } else if (secondsUntil(compo.submit_deadline) > 0) { %>
-        <p>submission deadline in <%= printableTimeUntil(compo.submit_deadline) %></p>
-    <% } else if (compo.have_listening_party && secondsUntil(compo.listening_party_end_date) > 0) { %>
-        <% if (localTime(compo.listening_party_start_date) > (new Date())) { %> 
+    <% if (Time.secondsUntil(compo.start_date) > 0) { %>
+        <p>starts in <%= Time.printableTimeUntil(compo.start_date) %></p>
+    <% } else if (Time.secondsUntil(compo.submit_deadline) > 0) { %>
+        <p>submission deadline in <%= Time.printableTimeUntil(compo.submit_deadline) %></p>
+    <% } else if (compo.have_listening_party && Time.secondsUntil(compo.listening_party_end_date) > 0) { %>
+        <% if (Time.localTime(compo.listening_party_start_date) > (new Date())) { %> 
             <p>listening party starting in
-            <%= printableTimeUntil(compo.listening_party_start_date) %>
+            <%= Time.printableTimeUntil(compo.listening_party_start_date) %>
             </p>
         <% } else { %>
             <p>Listening party
-            (<%= timeDisplaySince(compo.listening_party_start_date) %> / 
-            <%= timeDisplayUntil(compo.listening_party_end_date) %>)</p>
+            (<%= Time.timeDisplaySince(compo.listening_party_start_date) %> / 
+            <%= Time.timeDisplayUntil(compo.listening_party_end_date) %>)</p>
         <% } %>
-    <% } else if (secondsUntil(compo.vote_deadline) > 0) { %>
-        <p>voting ends in <%= printableTimeUntil(compo.vote_deadline) %></p>
+    <% } else if (Time.secondsUntil(compo.vote_deadline) > 0) { %>
+        <p>voting ends in <%= Time.printableTimeUntil(compo.vote_deadline) %></p>
     <% } else { %>
-        <p>ended on <%= formatDate(localTime(compo.submit_deadline)) %></p>
+        <p>ended on <%= Time.formatDate(Time.localTime(compo.submit_deadline)) %></p>
     <% } %>
     <div class="compo-links">
         <a href="/arena/compete/<%= compo.id %>/" id="compo-<%= compo.id %>-view">view</a>

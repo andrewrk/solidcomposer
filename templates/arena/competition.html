@@ -13,7 +13,7 @@ var competition_id = {{ competition.id }};
 var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{% else %}null{% endif %};
 var MEDIA_URL = "{{ MEDIA_URL }}";
     </script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/formatting.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/chat.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/competition.js"></script>
@@ -47,7 +47,7 @@ var MEDIA_URL = "{{ MEDIA_URL }}";
     <div style="display: none;" id="submission">
         <h4>Your entry</h4>
         <div id="submit-entry">
-            <form method="post" enctype="multipart/form-data" action="/arena/ajax/submit-entry/" onsubmit="return AIM.submit(this, {'onStart': submitEntryStartCallback, 'onComplete': submitEntryCompleteCallback})">
+            <form method="post" enctype="multipart/form-data" action="/arena/ajax/submit-entry/" onsubmit="return AIM.submit(this, {'onStart': SCCompo.submitEntryStartCallback, 'onComplete': SCCompo.submitEntryCompleteCallback})">
             <input type="hidden" name="compo" value="{{ competition.id }}" />
                 <table>
                 <tr>

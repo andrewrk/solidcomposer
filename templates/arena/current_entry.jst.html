@@ -1,36 +1,36 @@
-<% if (ongoingListeningParty(compo)) { %>
-    <% if (party.track_position < 0) { %>
+<% if (SCCompo.ongoingListeningParty(json.compo)) { %>
+    <% if (json.party.track_position < 0) { %>
         <div id="track">
-            Buffering... <%= party.entry.owner.artist_name %> - <%= party.entry.song.title  %> - <%= -Math.ceil(party.track_position) %>s
+            Buffering... <%= json.party.entry.owner.artist_name %> - <%= json.party.entry.song.title  %> - <%= -Math.ceil(json.party.track_position) %>s
         </div>
     <% } else { %>
         <div id="track">
-            Currently playing: <%= party.entry.owner.artist_name %> - <%= party.entry.song.title  %>
-            <%= timeDisplay(party.track_position) %> / 
-            <%= timeDisplay(party.entry.song.length) %>
+            Currently playing: <%= json.party.entry.owner.artist_name %> - <%= json.party.entry.song.title  %>
+            <%= Time.timeDisplay(json.party.track_position) %> / 
+            <%= Time.timeDisplay(json.party.entry.song.length) %>
         </div>
     <% } %>
-    <% if (party.entry.song.comments) { %>
+    <% if (json.party.entry.song.comments) { %>
         <div id="track-info">
             <h4>Author Comments</h4>
             <p>
-                <%= party.entry.song.comments %>
+                <%= json.party.entry.song.comments %>
             </p>
         </div>
     <% } %>
-<% } else if (votingActive(compo) || compoClosed(compo)) { %>
-    <% if (playback_current_track.entry) { %>
+<% } else if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
+    <% if (current_track.entry) { %>
         <div id="track">
-            Currently playing: <%= playback_current_track.entry.owner.artist_name %> -
-            <%= playback_current_track.entry.song.title  %>
-            <%= timeDisplay(playback_current_track.track_position) %> / 
-            <%= timeDisplay(playback_current_track.entry.song.length) %>
+            Currently playing: <%= current_track.entry.owner.artist_name %> -
+            <%= current_track.entry.song.title  %>
+            <%= Time.timeDisplay(current_track.track_position) %> / 
+            <%= Time.timeDisplay(current_track.entry.song.length) %>
         </div>
-        <% if (playback_current_track.entry.song.comments) { %>
+        <% if (current_track.entry.song.comments) { %>
             <div id="track-info">
                 <h4>Author Comments</h4>
                 <p>
-                    <%= playback_current_track.entry.song.comments %>
+                    <%= current_track.entry.song.comments %>
                 </p>
             </div>
         <% } %>

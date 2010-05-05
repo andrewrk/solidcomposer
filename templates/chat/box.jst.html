@@ -1,22 +1,22 @@
-<% if (beforeChatRoomActive(room)) { %>
+<% if (Chat.beforeChatRoomActive(room)) { %>
     <p>This chat room will become active in <%= printableTimeUntil(room.start_date) %>.</p>
 <% } else { %>
     <% for (var i=0; i<messages.length; ++i) { var msg = messages[i]; %>
-        <% if (msg.type == MESSAGE) { %>
+        <% if (msg.type == Chat.message_type.MESSAGE) { %>
             <div class="msg">
-                <%= prettyTime(msg.timestamp) %> <%= msg.author.username %>: <%= msg.message %>
+                <%= Time.prettyTime(msg.timestamp) %> <%= msg.author.username %>: <%= msg.message %>
             </div>
-        <% } else if (msg.type == JOIN) { %>
+        <% } else if (msg.type == Chat.message_type.JOIN) { %>
             <div class="join">
-                <%= prettyTime(msg.timestamp) %> <%= msg.author.username %> has joined.
+                <%= Time.prettyTime(msg.timestamp) %> <%= msg.author.username %> has joined.
             </div>
-        <% } else if (msg.type == LEAVE) { %>
+        <% } else if (msg.type == Chat.message_type.LEAVE) { %>
             <div class="leave">
-                <%= prettyTime(msg.timestamp) %> <%= msg.author.username %> has left.
+                <%= Time.prettyTime(msg.timestamp) %> <%= msg.author.username %> has left.
             </div>
-        <% } else if (msg.type == ACTION) { %>
+        <% } else if (msg.type == Chat.message_type.ACTION) { %>
             <div class="action">
-                <%= prettyTime(msg.timestamp) %> * <%= msg.author.username %> <%= msg.message %>
+                <%= Time.prettyTime(msg.timestamp) %> * <%= msg.author.username %> <%= msg.message %>
             </div>
         <% } %>
     <% } %>
