@@ -152,6 +152,8 @@ FILE_UPLOAD_SIZE_CAP = 1024 * 1024 * 10  # 20 MB
 # for pagination
 ITEMS_PER_PAGE = 5
 
+# how long does a user have to activate before it expires
+ACTIVATION_EXPIRE_DAYS = 1
 
 # leave this at the very end
 if os.path.exists("settings_user.py"):

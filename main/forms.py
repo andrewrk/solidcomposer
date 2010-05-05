@@ -1,6 +1,9 @@
 from django import forms
 
 from opensourcemusic.main.models import *
+from opensourcemusic import settings
+
+from datetime import datetime, timedelta
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100)
@@ -25,8 +28,17 @@ class RegisterForm(forms.Form):
     def clean_username(self):
         username = self.cleaned_data['username']
 
-        if User.objects.filter(username=username).count() > 0:
-            raise forms.ValidationError("The user '%s' already exists." % username)
+        old_users = User.objects.filter(username=username)
+        if old_users.count() > 0:
+            # if the account is registered but not activated some time, delete
+            # the old account
+            old_user = old_users[0]
+            expire_date = old_user.date_joined + timedelta(days=settings.ACTIVATION_EXPIRE_DAYS)
+            now = datetime.now()
+            if now > expire_date:
+                old_user.delete()
+            else:
+                raise forms.ValidationError("The user '%s' already exists." % username)
 
         return username
    
