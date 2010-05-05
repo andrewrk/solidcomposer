@@ -1,6 +1,4 @@
 = arena =
- * improve javascript
-     * don't make a function inside a for loop
  * set chat refresh to 4s and part message to double
  * buffering playing and not stopping
  * error when submitting a source file

@@ -128,10 +128,9 @@ var SCCompo = function () {
 
     function updateEntryArea() {
         var i;
-        var index;
+        var play_link;
         var vote_link;
         var unvote_link;
-        var entry;
         
         if (state.json === null) {
             return;
@@ -148,42 +147,61 @@ var SCCompo = function () {
             return false;
         });
 
-        for (i=0; i<state.json.entries.length; ++i) {
-            $("#entry-"+i).attr('entry_index', i);
-            $("#entry-"+i).click(function(){
-                index = $(this).attr('entry_index');
-                state.current_track.index = index;
-                state.current_track.entry = state.json.entries[index];
-                state.current_track.track_position = 0;
-                jp.jPlayer("setFile",
-                    MEDIA_URL+state.current_track.entry.song.mp3_file);
-                jp.jPlayer("play");
-                updateCurrentEntry();
-                return false;
+        function entry_vote() {
+            var index;
+            var entry;
+
+            index = $(this).attr('entry_index');
+            entry = state.json.entries[index];
+            $.getJSON("/arena/ajax/vote/" + entry.id + "/", function(data){
+                that.ajaxRequest();
             });
+            return false;
+        }
+
+        function entry_unvote() {
+            var index;
+            var entry;
+
+            index = $(this).attr('entry_index');
+            entry = state.json.entries[index];
+            $.getJSON("/arena/ajax/unvote/" + entry.id + "/",function(data){
+                that.ajaxRequest();
+            });
+            return false;
+        }
+
+        function entry_play() {
+            var index;
+            var entry;
+
+            index = $(this).attr('entry_index');
+            state.current_track.index = index;
+            state.current_track.entry = state.json.entries[index];
+            state.current_track.track_position = 0;
+            jp.jPlayer("setFile",
+                MEDIA_URL+state.current_track.entry.song.mp3_file);
+            jp.jPlayer("play");
+            updateCurrentEntry();
+            return false;
+        }
+
+        for (i=0; i<state.json.entries.length; ++i) {
+            play_link = $("#entry-"+i);
+            if (play_link) {
+                play_link.attr('entry_index', i);
+                play_link.click(entry_play);
+            }
+
             vote_link = $("#vote-"+i);
             if (vote_link) {
                 vote_link.attr('entry_index', i);
-                vote_link.click(function(){
-                    index = $(this).attr('entry_index');
-                    entry = state.json.entries[index];
-                    $.getJSON("/arena/ajax/vote/" + entry.id + "/", function(data){
-                        that.ajaxRequest();
-                    });
-                    return false;
-                });
+                vote_link.click(entry_vote);
             }
             unvote_link = $("#unvote-"+i);
             if (unvote_link) {
                 unvote_link.attr('entry_index', i);
-                unvote_link.click(function(){
-                    index = $(this).attr('entry_index');
-                    entry = state.json.entries[index];
-                    $.getJSON("/arena/ajax/unvote/" + entry.id + "/",function(data){
-                        that.ajaxRequest();
-                    });
-                    return false;
-                });
+                unvote_link.click(entry_unvote);
             }
         }
     }
