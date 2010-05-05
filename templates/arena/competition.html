@@ -1,4 +1,4 @@
-{% extends 'arena/arena_base.html' %}
+{% extends 'arena/base.html' %}
 
 {% block title %}{{ competition.title }} - {{ block.super }}{% endblock %}
 
@@ -24,7 +24,6 @@ var MEDIA_URL = "{{ MEDIA_URL }}";
 {% endblock %}
 
 {% block content %}
-    {% include 'login_div.html' %}
     <p>Back to <a href="/arena/">Arena</a></p>
     <div id="css-status">
         <h2>{{ competition.title }}</h2>

@@ -4,6 +4,10 @@
 
 {% block css %}arena.css{% endblock %}
 
+{% block login %}
+{% include 'login_div.html' %}
+{% endblock %}
+
 {% block extra_header %}
     <script type="text/javascript">
 var server_time = new Date('{{ server_time }}');

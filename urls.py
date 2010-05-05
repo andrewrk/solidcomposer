@@ -26,6 +26,9 @@ urlpatterns = patterns('',
     (r'^register/$', 'opensourcemusic.main.views.user_register'),
     (r'^register/pending/$', direct_to_template, {'template': 'pending.html'}),
     (r'^confirm/(.+)/(.+)/$', 'opensourcemusic.main.views.confirm'),
+
+    (r'^about/$', direct_to_template, {'template': 'about.html'}),
+    (r'^policy/$', direct_to_template, {'template': 'policy.html'}),
 )
 # exceptions to media url
 if settings.DEBUG:

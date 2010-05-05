@@ -1,4 +1,4 @@
-{% extends 'arena/arena_base.html' %}
+{% extends 'arena/base.html' %}
 
 {% block extra_header %}
     {{ block.super }}
@@ -8,7 +8,6 @@
 {% endblock %}
 
 {% block content %}
-    {% include 'login_div.html' %}
     <h1>Arena</h1>
     <div id="create">
         <a href="/arena/create/">Create a Competition</a>
