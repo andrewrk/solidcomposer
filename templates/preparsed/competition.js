@@ -264,6 +264,14 @@ var SCCompo = function () {
         template_current_entry_s = Jst.compile(template_current_entry);
     }
 
+    function clearForm(form_selector) {
+        $(':input',form_selector)
+            .not(':button, :submit, :reset, :hidden')
+            .val('')
+            .removeAttr('checked')
+            .removeAttr('selected');
+    }
+
     function initializeJPlayer() {
         var current_url;
         var actually_playing;
@@ -345,12 +353,13 @@ var SCCompo = function () {
             }
             
             result = eval('(' + response + ')');
-            if (result.success === false) {
+            if (result.success === true) {
+                state.resubmitting = false;
+                // clear form
+                clearForm("#submission-form");
+            } else {
                 alert("Unable to submit:\n\n" + result.reason);
             }
-
-            state.resubmitting = false;
-
             that.ajaxRequest();
         },
 

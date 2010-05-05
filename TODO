@@ -9,7 +9,6 @@
  * make the gui pretty
    > thumbs ups instead of voting
    > chat colors
- * uploading an entry should clear that form
  * paging on competitions. right now it sends them all.
  * the online users is sketchy at best
    > chat: handle join/part messages by removing them or adding them from
