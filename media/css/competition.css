@@ -78,7 +78,7 @@ p {
     height: 300px;
     margin: 0;
     padding: 0;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     background: #ececec;
 }
