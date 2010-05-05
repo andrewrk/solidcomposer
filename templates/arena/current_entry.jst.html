@@ -1,4 +1,4 @@
-<% if (SCCompo.ongoingListeningParty(json.compo)) { %>
+<% if (SCCompo.ongoingListeningParty()) { %>
     <% if (json.party.track_position < 0) { %>
         <div id="track">
             Buffering... <%= json.party.entry.owner.artist_name %> - <%= json.party.entry.song.title  %> - <%= -Math.ceil(json.party.track_position) %>s

@@ -1,6 +1,4 @@
 = arena =
- * set chat refresh to 4s and part message to double
- * buffering playing and not stopping
  * error when submitting a source file
  * chat use last received message id instead of date
  * chat doesn't scroll properly

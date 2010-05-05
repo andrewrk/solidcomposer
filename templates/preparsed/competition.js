@@ -71,15 +71,13 @@ var SCCompo = function () {
     function checkIfShouldPlaySong() {
         var current_url;
         
-        if (that.ongoingListeningParty(state.json.compo)) {
+        if (that.ongoingListeningParty()) {
             // figure out what currently playing song should be
             if (! jp.jPlayer("getData", "diag.isPlaying")) {
                 current_url = MEDIA_URL+state.json.party.entry.song.mp3_file;
                 if (jp.jPlayer("getData", "diag.src") != current_url) {
                     // pre-load
-                    jp.jPlayer("setFile", current_url);
-                    jp.jPlayer("play");
-                    // the onProgress handler will pause it when it starts playing.
+                    jp.jPlayer("setFile", current_url).jPlayer("play").jPlayer("stop");
                 }
                 if (state.json.party.track_position >= 0) {
                     jp.jPlayer("playHeadTime", state.json.party.track_position*1000);
@@ -246,7 +244,7 @@ var SCCompo = function () {
             }
             state.activity = new_activity;
 
-            if (that.ongoingListeningParty(state.json.compo)) {
+            if (that.ongoingListeningParty()) {
                 computeListeningPartyState();
             }
 
@@ -277,9 +275,11 @@ var SCCompo = function () {
                 this.element.jPlayer("onSoundComplete", function(){
                     checkIfShouldPlaySong();
                 });
-                this.element.jPlayer("onProgressChange", function(loadPercent,
-                playedPercentRelative,playedPercentAbsolute,playedTime,totalTime){
-                    if (that.ongoingListeningParty(state.json.compo)) {
+                this.element.jPlayer("onProgressChange",
+                    function(loadPercent,playedPercentRelative,
+                    playedPercentAbsolute,playedTime,totalTime)
+                {
+                    if (that.ongoingListeningParty()) {
                         current_url = MEDIA_URL+state.json.party.entry.song.mp3_file;
                         actually_playing = this.element.jPlayer("getData", "diag.src");
                         if (state.json.party.track_position < 0 &&
@@ -287,7 +287,7 @@ var SCCompo = function () {
                         {
                             this.element.jPlayer("pause");
                         }
-                    } else if (that.votingActive(state.json.compo) || 
+                    } else if (that.votingActive() || 
                         that.compoClosed(state.json.compo))
                     {
                         state.current_track.track_position = playedTime/1000;
@@ -366,10 +366,10 @@ var SCCompo = function () {
                 state.json = data;
 
                 state.activity = getCurrentActivity();
-                if (that.ongoingListeningParty(state.json.compo)) {
+                if (that.ongoingListeningParty()) {
                     computeListeningPartyState();
                 }
-                if (that.votingActive(state.json.compo) &&
+                if (that.votingActive() &&
                     state.json.user.is_authenticated)
                 {
                     for (i=0; i<state.json.votes.used.length; ++i) {
