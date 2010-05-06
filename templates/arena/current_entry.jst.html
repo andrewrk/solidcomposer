@@ -5,9 +5,27 @@
         </div>
     <% } else { %>
         <div id="track">
+            <div class="track-top">
+                <a href="{{ MEDIA_URL }}<%=json.party.entry.song.mp3_file%>">Download MP3</a>
+                <% if (json.party.entry.song.source_file) { %>
+                    <a href="{{ MEDIA_URL }}<%=json.party.entry.song.source_file%>">Download Source</a>
+                <% } %>
+            </div>
+            <div class="track-middle">
+                <% if (muted) { %>
+                    <a href="#" class="mute-button" id="unmute">unmute</a>
+                <% } else { %>
+                    <a href="#" class="mute-button" id="mute">mute</a>
+                <% } %>
+                <% if (json.party.entry.song.waveform_img) { %>
+                    <img src="{{ MEDIA_URL }}json.party.entry.song.waveform_img" alt="" />
+                <% } %>
+            </div>
+            <div class="track-bottom">
             Currently playing: <%= json.party.entry.owner.artist_name %> - <%= json.party.entry.song.title  %>
             <%= Time.timeDisplay(json.party.track_position) %> / 
             <%= Time.timeDisplay(json.party.entry.song.length) %>
+            </div>
         </div>
     <% } %>
     <% if (json.party.entry.song.comments) { %>

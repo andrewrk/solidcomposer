@@ -38,7 +38,9 @@ var SCCompo = function () {
             index: -1,
             entry: null
         },
-        activity: null
+        activity: null,
+        muted: false,
+        media_url: null
     };
 
     var jp = null;
@@ -74,7 +76,7 @@ var SCCompo = function () {
         if (that.ongoingListeningParty()) {
             // figure out what currently playing song should be
             if (! jp.jPlayer("getData", "diag.isPlaying")) {
-                current_url = MEDIA_URL+state.json.party.entry.song.mp3_file;
+                current_url = state.media_url+state.json.party.entry.song.mp3_file;
                 if (jp.jPlayer("getData", "diag.src") != current_url) {
                     // pre-load
                     jp.jPlayer("setFile", current_url).jPlayer("play").jPlayer("stop");
@@ -117,11 +119,32 @@ var SCCompo = function () {
         $("#status").html(Jst.evaluate(template_status_s, state));
     }
 
+    function updateJPVolume() {
+        if (state.muted) {
+            jp.jPlayer("volumeMin");
+        } else {
+            jp.jPlayer("volumeMax");
+        }
+    }
+
     function updateCurrentEntry() {
         if (state.json === null) {
             return;
         }
         $("#current-entry").html(Jst.evaluate(template_current_entry_s, state));
+
+        $("#mute").click(function() {
+            state.muted = true;
+            updateJPVolume();
+            updateCurrentEntry();
+            return false;
+        });
+        $("#unmute").click(function() {
+            state.muted = false;
+            updateJPVolume();
+            updateCurrentEntry();
+            return false;
+        });
     }
 
     function updateEntryArea() {
@@ -178,7 +201,7 @@ var SCCompo = function () {
             state.current_track.entry = state.json.entries[index];
             state.current_track.track_position = 0;
             jp.jPlayer("setFile",
-                MEDIA_URL+state.current_track.entry.song.mp3_file);
+                state.media_url+state.current_track.entry.song.mp3_file);
             jp.jPlayer("play");
             updateCurrentEntry();
             return false;
@@ -279,6 +302,7 @@ var SCCompo = function () {
         jp = $("#jplayer");
         jp.jPlayer({
             ready: function(){
+                updateJPVolume();
                 checkIfShouldPlaySong();
                 this.element.jPlayer("onSoundComplete", function(){
                     checkIfShouldPlaySong();
@@ -288,7 +312,7 @@ var SCCompo = function () {
                     playedPercentAbsolute,playedTime,totalTime)
                 {
                     if (that.ongoingListeningParty()) {
-                        current_url = MEDIA_URL+state.json.party.entry.song.mp3_file;
+                        current_url = state.media_url+state.json.party.entry.song.mp3_file;
                         actually_playing = this.element.jPlayer("getData", "diag.src");
                         if (state.json.party.track_position < 0 &&
                             current_url === actually_playing)
@@ -308,7 +332,8 @@ var SCCompo = function () {
     }
 
     that = {
-        initialize: function () {
+        initialize: function (media_url) {
+            state.media_url = media_url;
             initializeJPlayer();
             compileTemplates();
             ajaxRequestLoop();
@@ -405,6 +430,6 @@ $(document).ready(function(){
     Login.initialize();
     Login.addStateChangeCallback(SCCompo.ajaxRequest);
 
-    SCCompo.initialize();
+    SCCompo.initialize(MEDIA_URL);
 });
 
