@@ -1,14 +1,17 @@
 Dependencies:
- * django
+ * django - http://www.djangoproject.com/
  * A good database system like postgresql or mysql so that the migration
-   stuff (south) can work.
+   stuff (south) can work. (sqlite3 will not work)
  * south - http://south.aeracode.org/
  * django-cron - http://code.google.com/p/django-cron/
  * mugaten - http://code.google.com/p/mutagen/
+ * pymad - http://spacepants.org/src/pymad/
+ * Python Image Library - http://www.pythonware.com/products/pil/
 
 Procedure:
+ * ensure that all dependencies are installed on server
  * copy django code to server
- * touch a file called RELEASE to activate release mode in settings.py
+ * configure settings_user.py to override the system-specific settings from settings.py
  * make sure database is migrated to latest version
  * configure files in the /static/* URL to be served statically, bypassing
    django. the files that are served here should be a softlink to media/static/.

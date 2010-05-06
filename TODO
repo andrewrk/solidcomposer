@@ -1,14 +1,13 @@
 = arena =
  == Release Thursday May 6 2010 ==
- * edit competition
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
  * have a robust song player and use it during competitions
-   > song wave form
    > have a mute button during competitions but not pause/play
    > ability to download mp3 and source file
    > ability to comment on sections of the song
+ * edit competition
  * make the gui pretty
    > skiessi's redesign
    > click the logo to go to home page

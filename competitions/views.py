@@ -18,6 +18,12 @@ import os
 import stat
 import string
 
+from mutagen.easyid3 import EasyID3
+from mutagen.mp3 import MP3
+import shutil
+
+from opensourcemusic.main import madwave
+
 def upload_file(f, new_name):
     handle = open(new_name, 'wb+')
     upload_file_h(f, handle)
@@ -61,10 +67,6 @@ def safe_file(path, title):
     return (os.path.join(path,unique), unique)
 
 def ajax_submit_entry(request):
-    from mutagen.easyid3 import EasyID3
-    from mutagen.mp3 import MP3
-    import shutil
-
     data = {
         'user': {
             'is_authenticated': request.user.is_authenticated(),
@@ -156,10 +158,14 @@ def ajax_submit_entry(request):
         data['reason'] = 'Unable to save ID3 tags.'
         return json_response(data)
 
-    # pick a nice safe unique path for mp3_file and source_file
+    # pick a nice safe unique path for mp3_file, source_file, and wave form
     mp3_file_title = "%s - %s (%s).mp3" % (request.user.get_profile().artist_name, title, compo.title)
     mp3_safe_path, mp3_safe_title = safe_file(os.path.join(settings.MEDIA_ROOT, 'compo', 'mp3'), mp3_file_title)
     mp3_safe_path_relative = os.path.join('compo','mp3',mp3_safe_title)
+
+    png_file_title = "%s - %s (%s).png" % (request.user.get_profile().artist_name, title, compo.title)
+    png_safe_path, png_safe_title = safe_file(os.path.join(settings.MEDIA_ROOT, 'compo', 'mp3'), png_file_title)
+
 
     # move the mp3 file
     shutil.move(handle.name, mp3_safe_path)
@@ -194,6 +200,13 @@ def ajax_submit_entry(request):
 
         upload_file(source_file, source_safe_path)
         song.source_file = source_safe_path_relative
+
+    # generate the waveform image
+    try:
+        madwave.draw(mp3_safe_path, png_safe_path, 380, 45, fgcolor=(157,203,229,255), cheat=True)
+        song.waveform_img = png_safe_path
+    except:
+        pass
 
     song.mp3_file = mp3_safe_path_relative
     song.owner = request.user.get_profile()
