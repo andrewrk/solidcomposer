@@ -1,30 +1,32 @@
 = arena =
  == Release Thursday May 6 2010 ==
  * edit competition
-
- * arena - the competitions aren't updating on a second based timer
-   > make it a second-based timer but not suck to click the link
- * the online users is sketchy at best
-   > chat: handle join/part messages by removing them or adding them from
-     the onliners list
- * if creating a competition fails, have a message at the top saying
-   "please correct these errors."
+ * support some kind of formatting for author comments and such. minimum:
+   honor line breaks. maximum: a bb-like system or markdown.
+     * provide some way to format themes, rules, comments, etc
  * have a robust song player and use it during competitions
    > song wave form
    > have a mute button during competitions but not pause/play
    > ability to download mp3 and source file
+   > ability to comment on sections of the song
  * make the gui pretty
+   > skiessi's redesign
+   > click the logo to go to home page
    > thumbs ups instead of voting
    > chat colors
+
+ * if creating a competition fails, have a message at the top saying
+   "please correct these errors."
  * user profile page
    - show their competition entries
- * support some kind of formatting for author comments and such. minimum:
-   honor line breaks. maximum: a bb-like system or markdown.
-     * provide some way to format themes, rules, comments, etc
-
+ * arena - the competitions aren't updating on a second based timer
+   > make it a second-based timer but not suck to click the link
  * when they click resubmit, scroll down the page to see the form.
  * display error when chat message doesn't go through
  * listening party - make song comments during chat during listening party
+ * show and allow posting comments on songs on user pages
+ * replay listening party feature
+   - put an indicator on the page so you know whether it's live or replay
  * better competition ordering in arena
  * put whitelist/blacklist/open in the create competition page. default open.
    - invitation system based on passwords
@@ -42,13 +44,10 @@
  * better feedback for a failed submission than an alert box.
  * make the gui experience of clicking edit on a submission and then
    deciding not to better.
- * replay listening party feature
-   - put an indicator on the page so you know whether it's live or replay
  * test with a messed up clock in windows
    - possibly use ajax to improve offset calculation between server and local.
- * google map integration
+ * google calendar integration
  * rss feed for competitions
- * show and allow posting comments on songs on user pages
 
 = project manager / band page =
 

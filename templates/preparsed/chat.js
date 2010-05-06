@@ -160,6 +160,18 @@ var Chat = function() {
             });
     }
 
+    function onlinerAction(user_id, func) {
+        var i;
+        for (i=0; i<state_chat.onliners.length; ++i) {
+            if (state_chat.onliners[i].id === user_id) {
+                func(i);
+            }
+        }
+    }
+
+    function userJoin(user_id) {
+    }
+
     function chatAjaxRequest() {
         $.getJSON("/ajax/chat/",
             {
@@ -190,6 +202,18 @@ var Chat = function() {
                 state_chat.room = data.room;
                 state_chat.user = data.user;
                 for (i=0; i<data.messages.length; ++i) {
+                    // if it's a join or part, affect state_chat.onliners
+                    if (last_message_id && state_chat.onliners) {
+                        if (data.messages[i].type === that.message_type.JOIN) {
+                            onlinerAction(data.messages[i].author.id, function(index) {
+                                state_chat.onliners.splice(index, 1);
+                            });
+                            updateChatOnliners();
+                        } else if (data.messages[i].type === that.message_type.LEAVE) {
+                            state_chat.onliners.push(data.messages[i].author);
+                            updateChatOnliners();
+                        }
+                    }
                     state_chat.messages.push(data.messages[i]);
                 }
                 if (data.messages.length > 0) {
@@ -215,7 +239,7 @@ var Chat = function() {
 
     function chatOnlinersAjaxRequestLoop() {
         chatOnlinersAjaxRequest();
-        setTimeout(chatOnlinersAjaxRequest, onlinersRequestTimeout);
+        setTimeout(chatOnlinersAjaxRequestLoop, onlinersRequestTimeout);
     }
 
     function chatCompileTemplates() {
