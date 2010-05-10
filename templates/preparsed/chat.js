@@ -1,4 +1,3 @@
-{% load jst %}
 /*
  * chat.js - include this if you have a chat room on the page.
  *
@@ -22,10 +21,10 @@ var Chat = function() {
     var onlinersRequestTimeout = 10000;
 
     // jst templates
-    var template_chat = "{% filter jst_escape %}{% include 'chat/box.jst.html' %}{% endfilter %}";
-    var template_onliners = "{% filter jst_escape %}{% include 'chat/onliners.jst.html' %}{% endfilter %}";
-    var template_cannot_say = "{% filter jst_escape %}{% include 'chat/cannot_say.jst.html' %}{% endfilter %}";
-    var template_say = "{% filter jst_escape %}{% include 'chat/say.jst.html' %}{% endfilter %}";
+    var template_chat = "{% filter escapejs %}{% include 'chat/box.jst.html' %}{% endfilter %}";
+    var template_onliners = "{% filter escapejs %}{% include 'chat/onliners.jst.html' %}{% endfilter %}";
+    var template_cannot_say = "{% filter escapejs %}{% include 'chat/cannot_say.jst.html' %}{% endfilter %}";
+    var template_say = "{% filter escapejs %}{% include 'chat/say.jst.html' %}{% endfilter %}";
     
     // compiled templates
     var template_chat_s = null;

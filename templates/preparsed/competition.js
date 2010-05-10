@@ -1,5 +1,3 @@
-{% load jst %}
-
 var SCCompo = function () {
     // private variables
     var that;
@@ -9,11 +7,11 @@ var SCCompo = function () {
     var stateRequestTimeout = 10000;
 
     // templates
-    var template_status = "{% filter jst_escape %}{% include 'arena/compo_status.jst.html' %}{% endfilter %}";
-    var template_info = "{% filter jst_escape %}{% include 'arena/compo_info.jst.html' %}{% endfilter %}";
-    var template_vote_status = "{% filter jst_escape %}{% include 'arena/vote_status.jst.html' %}{% endfilter %}";
-    var template_entries = "{% filter jst_escape %}{% include 'arena/entry_list.jst.html' %}{% endfilter %}";
-    var template_current_entry = "{% filter jst_escape %}{% include 'arena/current_entry.jst.html' %}{% endfilter %}";
+    var template_status = "{% filter escapejs %}{% include 'arena/compo_status.jst.html' %}{% endfilter %}";
+    var template_info = "{% filter escapejs %}{% include 'arena/compo_info.jst.html' %}{% endfilter %}";
+    var template_vote_status = "{% filter escapejs %}{% include 'arena/vote_status.jst.html' %}{% endfilter %}";
+    var template_entries = "{% filter escapejs %}{% include 'arena/entry_list.jst.html' %}{% endfilter %}";
+    var template_current_entry = "{% filter escapejs %}{% include 'arena/current_entry.jst.html' %}{% endfilter %}";
 
     // pre-compiled templates
     var template_status_s = null;

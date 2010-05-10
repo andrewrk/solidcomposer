@@ -1,5 +1,3 @@
-{% load jst %}
-
 /*
  * login.js
  *
@@ -18,7 +16,7 @@ var Login = function () {
     // configurable stuff
     var stateRequestTimeout = 10000;
 
-    var template_login = "{% filter jst_escape %}{% include 'login_area.jst.html' %}{% endfilter %}";
+    var template_login = "{% filter escapejs %}{% include 'login_area.jst.html' %}{% endfilter %}";
 
     var template_login_s = null;
 

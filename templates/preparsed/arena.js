@@ -1,5 +1,3 @@
-{% load jst %}
-
 var SCArena = function () {
     // private variables
     var that;
@@ -7,8 +5,8 @@ var SCArena = function () {
     // configurable stuff
     var stateRequestTimeout = 10000;
 
-    var template_available = "{% filter jst_escape %}{% include 'arena/available.jst.html' %}{% endfilter %}";
-    var template_owned = "{% filter jst_escape %}{% include 'arena/owned.jst.html' %}{% endfilter %}";
+    var template_available = "{% filter escapejs %}{% include 'arena/available.jst.html' %}{% endfilter %}";
+    var template_owned = "{% filter escapejs %}{% include 'arena/owned.jst.html' %}{% endfilter %}";
 
     var template_available_s = null;
     var template_owned_s = null;
