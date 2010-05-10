@@ -1,5 +1,30 @@
 = arena =
+ == Feedback from Starla ==
+ * Integrate chat from an IRC channel.
+ * make the chat more friendly to use for people who are used to IRC
+   > highlight when someone's name is mentioned
+   > tab completion for names
+   > ability to private message?
+   > page up / down to scroll up and down
+ * better moderator features
+   > ability to pause, skip, previous in listening party
+   > ability to open submission up even during listening party
+   > ability to kick people out (blacklist) if they're misbehaving
+ * ability to customize the design
+ * ability to replay the listening party
+ * better music player
+
  == Release Thursday May 6 2010 ==
+ * the date lies when it's close. if it's hours it should say minutes too.
+ * implement IRC actions
+ * make the page flash when people talk?
+ * test song playback on google chrome 4.1.249.1064
+ * make the gui pretty
+   > skiessi's redesign
+   > click the logo to go to home page
+   > thumbs ups instead of voting
+   > chat colors
+ * edit competition
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
@@ -7,12 +32,6 @@
    > have a mute button during competitions but not pause/play
    > ability to download mp3 and source file
    > ability to comment on sections of the song
- * edit competition
- * make the gui pretty
-   > skiessi's redesign
-   > click the logo to go to home page
-   > thumbs ups instead of voting
-   > chat colors
 
  * if creating a competition fails, have a message at the top saying
    "please correct these errors."
@@ -49,6 +68,7 @@
  * rss feed for competitions
 
 = project manager / band page =
+
 
 = fan page / interface with band page = 
 
