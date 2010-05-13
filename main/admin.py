@@ -10,6 +10,7 @@ stuff = (
     SongCommentThread,
     SongComment,
     Band,
+    BandMember,
     Tag,
 )
 

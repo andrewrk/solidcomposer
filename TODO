@@ -70,8 +70,12 @@
  * google calendar integration
  * rss feed for competitions
 
-= project manager / band page =
-
+= workbench =
+ * make it look pretty
+ * easier to check in a file without uploading anything
+ * support merging and forking
+ * show who is voting to scrap, who is voting to promote
+ * filter box to search through projects quickly
 
 = fan page / interface with band page = 
 

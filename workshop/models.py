@@ -14,9 +14,6 @@ class Project(models.Model):
     band = models.ForeignKey(Band)
     date_activity = models.DateTimeField(auto_now=True)
 
-    # False if this project supports concurrent editing
-    can_check_out = models.BooleanField()
-
     # who has it checked out, null if nobody
     checked_out_to = models.ForeignKey(User, null=True, blank=True, related_name='checked_out_to')
 
