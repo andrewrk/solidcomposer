@@ -2,23 +2,24 @@ from django.db import models
 from django.contrib.auth.models import User
 from chat.models import ChatRoom
 
-MANAGER, BAND_MEMBER, CRITIC, FAN, BANNED = range(5)
 FULL_OPEN, OPEN_SOURCE, TRANSPARENT, NO_CRITIQUE, PRIVATE = range(5)
 
+MANAGER, BAND_MEMBER, CRITIC, FAN, BANNED = range(5)
+ROLE_CHOICES = (
+    (MANAGER, 'Manager'), # full privileges
+    (BAND_MEMBER, 'Band member'), # full privileges except band admin
+    (CRITIC, 'Critic'), # can view and post comments in project manager
+    (FAN, 'Fan'), # regular site user
+    (BANNED, 'Banned'), # this person is blacklisted
+)
+
 class BandMember(models.Model):
-    ROLE_CHOICES = (
-        (MANAGER, 'Manager'), # full privileges
-        (BAND_MEMBER, 'Band member'), # full privileges except band admin
-        (CRITIC, 'Critic'), # can view and post comments in project manager
-        (FAN, 'Fan'), # regular site user
-        (BANNED, 'Banned'), # this person is blacklisted
-    )
     user = models.ForeignKey(User)
     band = models.ForeignKey('Band')
     role = models.IntegerField(choices=ROLE_CHOICES, default=MANAGER)
 
     def __unicode__(self):
-        return u'%s: %s' % (dict(self.ROLE_CHOICES)[self.role], str(self.user))
+        return u'%s: %s' % (dict(ROLE_CHOICES)[self.role], str(self.user))
 
 class Band(models.Model):
     OPENNESS_CHOICES = (

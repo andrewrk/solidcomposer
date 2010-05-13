@@ -31,6 +31,7 @@
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
+     * http://attacklab.net/showdown/
  * have a robust song player and use it during competitions
    > have a mute button during competitions but not pause/play
    > ability to download mp3 and source file

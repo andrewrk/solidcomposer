@@ -1,6 +1,40 @@
 from django.db import models
 from django.contrib.auth.models import User
-from main.models import Tag, Song, Band
+from main.models import *
+
+class BandInvitation(models.Model):
+    """
+    An invitation from a user to join their band. It can be a code, which is
+    redeemed by hyperlink, or a direct invitation.
+    """
+    # who sent the invite
+    inviter = models.ForeignKey(User, related_name="inviter")
+    band = models.ForeignKey(Band)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    role = models.IntegerField(choices=ROLE_CHOICES, default=BAND_MEMBER)
+
+    # when the invite becomes inactive. null means never
+    # (only applies if isLink() is True)
+    expire_date = models.DateTimeField(null=True, blank=True)
+
+    # how many people can join the band based on this a
+    # (only applies if isLink() is True)
+    count = models.IntegerField(default=1)
+
+    # password to join the band if this is a hyperlink
+    code = models.CharField(max_length=256, null=True, blank=True)
+    # user if this is a direct invitation
+    invitee = models.ForeignKey(User, null=True, blank=True, related_name="invitee")
+
+    def isLink(self):
+        return not (self.code is None)
+
+    def redeemHyperlink(self):
+        if self.code is None:
+            return None
+        else:
+            from django.core.urlresolvers import reverse
+            return reverse('redeem_invitation', args=[self.code])
 
 class ProjectVersion(models.Model):
     project = models.ForeignKey('Project')

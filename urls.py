@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),
     (r'^arena/', include('opensourcemusic.competitions.urls')),
     (r'^chat/', include('opensourcemusic.chat.urls')),
+    (r'^workbench/', include('opensourcemusic.workshop.urls')),
     (r'^admin/', include(admin.site.urls)),
 
     url(r'^user/(.+)/$', 'opensourcemusic.main.views.userpage', name='userpage'),
