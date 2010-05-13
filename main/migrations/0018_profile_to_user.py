@@ -5,6 +5,8 @@ from south.v2 import DataMigration
 from django.db import models
 
 class Migration(DataMigration):
+    def get_profile(self, orm, user):
+        return orm.Profile.objects.filter(user=user)[0]
     
     def forwards(self, orm):
         for comp in orm.Competition.objects.all():
@@ -24,20 +26,21 @@ class Migration(DataMigration):
             comment.save()    
     
     def backwards(self, orm):
+            
         for comp in orm.Competition.objects.all():
-            comp.host = comp.host_user.get_profile()
+            comp.host = self.get_profile(orm, comp.host_user)
             comp.save()
         for thumb in orm.ThumbsUp.objects.all():
-            thumb.owner = thumb.owner_user.get_profile()
+            thumb.owner = self.get_profile(orm, thumb.owner_user)
             thumb.save()
         for song in orm.Song.objects.all():
-            song.owner = song.owner_user.get_profile()
+            song.owner = self.get_profile(song.owner_user)
             song.save()
         for entry in orm.Entry.objects.all():
-            entry.owner = entry.owner_user.get_profile()
+            entry.owner = self.get_profile(entry.owner_user)
             entry.save()
         for comment in orm.SongComment.objects.all():
-            comment.owner = comment.owner_user.get_profile()
+            comment.owner = self.get_profile(comment.owner_user)
             comment.save()
     
     models = {
