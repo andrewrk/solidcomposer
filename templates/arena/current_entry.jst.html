@@ -1,7 +1,7 @@
 <% if (SCCompo.ongoingListeningParty()) { %>
     <% if (json.party.track_position < 0) { %>
         <div id="track">
-            Buffering... <%= json.party.entry.owner.artist_name %> - <%= json.party.entry.song.title  %> - <%= -Math.ceil(json.party.track_position) %>s
+            Buffering... <%= json.party.entry.song.band.title %> - <%= json.party.entry.song.title  %> - <%= -Math.ceil(json.party.track_position) %>s
         </div>
     <% } else { %>
         <div id="track">
@@ -22,7 +22,7 @@
                 <% } %>
             </div>
             <div class="track-bottom">
-            Currently playing: <%= json.party.entry.owner.artist_name %> - <%= json.party.entry.song.title  %>
+            Currently playing: <%= json.party.entry.song.band.title %> - <%= json.party.entry.song.title  %>
             <%= Time.timeDisplay(json.party.track_position) %> / 
             <%= Time.timeDisplay(json.party.entry.song.length) %>
             </div>
@@ -39,7 +39,7 @@
 <% } else if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
     <% if (current_track.entry) { %>
         <div id="track">
-            Currently playing: <%= current_track.entry.owner.artist_name %> -
+            Currently playing: <%= current_track.entry.song.band.title %> -
             <%= current_track.entry.song.title  %>
             <%= Time.timeDisplay(current_track.track_position) %> / 
             <%= Time.timeDisplay(current_track.entry.song.length) %>

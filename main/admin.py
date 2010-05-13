@@ -9,9 +9,8 @@ stuff = (
     Song,
     SongCommentThread,
     SongComment,
-    ChatRoom,
-    ChatMessage,
-    Appearance,
+    Band,
+    Tag,
 )
 
 map(lambda x: admin.site.register(x), stuff)

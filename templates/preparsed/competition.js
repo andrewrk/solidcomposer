@@ -38,7 +38,8 @@ var SCCompo = function () {
         },
         activity: null,
         muted: false,
-        media_url: null
+        media_url: null,
+        urls: {% include "arena/urls.js" %}
     };
 
     var jp = null;
@@ -172,7 +173,7 @@ var SCCompo = function () {
 
             index = $(this).attr('entry_index');
             entry = state.json.entries[index];
-            $.getJSON("/arena/ajax/vote/" + entry.id + "/", function(data){
+            $.getJSON(state.urls.ajax_vote(entry.id), function(data){
                 that.ajaxRequest();
             });
             return false;
@@ -184,7 +185,7 @@ var SCCompo = function () {
 
             index = $(this).attr('entry_index');
             entry = state.json.entries[index];
-            $.getJSON("/arena/ajax/unvote/" + entry.id + "/",function(data){
+            $.getJSON(state.urls.ajax_unvote(entry.id),function(data){
                 that.ajaxRequest();
             });
             return false;
@@ -340,6 +341,9 @@ var SCCompo = function () {
 
         // true if we are in the middle of a listening party
         ongoingListeningParty: function () {
+            if (state.json === null) {
+                return false;
+            }
             var compo = state.json.compo;
             return compo !== null && compo.have_listening_party &&
                 Time.secondsSince(compo.listening_party_start_date) > 0 &&
@@ -387,7 +391,7 @@ var SCCompo = function () {
         },
 
         ajaxRequest: function () {
-            $.getJSON("/arena/ajax/compo/" + competition_id + "/", function(data){
+            $.getJSON(state.urls.ajax_compo(competition_id), function(data){
                 var i;
                 var j;
                 

@@ -22,9 +22,20 @@ var Login = function () {
 
     // true if we display the input text boxes
     var loginFormDisplayed = false;
-
     var loginFormError = false;
-    var state_login = null;
+    var state = {
+        json: null,
+        urls: {
+            ajax_login_state: "{% filter escapejs %}{% url ajax_login_state %}{% endfilter %}",
+            ajax_login: "{% filter escapejs %}{% url ajax_login %}{% endfilter %}",
+            ajax_logout: "{% filter escapejs %}{% url ajax_logout %}{% endfilter %}",
+            login: "{% filter escapejs %}{% url user_login %}{% endfilter %}",
+            logout: "{% filter escapejs %}{% url user_logout %}{% endfilter %}",
+            userpage: function (username) {
+                return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
+            }
+        }
+    };
     
     var callbacks = [];
 
@@ -54,12 +65,12 @@ var Login = function () {
     }
 
     function updateLogin() {
-        if (state_login === null) {
+        if (state.json === null) {
             return;
         }
 
         // populate div with template parsed with json object
-        $("#login").html(Jst.evaluate(template_login_s, state_login));
+        $("#login").html(Jst.evaluate(template_login_s, state));
 
         displayCorrectly($("#loginFormDiv"), loginFormDisplayed);
         displayCorrectly($("#loginFormError"), loginFormError);
@@ -75,7 +86,7 @@ var Login = function () {
         });
         $("#signOut").click(function(){
             $.ajax({
-                url: "/ajax/logout/",
+                url: state.urls.ajax_logout,
                 type: 'GET',
                 success: function(){
                     signalStateChanged();
@@ -93,12 +104,12 @@ var Login = function () {
     }
 
     function loginAjaxRequest() {
-        $.getJSON("/ajax/login_state/", function(data){
+        $.getJSON(state.urls.ajax_login_state, function(data){
             if (data === null) {
                 return;
             }
 
-            state_login = data;
+            state.json = data;
             updateLogin();
         });
     }
@@ -114,7 +125,7 @@ var Login = function () {
 
     function sendLoginRequest() {
         $.ajax({
-            url: "/ajax/login/",
+            url: state.urls.ajax_login,
             type: 'POST',
             dataType: 'json',
             data: {

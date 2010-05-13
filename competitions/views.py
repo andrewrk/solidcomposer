@@ -7,10 +7,11 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.db.models import Count
 from django.core.paginator import Paginator
 
-from opensourcemusic.competitions.models import *
 from opensourcemusic import settings
 from opensourcemusic.main.views import safe_model_to_dict, json_response
+from opensourcemusic.competitions.models import *
 from opensourcemusic.competitions.forms import *
+from opensourcemusic.chat.models import *
 
 from datetime import datetime, timedelta
 import tempfile
@@ -149,9 +150,11 @@ def ajax_submit_entry(request):
         return json_response(data)
 
     # enforce ID3 tags
+    profile = request.user.get_profile()
+    artist_name = profile.solo_band.title
     audio['title'] = title
     audio['album'] = compo.title
-    audio['artist'] = request.user.get_profile().artist_name
+    audio['artist'] = artist_name
     try:
         audio.save()
     except:
@@ -159,12 +162,13 @@ def ajax_submit_entry(request):
         return json_response(data)
 
     # pick a nice safe unique path for mp3_file, source_file, and wave form
-    mp3_file_title = "%s - %s (%s).mp3" % (request.user.get_profile().artist_name, title, compo.title)
+    mp3_file_title = "%s - %s (%s).mp3" % (artist_name, title, compo.title)
     mp3_safe_path, mp3_safe_title = safe_file(os.path.join(settings.MEDIA_ROOT, 'compo', 'mp3'), mp3_file_title)
     mp3_safe_path_relative = os.path.join('compo','mp3',mp3_safe_title)
 
-    png_file_title = "%s - %s (%s).png" % (request.user.get_profile().artist_name, title, compo.title)
+    png_file_title = "%s - %s (%s).png" % (artist_name, title, compo.title)
     png_safe_path, png_safe_title = safe_file(os.path.join(settings.MEDIA_ROOT, 'compo', 'mp3'), png_file_title)
+    png_safe_path_relative = os.path.join('compo','mp3',png_safe_title)
 
 
     # move the mp3 file
@@ -172,7 +176,7 @@ def ajax_submit_entry(request):
     # give it read permissions
     os.chmod(mp3_safe_path, stat.S_IWUSR|stat.S_IRUSR|stat.S_IRGRP|stat.S_IROTH)
 
-    entries = Entry.objects.filter(owner=request.user.get_profile(), competition=compo)
+    entries = Entry.objects.filter(owner=request.user, competition=compo)
     if entries.count() > 0:
         # resubmitting. edit old entry and song
         entry = entries[0]
@@ -192,9 +196,9 @@ def ajax_submit_entry(request):
         parts = source_file.name.split('.')
         if len(parts) > 0:
             source_ext = parts[-1]
-            source_file_title = "%s - %s (%s).%s" % (request.user.get_profile().artist_name, title, compo.title, source_ext)
+            source_file_title = "%s - %s (%s).%s" % (artist_name, title, compo.title, source_ext)
         else:
-            source_file_title = "%s - %s (%s)" % (request.user.get_profile().artist_name, title, compo.title)
+            source_file_title = "%s - %s (%s)" % (artist_name, title, compo.title)
         source_safe_path, source_safe_file_title = safe_file(os.path.join(settings.MEDIA_ROOT, 'compo', 'mp3'), source_file_title)
         source_safe_path_relative = os.path.join('compo','mp3',source_safe_file_title)
 
@@ -204,19 +208,19 @@ def ajax_submit_entry(request):
     # generate the waveform image
     try:
         madwave.draw(mp3_safe_path, png_safe_path, 380, 45, fgcolor=(157,203,229,255), cheat=True)
-        song.waveform_img = png_safe_path
+        song.waveform_img = png_safe_path_relative
     except:
         pass
 
     song.mp3_file = mp3_safe_path_relative
-    song.owner = request.user.get_profile()
+    song.owner = request.user
     song.title = title
     song.length = audio_length
     song.comments = comments
     song.save()
 
     entry.competition = compo
-    entry.owner = request.user.get_profile()
+    entry.owner = request.user
     entry.song = song
     entry.save()
 
@@ -268,7 +272,9 @@ def ajax_compo(request, id):
     def add_to_entry(entry):
         d = safe_model_to_dict(entry)
         d['owner'] = safe_model_to_dict(entry.owner)
+        d['owner']['solo_band'] = safe_model_to_dict(entry.owner.get_profile().solo_band)
         d['song'] = safe_model_to_dict(entry.song)
+        d['song']['band'] = safe_model_to_dict(entry.song.band)
         if compo_closed:
             d['vote_count'] = ThumbsUp.objects.filter(entry=entry).count()
         return d
@@ -291,17 +297,16 @@ def ajax_compo(request, id):
 
     if request.user.is_authenticated():
         max_votes = max_vote_count(compo.entry_set.count())
-        used_votes = ThumbsUp.objects.filter(owner=request.user.get_profile(), entry__competition=compo)
+        used_votes = ThumbsUp.objects.filter(owner=request.user, entry__competition=compo)
 
         data['user'] = safe_model_to_dict(request.user)
-        data['user']['get_profile'] = safe_model_to_dict(request.user.get_profile())
         data['user']['is_authenticated'] = True
         data['votes'] = {
             'max': max_votes,
             'used': [safe_model_to_dict(x) for x in used_votes],
             'left': max_votes - used_votes.count(),
         }
-        user_entries = Entry.objects.filter(competition=compo, owner=request.user.get_profile())
+        user_entries = Entry.objects.filter(competition=compo, owner=request.user)
         data['submitted'] = (user_entries.count() > 0)
         if user_entries.count() > 0:
             data['user_entry'] = safe_model_to_dict(user_entries[0].song)
@@ -335,7 +340,7 @@ def compo_to_dict(compo, user):
     data = safe_model_to_dict(compo)
     if user.is_authenticated():
         # see if the user entered the compo
-        entries = Entry.objects.filter(owner=user.get_profile(), competition=compo)
+        entries = Entry.objects.filter(owner=user, competition=compo)
         if entries.count() > 0:
             data['user_entered'] = True
             entry = entries[0]
@@ -399,7 +404,7 @@ def create(request):
             # create and save the Competition
             comp = Competition()
             comp.title = form.cleaned_data.get('title')
-            comp.host = prof
+            comp.host = request.user
 
             comp.preview_theme = form.cleaned_data.get('preview_theme', False)
             if form.cleaned_data.get('have_theme', False):
@@ -493,18 +498,18 @@ def ajax_vote(request, entry_id):
         return json_response(data)
 
     # can't vote for yourself
-    if entry.owner == request.user.get_profile():
+    if entry.owner == request.user:
         data['reason'] = "Can't vote for yourself."
         return json_response(data)
 
     # how many thumbs up should they have
     max_votes = max_vote_count(entry.competition.entry_set.count())
-    used_votes = ThumbsUp.objects.filter(owner=request.user.get_profile(), entry__competition=entry.competition).count()
+    used_votes = ThumbsUp.objects.filter(owner=request.user, entry__competition=entry.competition).count()
 
     if used_votes < max_votes:
         # OK! spend a vote on this entry
         vote = ThumbsUp()
-        vote.owner = request.user.get_profile()
+        vote.owner = request.user
         vote.entry = entry
         vote.save()
 
@@ -527,7 +532,7 @@ def ajax_unvote(request, entry_id):
         data['reason'] = "Not authenticated."
         return json_response(data)
 
-    votes = ThumbsUp.objects.filter(owner=request.user.get_profile(), entry=entry)
+    votes = ThumbsUp.objects.filter(owner=request.user, entry=entry)
     if votes.count() > 0:
         votes[0].delete()
 

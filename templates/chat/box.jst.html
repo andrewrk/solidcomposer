@@ -1,5 +1,5 @@
 <% if (Chat.beforeChatRoomActive(room)) { %>
-    <p>This chat room will become active in <%= printableTimeUntil(room.start_date) %>.</p>
+    <p>This chat room will become active in <%= Time.printableTimeUntil(room.start_date) %>.</p>
 <% } else { %>
     <% for (var i=0; i<messages.length; ++i) { var msg = messages[i]; %>
         <% if (msg.type == Chat.message_type.MESSAGE) { %>

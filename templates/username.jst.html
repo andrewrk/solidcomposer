@@ -1,2 +1,2 @@
-<a href="/user/<%= user.username %>/"><%= user.username %></a>
-<span class="points"><%= user.get_profile.get_points %></span>
+<a href="<%=urls.userpage(json.user.username)%>"><%= json.user.username %></a>
+<span class="points"><%= json.user.get_profile.get_points %></span>

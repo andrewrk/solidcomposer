@@ -1,0 +1,7 @@
+    <% for (var i=0; i<jst_compo_list.compos.length; ++i) { var jst_compo = jst_compo_list.compos[i]; %>
+        {% include 'arena/compo_block.jst.html' %}
+    <% } %>
+    <% var jst_pagination = {count: jst_compo_list.page_count, number: jst_compo_list.page_number}; %>
+    <div id="public-nav">
+        {% include 'page_nav.jst.html' %}
+    </div>

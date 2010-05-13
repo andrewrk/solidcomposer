@@ -128,6 +128,8 @@ INSTALLED_APPS = (
     'django_cron',
     'opensourcemusic.main',
     'opensourcemusic.competitions',
+    'opensourcemusic.chat',
+    'opensourcemusic.workshop',
 )
 
 LOGIN_URL = "/login/"

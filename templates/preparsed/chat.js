@@ -32,7 +32,17 @@ var Chat = function() {
     var template_cannot_say_s = null;
     var template_say_s = null;
 
-    var state_chat = null;
+    var state = {
+        user: null,
+        room: null,
+        messages: [],
+        urls: {
+            say: "{% filter escapejs %}{% url opensourcemusic.chat.views.ajax_say %}{% endfilter %}",
+            hear: "{% filter escapejs %}{% url opensourcemusic.chat.views.ajax_hear %}{% endfilter %}",
+            onliners: "{% filter escapejs %}{% url opensourcemusic.chat.views.ajax_onliners %}{% endfilter %}"
+        },
+        onliners: null
+    };
     var chat_can_say = null;
 
     var last_message_id = null;
@@ -56,14 +66,14 @@ var Chat = function() {
         var new_message = {
             'room': chatroom_id,
             'type': that.message_type.MESSAGE,
-            'author': state_chat.user.get_profile,
+            'author': state.user.get_profile,
             'message': msg_to_post,
             'timestamp': Time.serverTime(new Date())
         };
         var scroll = scrolledToBottom();
 
-        new_message.author.username = state_chat.user.username;
-        state_chat.messages.push(new_message);
+        new_message.author.username = state.user.username;
+        state.messages.push(new_message);
         ++chat_temp_msg_count;
         updateChat();
 
@@ -85,7 +95,7 @@ var Chat = function() {
                 }
                 $("#chat-say-text").attr('value','');
                 $.ajax({
-                    url: "/ajax/chat/say/",
+                    url: state.urls.say,
                     type: 'POST',
                     dataType: 'text',
                     data: {
@@ -108,23 +118,23 @@ var Chat = function() {
         var new_chat_can_say;
         var different;
         
-        if (state_chat === null) {
+        if (state.room === null || state.user === null) {
             return;
         }
         
-        new_chat_can_say = that.chatRoomActive(state_chat.room) &&
-            state_chat.user.is_authenticated &&
-            state_chat.user.has_permission;
+        new_chat_can_say = that.chatRoomActive(state.room) &&
+            state.user.is_authenticated &&
+            state.user.has_permission;
         different = new_chat_can_say !== chat_can_say;
         chat_can_say = new_chat_can_say;
         if (different) {
-            $("#chatroom-say").html(Jst.evaluate(template_say_s, state_chat));
+            $("#chatroom-say").html(Jst.evaluate(template_say_s, state));
             chatAddClicksToSay();
-            $("#chatroom-cannot-say").html(Jst.evaluate(template_cannot_say_s, state_chat));
+            $("#chatroom-cannot-say").html(Jst.evaluate(template_cannot_say_s, state));
         }
 
         if (scrolledToBottom()) {
-            $("#chatroom-outer-box").html(Jst.evaluate(template_chat_s, state_chat));
+            $("#chatroom-outer-box").html(Jst.evaluate(template_chat_s, state));
         }
 
         if (chat_can_say) {
@@ -137,11 +147,11 @@ var Chat = function() {
     }
 
     function updateChatOnliners() {
-        $("#chatroom-outer-onliners").html(Jst.evaluate(template_onliners_s, state_chat));
+        $("#chatroom-outer-onliners").html(Jst.evaluate(template_onliners_s, state));
     }
 
     function chatOnlinersAjaxRequest() {
-        $.getJSON("/ajax/chat/online/",
+        $.getJSON(state.urls.onliners,
             {
                 "room": chatroom_id
             },
@@ -150,19 +160,15 @@ var Chat = function() {
                     return;
                 }
 
-                if (state_chat === null) {
-                    state_chat = {user: null, messages: []};
-                }
-
-                state_chat.onliners = data;
+                state.onliners = data;
                 updateChatOnliners();
             });
     }
 
     function onlinerAction(user_id, func) {
         var i;
-        for (i=0; i<state_chat.onliners.length; ++i) {
-            if (state_chat.onliners[i].id === user_id) {
+        for (i=0; i<state.onliners.length; ++i) {
+            if (state.onliners[i].id === user_id) {
                 func(i);
             }
         }
@@ -172,7 +178,7 @@ var Chat = function() {
     }
 
     function chatAjaxRequest() {
-        $.getJSON("/ajax/chat/",
+        $.getJSON(state.urls.hear,
             {
                 "last_message": last_message_id,
                 "room": chatroom_id
@@ -185,41 +191,37 @@ var Chat = function() {
                     return;
                 }
 
-                if (state_chat === null) {
-                    state_chat = {'user': null, 'messages': []};
-                }
-
                 // clear temporary messages
                 while (chat_temp_msg_count > 0) {
-                    state_chat.messages.pop();
+                    state.messages.pop();
                     --chat_temp_msg_count;
                 }
 
                 // see if we're at the bottom of the div
                 scroll = scrolledToBottom();
 
-                state_chat.room = data.room;
-                state_chat.user = data.user;
+                state.room = data.room;
+                state.user = data.user;
                 for (i=0; i<data.messages.length; ++i) {
-                    // if it's a join or part, affect state_chat.onliners
-                    if (last_message_id && state_chat.onliners) {
+                    // if it's a join or part, affect state.onliners
+                    if (last_message_id && state.onliners) {
                         if (data.messages[i].type === that.message_type.JOIN) {
                             onlinerAction(data.messages[i].author.id, function(index) {
-                                state_chat.onliners.splice(index, 1);
+                                state.onliners.splice(index, 1);
                             });
                             updateChatOnliners();
                         } else if (data.messages[i].type === that.message_type.LEAVE) {
-                            state_chat.onliners.push(data.messages[i].author);
+                            state.onliners.push(data.messages[i].author);
                             updateChatOnliners();
                         }
                     }
-                    state_chat.messages.push(data.messages[i]);
+                    state.messages.push(data.messages[i]);
                 }
                 if (data.messages.length > 0) {
                     last_message_id = data.messages[data.messages.length-1].id;
                 }
 
-                if (that.beforeChatRoomActive(state_chat.room)) {
+                if (that.beforeChatRoomActive(state.room)) {
                     last_message_id = null;
                 }
 

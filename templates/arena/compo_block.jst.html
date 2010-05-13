@@ -1,36 +1,36 @@
 <div class="compo">
-    <% if (compo.user_entered) { %>
+    <% if (jst_compo.user_entered) { %>
         <span class="vote-count">
-            <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="+" /><%= compo.vote_count %>
+            <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="+" /><%= jst_compo.vote_count %>
         </span>
     <% } %>
-    <h4><%= compo.title %></h4>
-    <% if (Time.secondsUntil(compo.start_date) > 0) { %>
-        <p>starts in <%= Time.printableTimeUntil(compo.start_date) %></p>
-    <% } else if (Time.secondsUntil(compo.submit_deadline) > 0) { %>
-        <p>submission deadline in <%= Time.printableTimeUntil(compo.submit_deadline) %></p>
-    <% } else if (compo.have_listening_party && Time.secondsUntil(compo.listening_party_end_date) > 0) { %>
-        <% if (Time.localTime(compo.listening_party_start_date) > (new Date())) { %> 
+    <h4><%= jst_compo.title %></h4>
+    <% if (Time.secondsUntil(jst_compo.start_date) > 0) { %>
+        <p>starts in <%= Time.printableTimeUntil(jst_compo.start_date) %></p>
+    <% } else if (Time.secondsUntil(jst_compo.submit_deadline) > 0) { %>
+        <p>submission deadline in <%= Time.printableTimeUntil(jst_compo.submit_deadline) %></p>
+    <% } else if (jst_compo.have_listening_party && Time.secondsUntil(jst_compo.listening_party_end_date) > 0) { %>
+        <% if (Time.localTime(jst_compo.listening_party_start_date) > (new Date())) { %> 
             <p>listening party starting in
-            <%= Time.printableTimeUntil(compo.listening_party_start_date) %>
+            <%= Time.printableTimeUntil(jst_compo.listening_party_start_date) %>
             </p>
         <% } else { %>
             <p>Listening party
-            (<%= Time.timeDisplaySince(compo.listening_party_start_date) %> / 
-            <%= Time.timeDisplayUntil(compo.listening_party_end_date) %>)</p>
+            (<%= Time.timeDisplaySince(jst_compo.listening_party_start_date) %> / 
+            <%= Time.timeDisplayUntil(jst_compo.listening_party_end_date) %>)</p>
         <% } %>
-    <% } else if (Time.secondsUntil(compo.vote_deadline) > 0) { %>
-        <p>voting ends in <%= Time.printableTimeUntil(compo.vote_deadline) %></p>
+    <% } else if (Time.secondsUntil(jst_compo.vote_deadline) > 0) { %>
+        <p>voting ends in <%= Time.printableTimeUntil(jst_compo.vote_deadline) %></p>
     <% } else { %>
-        <p>ended on <%= Time.formatDate(Time.localTime(compo.submit_deadline)) %></p>
+        <p>ended on <%= Time.formatDate(Time.localTime(jst_compo.submit_deadline)) %></p>
     <% } %>
     <div class="compo-links">
-        <a href="/arena/compete/<%= compo.id %>/" id="compo-<%= compo.id %>-view">view</a>
+        <a href="<%=urls.compete(jst_compo.id)%>" id="compo-<%= jst_compo.id %>-view">view</a>
         <% if (user.is_authenticated) { %>
-            <% if (compo.bookmarked) { %>
-                <a href="#" id="compo-<%= compo.id %>-remove"><img src="{{ MEDIA_URL }}img/close.png" alt="unbookmark"></a>
+            <% if (jst_compo.bookmarked) { %>
+                <a href="#" id="compo-<%= jst_compo.id %>-remove"><img src="{{ MEDIA_URL }}img/close.png" alt="unbookmark"></a>
             <% } else { %>
-                <a href="#" id="compo-<%= compo.id %>-bookmark"><img src="{{ MEDIA_URL }}img/favorite.png" alt="" />bookmark</a>
+                <a href="#" id="compo-<%= jst_compo.id %>-bookmark"><img src="{{ MEDIA_URL }}img/favorite.png" alt="" />bookmark</a>
             <% } %>
         <% } %>
     </div>

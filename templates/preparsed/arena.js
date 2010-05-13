@@ -13,7 +13,9 @@ var SCArena = function () {
 
     var state = {
         available: null,
-        owned: null
+        owned: null,
+        urls: {% include "arena/urls.js" %},
+        user: null
     }
 
     var available_page = 1;
@@ -23,7 +25,7 @@ var SCArena = function () {
     function addClicksToCompo(compo) {
         $("#compo-" + compo.id + "-remove").click(function(){
             $.ajax({
-                url: "/arena/ajax/remove/" + compo.id + "/",
+                url: state.urls.ajax_unbookmark(compo.id),
                 type: 'GET',
                 success: function(){
                     that.ajaxRequest();
@@ -37,7 +39,7 @@ var SCArena = function () {
 
         $("#compo-" + compo.id + "-bookmark").click(function(){
             $.ajax({
-                url: "/arena/ajax/bookmark/" + compo.id + "/",
+                url: state.urls.ajax_bookmark(compo.id),
                 type: 'GET',
                 success: function(){
                     that.ajaxRequest();
@@ -68,7 +70,7 @@ var SCArena = function () {
             return;
         }
 
-        $("#available").html(Jst.evaluate(template_available_s, state.available));
+        $("#available").html(Jst.evaluate(template_available_s, state));
 
         addClicksToSection(state.available);
 
@@ -85,7 +87,7 @@ var SCArena = function () {
             return;
         }
 
-        $("#owned").html(Jst.evaluate(template_owned_s, state.owned));
+        $("#owned").html(Jst.evaluate(template_owned_s, state));
 
         if (state.owned.user.is_authenticated) {
             addClicksToSection(state.owned);
@@ -118,7 +120,7 @@ var SCArena = function () {
 
     function ajaxRequestAvailable() {
         $.getJSON(
-            "/arena/ajax/available/",
+            state.urls.available,
             {
                 page: available_page
             },
@@ -128,16 +130,18 @@ var SCArena = function () {
                 }
 
                 state.available = data;
+                state.user = data.user;
 
                 setBookmarkedProperty(state.available, false);
                 updateAvailable();
+                updateOwned(); // because state.user is affected
             }
         );
     }
 
     function ajaxRequestOwned() {
         $.getJSON(
-            "/arena/ajax/owned/",
+            state.urls.owned,
             {
                 page: owned_page
             },
@@ -147,10 +151,12 @@ var SCArena = function () {
                 }
 
                 state.owned = data;
+                state.user = data.user;
                 if (data.user.is_authenticated) {
                     setBookmarkedProperty(state.owned, true);
                 }
                 updateOwned();
+                updateAvailable(); // because state.user is affected
             }
         );
     }

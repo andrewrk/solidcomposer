@@ -1,4 +1,7 @@
 = arena =
+ * refactor
+   > change competitions to arena
+   > change opensourcemusic to solidcomposer
  == Feedback from Starla ==
  * Integrate chat from an IRC channel.
  * make the chat more friendly to use for people who are used to IRC

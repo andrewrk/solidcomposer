@@ -4,7 +4,7 @@
         <% if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
             <div class="<% if (current_track.index == i) { %>entry-playing<% } else { %>entry<% } %>">
                 <a href="#" id="entry-<%= i %>">
-                <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                <%= entry.song.band.title %> - <%= entry.song.title %>
                 (<%= Time.timeDisplay(entry.song.length) %>)</a>
                 <% if (SCCompo.votingActive()) { %>
                     <% if (json.user.is_authenticated) { %>
@@ -23,13 +23,13 @@
         <% } else { %>
             <% if (SCCompo.ongoingListeningParty() && i == json.party.index) { %>
                 <div class="entry-playing">
-                    <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                    <%= entry.song.band.title %> - <%= entry.song.title %>
                     (<%= Time.timeDisplay(entry.song.length) %>)
                 </div>
             <% } else { %>
                 <% if (entry.owner.user == json.user.id) { %>
                     <div class="entry-user">
-                        <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                        <%= entry.song.band.title %> - <%= entry.song.title %>
                         (<%= Time.timeDisplay(entry.song.length) %>)
                         <% if (SCCompo.submissionActive()) { %>
                             (<a href="#" id="resubmit">edit</a>)
@@ -37,7 +37,7 @@
                     </div>
                 <% } else { %>
                     <div class="entry">
-                        <%= entry.owner.artist_name %> - <%= entry.song.title %>
+                        <%= entry.song.band.title %> - <%= entry.song.title %>
                         (<%= Time.timeDisplay(entry.song.length) %>)
                     </div>
                 <% } %>

@@ -10,26 +10,26 @@ django_cron.autodiscover()
 from opensourcemusic import settings
 
 urlpatterns = patterns('',
-    (r'^$', direct_to_template, {'template': 'home.html'}),
+    url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),
     (r'^arena/', include('opensourcemusic.competitions.urls')),
+    (r'^chat/', include('opensourcemusic.chat.urls')),
     (r'^admin/', include(admin.site.urls)),
 
-    (r'^ajax/login_state/$', 'opensourcemusic.main.views.ajax_login_state'),
-    (r'^ajax/login/$', 'opensourcemusic.main.views.ajax_login'),
-    (r'^ajax/logout/$', 'opensourcemusic.main.views.ajax_logout'),
-    (r'^ajax/chat/$', 'opensourcemusic.main.views.ajax_chat'),
-    (r'^ajax/chat/say/$', 'opensourcemusic.main.views.ajax_say'),
-    (r'^ajax/chat/online/$', 'opensourcemusic.main.views.ajax_onliners'),
+    url(r'^user/(.+)/$', 'opensourcemusic.main.views.userpage', name='userpage'),
 
-    (r'^login/$', 'opensourcemusic.main.views.user_login'),
-    (r'^logout/$', 'opensourcemusic.main.views.user_logout'),
-    (r'^register/$', 'opensourcemusic.main.views.user_register'),
+    url(r'^ajax/login_state/$', 'opensourcemusic.main.views.ajax_login_state', name="ajax_login_state"),
+    url(r'^ajax/login/$', 'opensourcemusic.main.views.ajax_login', name="ajax_login"),
+    url(r'^ajax/logout/$', 'opensourcemusic.main.views.ajax_logout', name="ajax_logout"),
+
+    url(r'^login/$', 'opensourcemusic.main.views.user_login', name="user_login"),
+    url(r'^logout/$', 'opensourcemusic.main.views.user_logout', name="user_logout"),
+    url(r'^register/$', 'opensourcemusic.main.views.user_register', name="register"),
     (r'^register/pending/$', direct_to_template, {'template': 'pending.html'}),
     (r'^confirm/(.+)/(.+)/$', 'opensourcemusic.main.views.confirm'),
 
-    (r'^about/$', direct_to_template, {'template': 'about.html'}),
-    (r'^policy/$', direct_to_template, {'template': 'policy.html'}),
-    (r'^account/$', direct_to_template, {'template': 'account.html'}),
+    url(r'^about/$', direct_to_template, {'template': 'about.html'}, name="about"),
+    url(r'^policy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),
+    url(r'^account/$', direct_to_template, {'template': 'account.html'}, name="account"),
 )
 # exceptions to media url
 if settings.DEBUG:
