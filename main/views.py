@@ -29,6 +29,11 @@ def remove_unsafe_keys(hash, model):
             'user_permissions',
             'is_user',
             'is_staff'
+            'is_superuser',
+            'email',
+            'first_name',
+            'last_name',
+            'groups',
         )
     else:
         try:

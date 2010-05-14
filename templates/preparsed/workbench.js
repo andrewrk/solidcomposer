@@ -12,8 +12,23 @@ var SCWorkbench = function () {
     var state = {
         urls: {
             ajax_home: "{% filter escapejs %}{% url workbench.ajax_home %}{% endfilter %}",
+            band: function(id) {
+                return "{% filter escapejs %}{% url workbench.band 0 %}{% endfilter %}".replace(0, id);
+            },
+            bandFanPage: function(id) {
+                return "{% filter escapejs %}{% url music.band 0 %}{% endfilter %}".replace(0, id);
+            },
+            acceptInvite: "{% filter escapejs %}{% url workbench.ajax_accept_invite %}{% endfilter %}",
+            ignoreInvite: "{% filter escapejs %}{% url workbench.ajax_ignore_invite %}{% endfilter %}"
         },
-        json: null
+        json: null,
+        roleNames: [
+            "Manager",
+            "Band member",
+            "Critic",
+            "Fan",
+            "Banned"
+        ]
     }
     
     // private functions
@@ -23,6 +38,41 @@ var SCWorkbench = function () {
         }
 
         $("#workbench").html(Jst.evaluate(template_home_s, state));
+
+        $("#workbenchSignIn").click(Login.showSignIn);
+
+        // accept/ignore invitation buttons
+        var inviteAction = function() {
+            var index = $(this).attr('index');
+            var accept = $(this).attr('class') === "accept"; 
+            var url;
+            var err_msg;
+            if (accept) {
+                url = state.urls.ajax_accept_invite;
+                err_msg = "Error accepting invite: ";
+            } else {
+                url = state.urls.ajax_ignore_invite;
+                err_msg = "Error ignoring invite: ";
+            }
+            $.getJSON(url,
+                {
+                    invitation: state.json.invites[index].id
+                },
+                function(data) {
+                    if (data === null) {
+                        return;
+                    }
+                    if (data.success) {
+                        state.json.invites.splice(index, 1);
+                        updateHome();
+                    } else {
+                        alert(err_msg + data.reason);
+                    }
+                }
+            );
+        };
+        $(".action a.accept").click(inviteAction);
+        $(".action a.ignore").click(inviteAction);
     }
 
     function ajaxRequestLoop() {

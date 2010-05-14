@@ -85,7 +85,7 @@ def ajax_submit_entry(request):
     compo_id = request.POST.get('compo', 0)
     try:
         compo_id = int(compo_id)
-    except:
+    except ValueError:
         compo_id = 0
     
     try:
@@ -351,7 +351,7 @@ def compoRequest(request, compos):
     page_str = request.GET.get('page', 1) 
     try:
         page_number = int(page_str)
-    except:
+    except ValueError:
         page_number = 1
 
     paginator = Paginator(compos, settings.ITEMS_PER_PAGE)
@@ -489,7 +489,7 @@ def ajax_vote(request, entry_id):
 
     try:
         entry_id = int(entry_id)
-    except:
+    except ValueError:
         entry_id = 0
     entry = get_object_or_404(Entry, id=entry_id)
 
@@ -524,7 +524,7 @@ def ajax_unvote(request, entry_id):
 
     try:
         entry_id = int(entry_id)
-    except:
+    except ValueError:
         entry_id = 0
     entry = get_object_or_404(Entry, id=entry_id)
 

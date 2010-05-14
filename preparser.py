@@ -2,6 +2,7 @@
 
 import os
 import sys
+import traceback
 import time
 
 # set django environment
@@ -180,10 +181,14 @@ def monitor():
     while True:
         try:
             compile()
+        except KeyboardInterrupt:
+            sys.exit(0)
+        except:
+            traceback.print_exc(file=sys.stdout)
+        try:
             time.sleep(0.5)
         except KeyboardInterrupt:
             sys.exit(0)
-
 
 commands = {
     'help': print_usage,

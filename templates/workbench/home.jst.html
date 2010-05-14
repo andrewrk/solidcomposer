@@ -1,3 +1,36 @@
-<div>
-hi
-</div>
+<% if (json.user.is_authenticated) { %>
+    <div id="bands">
+        <a class="create-band" href="{% url workbench.create_band %}">Create a New Band</a>
+        <ul>
+            <% $.each(json.bands, function(i, item){ %>
+                <li class="band">
+                    <a href="<%=urls.band(item.id)%>"><%=item.title%></a>
+                </li>
+            <% }); %>
+            <% $.each(json.invites, function(i, item){ %>
+                <li class="invite">
+                    <span class="label">invitation</span>
+                    <a href="<%=urls.bandFanPage(item.band.id)%>"><%=item.band.title%></a>
+                    <span class="role"><%=roleNames[item.role]%></span>
+                    <span class="action">
+                    <a href="#" class="accept" index="<%=i%>">accept</a>
+                    <a href="#" class="ignore" index="<%=i%>">ignore</a>
+                    </span>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+    <div id="activity">
+    recent activity
+    </div>
+<% } else { %>
+    <p>
+        <strong>Workbench</strong> is a project manager, providing version control
+        and backups of your work. It makes collaboration with other people
+        a piece of cake.
+    </p>
+    <p>
+        <a id="workbenchSignIn" href="{% url user_login %}">Sign in</a> or
+        <a href="{% url register %}">register</a> to participate.
+    </p>
+<% } %>

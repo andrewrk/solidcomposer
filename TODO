@@ -76,8 +76,12 @@
 
 = workbench =
  * workbench page
-   > list bands the user is in
-   > create band button
+   > project manager page
+   > project page
+   > ability to create band invitations
+     - creating a link to hand out
+     - direct invitation on the person's user page
+     - a box with auto-complete to direct invite people
    > recent activity for each band they're in
      - crtitiques on songs
      - songs checked in
@@ -90,6 +94,7 @@
  * create band page
    > Choose a name and then proceeed directly to band settings page
  * band settings page
+ * automatically upload competition entries to the project manager
 
  * make it look pretty
  * ability to customize css
@@ -99,6 +104,8 @@
    > ability to turn off requests or specify a reputation threshold
  * easier to check in a file without uploading anything
  * support merging and forking
+   > if you have access to the source of another band's song, you can fork it
+     into your own project manager
  * show who is voting to scrap, who is voting to promote
  * filter box to search through projects quickly
 

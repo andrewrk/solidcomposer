@@ -19,7 +19,7 @@ class BandMember(models.Model):
     role = models.IntegerField(choices=ROLE_CHOICES, default=MANAGER)
 
     def __unicode__(self):
-        return u'%s: %s' % (dict(ROLE_CHOICES)[self.role], str(self.user))
+        return u'%s - %s: %s' % (str(self.band), dict(ROLE_CHOICES)[self.role], str(self.user))
 
 class Band(models.Model):
     OPENNESS_CHOICES = (

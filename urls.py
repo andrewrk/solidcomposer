@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     (r'^arena/', include('opensourcemusic.competitions.urls')),
     (r'^chat/', include('opensourcemusic.chat.urls')),
     (r'^workbench/', include('opensourcemusic.workshop.urls')),
+    (r'^music/', include('opensourcemusic.music.urls')),
     (r'^admin/', include(admin.site.urls)),
 
     url(r'^user/(.+)/$', 'opensourcemusic.main.views.userpage', name='userpage'),

@@ -32,7 +32,7 @@ def ajax_hear(request):
     room_id = request.GET.get('room', 0)
     try:
         room_id = int(room_id)
-    except:
+    except ValueError:
         room_id = 0
     room = get_object_or_404(ChatRoom, id=room_id)
 
@@ -64,7 +64,7 @@ def ajax_hear(request):
     else:
         try:
             last_message_id = int(last_message_str)
-        except:
+        except ValueError:
             last_message_id = 0
 
         last_message = get_object_or_404(ChatMessage, id=last_message_id)
@@ -94,7 +94,7 @@ def ajax_say(request):
     room_id = request.POST.get('room', 0)
     try:
         room_id = int(room_id)
-    except:
+    except ValueError:
         room_id = 0
     room = get_object_or_404(ChatRoom, id=room_id)
 
@@ -141,7 +141,7 @@ def ajax_onliners(request):
     room_id = request.GET.get('room', 0)
     try:
         room_id = int(room_id)
-    except:
+    except ValueError:
         room_id = 0
     room = get_object_or_404(ChatRoom, id=room_id)
 
