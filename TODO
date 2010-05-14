@@ -1,3 +1,7 @@
+= sitewide =
+ * make the login ALWAYS ajax. the consistency will help user confidence.
+ * use a little spinning gif for loading instead of text
+
 = arena =
  * refactor
    > change competitions to arena
@@ -72,7 +76,28 @@
  * rss feed for competitions
 
 = workbench =
+ * workbench page
+   > list bands the user is in
+   > create band button
+   > recent activity for each band they're in
+     - crtitiques on songs
+     - songs checked in
+     - songs checked out
+     - pokes
+   > fan page activity
+     - download count in the past 24 hours
+     - play count in the past 24 hours
+     - new fan count in the past 24 hours
+ * create band page
+   > Choose a name and then proceeed directly to band settings page
+ * band settings page
+
  * make it look pretty
+ * ability to customize css
+   > on fan page
+   > on project manager
+ * users can request to join a band
+   > ability to turn off requests or specify a reputation threshold
  * easier to check in a file without uploading anything
  * support merging and forking
  * show who is voting to scrap, who is voting to promote

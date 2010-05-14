@@ -178,8 +178,8 @@ def monitor():
     and automatically re-parses them.
     """
     while True:
-        compile()
         try:
+            compile()
             time.sleep(0.5)
         except KeyboardInterrupt:
             sys.exit(0)
@@ -194,9 +194,7 @@ commands = {
 
 if __name__ == '__main__':
     if len(sys.argv) < 2 or not commands.has_key(sys.argv[1]):
-        print_usage();
+        print_usage()
         sys.exit(1)
     else:
         commands[sys.argv[1]]()
-
-

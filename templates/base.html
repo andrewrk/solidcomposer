@@ -15,6 +15,18 @@
 <div id="logo">
     <p>A place for musicians to <strong>compete, collaborate, and learn</strong>.</p>
 </div>
+{% block nav %}
+<div id="nav">
+    <ul>
+        <li class="{% block nav_arena_li_class %}unselected{% endblock %}">
+            <a href="{% url arena.home %}">Arena</a>
+        </li>
+        <li class="{% block nav_workbench_li_class %}unselected{% endblock %}">
+            <a href="{% url workbench.home %}">Workbench</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}
 <div id="wrapper">
     {% block content %}
     {% endblock %}

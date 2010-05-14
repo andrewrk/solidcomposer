@@ -1,0 +1,14 @@
+{% extends 'workbench/base.html' %}
+
+{% block extra_header %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/workbench.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="workbench">
+        {% include 'loading.html' %}
+    </div>
+{% endblock %}
