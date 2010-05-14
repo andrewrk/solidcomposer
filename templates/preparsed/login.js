@@ -75,14 +75,8 @@ var Login = function () {
         displayCorrectly($("#loginFormDiv"), loginFormDisplayed);
         displayCorrectly($("#loginFormError"), loginFormError);
 
-        $("#signIn").click(function(){
-            loginFormDisplayed = ! loginFormDisplayed;
-            loginFormError = false;
-            updateLogin();
-            if (loginFormDisplayed) {
-                $("#loginName").focus();
-            }
-            return false;
+        $("a#signIn").each(function(index){
+            $(this).click(that.showSignIn);
         });
         $("#signOut").click(function(){
             $.ajax({
@@ -197,6 +191,16 @@ var Login = function () {
         
         addStateChangeCallback: function(func) {
             callbacks.push(func);
+        },
+
+        showSignIn: function(){
+            loginFormDisplayed = true;
+            loginFormError = false;
+            updateLogin();
+            if (loginFormDisplayed) {
+                $("#loginName").focus();
+            }
+            return false;
         }
     };
     return that;
