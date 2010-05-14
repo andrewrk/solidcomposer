@@ -1,6 +1,5 @@
 = sitewide =
  * make the login ALWAYS ajax. the consistency will help user confidence.
- * use a little spinning gif for loading instead of text
 
 = arena =
  * refactor
