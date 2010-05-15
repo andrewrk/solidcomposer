@@ -123,6 +123,50 @@ class SimpleTest(TestCase):
         data = json.loads(response.content)
         self.assertEquals(data['user']['has_permission'], False)
 
-   # (r'^ajax/hear/$', 'opensourcemusic.chat.views.ajax_hear'),
-   # (r'^ajax/say/$', 'opensourcemusic.chat.views.ajax_say'),
+    def test_say(self):
+        # a room that is OK
+        self.client.login(username="skiessi", password="temp1234")
+        response = self.client.post('/chat/ajax/say/', {
+            'room': self.open_room.id,
+            'message': 'this is my message 1 2 3',
+        })
+        self.assertEquals(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEquals(data['user']['is_authenticated'], True)
+        self.assertEquals(data['user']['has_permission'], True)
+        self.assertEquals(data['success'], True)
+        msg = ChatMessage.objects.filter(room=self.open_room, author=self.skiessi).order_by('-id')[0]
+        self.assertEquals(msg.message, 'this is my message 1 2 3')
+
+        # too early
+        response = self.client.post('/chat/ajax/say/', {
+            'room': self.early_room.id,
+            'message': 'too early',
+        })
+        self.assertEquals(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEquals(data['user']['is_authenticated'], True)
+        self.assertEquals(data['success'], False)
+
+        # too late
+        response = self.client.post('/chat/ajax/say/', {
+            'room': self.late_room.id,
+            'message': 'too late',
+        })
+        self.assertEquals(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEquals(data['user']['is_authenticated'], True)
+        self.assertEquals(data['success'], False)
+
+        # not authenticated
+        self.client.logout()
+        response = self.client.post('/chat/ajax/say/', {
+            'room': self.open_room.id,
+            'message': 'not authed',
+        })
+        self.assertEquals(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEquals(data['user']['is_authenticated'], False)
+        self.assertEquals(data['success'], False)
+
    # (r'^ajax/online/$', 'opensourcemusic.chat.views.ajax_onliners'),

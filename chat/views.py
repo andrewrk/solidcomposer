@@ -82,15 +82,16 @@ def ajax_say(request):
         room_id = 0
     room = get_object_or_404(ChatRoom, id=room_id)
 
-    if not chatroom_is_active(room):
-        return json_response({})
-
     data = {
         'user': {
             'is_authenticated': request.user.is_authenticated(),
             'has_permission': False,
         },
+        'success': False,
     }
+
+    if not chatroom_is_active(room):
+        return json_response(data)
 
     message = request.POST.get('message', '')
 
@@ -109,6 +110,7 @@ def ajax_say(request):
     m.message = message
     m.save()
 
+    data['success'] = True
     return json_response(data)
 
 def chatroom_is_active(room):
