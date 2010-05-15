@@ -7,44 +7,6 @@ OPEN, WHITELIST, BLACKLIST = range(3)
 class ChatRoom(models.Model):
     """
     ChatRoom contains ChatMessages and manages who is allowed to be in it
-
-    # create a test user
-    >>> bob = User.objects.create_user('bob', 'bob@bob.bob', 'bob1')
-    >>> bob.save()
-
-    >>> anon = django.contrib.auth.models.AnonymousUser()
-    >>> anon.is_authenticated()
-    False
-
-    # create some test rooms
-    >>> now = datetime.now()
-    >>> open_room = ChatRoom.objects.create(permission_type=OPEN)
-    >>> white_room = ChatRoom.objects.create(permission_type=WHITELIST)
-    >>> white_room.save()
-    >>> black_room = ChatRoom.objects.create(permission_type=BLACKLIST)
-    >>> black_room.save()
-
-    # test permission to chat
-    >>> open_room.permission_to_chat(anon)
-    True
-    >>> white_room.permission_to_chat(anon)
-    False
-    >>> black_room.permission_to_chat(anon)
-    False
-    >>> open_room.permission_to_chat(bob)
-    True
-    >>> white_room.permission_to_chat(bob)
-    False
-    >>> white_room.whitelist.add(bob)
-    >>> white_room.permission_to_chat(bob)
-    True
-    >>> black_room.permission_to_chat(bob)
-    True
-    >>> black_room.blacklist.add(bob)
-    >>> black_room.permission_to_chat(bob)
-    False
-    >>> True
-    False
     """
     PERMISSION_TYPES = (
         (OPEN, 'open'),

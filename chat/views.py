@@ -35,7 +35,10 @@ def ajax_hear(request):
 
     def add_to_message(msg):
         d = safe_model_to_dict(msg)
-        d['author'] = safe_model_to_dict(msg.author)
+        d['author'] = {
+            'username': msg.author.username,
+            'id': msg.author.id,
+        }
         d['timestamp'] = msg.timestamp
         return d
 

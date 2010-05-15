@@ -5,7 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^ajax/hear/$', 'opensourcemusic.chat.views.ajax_hear'),
-    (r'^ajax/say/$', 'opensourcemusic.chat.views.ajax_say'),
-    (r'^ajax/online/$', 'opensourcemusic.chat.views.ajax_onliners'),
+    url(r'^ajax/hear/$', 'opensourcemusic.chat.views.ajax_hear', name="chat.hear"),
+    url(r'^ajax/say/$', 'opensourcemusic.chat.views.ajax_say', name="chat.say"),
+    url(r'^ajax/online/$', 'opensourcemusic.chat.views.ajax_onliners', name="chat.onliners"),
 )

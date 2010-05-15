@@ -37,9 +37,9 @@ var Chat = function() {
         room: null,
         messages: [],
         urls: {
-            say: "{% filter escapejs %}{% url opensourcemusic.chat.views.ajax_say %}{% endfilter %}",
-            hear: "{% filter escapejs %}{% url opensourcemusic.chat.views.ajax_hear %}{% endfilter %}",
-            onliners: "{% filter escapejs %}{% url opensourcemusic.chat.views.ajax_onliners %}{% endfilter %}"
+            say: "{% filter escapejs %}{% url chat.say %}{% endfilter %}",
+            hear: "{% filter escapejs %}{% url chat.hear %}{% endfilter %}",
+            onliners: "{% filter escapejs %}{% url chat.onliners %}{% endfilter %}"
         },
         onliners: null
     };
