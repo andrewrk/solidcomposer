@@ -35,6 +35,12 @@ DATABASE_HOST = ''
 DATABASE_PORT = ''             
 
 
+# South
+SOUTH_LOGGING_ON = False
+SOUTH_LOGGING_FILE = absolute("south.log")
+SOUTH_TESTS_MIGRATE = False
+SKIP_SOUTH_TESTS = True
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -130,6 +136,7 @@ INSTALLED_APPS = (
     'opensourcemusic.competitions',
     'opensourcemusic.chat',
     'opensourcemusic.workshop',
+    'opensourcemusic.music',
 )
 
 LOGIN_URL = "/login/"

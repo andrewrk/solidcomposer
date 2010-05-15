@@ -5,25 +5,6 @@ from opensourcemusic.main.views import safe_model_to_dict, json_response
 
 from datetime import datetime, timedelta
 
-def user_can_chat(room, user):
-    if room.permission_type == OPEN:
-        return True
-    else:
-        # user has to be signed in
-        if not user.is_authenticated():
-            return False
-
-        if room.permission_type == WHITELIST:
-            # user has to be on the whitelist
-            if room.whitelist.filter(pk=user.id).count() != 1:
-                return False
-        elif room.permission_type == BLACKLIST:
-            # user is blocked if he is on the blacklist 
-            if room.blacklist.filter(pk=user.id).count() == 1:
-                return False
-
-        return True
-
 def ajax_hear(request):
     """
     get new or all messages
@@ -50,7 +31,7 @@ def ajax_hear(request):
         data['user']['get_profile'] = safe_model_to_dict(request.user.get_profile())
         data['user']['username'] = request.user.username
 
-    data['user']['has_permission'] = user_can_chat(room, request.user)
+    data['user']['has_permission'] = room.permission_to_chat(request.user)
 
     def add_to_message(msg):
         d = safe_model_to_dict(msg)
@@ -113,7 +94,7 @@ def ajax_say(request):
     if message == "" or not request.user.is_authenticated():
         return json_response(data)
 
-    data['user']['has_permission'] = user_can_chat(room, request.user)
+    data['user']['has_permission'] = room.permission_to_chat(request.user)
     if not data['user']['has_permission']:
         return json_response(data)
 

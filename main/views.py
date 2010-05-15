@@ -210,4 +210,4 @@ def userpage(request, username):
     """
     TODO
     """
-    pass
+    return render_to_response('userpage.html', locals(), context_instance=RequestContext(request))
