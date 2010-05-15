@@ -21,7 +21,7 @@ def ajax_hear(request):
     data = {
         'user': {
             'is_authenticated': request.user.is_authenticated(),
-            'has_permission': False,
+            'has_permission': room.permission_to_chat(request.user),
         },
         'room': safe_model_to_dict(room),
         'messages': [],
@@ -30,8 +30,6 @@ def ajax_hear(request):
     if request.user.is_authenticated():
         data['user']['get_profile'] = safe_model_to_dict(request.user.get_profile())
         data['user']['username'] = request.user.username
-
-    data['user']['has_permission'] = room.permission_to_chat(request.user)
 
     def add_to_message(msg):
         d = safe_model_to_dict(msg)
@@ -90,7 +88,7 @@ def ajax_say(request):
         'success': False,
     }
 
-    if not chatroom_is_active(room):
+    if not room.is_active():
         return json_response(data)
 
     message = request.POST.get('message', '')
@@ -113,16 +111,6 @@ def ajax_say(request):
     data['success'] = True
     return json_response(data)
 
-def chatroom_is_active(room):
-    now = datetime.now()
-    if not room.start_date is None:
-        if room.start_date > now:
-            return False
-    if not room.end_date is None:
-        if room.end_date < now:
-            return False
-    return True
-
 def ajax_onliners(request):
     room_id = request.GET.get('room', 0)
     try:
@@ -131,11 +119,11 @@ def ajax_onliners(request):
         room_id = 0
     room = get_object_or_404(ChatRoom, id=room_id)
 
-    if not chatroom_is_active(room):
-        return json_response({})
+    data = {}
+
+    if not room.is_active():
+        return json_response(data)
 
     expire_date = datetime.now() - timedelta(seconds=settings.CHAT_TIMEOUT)
-    data = [x.person.username for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]
-
+    data = [safe_model_to_dict(x.person) for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]
     return json_response(data)
-

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from datetime import datetime
+
 SYSTEM, ACTION, MESSAGE, JOIN, LEAVE, NOTICE = range(6)
 OPEN, WHITELIST, BLACKLIST = range(3)
 
@@ -29,7 +31,7 @@ class ChatRoom(models.Model):
 
     def permission_to_chat(self, user):
         """
-        returns True if user has access to this room.
+        returns True if and only if user has access to this room.
         """
         if self.permission_type == OPEN:
             return True
@@ -48,6 +50,16 @@ class ChatRoom(models.Model):
                     return False
 
             return True
+
+    def is_active(self):
+        now = datetime.now()
+        if not self.start_date is None:
+            if self.start_date > now:
+                return False
+        if not self.end_date is None:
+            if self.end_date < now:
+                return False
+        return True
 
 
     def __unicode__(self):

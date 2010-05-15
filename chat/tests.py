@@ -28,6 +28,7 @@ class SimpleTest(TestCase):
 
         # create some chat rooms
         self.open_room = ChatRoom.objects.create(permission_type=OPEN)
+        self.open_room.save()
         self.white_room = ChatRoom.objects.create(permission_type=WHITELIST)
         self.white_room.save()
         self.black_room = ChatRoom.objects.create(permission_type=BLACKLIST)
@@ -65,6 +66,8 @@ class SimpleTest(TestCase):
         self.assertEquals(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEquals(data['user']['has_permission'], False)
+        # can't talk but can still read messages
+        self.assertEquals(len(data['messages']), 3)
 
         # requesting last 2 messages, has permission
         self.client.login(username="superjoe", password="temp1234")
@@ -87,6 +90,8 @@ class SimpleTest(TestCase):
         self.assertEquals(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEquals(data['user']['has_permission'], False)
+        # can still read messages
+        self.assertEquals(len(data['messages']), 3)
 
         # whitelist has permission
         self.white_room.whitelist.add(self.superjoe)
@@ -122,6 +127,8 @@ class SimpleTest(TestCase):
         self.assertEquals(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEquals(data['user']['has_permission'], False)
+        # can still read messages
+        self.assertEquals(len(data['messages']), 4)
 
     def test_say(self):
         # a room that is OK
@@ -147,6 +154,7 @@ class SimpleTest(TestCase):
         data = json.loads(response.content)
         self.assertEquals(data['user']['is_authenticated'], True)
         self.assertEquals(data['success'], False)
+        self.assertEquals(ChatMessage.objects.count(), 1)
 
         # too late
         response = self.client.post('/chat/ajax/say/', {
@@ -157,6 +165,7 @@ class SimpleTest(TestCase):
         data = json.loads(response.content)
         self.assertEquals(data['user']['is_authenticated'], True)
         self.assertEquals(data['success'], False)
+        self.assertEquals(ChatMessage.objects.count(), 1)
 
         # not authenticated
         self.client.logout()
@@ -168,5 +177,52 @@ class SimpleTest(TestCase):
         data = json.loads(response.content)
         self.assertEquals(data['user']['is_authenticated'], False)
         self.assertEquals(data['success'], False)
+        self.assertEquals(ChatMessage.objects.count(), 1)
 
-   # (r'^ajax/online/$', 'opensourcemusic.chat.views.ajax_onliners'),
+    def test_onliners(self):
+        # anon, nobody there yet
+        self.client.logout()
+        response = self.client.get('/chat/ajax/online/', {
+            'room': self.open_room.id,
+        })
+        self.assertEquals(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEquals(len(data), 0)
+
+        # superjoe, see himself in the list
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get('/chat/ajax/hear/', {
+            'last_message': 'null',
+            'room': self.open_room.id,
+        })
+        self.assertEquals(response.status_code, 200)
+        response = self.client.get('/chat/ajax/online/', {
+            'room': self.open_room.id,
+        })
+        self.assertEquals(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEquals(len(data), 1)
+        self.assertEquals(data[0]['username'], 'superjoe')
+
+        # pop skiessi online and anon check
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get('/chat/ajax/hear/', {
+            'last_message': 'null',
+            'room': self.open_room.id,
+        })
+        self.assertEquals(response.status_code, 200)
+        self.client.logout()
+        response = self.client.get('/chat/ajax/online/', {
+            'room': self.open_room.id,
+        })
+        self.assertEquals(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEquals(len(data), 2)
+
+        # check an early one
+        response = self.client.get('/chat/ajax/online/', {
+            'room': self.early_room.id,
+        })
+        self.assertEquals(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEquals(len(data), 0)
