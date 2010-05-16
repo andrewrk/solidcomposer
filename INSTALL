@@ -1,12 +1,11 @@
 Dependencies:
  * django - http://www.djangoproject.com/
- * A good database system like postgresql or mysql so that the migration
-   stuff (south) can work. (sqlite3 will not work)
  * south - http://south.aeracode.org/
+   - A good database system like postgresql or mysql so that the migration
+     stuff can work. (sqlite3 will not work)
  * django-cron - http://code.google.com/p/django-cron/
- * mugaten - http://code.google.com/p/mutagen/
- * pymad - http://spacepants.org/src/pymad/
- * Python Image Library - http://www.pythonware.com/products/pil/
+ * mutagen - http://code.google.com/p/mutagen/
+ * PyWaveform - http://github.com/superjoe30/PyWaveform
 
 Procedure:
  * ensure that all dependencies are installed on server
@@ -19,3 +18,4 @@ Procedure:
    a cron job manually to do the task it was going to do.
  * preparser.py parse
    this needs to be re-run any time you change any templates or settings.py
+ * run tests
