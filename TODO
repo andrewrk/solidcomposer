@@ -3,6 +3,7 @@
  * python library - PyFlp
  * complete tests for arena
  * work on workbench
+ * deploy script when merged with release branch
 
 = arena =
  * refactor
