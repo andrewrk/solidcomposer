@@ -23,7 +23,7 @@ from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 import shutil
 
-from opensourcemusic.main import madwave
+import waveform
 
 def upload_file(f, new_name):
     handle = open(new_name, 'wb+')
@@ -207,12 +207,13 @@ def ajax_submit_entry(request):
 
     # generate the waveform image
     try:
-        madwave.draw(mp3_safe_path, png_safe_path, 380, 45, fgcolor=(157,203,229,255), cheat=True)
+        waveform.draw(mp3_safe_path, png_safe_path, (800, 100), fgColor=(157,203,229,255))
         song.waveform_img = png_safe_path_relative
     except:
         pass
 
     song.mp3_file = mp3_safe_path_relative
+    song.band = request.user.get_profile().solo_band
     song.owner = request.user
     song.title = title
     song.length = audio_length

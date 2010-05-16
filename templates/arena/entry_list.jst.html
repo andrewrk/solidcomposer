@@ -27,7 +27,7 @@
                     (<%= Time.timeDisplay(entry.song.length) %>)
                 </div>
             <% } else { %>
-                <% if (entry.owner.user == json.user.id) { %>
+                <% if (entry.owner.id == json.user.id) { %>
                     <div class="entry-user">
                         <%= entry.song.band.title %> - <%= entry.song.title %>
                         (<%= Time.timeDisplay(entry.song.length) %>)
