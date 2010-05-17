@@ -479,13 +479,13 @@ def create(request):
         }
         form = CreateCompetitionForm(initial=initial)
     
-    url = reverse("arena.create")
-    return render_to_response(url, locals(), context_instance=RequestContext(request))
+    return render_to_response('arena/create.html', locals(),
+        context_instance=RequestContext(request))
 
 def competition(request, id):
     competition = get_object_or_404(Competition, id=int(id))
-    url = reverse("arena.compete")
-    return render_to_response(url, locals(), context_instance=RequestContext(request))
+    return render_to_response('arena/competition.html', locals(),
+        context_instance=RequestContext(request))
 
 def ajax_vote(request, entry_id):
     data = {'success': False}
