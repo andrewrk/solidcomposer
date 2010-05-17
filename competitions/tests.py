@@ -39,6 +39,9 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_ajax_available(self):
+        """
+        tests available, owned, bookmark, and unbookmark
+        """
         url = reverse('arena.ajax_available')
         # should be no competitions available
         response = self.client.get(url)
@@ -85,6 +88,21 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(len(data['compos']), 0)
+
+        # unbookmark it
+        unbookmark_url = reverse("arena.ajax_unbookmark", args=[comp.id])
+        response = self.client.get(unbookmark_url)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['compos']), 1)
+
+        # delete it
+        comp.delete()
         
         # make sure paging works
         howMany = settings.ITEMS_PER_PAGE * 3 # should be 3 pages
@@ -172,15 +190,37 @@ class SimpleTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
+        self.assertEqual(len(data['compos']), 1)
         self.assertEqual(data['compos'][0]['title'], 'test compo 123')
         # compo can't have theme yet because it didn't start yet
         self.assertEqual(data['compos'][0].has_key('theme'), False)
         # rules are on preview though
         self.assertEqual(data['compos'][0]['rules'], 'test rules 123')
 
-#    url('^ajax/owned/$', 'opensourcemusic.competitions.views.ajax_owned', name="arena.ajax_owned"),
-#    url('^ajax/bookmark/(\d+)/$', 'opensourcemusic.competitions.views.ajax_bookmark', name="arena.ajax_bookmark"),
-#    url('^ajax/remove/(\d+)/$', 'opensourcemusic.competitions.views.ajax_unbookmark', name="arena.ajax_unbookmark"),
+        # unbookmark it
+        unbookmark_url = reverse("arena.ajax_unbookmark", args=[comp.id])
+        response = self.client.get(unbookmark_url)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['compos']), 0)
+
+    def test_ajax_bookmark(self):
+        """
+        this is tested by available and owned above, not necessary.
+        """
+        pass
+
+    def test_ajax_unbookmark(self):
+        """
+        again, tested by available and owned above, not necessary.
+        """
+        pass
+
 #    url('^ajax/compo/(\d+)/$', 'opensourcemusic.competitions.views.ajax_compo', name="arena.ajax_compo"),
 #    url('^ajax/vote/(\d+)/$', 'opensourcemusic.competitions.views.ajax_vote', name="arena.ajax_vote"),
 #    url('^ajax/unvote/(\d+)/$', 'opensourcemusic.competitions.views.ajax_unvote', name="arena.ajax_unvote"),
@@ -190,5 +230,5 @@ class SimpleTest(TestCase):
 #    url('^compete/(\d+)/$', 'opensourcemusic.competitions.views.competition', name="arena.compete"),
 #)
     def tearDown(self):
-        # undo changes to thefilesystem
+        "undo changes to the file system"
         pass
