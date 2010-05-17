@@ -10,6 +10,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from opensourcemusic.main.forms import *
 from opensourcemusic import settings
+from opensourcemusic.main import design
 
 import simplejson as json
 from datetime import datetime, timedelta
@@ -103,9 +104,9 @@ def user_login(request):
                     login(request, user)
                     return HttpResponseRedirect(form.cleaned_data.get('next_url'))
                 else:
-                    err_msg = 'Your account is not activated.'
+                    err_msg = design.your_account_not_activated
             else:
-                err_msg = 'Invalid login.'
+                err_msg = design.invalid_login
     else:
         home_url = reverse('home')
         form = LoginForm(initial={'next_url': request.GET.get('next', home_url)})
@@ -121,11 +122,11 @@ def ajax_login(request):
                 login(request, user)
                 success = True
             else:
-                err_msg = 'Your account is not activated.'
+                err_msg = design.your_account_not_activated
         else:
-            err_msg = 'Invalid login.'
+            err_msg = design.invalid_login
     else:
-        err_msg = 'No login data supplied.'
+        err_msg = design.no_login_data_supplied
 
     data = {
         'success': success,
@@ -193,7 +194,7 @@ def confirm(request, username, code):
     try:
         user = User.objects.get(username=username)
     except:
-        err_msg = "Invalid username. Your account may have expired. You can try registering again."
+        err_msg = design.invalid_username_tips
         return render_to_response('confirm_failure.html', locals(), context_instance=RequestContext(request))
 
     profile = user.get_profile()
@@ -207,7 +208,7 @@ def confirm(request, username, code):
         profile.save()
         return render_to_response('confirm_success.html', locals(), context_instance=RequestContext(request))
     else:
-        err_msg = "Invalid activation code. Nice try!"
+        err_msg = design.invalid_activation_code
         return render_to_response('confirm_failure.html', locals(), context_instance=RequestContext(request))
 
 def userpage(request, username):
