@@ -262,7 +262,7 @@ def ajax_compo(request, id):
         'user': {
             'is_authenticated': False,
         },
-        'compo': safe_model_to_dict(compo),
+        'compo': compo_to_dict(compo, request.user),
         'party': {
             'buffer_time': settings.LISTENING_PARTY_BUFFER_TIME,
         }
@@ -286,16 +286,6 @@ def ajax_compo(request, id):
     else:
         entries = compo.entry_set.order_by('submit_date')
     data['entries'] = [add_to_entry(x) for x in entries]
-
-    data['compo']['have_theme'] = compo.theme != ''
-    data['compo']['have_rules'] = compo.rules != ''
-
-    # send the rules and theme if it's time
-    compo_started = compo.start_date <= now
-    if compo_started or compo.preview_theme:
-        data['compo']['theme'] = compo.theme
-    if compo_started or compo.preview_rules:
-        data['compo']['rules'] = compo.rules
 
     if request.user.is_authenticated():
         max_votes = max_vote_count(compo.entry_set.count())
@@ -340,6 +330,15 @@ def ajax_bookmark(request, id):
 
 def compo_to_dict(compo, user):
     data = safe_model_to_dict(compo)
+
+    data['have_theme'] = compo.theme != ''
+    data['have_rules'] = compo.rules != ''
+
+    if compo.rulesVisible():
+        data['rules'] = compo.rules
+    if compo.themeVisible():
+        data['theme'] = compo.theme
+
     if user.is_authenticated():
         # see if the user entered the compo
         entries = Entry.objects.filter(owner=user, competition=compo)

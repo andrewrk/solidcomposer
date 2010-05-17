@@ -52,10 +52,10 @@ class SimpleTest(TestCase):
             'last_message': 'null',
             'room': self.open_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['has_permission'], True)
-        self.assertEquals(len(data['messages']), 3)
+        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(len(data['messages']), 3)
 
         # anon requesting all messages, no permission
         self.client.logout()
@@ -63,11 +63,11 @@ class SimpleTest(TestCase):
             'last_message': 'null',
             'room': self.black_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['has_permission'], False)
+        self.assertEqual(data['user']['has_permission'], False)
         # can't talk but can still read messages
-        self.assertEquals(len(data['messages']), 3)
+        self.assertEqual(len(data['messages']), 3)
 
         # requesting last 2 messages, has permission
         self.client.login(username="superjoe", password="temp1234")
@@ -77,21 +77,21 @@ class SimpleTest(TestCase):
             'last_message': msg_id,
             'room': self.black_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['has_permission'], True)
-        self.assertEquals(len(data['messages']), 2)
+        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(len(data['messages']), 2)
 
         # whitelist not authorized
         response = self.client.get('/chat/ajax/hear/', {
             'last_message': 'null',
             'room': self.white_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['has_permission'], False)
+        self.assertEqual(data['user']['has_permission'], False)
         # can still read messages
-        self.assertEquals(len(data['messages']), 3)
+        self.assertEqual(len(data['messages']), 3)
 
         # whitelist has permission
         self.white_room.whitelist.add(self.superjoe)
@@ -100,22 +100,22 @@ class SimpleTest(TestCase):
             'last_message': 'null',
             'room': self.white_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['has_permission'], True)
+        self.assertEqual(data['user']['has_permission'], True)
         # second check of whitelist, has join message
-        self.assertEquals(len(data['messages']), 4)
+        self.assertEqual(len(data['messages']), 4)
 
         # blacklist has permission
         response = self.client.get('/chat/ajax/hear/', {
             'last_message': 'null',
             'room': self.black_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['has_permission'], True)
+        self.assertEqual(data['user']['has_permission'], True)
         # second peek of  black_room, contains join message
-        self.assertEquals(len(data['messages']), 4)
+        self.assertEqual(len(data['messages']), 4)
 
         # blacklist not authorized
         self.black_room.blacklist.add(self.superjoe)
@@ -124,11 +124,11 @@ class SimpleTest(TestCase):
             'last_message': 'null',
             'room': self.black_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['has_permission'], False)
+        self.assertEqual(data['user']['has_permission'], False)
         # can still read messages
-        self.assertEquals(len(data['messages']), 4)
+        self.assertEqual(len(data['messages']), 4)
 
     def test_say(self):
         # a room that is OK
@@ -137,35 +137,35 @@ class SimpleTest(TestCase):
             'room': self.open_room.id,
             'message': 'this is my message 1 2 3',
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['is_authenticated'], True)
-        self.assertEquals(data['user']['has_permission'], True)
-        self.assertEquals(data['success'], True)
+        self.assertEqual(data['user']['is_authenticated'], True)
+        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(data['success'], True)
         msg = ChatMessage.objects.filter(room=self.open_room, author=self.skiessi).order_by('-id')[0]
-        self.assertEquals(msg.message, 'this is my message 1 2 3')
+        self.assertEqual(msg.message, 'this is my message 1 2 3')
 
         # too early
         response = self.client.post('/chat/ajax/say/', {
             'room': self.early_room.id,
             'message': 'too early',
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['is_authenticated'], True)
-        self.assertEquals(data['success'], False)
-        self.assertEquals(ChatMessage.objects.count(), 1)
+        self.assertEqual(data['user']['is_authenticated'], True)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(ChatMessage.objects.count(), 1)
 
         # too late
         response = self.client.post('/chat/ajax/say/', {
             'room': self.late_room.id,
             'message': 'too late',
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['is_authenticated'], True)
-        self.assertEquals(data['success'], False)
-        self.assertEquals(ChatMessage.objects.count(), 1)
+        self.assertEqual(data['user']['is_authenticated'], True)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(ChatMessage.objects.count(), 1)
 
         # not authenticated
         self.client.logout()
@@ -173,11 +173,11 @@ class SimpleTest(TestCase):
             'room': self.open_room.id,
             'message': 'not authed',
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(data['user']['is_authenticated'], False)
-        self.assertEquals(data['success'], False)
-        self.assertEquals(ChatMessage.objects.count(), 1)
+        self.assertEqual(data['user']['is_authenticated'], False)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(ChatMessage.objects.count(), 1)
 
     def test_onliners(self):
         # anon, nobody there yet
@@ -185,9 +185,9 @@ class SimpleTest(TestCase):
         response = self.client.get('/chat/ajax/online/', {
             'room': self.open_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(len(data), 0)
+        self.assertEqual(len(data), 0)
 
         # superjoe, see himself in the list
         self.client.login(username='superjoe', password='temp1234')
@@ -195,14 +195,14 @@ class SimpleTest(TestCase):
             'last_message': 'null',
             'room': self.open_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         response = self.client.get('/chat/ajax/online/', {
             'room': self.open_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(len(data), 1)
-        self.assertEquals(data[0]['username'], 'superjoe')
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['username'], 'superjoe')
 
         # pop skiessi online and anon check
         self.client.login(username='skiessi', password='temp1234')
@@ -210,19 +210,19 @@ class SimpleTest(TestCase):
             'last_message': 'null',
             'room': self.open_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.client.logout()
         response = self.client.get('/chat/ajax/online/', {
             'room': self.open_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(len(data), 2)
+        self.assertEqual(len(data), 2)
 
         # check an early one
         response = self.client.get('/chat/ajax/online/', {
             'room': self.early_room.id,
         })
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEquals(len(data), 0)
+        self.assertEqual(len(data), 0)

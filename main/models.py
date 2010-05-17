@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from chat.models import ChatRoom
 
+from datetime import datetime, timedelta
+
 FULL_OPEN, OPEN_SOURCE, TRANSPARENT, NO_CRITIQUE, PRIVATE = range(5)
 
 MANAGER, BAND_MEMBER, CRITIC, FAN, BANNED = range(5)
@@ -92,12 +94,12 @@ class Competition(models.Model):
     # optional
     theme = models.TextField(blank=True)
     # can entrants view the theme before it starts?
-    preview_theme = models.BooleanField()
+    preview_theme = models.BooleanField(default=False)
 
     # optional
     rules = models.TextField(blank=True)
     # can entrants view the rules before it starts?
-    preview_rules = models.BooleanField()
+    preview_rules = models.BooleanField(default=True)
 
     # when this competition was created
     date_created = models.DateTimeField(auto_now_add=True)
@@ -108,13 +110,13 @@ class Competition(models.Model):
     # deadline for submitting entries
     submit_deadline = models.DateTimeField()
 
-    have_listening_party = models.BooleanField()
+    have_listening_party = models.BooleanField(default=False)
     # must be after submit_deadline, with enough time for
     # processing.
     listening_party_start_date = models.DateTimeField(blank=True, null=True)
 
-    # this date is unknown until all entries are submitted and the
-    # processing is complete
+    # set this date to listening_party_start_date. it will be updated when
+    # someone submits an entry
     listening_party_end_date = models.DateTimeField(blank=True, null=True)
 
     # deadline for casting votes. must be after listening party end time,
@@ -129,6 +131,12 @@ class Competition(models.Model):
 
     # one chat room per competition
     chat_room = models.ForeignKey(ChatRoom, blank=True, null=True)
+
+    def themeVisible(self):
+        return self.preview_theme or datetime.now() >= self.start_date
+
+    def rulesVisible(self):
+        return self.preview_rules or datetime.now() >= self.start_date
 
     def __unicode__(self):
         return "%s on %s" % (self.title, self.start_date)

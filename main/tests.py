@@ -4,6 +4,9 @@ from django.core import mail
 
 from opensourcemusic.main.models import *
 
+from datetime import datetime, timedelta
+import simplejson as json
+
 class SimpleTest(TestCase):
     def setUp(self):
         # create some users
@@ -24,7 +27,7 @@ class SimpleTest(TestCase):
         outboxCount = len(mail.outbox)
         # make sure the page loads
         response = self.client.get('/register/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         # register an account
         response = self.client.post('/register/', {
             'username': 'Rellik',
@@ -37,54 +40,62 @@ class SimpleTest(TestCase):
         # verify the profile was created
         profile = User.objects.filter(username='Rellik')[0].get_profile()
         # should not be activated
-        self.failUnlessEqual(profile.activated, False)
+        self.assertEqual(profile.activated, False)
 
         # make sure email sent
-        self.assertEquals(len(mail.outbox), outboxCount+1)
+        self.assertEqual(len(mail.outbox), outboxCount+1)
 
         # test register pending
         response = self.client.get('/register/pending/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # test activate account
         # now fake the activation
         profile = User.objects.filter(username='Rellik')[0].get_profile()
         response = self.client.get('/confirm/Rellik/%s/' % profile.activate_code)
         profile = User.objects.filter(username='Rellik')[0].get_profile()
-        self.failUnlessEqual(response.status_code, 200)
-        self.failUnlessEqual(profile.activated, True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(profile.activated, True)
 
         # test register pending logged in
         self.client.login(username="Rellik", password="temp1234")
         response = self.client.get('/register/pending/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_userpage(self):
         self.client.login(username="skiessi", password="temp1234")
         response = self.client.get('/user/skiessi/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.client.logout()
         response = self.client.get('/user/skiessi/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_ajax_login_state(self):
+        # test logged in
         self.client.login(username="skiessi", password="temp1234")
         response = self.client.get('/ajax/login_state/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['user']['is_authenticated'], True)
+        self.assertEqual(data['user']['username'], "skiessi")
+
+        # test logged out
         self.client.logout()
         response = self.client.get('/ajax/login_state/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['user']['is_authenticated'], False)
 
     def test_ajax_login(self):
         self.client.logout()
         response = self.client.post('/ajax/login/',
             {'username': "skiessi", 'password': 'temp1234'})
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         #TODO: assert logged in
 
     def test_ajax_logout(self):
         response = self.client.get('/ajax/logout/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         #TODO: assert logged out
 
     def test_login(self):
@@ -106,23 +117,23 @@ class SimpleTest(TestCase):
     def test_about(self):
         self.client.login(username="skiessi", password="temp1234")
         response = self.client.get('/about/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.client.logout()
         response = self.client.get('/about/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_policy(self):
         self.client.login(username="skiessi", password="temp1234")
         response = self.client.get('/policy/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.client.logout()
         response = self.client.get('/policy/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_account(self):
         self.client.login(username="skiessi", password="temp1234")
         response = self.client.get('/account/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.client.logout()
         response = self.client.get('/account/')
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
