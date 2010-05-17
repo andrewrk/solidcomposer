@@ -23,6 +23,7 @@ import string
 
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
+from mutagen.id3 import error as MutagenID3Error
 import shutil
 
 import waveform
@@ -155,22 +156,18 @@ def ajax_submit_entry(request):
     # enforce ID3 tags
     profile = request.user.get_profile()
     artist_name = profile.solo_band.title
+    try:
+        audio.add_tags(ID3=EasyID3)
+    except MutagenID3Error:
+        pass
     audio['title'] = title
     audio['album'] = compo.title
     audio['artist'] = artist_name
     try:
         audio.save()
     except:
-        # :( unable to save id3 tags
-        # if we wanted to fail, we'd do this:
-
-        # data['reason'] = design.unable_to_save_id3_tags
-        # return json_response(data)
-
-        # unfortunately, mutagen isn't strong enough to trust - 
-        # it will break on untagged vbr files.
-        # so we'll just let this pass.
-        pass
+        data['reason'] = design.unable_to_save_id3_tags
+        return json_response(data)
 
     # pick a nice safe unique path for mp3_file, source_file, and wave form
     mp3_file_title = "%s - %s (%s).mp3" % (artist_name, title, compo.title)

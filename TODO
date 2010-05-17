@@ -27,6 +27,8 @@
  * implement IRC actions
  * make the page flash when people talk?
  * test song playback on google chrome 4.1.249.1064
+   > I don't think jplayer is reporting the song position in chrome
+   > update to latest jplayer and use the preload feature
  * make the gui pretty
    > skiessi's redesign
    > click the logo to go to home page
