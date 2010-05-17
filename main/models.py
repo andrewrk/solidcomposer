@@ -138,6 +138,11 @@ class Competition(models.Model):
     def rulesVisible(self):
         return self.preview_rules or datetime.now() >= self.start_date
 
+    def isClosed(self):
+        "Returns True if and only if the competition is closed."
+        now = datetime.now()
+        return self.vote_deadline is not None and now >= self.vote_deadline
+
     def __unicode__(self):
         return "%s on %s" % (self.title, self.start_date)
 

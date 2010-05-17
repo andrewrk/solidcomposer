@@ -260,7 +260,7 @@ def ajax_compo(request, id):
 
     data = {
         'user': {
-            'is_authenticated': False,
+            'is_authenticated': request.user.is_authenticated(),
         },
         'compo': compo_to_dict(compo, request.user),
         'party': {
@@ -270,7 +270,7 @@ def ajax_compo(request, id):
 
     # entries. if competition is closed, sort by vote count.
     now = datetime.now()
-    compo_closed = (now > compo.vote_deadline)
+    compo_closed = compo.isClosed()
     def add_to_entry(entry):
         d = safe_model_to_dict(entry)
         d['owner'] = safe_model_to_dict(entry.owner)
@@ -291,8 +291,7 @@ def ajax_compo(request, id):
         max_votes = max_vote_count(compo.entry_set.count())
         used_votes = ThumbsUp.objects.filter(owner=request.user, entry__competition=compo)
 
-        data['user'] = safe_model_to_dict(request.user)
-        data['user']['is_authenticated'] = True
+        data['user'].update(safe_model_to_dict(request.user))
         data['votes'] = {
             'max': max_votes,
             'used': [safe_model_to_dict(x) for x in used_votes],

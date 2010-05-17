@@ -50,26 +50,34 @@ class CreateCompetitionForm(forms.Form):
     # add this many hours to the times to get the correct value
     tz_offset = forms.IntegerField(widget=forms.HiddenInput())
 
-    def clean_submission_deadline_date(self):
-        in_start_date = self.cleaned_data['start_date']
-        in_deadline = self.cleaned_data['submission_deadline_date']
+    def clean(self):
+        cleaned_data = self.cleaned_data
 
+        in_lp_date = cleaned_data.get('listening_party_date')
+        in_have_party = cleaned_data.get('have_listening_party')
+        in_deadline = cleaned_data.get('submission_deadline_date')
+        in_start_date = cleaned_data.get('start_date')
+
+        # clean start_date
+        if in_start_date <= datetime.now():
+            msg = u"You cannot start a competition in the past."
+            self._errors['start_date'] = self.error_class([msg])
+
+        # clean submission_deadline_date
         min_deadline = in_start_date + timedelta(minutes=10)
         if in_deadline < min_deadline:
-            raise forms.ValidationError("You have to give people at least 10 minutes to work.")
+            msg = u"You have to give people at least 10 minutes to work."
+            self._errors['submission_deadline_date'] = self.error_class([msg])
 
-        return in_deadline
-
-    def clean_listening_party_date(self):
-        if self.cleaned_data['party_immediately'] or not self.cleaned_data.has_key('submission_deadline_date'):
-            return self.cleaned_data['listening_party_date']
-        in_date = self.cleaned_data['listening_party_date']
-        in_have_party = self.cleaned_data['have_listening_party']
-        in_deadline = self.cleaned_data['submission_deadline_date']
-        if in_have_party:
-            if in_date is None:
-                raise forms.ValidationError("If you want a listening party, you need to set a date.")
-            if in_date < in_deadline:
-                raise forms.ValidationError("Listening party must be after submission deadline.")
-        return in_date
+        # clean listening_party_date
+        if not cleaned_data.get('party_immediately'):
+            if in_have_party:
+                if in_lp_date is None:
+                    msg = u"If you want a listening party, you need to set a date."
+                    self._errors['listening_party_date'] = self.error_class([msg])
+                elif in_lp_date < in_deadline:
+                    msg = u"Listening party must be after submission deadline."
+                    self._errors['listening_party_date'] = self.error_class([msg])
+        
+        return cleaned_data
 
