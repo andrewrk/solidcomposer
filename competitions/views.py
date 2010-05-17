@@ -108,11 +108,15 @@ def ajax_submit_entry(request):
         return json_response(data)
 
     title = request.POST.get('entry-title','')
-    comments = request.POST.get('entry-comments')
+    comments = request.POST.get('entry-comments', '')
     mp3_file = request.FILES.get('entry-file-mp3')
     source_file = request.FILES.get('entry-file-source')
 
     # make sure files are small enough
+    if mp3_file is None:
+        data['reason'] = design.mp3_required
+        return json_response(data)
+
     if mp3_file.size > settings.FILE_UPLOAD_SIZE_CAP:
         data['reason'] = design.mp3_too_big
         return json_response(data)
@@ -124,10 +128,6 @@ def ajax_submit_entry(request):
 
     if title == '':
         data['reason'] = design.entry_title_required
-        return json_response(data)
-
-    if mp3_file is None:
-        data['reason'] = design.mp3_required
         return json_response(data)
 
     # upload mp3_file to temp folder
