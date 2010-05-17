@@ -1,6 +1,5 @@
 = sitewide =
  * make the login ALWAYS ajax. the consistency will help user confidence.
- * python library - PyFlp
  * complete tests for arena
  * work on workbench
  * deploy script when merged with release branch

@@ -12,6 +12,7 @@ from opensourcemusic import settings
 from opensourcemusic.main.views import safe_model_to_dict, json_response
 from opensourcemusic.competitions.models import *
 from opensourcemusic.competitions.forms import *
+from opensourcemusic.competitions import design
 from opensourcemusic.chat.models import *
 
 from datetime import datetime, timedelta
@@ -74,13 +75,14 @@ def ajax_submit_entry(request):
             'is_authenticated': request.user.is_authenticated(),
         },
         'success': False,
-        'reason': 'Not authenticated',
+        'reason': '',
     }
     if not request.user.is_authenticated():
+        data['reason'] = design.not_authenticated
         return json_response(data)
 
     if request.method != 'POST':
-        data['reason'] = 'Must submit via POST.'
+        data['reason'] = design.must_submit_via_post
         return json_response(data)
 
     compo_id = request.POST.get('compo', 0)
@@ -92,17 +94,17 @@ def ajax_submit_entry(request):
     try:
         compo = Competition.objects.get(pk=compo_id)
     except Competition.DoesNotExist:
-        data['reason'] = 'Competition not found'
+        data['reason'] = design.competition_not_found
         return json_response(data)
 
     # make sure it's still submission time
     now = datetime.now()
     if now >= compo.submit_deadline:
-        data['reason'] = 'Past submission deadline.'
+        data['reason'] = design.past_submission_deadline
         return json_response(data)
 
     if now <= compo.start_date:
-        data['reason'] = 'Competition has not yet begun.'
+        data['reason'] = design.competition_not_started
         return json_response(data)
 
     title = request.POST.get('entry-title','')
@@ -112,20 +114,20 @@ def ajax_submit_entry(request):
 
     # make sure files are small enough
     if mp3_file.size > settings.FILE_UPLOAD_SIZE_CAP:
-        data['reason'] = 'MP3 file is too large.'
+        data['reason'] = design.mp3_too_big
         return json_response(data)
 
     if not source_file is None:
         if source_file.size > settings.FILE_UPLOAD_SIZE_CAP:
-            data['reason'] = 'Project source file is too large.'
+            data['reason'] = design.source_file_too_big
             return json_response(data)
 
     if title == '':
-        data['reason'] = 'Entry title is required.'
+        data['reason'] = design.entry_title_required
         return json_response(data)
 
     if mp3_file is None:
-        data['reason'] = 'MP3 file submission is required.'
+        data['reason'] = design.mp3_required
         return json_response(data)
 
     # upload mp3_file to temp folder
@@ -138,16 +140,16 @@ def ajax_submit_entry(request):
         audio = MP3(handle.name, ID3=EasyID3)
         audio_length = audio.info.length
     except:
-        data['reason'] = 'Invalid MP3 file.'
+        data['reason'] = design.invalid_mp3_file
         return json_response(data)
 
     # reject if too long or invalid
     if audio.info.sketchy:
-        data['reason'] = 'Sketchy MP3 file.'
+        data['reason'] = design.sketchy_mp3_file
         return json_response(data)
 
     if audio.info.length > settings.COMPO_ENTRY_MAX_LEN:
-        data['reason'] = 'Song is too long.'
+        data['reason'] = design.song_too_long
         return json_response(data)
 
     # enforce ID3 tags
@@ -159,7 +161,7 @@ def ajax_submit_entry(request):
     try:
         audio.save()
     except:
-        data['reason'] = 'Unable to save ID3 tags.'
+        data['reason'] = design.unable_to_save_id3_tags
         return json_response(data)
 
     # pick a nice safe unique path for mp3_file, source_file, and wave form
@@ -496,12 +498,12 @@ def ajax_vote(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
 
     if not request.user.is_authenticated():
-        data['reason'] = "Not authenticated."
+        data['reason'] = design.not_authenticated
         return json_response(data)
 
     # can't vote for yourself
     if entry.owner == request.user:
-        data['reason'] = "Can't vote for yourself."
+        data['reason'] = design.cannot_vote_for_yourself
         return json_response(data)
 
     # how many thumbs up should they have
@@ -517,7 +519,7 @@ def ajax_vote(request, entry_id):
 
         data['success'] = True
     else:
-        data['reason'] = "No votes left."
+        data['reason'] = design.no_votes_left
 
     return json_response(data)
 
@@ -531,7 +533,7 @@ def ajax_unvote(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
 
     if not request.user.is_authenticated():
-        data['reason'] = "Not authenticated."
+        data['reason'] = design.not_authenticated
         return json_response(data)
 
     votes = ThumbsUp.objects.filter(owner=request.user, entry=entry)
