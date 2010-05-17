@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 from django.template import RequestContext, Context, Template
 from django.template.loader import get_template
@@ -87,7 +88,9 @@ def ajax_login_state(request):
 
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect(request.GET.get('next', '/'))
+
+    home_url = reverse('home')
+    return HttpResponseRedirect(request.GET.get('next', home_url))
 
 def user_login(request):
     err_msg = ''
@@ -104,7 +107,8 @@ def user_login(request):
             else:
                 err_msg = 'Invalid login.'
     else:
-        form = LoginForm(initial={'next_url': request.GET.get('next', '/')})
+        home_url = reverse('home')
+        form = LoginForm(initial={'next_url': request.GET.get('next', home_url)})
     return render_to_response('login.html', {'form': form, 'err_msg': err_msg }, context_instance=RequestContext(request))
 
 def ajax_login(request):
@@ -170,7 +174,7 @@ def user_register(request):
             to_email = user.email
             send_mail(subject, message, from_email, [to_email], fail_silently=True)
 
-            return HttpResponseRedirect("/register/pending/")
+            return HttpResponseRedirect(reverse("register_pending"))
     else:
         form = RegisterForm()
     return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))

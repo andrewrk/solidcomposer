@@ -1,3 +1,5 @@
+from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator
 from django.template import RequestContext, Context, Template
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
@@ -5,7 +7,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
 from django.db.models import Count
-from django.core.paginator import Paginator
 
 from opensourcemusic import settings
 from opensourcemusic.main.views import safe_model_to_dict, json_response
@@ -466,7 +467,7 @@ def create(request):
             prof.competitions_bookmarked.add(comp)
             prof.save();
 
-            return HttpResponseRedirect('/arena/')
+            return HttpResponseRedirect(reverse("arena.home"))
     else:
         initial = {
             'have_theme': True,
@@ -479,11 +480,13 @@ def create(request):
         }
         form = CreateCompetitionForm(initial=initial)
     
-    return render_to_response('arena/create.html', locals(), context_instance=RequestContext(request))
+    url = reverse("arena.create")
+    return render_to_response(url, locals(), context_instance=RequestContext(request))
 
 def competition(request, id):
     competition = get_object_or_404(Competition, id=int(id))
-    return render_to_response('arena/competition.html', locals(), context_instance=RequestContext(request))
+    url = reverse("arena.compete")
+    return render_to_response(url, locals(), context_instance=RequestContext(request))
 
 def ajax_vote(request, entry_id):
     data = {'success': False}
