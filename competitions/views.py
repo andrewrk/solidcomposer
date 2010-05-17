@@ -161,8 +161,16 @@ def ajax_submit_entry(request):
     try:
         audio.save()
     except:
-        data['reason'] = design.unable_to_save_id3_tags
-        return json_response(data)
+        # :( unable to save id3 tags
+        # if we wanted to fail, we'd do this:
+
+        # data['reason'] = design.unable_to_save_id3_tags
+        # return json_response(data)
+
+        # unfortunately, mutagen isn't strong enough to trust - 
+        # it will break on untagged vbr files.
+        # so we'll just let this pass.
+        pass
 
     # pick a nice safe unique path for mp3_file, source_file, and wave form
     mp3_file_title = "%s - %s (%s).mp3" % (artist_name, title, compo.title)

@@ -6,10 +6,8 @@ import os
 import datetime
 
 def absolute(relative_path):
-    """
-    make a relative path absolute
-    """
-    return os.path.join(os.path.dirname(__file__), relative_path)
+    "make a relative path absolute"
+    return os.path.normpath(os.path.join(os.path.dirname(__file__), relative_path))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

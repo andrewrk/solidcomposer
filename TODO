@@ -1,8 +1,7 @@
 = sitewide =
- * make the login ALWAYS ajax. the consistency will help user confidence.
- * complete tests for arena
  * work on workbench
  * deploy script when merged with release branch
+ * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
  * refactor
