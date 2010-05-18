@@ -72,6 +72,9 @@ cd $WORKING
 echo "Migrating the client to the latest version..."
 python manage.py migrate
 
+echo "Preparsing javascript for tests..."
+python preparser.py parse
+
 # run test suite locally
 echo "Running test suite locally..."
 python manage.py test

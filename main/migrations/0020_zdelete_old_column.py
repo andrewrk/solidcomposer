@@ -1,45 +1,61 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+class Migration(SchemaMigration):
     
     def forwards(self, orm):
-        for comp in orm.Competition.objects.all():
-            comp.host = comp.host_user
-            comp.save()
-        for thumb in orm.ThumbsUp.objects.all():
-            thumb.owner = thumb.owner_user
-            thumb.save()
-        for song in orm.Song.objects.all():
-            song.owner = song.owner_user
-            song.save()
-        for entry in orm.Entry.objects.all():
-            entry.owner = entry.owner_user
-            entry.save()
-        for comment in orm.SongComment.objects.all():
-            comment.owner = comment.owner_user
-            comment.save()
+        
+        # Deleting field 'ThumbsUp.owner_user'
+        db.delete_column('main_thumbsup', 'owner_user_id')
+
+        # Deleting field 'SongComment.owner_user'
+        db.delete_column('main_songcomment', 'owner_user_id')
+
+        # Deleting field 'Entry.owner_user'
+        db.delete_column('main_entry', 'owner_user_id')
+
+        # Deleting field 'Competition.host_user'
+        db.delete_column('main_competition', 'host_user_id')
+
+        # Deleting field 'Song.owner_user'
+        db.delete_column('main_song', 'owner_user_id')
     
     
     def backwards(self, orm):
-        for comp in orm.Competition.objects.all():
-            comp.host_user = comp.host
-            comp.save()
-        for thumb in orm.ThumbsUp.objects.all():
-            thumb.owner_user = thumb.owner
-            thumb.save()
-        for song in orm.Song.objects.all():
-            song.owner_user = song.owner
-            song.save()
-        for entry in orm.Entry.objects.all():
-            entry.owner_user = entry.owner
-            entry.save()
-        for comment in orm.SongComment.objects.all():
-            comment.owner_user = comment.owner
-            comment.save()
+        
+        # Adding field 'ThumbsUp.owner_user'
+        db.add_column('main_thumbsup', 'owner_user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True), keep_default=False)
+
+        # Changing field 'ThumbsUp.owner'
+        db.alter_column('main_thumbsup', 'owner_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['main.Profile']))
+
+        # Adding field 'SongComment.owner_user'
+        db.add_column('main_songcomment', 'owner_user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True), keep_default=False)
+
+        # Changing field 'SongComment.owner'
+        db.alter_column('main_songcomment', 'owner_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['main.Profile']))
+
+        # Adding field 'Entry.owner_user'
+        db.add_column('main_entry', 'owner_user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True), keep_default=False)
+
+        # Changing field 'Entry.owner'
+        db.alter_column('main_entry', 'owner_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['main.Profile']))
+
+        # Adding field 'Competition.host_user'
+        db.add_column('main_competition', 'host_user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True), keep_default=False)
+
+        # Changing field 'Competition.host'
+        db.alter_column('main_competition', 'host_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['main.Profile']))
+
+        # Adding field 'Song.owner_user'
+        db.add_column('main_song', 'owner_user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True), keep_default=False)
+
+        # Changing field 'Song.owner'
+        db.alter_column('main_song', 'owner_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['main.Profile']))
+    
     
     models = {
         'auth.group': {
@@ -98,7 +114,6 @@ class Migration(DataMigration):
             'date_created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'have_listening_party': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'host': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
-            'host_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'listening_party_end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'listening_party_start_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
@@ -118,7 +133,6 @@ class Migration(DataMigration):
             'edit_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
-            'owner_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
             'song': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.Song']"}),
             'submit_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'})
         },
@@ -140,7 +154,6 @@ class Migration(DataMigration):
             'length': ('django.db.models.fields.FloatField', [], {}),
             'mp3_file': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
-            'owner_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
             'source_file': ('django.db.models.fields.CharField', [], {'max_length': '500', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'waveform_img': ('django.db.models.fields.CharField', [], {'max_length': '500', 'blank': 'True'})
@@ -151,8 +164,7 @@ class Migration(DataMigration):
             'date_created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'date_edited': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
-            'owner_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'})
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'})
         },
         'main.songcommentthread': {
             'Meta': {'object_name': 'SongCommentThread'},
@@ -165,8 +177,7 @@ class Migration(DataMigration):
             'date_given': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'entry': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.Entry']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
-            'owner_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'})
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'})
         }
     }
     

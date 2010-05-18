@@ -7,33 +7,17 @@ from django.db import models
 class Migration(SchemaMigration):
     
     def forwards(self, orm):
-        
-        # Deleting field 'ThumbsUp.owner_user'
-        db.delete_column('main_thumbsup', 'owner_user_id')
-
         # Changing field 'ThumbsUp.owner'
         db.alter_column('main_thumbsup', 'owner_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))
-
-        # Deleting field 'SongComment.owner_user'
-        db.delete_column('main_songcomment', 'owner_user_id')
 
         # Changing field 'SongComment.owner'
         db.alter_column('main_songcomment', 'owner_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))
 
-        # Deleting field 'Entry.owner_user'
-        db.delete_column('main_entry', 'owner_user_id')
-
         # Changing field 'Entry.owner'
         db.alter_column('main_entry', 'owner_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))
 
-        # Deleting field 'Competition.host_user'
-        db.delete_column('main_competition', 'host_user_id')
-
         # Changing field 'Competition.host'
         db.alter_column('main_competition', 'host_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))
-
-        # Deleting field 'Song.owner_user'
-        db.delete_column('main_song', 'owner_user_id')
 
         # Changing field 'Song.owner'
         db.alter_column('main_song', 'owner_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))

@@ -10,29 +10,33 @@ class Migration(DataMigration):
     )
     
     def forwards(self, orm):
+        rooms = {}
+
         for room in orm['main.ChatRoom'].objects.all():
             new_room = orm['chat.ChatRoom']()
             new_room.permission_type = room.permission_type
-            for white in room.whitelist:
+            new_room.save()
+            for white in room.whitelist.all():
                 new_room.whitelist.add(white)
-            for black in room.blacklist:
+            for black in room.blacklist.all():
                 new_room.blacklist.add(black)
             new_room.start_date = room.start_date
             new_room.end_date = room.end_date
             new_room.save()
+            rooms[room.id] = new_room
         
         for app in orm['main.Appearance'].objects.all():
             new_app = orm['chat.Appearance']()
-            new_app.person = app.person
-            new_app.room = app.room
+            new_app.person = app.person.user
+            new_app.room = rooms[app.room.id]
             new_app.timestamp = app.timestamp
             new_app.save()
 
         for msg in orm['main.ChatMessage'].objects.all():
             new_msg = orm['chat.ChatMessage']()
-            new_msg.room = msg.room
+            new_msg.room = rooms[msg.room.id]
             new_msg.type = msg.type
-            new_msg.author = msg.author
+            new_msg.author = msg.author.user
             new_msg.message = msg.message
             new_msg.timestamp = msg.timestamp
             new_msg.save()
@@ -41,9 +45,9 @@ class Migration(DataMigration):
         for room in orm['chat.ChatRoom'].objects.all():
             new_room = orm['main.ChatRoom']()
             new_room.permission_type = room.permission_type
-            for white in room.whitelist:
+            for white in room.whitelist.all():
                 new_room.whitelist.add(white)
-            for black in room.blacklist:
+            for black in room.blacklist.all():
                 new_room.blacklist.add(black)
             new_room.start_date = room.start_date
             new_room.end_date = room.end_date
@@ -101,6 +105,31 @@ class Migration(DataMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        'chat.appearance': {
+            'Meta': {'object_name': 'Appearance'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'person': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'room': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['chat.ChatRoom']"}),
+            'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+        },
+        'chat.chatmessage': {
+            'Meta': {'object_name': 'ChatMessage'},
+            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'message': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'room': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['chat.ChatRoom']"}),
+            'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'type': ('django.db.models.fields.IntegerField', [], {})
+        },
+        'chat.chatroom': {
+            'Meta': {'object_name': 'ChatRoom'},
+            'blacklist': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'blacklisted_users'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'permission_type': ('django.db.models.fields.IntegerField', [], {}),
+            'start_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'whitelist': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'whitelisted_users'", 'null': 'True', 'to': "orm['auth.User']"})
         },
         'main.appearance': {
             'Meta': {'object_name': 'Appearance'},
