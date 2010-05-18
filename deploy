@@ -33,26 +33,40 @@ fi
 
 # the folder that contains this script
 WORKING="$(pwd)/$(dirname \"$0\")"
+cd $WORKING
 
 # test the migrations
-echo "Generating fixtures from the server..."
+# export the old git revision to a temp folder
+echo "Getting old version hash from server..."
+OLDHASH=$(ssh $SSH "source .bashrc; cd $PRJ_PATH; cat deploy_revision;")
+OLD=$(mktemp -d)/opensourcemusic
+mkdir $OLD
+
+git archive $OLDHASH | tar -x -C $OLD
+if [ -f $WORKING/settings_user.py ]; then
+    cp $WORKING/settings_user.py $OLD/
+fi
+cd $OLD
+
+echo "Generating fixtures on the server..."
 ssh $SSH "source .bashrc; cd $PRJ_PATH; python manage.py dumpdata --exclude=contenttypes >dump.json"
 echo "Transferring fixtures from the server..."
-scp $SSH:$PRJ_PATH/dump.json $WORKING/
+scp $SSH:$PRJ_PATH/dump.json ./
 
-# find out what migration state the server is on
-echo "Getting the migration state from the server..."
-MIGLIST=$(ssh $SSH "source .bashrc; cd $PRJ_PATH; python manage.py migrate --list")
-# destroy the client database and migrate to the server's state
+# reset the client database
+echo "Resetting the client database..."
+python $WORKING/resetdb.py
+python manage.py syncdb --noinput
+
 echo "Migrating the client to the server's state..."
-echo $MIGLIST | python syncmigration.py
+python manage.py migrate
 
 # install fixtures from the server
 echo "Installing fixtures from the server..."
-echo " [skipping this step] "
-#python manage.py reset auth --noinput
-#python manage.py loaddata $WORKING/dump.json
+python manage.py loaddata dump.json
 
+# ok now we can use the new code
+cd $WORKING
 # migrate to the latest migration
 # (this makes sure the server won't fail when migrating)
 echo "Migrating the client to the latest version..."
@@ -67,6 +81,7 @@ echo
 echo "== All Tests Passed =="
 echo
 
+NEWHASH=$(git log --pretty="%H" -n 1)
 CMD=""
 # copy django code to server
 echo "Copying django code to server..."
@@ -75,6 +90,7 @@ rsync -avz --exclude-from "$WORKING/.gitignore" $WORKING $SSH:$PRJ_PATH/
 # make sure database is migrated to latest version
 CMD="$CMD source .bashrc;"
 CMD="$CMD cd $PRJ_PATH;"
+CMD="$CMD echo \"$NEWHASH\" >deploy_revision;"
 CMD="$CMD python manage.py migrate;"
 # preparser
 CMD="$CMD python preparser.py parse;"
