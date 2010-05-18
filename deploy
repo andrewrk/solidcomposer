@@ -1,0 +1,92 @@
+#!/bin/bash
+
+URL="http://solidcomposer.com/"
+SSH="web" # the ssh connection to make (here I am using one from .ssh/config)
+REMOTE_TMP="/home/superjoe/temp"
+INSTALL_PATH="/home/superjoe/django_code"
+
+######### initial checking before deploying #########
+PRJ_PATH="$INSTALL_PATH/opensourcemusic"
+# crash if any program has error status code
+set -e
+
+# ensure that all dependencies are installed on client
+# (necessary for testing)
+echo "Checking dependencies on this machine..."
+MISSING=$(python deps.py)
+if [ -n "$MISSING" ]; then
+    echo "cannot continue, missing dependencies on deploying machine:";
+    echo "$MISSING";
+    exit 1;
+fi
+
+# ensure that all dependencies are installed on server
+echo "Copying dependency script to server..."
+scp deps.py $SSH:$PRJ_PATH/deps.py
+echo "Checking dependencies on server..."
+MISSING=$(ssh $SSH "source .bashrc; cd $PRJ_PATH; python deps.py")
+if [ -n "$MISSING" ]; then
+    echo "cannot continue, missing dependencies on the server:";
+    echo "$MISSING";
+    exit 1;
+fi
+
+# the folder that contains this script
+WORKING="$(pwd)/$(dirname \"$0\")"
+
+# test the migrations
+echo "Generating fixtures from the server..."
+ssh $SSH "source .bashrc; cd $PRJ_PATH; python manage.py dumpdata --exclude=contenttypes >dump.json"
+echo "Transferring fixtures from the server..."
+scp $SSH:$PRJ_PATH/dump.json $WORKING/
+
+# find out what migration state the server is on
+echo "Getting the migration state from the server..."
+MIGLIST=$(ssh $SSH "source .bashrc; cd $PRJ_PATH; python manage.py migrate --list")
+# destroy the client database and migrate to the server's state
+echo "Migrating the client to the server's state..."
+echo $MIGLIST | python syncmigration.py
+
+# install fixtures from the server
+echo "Installing fixtures from the server..."
+echo " [skipping this step] "
+#python manage.py reset auth --noinput
+#python manage.py loaddata $WORKING/dump.json
+
+# migrate to the latest migration
+# (this makes sure the server won't fail when migrating)
+echo "Migrating the client to the latest version..."
+python manage.py migrate
+
+# run test suite locally
+echo "Running test suite locally..."
+python manage.py test
+
+######## update the server ############
+echo 
+echo "== All Tests Passed =="
+echo
+
+CMD=""
+# copy django code to server
+echo "Copying django code to server..."
+rsync -avz --exclude-from "$WORKING/.gitignore" $WORKING $SSH:$PRJ_PATH/
+
+# make sure database is migrated to latest version
+CMD="$CMD source .bashrc;"
+CMD="$CMD cd $PRJ_PATH;"
+CMD="$CMD python manage.py migrate;"
+# preparser
+CMD="$CMD python preparser.py parse;"
+# run tests
+CMD="$CMD python manage.py test;"
+# reset django daemon
+CMD="$CMD killall django.fcgi;"
+
+echo "Migrating, preparsing, testing, and refreshing Django..."
+ssh $SSH "$CMD"
+echo "Getting home page to force django to get loaded..."
+wget $URL -O $(mktemp) -q
+
+echo "== Deploy Success =="
+echo

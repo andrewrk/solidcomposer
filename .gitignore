@@ -1,5 +1,7 @@
+.git/
 *.pyc
 *.swp
 media/js/pre
 media/compo/mp3/*
 settings_user.py
+dump.json
