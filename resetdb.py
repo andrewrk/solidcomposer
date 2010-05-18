@@ -15,7 +15,7 @@ def system(command):
         sys.exit(code)
 
 if settings.DATABASE_ENGINE == 'postgresql_psycopg2': 
-    cmd = 'echo "DROP DATABASE %s; CREATE DATABASE %s;" | psql template1' % (settings.DATABASE_NAME, settings.DATABASE_NAME)
+    cmd = 'echo "DROP DATABASE %s; CREATE DATABASE %s;" | psql template1' % (settings.DATABASES['default']['NAME'], settings.DATABASES['default']['NAME'])
     system(cmd)
 else:
     system("python manage.py reset --noinput %s" % apps)

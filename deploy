@@ -103,7 +103,7 @@ CMD="$CMD python manage.py test;"
 CMD="$CMD killall django.fcgi;"
 
 echo "Migrating, preparsing, testing, and refreshing Django..."
-ssh $SSH "$CMD"
+ssh $SSH $CMD
 echo "Getting home page to force django to get loaded..."
 wget $URL -O $(mktemp) -q
 

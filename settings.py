@@ -19,19 +19,14 @@ ADMINS = (
 MANAGERS = ADMINS
 
 # this is something you may want to override in settings_user.py
-# 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_ENGINE = 'mysql'           
-# Or path to database file if using sqlite3.
-DATABASE_NAME = 'opensourcemusic'
-# Not used with sqlite3.
-DATABASE_USER = 'opensourcemusic'             
-# Not used with sqlite3.
-DATABASE_PASSWORD = 'dev'         
-# Set to empty string for localhost. Not used with sqlite3.
-DATABASE_HOST = ''             
-# Set to empty string for default. Not used with sqlite3.
-DATABASE_PORT = ''             
-
+DATABASES = {
+    'default': {
+        'NAME': 'solidcomposer',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'USER': 'dev',
+        'PASSWORD': 'dev',
+    },
+}
 
 # South
 SOUTH_LOGGING_ON = False
