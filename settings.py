@@ -128,7 +128,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'south',
-    'django_cron',
+    'django_extensions',
     'opensourcemusic.main',
     'opensourcemusic.competitions',
     'opensourcemusic.chat',

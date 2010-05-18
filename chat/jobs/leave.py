@@ -1,22 +1,22 @@
-from django_cron import cronScheduler, Job
+from django_extensions.management.jobs import BaseJob
 
 from datetime import datetime, timedelta
-from opensourcemusic.main.models import *
+from opensourcemusic.chat.models import *
 from opensourcemusic.settings import CHAT_TIMEOUT
 
-class CreateLeaveMessages(Job):
+class Job(BaseJob):
     """
     Cron Job that checks if any users should be considered as having left any
-    ChatRooms and generates Leave Messages
+    ChatRooms and generates Leave Messages.
+
+    Should be run every minute.
     """
+    help = __doc__
 
-    # run every 20 seconds
-    run_every = 30
-
-    def job(self):
+    def execute(self):
         expire_date = datetime.now() - timedelta(seconds=CHAT_TIMEOUT)
         appearances = Appearance.objects.filter(timestamp__lte=expire_date)
-
+        
         for appearance in appearances:
             # generate leave messages in each room
             m = ChatMessage()
@@ -26,4 +26,3 @@ class CreateLeaveMessages(Job):
             m.save()
             appearance.delete()
 
-cronScheduler.register(CreateLeaveMessages)

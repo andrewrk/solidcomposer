@@ -1,21 +1,22 @@
-Dependencies:
- * django - http://www.djangoproject.com/
- * south - http://south.aeracode.org/
-   - A good database system like postgresql or mysql so that the migration
-     stuff can work. (sqlite3 will not work)
- * django-cron - http://code.google.com/p/django-cron/
- * mutagen - http://code.google.com/p/mutagen/
- * PyWaveform - http://github.com/superjoe30/PyWaveform
+The first time you install this project, you need to:
+    * copy the code to the server
+    * configure settings_user.py to override the system-specific settings
+      from settings.py
+    * python manage.py syncdb --noinput
+    * python manage.py migrate
+    * configure files in the /static/* URL to be served statically, bypassing
+      django. the files that are served here should be a softlink to
+      media/static/.
+    * set up cron jobs
+        <minute>     python /path/to/project/manage.py runjob opensourcemusic.chat leave
+        <hourly>     python /path/to/project/manage.py runjobs hourly
+        <daily>      python /path/to/project/manage.py runjobs daily
+        <weekly>     python /path/to/project/manage.py runjobs weekly
+        <monthly>    python /path/to/project/manage.py runjobs monthly 
+    * follow the directions below for deploying
 
-Procedure:
- * ensure that all dependencies are installed on server
- * copy django code to server
- * configure settings_user.py to override the system-specific settings from settings.py
- * make sure database is migrated to latest version
- * configure files in the /static/* URL to be served statically, bypassing
-   django. the files that are served here should be a softlink to media/static/.
- * verify that the cron.py thing is working. if it's not, you need to set up
-   a cron job manually to do the task it was going to do.
- * preparser.py parse
-   this needs to be re-run any time you change any templates or settings.py
- * run tests
+After that, you get to use the happy funtime deploy script (tm)!
+
+  ./deploy
+
+If you need to add a dependency to is project, add it to deps.py.

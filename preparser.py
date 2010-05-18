@@ -161,9 +161,9 @@ def clean_file(source, dest, force):
         os.remove(dest)
         print("removing %s" % dest)
 
-def compile():
+def parse():
     """
-    compile every file, mirroring directory structure
+    parse every file, mirroring directory structure
     """
     walk(compile_file)
 
@@ -180,7 +180,7 @@ def monitor():
     """
     while True:
         try:
-            compile()
+            parse()
         except KeyboardInterrupt:
             sys.exit(0)
         except:
@@ -192,7 +192,7 @@ def monitor():
 
 commands = {
     'help': print_usage,
-    'parse': compile,
+    'parse': parse,
     'clean': clean,
     'monitor': monitor,
 }

@@ -83,7 +83,16 @@ class ChatMessage(models.Model):
     type = models.IntegerField(choices=MESSAGE_TYPES)
     author = models.ForeignKey(User, blank=True, null=True)
     message = models.CharField(max_length=255, blank=True)
-    timestamp = models.DateTimeField(auto_now=True)
+    timestamp = models.DateTimeField(editable=False)
+
+    def save(self, *args, **kwargs):
+        "Update populated fields before saving"
+        self.timestamp = datetime.now()
+        self.baseSave(*args, **kwargs)
+
+    def baseSave(self, *args, **kwargs):
+        "Save without any auto field population"
+        super(ChatMessage, self).save(*args, **kwargs)
 
     def __unicode__(self):
         """
@@ -108,7 +117,16 @@ class Appearance(models.Model):
     """
     person = models.ForeignKey(User)
     room = models.ForeignKey('ChatRoom')
-    timestamp = models.DateTimeField(auto_now=True)
+    timestamp = models.DateTimeField(editable=False)
+
+    def save(self, *args, **kwargs):
+        "Update populated fields before saving"
+        self.timestamp = datetime.now()
+        self.baseSave(*args, **kwargs)
+
+    def baseSave(self, *args, **kwargs):
+        "Save without any auto field population"
+        super(Appearance, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return "%s in %s on %s" % (self.person, self.room, self.timestamp)

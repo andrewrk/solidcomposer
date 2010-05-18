@@ -1,4 +1,6 @@
 = sitewide =
+ * refactor tests to use url reverse
+ * refactor auto_now and auto_now_add out
  * work on workbench
  * deploy script when merged with release branch
  * make the login ALWAYS ajax. the consistency will help user confidence.

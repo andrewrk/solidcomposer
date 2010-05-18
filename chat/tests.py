@@ -8,6 +8,22 @@ from opensourcemusic.chat.models import *
 from datetime import datetime, timedelta
 import simplejson as json
 
+from opensourcemusic import settings
+
+import os
+import subprocess
+
+from django_extensions.management.jobs import get_job
+
+def system(command):
+    "run a command on the system"
+    p = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    return p.communicate()[0].strip()
+
+def absolute(relative_path):
+    "make a relative path absolute"
+    return os.path.normpath(os.path.join(os.path.dirname(__file__), relative_path))
+
 class SimpleTest(TestCase):
     def setUp(self):
         # create some users
@@ -226,3 +242,50 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(len(data), 0)
+
+    def test_leave_messages(self):
+        # make two appearances
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get('/chat/ajax/hear/', {
+            'last_message': 'null',
+            'room': self.open_room.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get('/chat/ajax/hear/', {
+            'last_message': 'null',
+            'room': self.open_room.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(Appearance.objects.count(), 2)
+        # pretend that superjoe's appearance was settings.CHAT_TIMEOUT + 1
+        # seconds ago
+        appear = Appearance.objects.filter(person=self.superjoe)[0]
+        new_ts = datetime.now() - timedelta(seconds=(settings.CHAT_TIMEOUT+1))
+        appear.timestamp = new_ts
+        appear.baseSave() # bypass the auto timestamp update
+        appear = Appearance.objects.filter(person=self.superjoe)[0]
+        self.assertEqual(appear.timestamp, new_ts)
+
+        # run the job
+        job = get_job('opensourcemusic.chat', 'leave')
+        job().execute()
+
+        # there should be a part message in the chat room
+        response = self.client.get('/chat/ajax/hear/', {
+            'last_message': 'null',
+            'room': self.open_room.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['user']['has_permission'], True)
+        # 3 messages: join, join, leave
+        self.assertEqual(len(data['messages']), 3)
+        self.assertEqual(data['messages'][2]['type'], LEAVE)
+        self.assertEqual(data['messages'][2]['author']['username'], 'superjoe')
+
+
+        # now there should be 1 appearance
+        self.assertEqual(Appearance.objects.count(), 1)

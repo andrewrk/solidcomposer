@@ -1,11 +1,9 @@
 from django.conf.urls.defaults import *
 from django.views.generic.simple import direct_to_template, redirect_to
 from django.contrib import admin
-import django_cron
 import os
 
 admin.autodiscover()
-django_cron.autodiscover()
 
 from opensourcemusic import settings
 
