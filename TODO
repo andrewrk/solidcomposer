@@ -1,11 +1,22 @@
 = sitewide =
+ * make the gui pretty
+   > skiessi's redesign
+   > click the logo to go to home page
+   > thumbs ups instead of voting
+   > chat colors
  * refactor tests to use url reverse
  * refactor auto_now and auto_now_add out
  * work on workbench
- * deploy script when merged with release branch
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
+ * sort onliners by name in javascript
+ * chat should start an hour before competition start and end an hour after
+   listening party.
+ * show upcoming/new competitions before old ones in bookmarked
+   competitions. there should be a clear divide.
+ * if there are 2.5 hours left it should say 2 hours left not 3
+ * for competitions, show the actual time left. we want to know the details.
  * refactor
    > change competitions to arena
    > change opensourcemusic to solidcomposer
@@ -31,11 +42,6 @@
  * test song playback on google chrome 4.1.249.1064
    > I don't think jplayer is reporting the song position in chrome
    > update to latest jplayer and use the preload feature
- * make the gui pretty
-   > skiessi's redesign
-   > click the logo to go to home page
-   > thumbs ups instead of voting
-   > chat colors
  * edit competition
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
