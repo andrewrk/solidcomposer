@@ -219,10 +219,8 @@ var Chat = function() {
                             onlinerAction(data.messages[i].author.id, function(index) {
                                 state.onliners.splice(index, 1);
                             });
-                            updateChatOnliners();
                         } else if (data.messages[i].type === that.message_type.LEAVE) {
                             state.onliners.push(data.messages[i].author);
-                            updateChatOnliners();
                         }
                     }
                     state.messages.push(data.messages[i]);
@@ -236,6 +234,9 @@ var Chat = function() {
                 }
 
                 updateChat();
+                if (state.onliners !== null) {
+                    updateChatOnliners();
+                }
 
                 if (scroll) {
                     scrollToLastMessage();
