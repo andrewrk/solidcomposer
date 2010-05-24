@@ -10,9 +10,9 @@
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
- * sort onliners by name in javascript
  * chat should start an hour before competition start and end an hour after
    listening party.
+ * onliners fails the first time if chat request doesn't get back first
  * show upcoming/new competitions before old ones in bookmarked
    competitions. there should be a clear divide.
  * if there are 2.5 hours left it should say 2 hours left not 3
