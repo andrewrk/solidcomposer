@@ -243,7 +243,7 @@ def ajax_submit_entry(request):
     compo.save()
 
     chatroom = compo.chat_room
-    chatroom.end_date = compo.vote_deadline + timedelta(hours=1)
+    chatroom.end_date = compo.listening_party_end_date + timedelta(hours=1)
     chatroom.save()
 
     data['success'] = True
@@ -461,7 +461,7 @@ def create(request):
             # open the chat room an hour before the competition
             chatroom.start_date = comp.start_date - timedelta(hours=1)
             # chat room is open an hour before and after competition
-            chatroom.end_date = comp.vote_deadline + timedelta(hours=1)
+            chatroom.end_date = comp.listening_party_end_date + timedelta(hours=1)
             chatroom.save()
             comp.chat_room = chatroom;
 
