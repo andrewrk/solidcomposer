@@ -1,86 +1,78 @@
 = sitewide =
- * make the gui pretty
-   > skiessi's redesign
-   > click the logo to go to home page
-   > thumbs ups instead of voting
-   > chat colors
- * refactor tests to use url reverse
- * refactor auto_now and auto_now_add out
- * work on workbench
- * make the login ALWAYS ajax. the consistency will help user confidence.
-
-= arena =
- * show upcoming/new competitions before old ones in bookmarked
-   competitions. there should be a clear divide.
- * for competitions, show the actual time left. we want to know the details.
- * refactor
-   > change competitions to arena
-   > change opensourcemusic to solidcomposer
- == Feedback from Starla ==
- * Integrate chat from an IRC channel.
- * make the chat more friendly to use for people who are used to IRC
-   > highlight when someone's name is mentioned
-   > tab completion for names
-   > ability to private message?
-   > page up / down to scroll up and down
- * better moderator features
-   > ability to pause, skip, previous in listening party
-   > ability to open submission up even during listening party
-   > ability to kick people out (blacklist) if they're misbehaving
- * ability to customize the design
- * ability to replay the listening party
- * better music player
-
- == Release Thursday May 6 2010 ==
- * the date lies when it's close. if it's hours it should say minutes too.
- * implement IRC actions
- * make the page flash when people talk?
- * test song playback on google chrome 4.1.249.1064
-   > I don't think jplayer is reporting the song position in chrome
-   > update to latest jplayer and use the preload feature
- * edit competition
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
      * http://attacklab.net/showdown/
- * have a robust song player and use it during competitions
+ * better music player
+   > see notepad
    > have a mute button during competitions but not pause/play
    > ability to download mp3 and source file
    > ability to comment on sections of the song
+ * work on workbench
+ * GUI Redesign
+   > skiessi's design
+   > click the logo to go to home page
+   > thumbs ups instead of voting
+   > chat colors
+   > take full advantage of space on wide screens
+   > make the entry list look good
+     - highlight which song is currently playing
+ * refactor
+   > tests to use url reverse
+   > get rid of auto_now and auto_now_add 
+   > change competitions to arena
+   > change opensourcemusic to solidcomposer
+ * make the login ALWAYS ajax. the consistency will help user confidence.
 
- * if creating a competition fails, have a message at the top saying
-   "please correct these errors."
- * user profile page
-   - show their competition entries
+= arena =
  * arena - the competitions aren't updating on a second based timer
    > make it a second-based timer but not suck to click the link
- * when they click resubmit, scroll down the page to see the form.
- * display error when chat message doesn't go through
+ * if creating a competition fails, have a message at the top saying
+   "please correct these errors."
+ * edit competition
+ * update to latest jplayer and use the preload feature
+ * test song playback on google chrome 4.1.249.1064
+   > I don't think jplayer is reporting the song position in chrome
+ * make the chat more friendly to use for people who are used to IRC
+   > highlight when someone's name is mentioned and and make the page flash
+     (or change the title text to indicate)
+   > tab completion for names
+   > ability to private message?
+   > page up / down to scroll up and down
+   > /me action
+   > display error when chat message doesn't go through
+ * show upcoming/new competitions before old ones in bookmarked
+   competitions. there should be a clear divide.
+   > better competition ordering in arena
+ * better moderator features
+   > ability to pause, skip, previous in listening party
+   > ability to open submission up even during listening party
+   > ability to kick people out (blacklist) if they're misbehaving
+   > compo owner can make other people moderators too
  * listening party - make song comments during chat during listening party
+ * when they click resubmit, scroll down the page to see the form.
+ * user profile page
+   - show their competition entries
  * show and allow posting comments on songs on user pages
- * replay listening party feature
-   - put an indicator on the page so you know whether it's live or replay
- * better competition ordering in arena
  * put whitelist/blacklist/open in the create competition page. default open.
    - invitation system based on passwords
    - ability to have private compo by invitation
+ * ability to replay the listening party
+   - put an indicator on the page so you know whether it's live or replay
  * protect against h4xz0rz by adding a @method to views which do things like
    login, logout, etc. The method would make sure the referrer was us and not
    some other website.
- * moderation tools for competitions
-     * compo owner gets skip song controls
-     * compo owner can make other people moderators too
- * obfuscate media URLs to protect people's stuff
  * chat: display how many invisible observers there are
+   - by IP address?
  * color the time differently when there isn't much time left so that 
    people know they're running out of time
- * better feedback for a failed submission than an alert box.
  * make the gui experience of clicking edit on a submission and then
    deciding not to better.
- * test with a messed up clock in windows
-   - possibly use ajax to improve offset calculation between server and local.
+
+ * Integrate chat from an IRC channel.
  * google calendar integration
  * rss feed for competitions
+ * ability to customize the design
 
 = workbench =
  * workbench page
@@ -103,6 +95,7 @@
    > Choose a name and then proceeed directly to band settings page
  * band settings page
  * automatically upload competition entries to the project manager
+ * obfuscate media URLs to protect people's stuff
 
  * make it look pretty
  * ability to customize css
@@ -131,3 +124,5 @@
   * unison / lmms plug
   * project management plug
   * vocoding drums
+  * using noise, a flanger, and a cutoff to make wind
+  * using noise, envelope, and cutoff to make a crash type sound
