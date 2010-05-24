@@ -12,7 +12,6 @@
 = arena =
  * show upcoming/new competitions before old ones in bookmarked
    competitions. there should be a clear divide.
- * if there are 2.5 hours left it should say 2 hours left not 3
  * for competitions, show the actual time left. we want to know the details.
  * refactor
    > change competitions to arena

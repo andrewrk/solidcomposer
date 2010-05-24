@@ -170,30 +170,32 @@ var Time = function () {
             var years = days / 365;
 
             if (years >= 1) {
-                return this.plural(Math.ceil(years), "year", "years");
+                return this.plural(Math.floor(years), "year", "years");
             }
 
             if (months >= 1) {
-                return this.plural(Math.ceil(months), "month", "months");
+                return this.plural(Math.floor(months), "month", "months");
             }
 
             if (weeks >= 1) {
-                return this.plural(Math.ceil(weeks), "week", "weeks");
+                return this.plural(Math.floor(weeks), "week", "weeks");
             }
 
             if (days >= 1) {
-                return this.plural(Math.ceil(days), "day", "days");
+                return this.plural(Math.floor(days), "day", "days");
             }
 
             if (hours >= 1) {
-                return this.plural(Math.ceil(hours), "hour", "hours");
+                minutes -= Math.floor(hours) * 60;
+                return this.plural(Math.floor(hours), "hour", "hours") + ", " +
+                    this.plural(Math.floor(minutes), "minute", "minutes");
             }
 
             if (minutes >= 1) {
-                return this.plural(Math.ceil(minutes), "minute", "minutes");
+                return this.plural(Math.floor(minutes), "minute", "minutes");
             }
 
-            return this.plural(Math.ceil(seconds), "second", "seconds");
+            return this.plural(Math.floor(seconds), "second", "seconds");
         },
 
         plural: function (n, singular, plural) {
