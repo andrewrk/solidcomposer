@@ -1,4 +1,7 @@
 = sitewide =
+ * use gravatar for avatars
+ * password recovery
+ * ability to change password
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
@@ -17,6 +20,8 @@
    > take full advantage of space on wide screens
    > make the entry list look good
      - highlight which song is currently playing
+   > right now when voting is over if you got 1 vote it says
+     "you got 1 votes"
  * refactor
    > tests to use url reverse
    > get rid of auto_now and auto_now_add 
