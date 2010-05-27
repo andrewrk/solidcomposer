@@ -1,2 +1,3 @@
 <a href="{% url userpage user.username %}">{{ user.username }}</a>
-<span class="points">{{ user.get_profile.get_points }}</span>
+<span class="points"><img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" />
+x {{ user.get_profile.get_points }}</span>

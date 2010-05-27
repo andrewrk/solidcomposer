@@ -13,24 +13,26 @@
 {% include 'login_area.html' %}
 {% endblock %}
 <div id="logo">
-    <p>A place for musicians to <strong>compete, collaborate, and learn</strong>.</p>
+    <a href="{% url home %}"><img src="{{ MEDIA_URL }}img/logo.png" alt="Solid Composer" /></a>
 </div>
 {% block nav %}
-<div id="nav">
+<div id="tabsJ">
+    <p>A place for musicians to <strong>compete, collaborate, and learn</strong>.</p>
     <ul>
         <li class="{% block nav_arena_li_class %}unselected{% endblock %}">
-            <a href="{% url arena.home %}">Arena</a>
+            <a href="{% url arena.home %}"><span>Arena</span></a>
         </li>
         <li class="{% block nav_workbench_li_class %}unselected{% endblock %}">
-            <a href="{% url workbench.home %}">Workbench</a>
+            <a href="{% url workbench.home %}"><span>Workbench</span></a>
         </li>
         <li class="{% block nav_music_li_class %}unselected{% endblock %}">
-            <a href="{% url music.home %}">Showcase</a>
+            <a href="{% url music.home %}"><span>Showcase</span></a>
         </li>
     </ul>
 </div>
 {% endblock %}
 <div id="wrapper">
+    <div class="clear"></div>
     {% block content %}
     {% endblock %}
 </div>

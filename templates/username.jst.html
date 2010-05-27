@@ -1,2 +1,3 @@
 <a href="<%=urls.userpage(json.user.username)%>"><%= json.user.username %></a>
-<span class="points"><%= json.user.get_profile.get_points %></span>
+<span class="points"><img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" />
+x <%= json.user.get_profile.get_points %></span>

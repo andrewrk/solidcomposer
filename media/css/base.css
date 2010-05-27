@@ -3,20 +3,118 @@ body {
     font-size: 14px;
     margin: 0;
     padding: 0;
+    background: #ffffff;
     color: #000000;
 }
 
+#wrapper {
+    background: #eeeeee;
+    margin: 0;
+    padding: 0;
+    border-bottom:1px solid #24618e;
+}
+
 h1 {
+    font-family: Arial, Verdana, sans-serif;
     font-size: 20px;
-    margin: 0; 
+    font-weight: bold;
+    color: #4079e3;
+    margin: 20px 0 8px 14px;
     padding: 0;
 }
 
-h2 {
-    font-size: 18px;
-    margin: 0; 
-    padding: 12px 0;
+p {
+    margin: 0 0 12px 14px;
+    padding: 0;
 }
+
+#whitetop {
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+img {
+    border: none;
+}
+
+.clear {
+    clear: both;
+    margin: 0;
+    padding: 0;
+}
+
+fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+   color: #4a62ff;
+   text-decoration: underline;
+}
+
+#css-login {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 10px 12px 0 0;
+    padding: 0;
+}
+
+#loginStatusDiv a {
+    margin: 0 0 0 6px;
+    padding: 0;
+}
+
+.points img {
+    vertical-align: middle;
+}
+
+.points {
+    font-size: 16px;
+    font-family: Arial, Verdana, sans-serif;
+    font-weight: bold;
+}
+
+#loginFormDiv {
+    background: #dadada;
+    padding: 12px;
+}
+
+#login-buttons {
+    text-align: right;
+}
+
+#logo {
+    padding: 8px 0 0 12px;
+    margin: 0;
+}
+
+#tabsJ p {
+    float: left;
+    font-size: 12px;
+    padding: 14px 0 0 16px;
+    margin: 0;
+}
+
+#footer {
+    text-align: center;
+    font-size: 10px;
+    background: #ffffff;
+    margin: 0;
+    padding: 10px 0 0 0;
+}
+
+div.textblock {
+    width: 500px;
+}
+
+
+
+
+/* iffy things */
 
 form h3 {
     font-size: 14px;
@@ -29,82 +127,78 @@ form h3 {
     text-align: center;
 }
 
-p {
-    margin: 0;
-    padding: 10px;
-}
-
-img {
-    border: none;
-}
-
-#css-login {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-#loginFormDiv {
-    background: #dadada;
-    padding: 12px;
-}
-
-#login-buttons {
-    text-align: right;
-}
-
-td.label {
-    text-align: right;
-}
-
-#logo {
-    background: #ffffff url('../img/logo3.png') no-repeat center;
-    height: 108px;
-    margin: 0 auto 0 auto;
-    padding: 0;
-    font-size: 12px;
-}
-
-#logo img {
-    margin: 0 0 0 0;
-    padding: 0;
-}
-
-#logo p {
-    margin: 0;
-    padding: 4px 0 0 4px;
-}
-
-#footer {
-    text-align: center;
-    font-size: 10px;
-}
-
-#wrapper {
-    margin: 0;
-    padding: 0 0 0 100px;
-    text-align: left;
-    background: #ffffff url(../img/blurrystaff.jpg) no-repeat center top;
-}
-
-.points {
-    background: url('../img/star.png') no-repeat center center;
-    margin: 0;
-    padding: 2px 8px;
-}
-
 form th {
     font-size: 12px;
     font-weight: normal;
     text-align: right;
 }
 
-.clear {
-    clear: both;
+
+td.label {
+    text-align: right;
 }
 
-fieldset {
-    border: none;
-    margin: 0;
-    padding: 0;
+
+/*- Menu Tabs J--------------------------- */
+
+#tabsJ {
+    float:left;
+    width:100%;
+    background:#ffffff;
+    font-size:93%;
+    line-height:normal;
+    border-bottom:1px solid #24618e;
+}
+
+#tabsJ ul {
+    margin:0;
+    padding:10px 10px 0 50%;
+    list-style:none;
+}
+
+#tabsJ li {
+    display:inline;
+    margin:0;
+    padding:0;
+}
+
+#tabsJ a {
+    float:left;
+    background:url("../img/tableftJ.gif") no-repeat left top;
+    margin:0;
+    padding:0 0 0 5px;
+    text-decoration:none;
+}
+
+#tabsJ a span {
+    float:left;
+    display:block;
+    background:url("../img/tabrightJ.gif") no-repeat right top;
+    padding:5px 15px 4px 6px;
+    color:#24618E;
+}
+
+/* Commented Backslash Hack hides rule from IE5-Mac \*/
+#tabsJ a span {float:none;}
+/* End IE5-Mac hack */
+
+#tabsJ a:hover span {
+    color:#FFF;
+}
+
+#tabsJ a:hover {
+    background-position:0% -42px;
+}
+
+#tabsJ a:hover span {
+    background-position:100% -42px;
+}
+
+#tabsJ .selected a {
+    background-position:0% -42px;
+}
+
+#tabsJ .selected a span {
+    background-position:100% -42px;
+    color:#FFF;
 }
