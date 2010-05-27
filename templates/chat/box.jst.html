@@ -1,23 +1,38 @@
 <% if (Chat.beforeChatRoomActive(room)) { %>
     <p>This chat room will become active in <%= Time.printableTimeUntil(room.start_date) %>.</p>
 <% } else { %>
+    <table>
     <% for (var i=0; i<messages.length; ++i) { var msg = messages[i]; %>
         <% if (msg.type == Chat.message_type.MESSAGE) { %>
-            <div class="msg">
-                <%= Time.prettyTime(msg.timestamp) %> <%= msg.author.username %>: <%= msg.message %>
+            <tr class="msg">
+                <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
+                <td class="name"><%= msg.author.username %></td>
+                <td class="imsg"><%= msg.message %><td>
             </div>
         <% } else if (msg.type == Chat.message_type.JOIN) { %>
-            <div class="join">
-                <%= Time.prettyTime(msg.timestamp) %> <%= msg.author.username %> has joined.
-            </div>
+            <tr class="join">
+                <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
+                <td class="name">*</td>
+                <td class="imsg"><%= msg.author.username %> has joined.</td>
+            </tr>
         <% } else if (msg.type == Chat.message_type.LEAVE) { %>
-            <div class="leave">
-                <%= Time.prettyTime(msg.timestamp) %> <%= msg.author.username %> has left.
-            </div>
+            <tr class="leave">
+                <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
+                <td class="name">*</td>
+                <td class="imsg"><%= msg.author.username %> has left.</td>
+            </tr>
         <% } else if (msg.type == Chat.message_type.ACTION) { %>
-            <div class="action">
-                <%= Time.prettyTime(msg.timestamp) %> * <%= msg.author.username %> <%= msg.message %>
-            </div>
+            <tr class="action">
+                <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
+                <td class="name">*</td>
+                <td class="imsg"><%= msg.author.username %> <%= msg.message %></td>
+            </tr>
         <% } %>
     <% } %>
+    <tr class="lastmsg">
+        <td class="ts"></td>
+        <td class="name"></td>
+        <td class="imsg"></td>
+    </tr>
+    </table>
 <% } %>

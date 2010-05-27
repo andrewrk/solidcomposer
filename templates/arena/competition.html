@@ -24,9 +24,15 @@ var MEDIA_URL = "{{ MEDIA_URL }}";
 {% endblock %}
 
 {% block content %}
-    <p>Back to <a href="/arena/">Arena</a></p>
+    <div id="bread">
+        <a href="{% url home %}">Home</a>
+        &gt;
+        <a href="{% url arena.home %}">Arena</a>
+        &gt;
+        <span class="dest">{{ competition.title }}</span>
+    </div>
     <div id="css-status">
-        <h2>{{ competition.title }}</h2>
+        <h1>{{ competition.title }}</h1>
         <div id="status">
             {% include 'loading.html' %}
         </div>
@@ -41,7 +47,9 @@ var MEDIA_URL = "{{ MEDIA_URL }}";
     <div id="entry-area">
         {% include 'loading.html' %}
     </div>
-    {% include 'chat/chatroom.html' %}
+    <div id="chatroom-outer">
+        {% include 'chat/chatroom.html' %}
+    </div>
     <div class="clear"></div>
     <div style="display: none;" id="submission">
         <h4>Your entry</h4>

@@ -125,5 +125,9 @@ def ajax_onliners(request):
         return json_response(data)
 
     expire_date = datetime.now() - timedelta(seconds=settings.CHAT_TIMEOUT)
-    data = [safe_model_to_dict(x.person) for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]
+    def person_data(x):
+        d = safe_model_to_dict(x)
+        d['get_profile']['get_points'] = x.get_profile().get_points()
+        return d
+    data = [person_data(x.person) for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]
     return json_response(data)

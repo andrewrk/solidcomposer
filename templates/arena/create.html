@@ -17,91 +17,93 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Arena</h1>
-    <h2>Create a Competition</h2>
-    <form id="competition-form" method="post" action=".">
-        {{ form.tz_offset }}
-        <table>
-            <tr>
-                <td colspan="2">
-                    <h3>Title</h3>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="id_title">Title:</label></th>
-                <td>{{ form.title.errors }}{{ form.title }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Theme</h3>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="id_have_theme">Have theme:</label></th>
-                <td>{{ form.have_theme }}</td>
-            </tr>
-            <tr id="div_theme">
-                <th><label for="id_theme">Theme:</label></th>
-                <td>{{ form.theme.errors }}{{ form.theme }}</td>
-            </tr>
-            <tr id="div_preview_theme">
-                <th><label for="id_preview_theme">Preview theme:</label></th>
-                <td>{{ form.preview_theme.errors }}{{ form.preview_theme }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Rules</h3>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="id_have_rules">Have rules:</label></th>
-                <td>{{ form.have_rules.errors }}{{ form.have_rules }}</td>
-            </tr>
-            <tr id="div_rules">
-                <th><label for="id_rules">Rules:</label></th>
-                <td>{{ form.rules.errors }}{{ form.rules }}</td>
-            </tr>
-            <tr id="div_preview_rules">
-                <th><label for="id_preview_rules">Preview rules:</label></th>
-                <td>{{ form.preview_rules.errors }}{{ form.preview_rules }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Dates</h3>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="id_start_date">Start date:</label></th>
-                <td>{{ form.start_date.errors }}{{ form.start_date }}</td>
-            </tr><tr>
-                <th><label for="id_submission_deadline_date">Submission deadline date:</label></th>
-                <td>{{ form.submission_deadline_date.errors }}{{ form.submission_deadline_date }}</td>
-            </tr>
-            <tr>
-                <th><label for="id_vote_time_quantity">Voting is open for:</label></th>
-                <td>{{ form.vote_time_quantity.errors }}{{ form.vote_time_measurement.errors}}{{ form.vote_time_quantity }}{{ form.vote_time_measurement }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h3>Listening Party</h3>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="id_have_listening_party">Have listening party:</label></th>
-                <td>{{ form.have_listening_party.errors }}{{ form.have_listening_party }}</td>
-            </tr>
-            <tr id="div_immediately">
-                <th><label for="id_party_immediately">Immediately:</th>
-                <td>{{ form.party_immediately.errors }}{{ form.party_immediately}}</td>
-            </tr>
-            <tr id="div_lp_date">
-                <th><label for="id_listening_party_date">Listening party date:</label></th>
-                <td>{{ form.listening_party_date.errors }}{{ form.listening_party_date }}</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><input type="submit" value="Create Competition" /></td>
-            </tr>
-        </table>
-    </form>
+    <div class="textblock">
+        <h1>Arena</h1>
+        <h2>Create a Competition</h2>
+        <form id="competition-form" method="post" action="." style="width: 500px;">
+            {{ form.tz_offset }}
+            <table>
+                <tr>
+                    <td colspan="2">
+                        <h3>Title</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="id_title">Title:</label></th>
+                    <td>{{ form.title.errors }}{{ form.title }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <h3>Theme</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="id_have_theme">Have theme:</label></th>
+                    <td>{{ form.have_theme }}</td>
+                </tr>
+                <tr id="div_theme">
+                    <th><label for="id_theme">Theme:</label></th>
+                    <td>{{ form.theme.errors }}{{ form.theme }}</td>
+                </tr>
+                <tr id="div_preview_theme">
+                    <th><label for="id_preview_theme">Preview theme:</label></th>
+                    <td>{{ form.preview_theme.errors }}{{ form.preview_theme }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <h3>Rules</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="id_have_rules">Have rules:</label></th>
+                    <td>{{ form.have_rules.errors }}{{ form.have_rules }}</td>
+                </tr>
+                <tr id="div_rules">
+                    <th><label for="id_rules">Rules:</label></th>
+                    <td>{{ form.rules.errors }}{{ form.rules }}</td>
+                </tr>
+                <tr id="div_preview_rules">
+                    <th><label for="id_preview_rules">Preview rules:</label></th>
+                    <td>{{ form.preview_rules.errors }}{{ form.preview_rules }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <h3>Dates</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="id_start_date">Start date:</label></th>
+                    <td>{{ form.start_date.errors }}{{ form.start_date }}</td>
+                </tr><tr>
+                    <th><label for="id_submission_deadline_date">Submission deadline date:</label></th>
+                    <td>{{ form.submission_deadline_date.errors }}{{ form.submission_deadline_date }}</td>
+                </tr>
+                <tr>
+                    <th><label for="id_vote_time_quantity">Voting is open for:</label></th>
+                    <td>{{ form.vote_time_quantity.errors }}{{ form.vote_time_measurement.errors}}{{ form.vote_time_quantity }}{{ form.vote_time_measurement }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <h3>Listening Party</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="id_have_listening_party">Have listening party:</label></th>
+                    <td>{{ form.have_listening_party.errors }}{{ form.have_listening_party }}</td>
+                </tr>
+                <tr id="div_immediately">
+                    <th><label for="id_party_immediately">Immediately:</th>
+                    <td>{{ form.party_immediately.errors }}{{ form.party_immediately}}</td>
+                </tr>
+                <tr id="div_lp_date">
+                    <th><label for="id_listening_party_date">Listening party date:</label></th>
+                    <td>{{ form.listening_party_date.errors }}{{ form.listening_party_date }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Create Competition" /></td>
+                </tr>
+            </table>
+        </form>
+    </div>
 {% endblock %}

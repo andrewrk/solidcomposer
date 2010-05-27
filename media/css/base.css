@@ -130,17 +130,8 @@ div.textblock {
     width: 350px;
 }
 
-/* iffy things */
-
-form h3 {
-    font-size: 14px;
-    background: #ececec;
-    border: 1px solid #e0e0e0;
-    border-left: none;
-    border-right: none;
-    margin: 0; 
-    padding: 12px 0;
-    text-align: center;
+td.label {
+    text-align: right;
 }
 
 form th {
@@ -149,11 +140,33 @@ form th {
     text-align: right;
 }
 
-
-td.label {
-    text-align: right;
+form h3 {
+    font-size: 14px;
+    background: #e0e0e0;
+    border: 1px solid #d4d4d4;
+    border-left: none;
+    border-right: none;
+    margin: 0; 
+    padding: 12px 0;
+    text-align: center;
 }
 
+#bread {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 12px;
+    color: #777777;
+    margin: 0;
+    padding: 12px;
+}
+
+#bread a {
+    text-decoration: none;
+    color: #0000ff;
+}
+
+#bread .dest {
+    color: #000000;
+}
 
 /*- Menu Tabs J--------------------------- */
 

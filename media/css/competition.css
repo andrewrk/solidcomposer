@@ -1,42 +1,93 @@
 @import "base.css";
 @import "chat.css";
 
-h2 {
+h1 {
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 30px;
+    font-weight: bold;
+    color: #4079e3;
+    margin: 0;
+    padding: 4px 0 8px 0;
     text-align: center;
-    font-size: 22px;
-    margin 0;
-    padding: 0;
 }
 
-h3 {
-    margin: 8px 0 0 0;
-    padding: 0;
+h4 {
+    background: #134d77 url("../img/bluetitle.png") repeat-x left center;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0;
+    padding: 5px 0 6px 4px;
 }
 
-p {
-    margin: 6px 0 0 0;
-    padding: 0;
+h4 .sub {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 12px;
+    float: right;
+    font-weight: normal;
+    margin: 0;
+    padding: 0 8px 0 0;
 }
+
 
 #css-status {
-    background: #ececec;
-    border: 1px solid #e0e0e0;
-    border-left: none;
-    border-right: none;
-    margin: 0 100px 0 0;
+    background: #e3e3e3;
+    border: 1px solid #adc2d1;
+    border-width: 1px 0;
+    margin: 0 100px 16px 0;
     padding: 0;
+    width: 100%;
 }
 
 #status {
-    text-align: center;
+    font-family: Arial, Verdana, sans-serif;
     font-size: 16px;
+    font-weight: bold;
+    text-align: center;
     margin: 0;
-    padding: 0;
+    padding: 0 0 8px 0;
+    color: #d9302a;
 }
 
 #vote-status {
-    text-align: center;
+    font-family: Arial, Verdana, sans-serif;
     font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+    padding: 0 0 8px 0;
+}
+
+#vote-status img {
+    vertical-align: bottom;
+}
+
+#vote-status .xamt {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+#infowrapper {
+    margin: 0 auto 16px auto;
+    padding: 0;
+    max-width: 900px;
+}
+
+#theme, #rules {
+    float: left;
+    width: 400px;
+    background: #e3e3e3;
+    border: 1px solid #adc2d1;
+    margin: 8px;
+    padding: 12px;
+}
+
+h3 {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
     margin: 0;
     padding: 0;
 }
@@ -45,6 +96,57 @@ p {
     float: left;
     width: 400px;
     height: 300px;
+    margin: 0 8px 8px 8px;
+    padding: 0;
+    background: #242424;
+    font-size: 12px;
+    font-family: Verdana, Arial, sans-serif;
+}
+
+.entry a, .entry-playing a {
+    color: #ffffff;
+    text-decoration: none;
+    display: block;
+    height: 32px;
+    padding: 4px 0 0 8px;
+}
+
+.entry-playing a {
+    background: #ffb52b;
+    color: #000000;
+}
+
+.entry .len, .entry-playing .len {
+    float: right;
+    margin: 0;
+    padding: 4px 8px 0 0;
+}
+
+.entry .len {
+    color: #5d5d5d;
+}
+
+.entry-playing .len {
+    color: #bd8620;
+}
+
+.entry img, .entry-playing img {
+    vertical-align: middle;
+}
+
+.entry .votes, .entry-playing .votes {
+    margin: 0 0 0 10px;
+}
+
+.votes .xamt {
+    font-weight: bold;
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 12px;
+}
+
+#chatroom {
+    margin: 0 0 8px 8px;
+    padding: 0;
 }
 
 #submission {
@@ -52,12 +154,3 @@ p {
     margin: 0
 }
 
-#theme {
-    float: left;
-    width: 400px;
-}
-
-#rules {
-    float: left;
-    width: 400px;
-}

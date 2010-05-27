@@ -1,11 +1,13 @@
-<h4>Entries (<%= json.entries.length %> so far)</h4>
 <div id="entries">
+    <h4><span class="sub">(<%= json.entries.length %> so far)</span>Entries</h4>
     <% for (var i=0; i<json.entries.length; ++i) { var entry = json.entries[i]; %>
         <% if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
             <div class="<% if (current_track.index == i) { %>entry-playing<% } else { %>entry<% } %>">
                 <a href="#" id="entry-<%= i %>">
+                <% if (current_track.index == i) { %><img src="{{ MEDIA_URL }}img/play24.png" alt="" /><% } %>
+                <span class="len"><%= Time.timeDisplay(entry.song.length) %></span>
                 <%= entry.song.band.title %> - <%= entry.song.title %>
-                (<%= Time.timeDisplay(entry.song.length) %>)</a>
+                <span class="votes">
                 <% if (SCCompo.votingActive()) { %>
                     <% if (json.user.is_authenticated) { %>
                         <% if (entry.voted_for) { %>
@@ -17,8 +19,11 @@
                         <% } %>
                     <% } %>
                 <% } else { %>
-                    <%= Time.plural(entry.vote_count, "vote", "votes") %>
+                    <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="thumbs up" />
+                    <span class="xamt">x <%= entry.vote_count %></span>
                 <% } %>
+                </span>
+                </a>
             </div>
         <% } else { %>
             <% if (SCCompo.ongoingListeningParty() && i == json.party.index) { %>

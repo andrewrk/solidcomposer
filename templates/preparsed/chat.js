@@ -39,7 +39,10 @@ var Chat = function() {
         urls: {
             say: "{% filter escapejs %}{% url chat.say %}{% endfilter %}",
             hear: "{% filter escapejs %}{% url chat.hear %}{% endfilter %}",
-            onliners: "{% filter escapejs %}{% url chat.onliners %}{% endfilter %}"
+            onliners: "{% filter escapejs %}{% url chat.onliners %}{% endfilter %}",
+            userpage: function (username) {
+                return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
+            }
         },
         onliners: null
     };
@@ -156,11 +159,17 @@ var Chat = function() {
                 "room": chatroom_id
             },
             function(data){
+                var onlinerCount = 0;
+
                 if (data === null) {
                     return;
                 }
 
-                if (data.length > 0) {
+                if (data.length) {
+                    onlinerCount = data.length;
+                }
+                
+                if (onlinerCount > 0) {
                     data.sort(function(a,b){
                         if (a.username > b.username) {
                             return 1;
@@ -172,6 +181,7 @@ var Chat = function() {
                     });
                 }
                 state.onliners = data;
+                $("#chatroom .onliner-count").html(onlinerCount);
                 
                 updateChatOnliners();
             });

@@ -1,3 +1,10 @@
 <% if (user.is_authenticated) { %>
-<input type="text" id="chat-say-text" />
+    <table>
+    <tr>
+        <td class="ts"></td>
+        <td class="name"><%= user.username %>:</td>
+        <td class="imsg"><input type="text" id="chat-say-text" /></td>
+    </tr>
+    </table>
+
 <% } %>

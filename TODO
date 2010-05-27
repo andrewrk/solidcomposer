@@ -1,4 +1,6 @@
 = sitewide =
+ * make sure no messages can be said when chat room is closed.
+   specifically join/part messages
  * ditch order_by in favor of client-side sorting.
    > chat ajax messages
  * use gravatar for avatars

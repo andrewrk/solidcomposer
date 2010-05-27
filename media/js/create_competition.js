@@ -56,8 +56,7 @@ var SCCreateCompo = function () {
 
 $(document).ready(function(){
     var dtpOptions = {
-        format: "%Y-%m-%d %H:%i:%s",
-        askSecond: false
+        format: "%Y-%m-%d %H:%i:%s"
     };
     $("#id_start_date").AnyTime_picker(dtpOptions);
     $("#id_submission_deadline_date").AnyTime_picker(dtpOptions);

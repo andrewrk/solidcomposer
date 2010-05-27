@@ -1,3 +1,10 @@
 <% if (json.user.is_authenticated && SCCompo.votingActive()) { %>
-    <p>You have <%= Time.plural(json.votes.left, "vote", "votes") %> to give.</p>
+    You have <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="thumbs up" />
+    <span class="xamt">x <%= json.votes.left %></span> to give.
+<% } %>
+<% if (Time.secondsSince(json.compo.vote_deadline) >= 0) { %>
+    <% if (json.compo.user_entered) { %>
+        You got <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="thumbs up" />
+        <span class="xamt">x <%= json.compo.vote_count %></span>
+    <% } %>
 <% } %>

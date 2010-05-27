@@ -203,6 +203,7 @@ var SCCompo = function () {
                 state.media_url+state.current_track.entry.song.mp3_file);
             jp.jPlayer("play");
             updateCurrentEntry();
+            updateEntryArea();
             return false;
         }
 
