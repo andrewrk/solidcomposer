@@ -3,21 +3,23 @@
 {% block title %}Log in - {{ block.super }}{% endblock %}
 
 {% block content %}
-    <h2>Log in</h2>
-    {% if err_msg %}
-    <p>{{ err_msg }}</p>
-    {% endif %}
-    <form action="." method="post">
-        <table class="form-table">
-            {{ form.as_table }}
-            <tr>
-            <td></td>
-            <td><input type="submit" value="Sign in" /></td>
-            </tr>
-        </table>
-    </form>
-    <h2>Don't have an account?</h2>
-    <p>
-        <a href="{% url register %}">Register.</a>
-    </p>
+    <div class="textblock">
+        <h1>Log in</h1>
+        {% if err_msg %}
+        <p>{{ err_msg }}</p>
+        {% endif %}
+        <form action="." method="post">
+            <table>
+                {{ form.as_table }}
+                <tr>
+                <td></td>
+                <td><input type="submit" value="Sign in" /></td>
+                </tr>
+            </table>
+        </form>
+        <h2>Don't have an account?</h2>
+        <p>
+            <a href="{% url register %}">Register.</a>
+        </p>
+    </div>
 {% endblock %}

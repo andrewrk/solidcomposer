@@ -16,15 +16,24 @@ body {
 
 h1 {
     font-family: Arial, Verdana, sans-serif;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
     color: #4079e3;
-    margin: 20px 0 8px 14px;
+    margin: 20px 0 8px 0;
+    padding: 0;
+}
+
+h2 {
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #d93027;
+    margin: 20px 0 8px 0;
     padding: 0;
 }
 
 p {
-    margin: 0 0 12px 14px;
+    margin: 0 0 12px 0;
     padding: 0;
 }
 
@@ -109,10 +118,17 @@ a {
 
 div.textblock {
     width: 500px;
+    margin: 0 0 0 14px;
+    padding: 0 0 12px 0;
 }
 
-
-
+.textblock form {
+    background: #f3f3f3;
+    border: 1px solid #e0e0e0;
+    border-width: 1px 0;
+    padding: 8px;
+    width: 350px;
+}
 
 /* iffy things */
 

@@ -3,8 +3,10 @@
 {% block title %}Account Activated - {{ block.super }}{% endblock %}
 
 {% block content %}
-    <h2>Account Activated</h2>
-    <p>
-        Your account was successfully activated. You may now <a href="{% url user_login %}">Log in.</a>
-    </p>
+    <div class="textblock">
+        <h1>Account Activated</h1>
+        <p>
+            Your account was successfully activated. You may now <a href="{% url user_login %}">Log in.</a>
+        </p>
+    </div>
 {% endblock %}

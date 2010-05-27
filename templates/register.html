@@ -3,19 +3,21 @@
 {% block title %}Create an account - {{ block.super }}{% endblock %}
 
 {% block content %}
-    <h2>Create an account</h2>
-    {% if err_msg %}
-    <p>{{ err_msg }}</p>
-    {% endif %}
-    <form action="." method="post">
-        <table class="form-table">
-            {{ form.as_table }}
-            <tr>
-            <td></td>
-            <td><input type="submit" value="Register" /></td>
-            </tr>
-        </table>
-    </form>
-    <h2>Already have an account?</h2>
-    <a href="{% url user_login %}">Log in.</a>
+    <div class="textblock">
+        <h1>Create an account</h1>
+        {% if err_msg %}
+        <p>{{ err_msg }}</p>
+        {% endif %}
+        <form action="." method="post">
+            <table class="form-table">
+                {{ form.as_table }}
+                <tr>
+                <td></td>
+                <td><input type="submit" value="Register" /></td>
+                </tr>
+            </table>
+        </form>
+        <h2>Already have an account?</h2>
+        <a href="{% url user_login %}">Log in.</a>
+    </div>
 {% endblock %}
