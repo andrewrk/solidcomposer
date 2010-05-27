@@ -1,4 +1,6 @@
 = sitewide =
+ * ditch order_by in favor of client-side sorting.
+   > chat ajax messages
  * use gravatar for avatars
  * password recovery
  * ability to change password
@@ -16,7 +18,6 @@
    > pages
      = arena
        - home
-       - create competition
        - competition page
    > thumbs ups instead of voting
    > chat colors
