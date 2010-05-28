@@ -75,6 +75,12 @@ h4 .sub {
     max-width: 900px;
 }
 
+#entry-chat-wrapper {
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1100px;
+}
+
 #theme, #rules {
     float: left;
     width: 400px;
@@ -221,13 +227,14 @@ h3 {
 
 #song-player {
     padding: 0;
-    margin: 0 0 14px 8px;
+    margin: 0 auto 14px auto;
+    max-width: 950px;
 }
 
 #track-info {
-    width: 500px;
+    width: 600px;
     padding: 0;
-    margin: 0 0 14px 8px;
+    margin: 0 auto 14px auto;
 }
 
 #track-info .inside {

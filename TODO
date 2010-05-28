@@ -28,9 +28,6 @@
    > entry area when there are more songs than can fit
      - use a scroll bar
      - when the current song changes, scroll it so that song is visible.
-   > center entry-area + chatroom
-   > center song player
-   > center author comments
    > add ability to add comments to songs
  * refactor
    > tests to use url reverse

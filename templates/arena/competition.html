@@ -44,11 +44,14 @@ var MEDIA_URL = "{{ MEDIA_URL }}";
         {% include 'loading.html' %}
     </div>
     <div class="clear"></div>
-    <div id="entry-area">
-        {% include 'loading.html' %}
-    </div>
-    <div id="chatroom-outer">
-        {% include 'chat/chatroom.html' %}
+    <div id="entry-chat-wrapper">
+        <div id="entry-area">
+            {% include 'loading.html' %}
+        </div>
+        <div id="chatroom-outer">
+            {% include 'chat/chatroom.html' %}
+        </div>
+        <div class="clear"></div>
     </div>
     <div class="clear"></div>
     <div style="display: none;" id="submission">
