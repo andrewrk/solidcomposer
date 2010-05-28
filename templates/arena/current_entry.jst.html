@@ -1,4 +1,15 @@
 <% if (SCCompo.ongoingListeningParty()) { %>
+    <% var entry = json.party.entry; %>
+    {% include 'arena/entry-player.jst.html' %}
+<% } else if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
+    <% if (current_track.entry) { %>
+        <% var entry = current_track.entry; %>
+        {% include 'arena/entry-player.jst.html' %}
+    <% } %>
+<% } %>
+
+{% comment %}
+<% if (SCCompo.ongoingListeningParty()) { %>
     <% if (json.party.track_position < 0) { %>
         <div id="track">
             Buffering... <%= json.party.entry.song.band.title %> - <%= json.party.entry.song.title  %> - <%= -Math.ceil(json.party.track_position) %>s
@@ -28,14 +39,6 @@
             </div>
         </div>
     <% } %>
-    <% if (json.party.entry.song.comments) { %>
-        <div id="track-info">
-            <h4>Author Comments</h4>
-            <p>
-                <%= json.party.entry.song.comments %>
-            </p>
-        </div>
-    <% } %>
 <% } else if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
     <% if (current_track.entry) { %>
         <div id="track">
@@ -44,13 +47,6 @@
             <%= Time.timeDisplay(current_track.track_position) %> / 
             <%= Time.timeDisplay(current_track.entry.song.length) %>
         </div>
-        <% if (current_track.entry.song.comments) { %>
-            <div id="track-info">
-                <h4>Author Comments</h4>
-                <p>
-                    <%= current_track.entry.song.comments %>
-                </p>
-            </div>
-        <% } %>
     <% } %>
 <% } %>
+{% endcomment %}

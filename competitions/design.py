@@ -1,9 +1,15 @@
 from opensourcemusic import settings
 
-# this file is a list of variables, like settings.py, that are the strings
-# that are displayed to the user. It's to provide a single place for editing
-# the design so you don't have to peruse through code when designing.
+"""
+this file is a list of variables, like settings.py, that make up the design
+aspects of the source code. It's to provide a single place for editing
+the design so you don't have to peruse through code when designing.
+"""
+# colors for waveforms
+waveform_center_color = (157, 203, 229, 255)
+waveform_outer_color = (36, 128, 215, 255)
 
+# strings that are displayed to the user.
 this_field_is_required = 'This field is required.'
 must_submit_via_post = 'Must submit via POST.'
 competition_not_found = 'Competition not found.'

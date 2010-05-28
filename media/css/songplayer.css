@@ -1,0 +1,126 @@
+.player-large {
+    border: 1px solid #c7c7c7;
+    background: #ebebeb;
+    width: 914px;
+    height: 137px;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 12px;
+}
+
+.player-large a {
+    color: #3049ff;
+    text-decoration: underline;
+}
+
+.player-large .top-layer {
+    width: 100%;
+    height: 19px;
+    border-bottom: 1px solid #c7c7c7;
+}
+
+.player-large .top-layer a {
+    float: right;
+    display: block;
+    border-left: 1px solid #c7c7c7;
+    padding: 2px;
+    background-repeat: no-repeat;
+    background-position: right center;
+}
+
+.player-large .dl-mp3 a {
+    margin: 0 2px 0 0;
+    padding: 2px 12px 2px 2px;
+    background-image: url("../img/note16.png");
+}
+
+.player-large .dl-samples a {
+    margin: 0 2px 0 0;
+    padding: 2px 16px 2px 2px;
+    background-image: url("../img/dl-zip16.png");
+}
+
+.player-large .dependencies .good a {
+    margin: 0 2px 0 0;
+    padding: 2px 18px 2px 2px;
+    background-image: url("../img/check16.png");
+}
+
+.player-large .dependencies .bad a {
+    margin: 0 2px 0 0;
+    padding: 2px 18px 2px 2px;
+    background-image: url("../img/warning16.png");
+}
+
+.player-large .dl-project .flp a {
+    margin: 0 2px 0 0;
+    padding: 2px 12px 2px 2px;
+    background-image: url("../img/flp16.png");
+}
+
+.player-large .top-layer .title {
+    padding: 2px;
+}
+
+.player-large .bottom-layer {
+    height: 117px;
+}
+
+.player-large .button-layer {
+    float: left;
+    width: 89px;
+    height: 100%;
+    background: #dbd5db;
+    border-right: 1px solid #c7c7c7;
+}
+
+.player-large .button-layer a {
+    display: block;
+    width: 64px;
+    height: 64px;
+    background-image: url("../img/play-circle64.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: 16px auto 0;
+}
+
+.player-large .button-layer .time {
+    text-align: center;
+    margin: 8px 0 0 0;
+}
+
+.player-large .wave-layer {
+    float: left;
+}
+
+.player-large .wave {
+    display: block;
+    width: 800px;
+    height: 100px;
+    border-bottom: 1px solid #c7c7c7;
+}
+
+.player-large .overlay {
+    background: #000000;
+    opacity: 0.2;
+    filter:alpha(opacity=20);
+    width: 100%;
+    height: 100%;
+}
+
+.player-large .overlay-border {
+    height: 100%;
+    border-right: 1px solid #1b3280;
+}
+
+.player-large .right-layer {
+    float: left;
+    border-left: 1px solid #c7c7c7;
+    height: 100%;
+}
+
+.player-large .right-layer .volume {
+    height: 100px;
+    width: 23px;
+    border-bottom: 1px solid #c7c7c7;
+}
+

@@ -1,0 +1,36 @@
+<div class="player-large">
+    <div class="top-layer">
+        <span class="dl-project"><span class="unknown"><a href="#">Download Project</a></span></span>
+        <span class="dependencies"><span class="unknown"><a href="#">Dependencies</a></span></span>
+        <span class="dl-samples"><a href="#">Download Samples</a></span>
+        <span class="dl-mp3"><a href="#">Download MP3</a></span>
+        <span class="title">Title</span>
+    </div>
+    <div class="bottom-layer">
+        <div class="button-layer">
+            <div class="button">
+                <a href="#"></a>
+            </div>
+            <div class="time">
+                0:00 / 0:00
+            </div>
+        </div>
+        <div class="wave-layer">
+            <div class="wave" style="background-image: url({{ MEDIA_URL}}<%=song.waveform_img%>);">
+                <div class="overlay-border"style="width: <%=current_track.track_position/current_track.entry.song.length*100%>%;">
+                    <div class="overlay">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right-layer">
+            <div class="volume">
+
+            </div>
+            <div class="comment-btn">
+
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
