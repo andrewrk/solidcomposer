@@ -164,6 +164,7 @@ class Song(models.Model):
 
     # in case the artist was generous enough to provide source
     source_file = models.CharField(max_length=500, blank=True)
+    studio = models.ForeignKey('Studio', null=True, blank=True)
 
     # filename where generated waveform img can be found
     waveform_img = models.CharField(max_length=500, blank=True)
@@ -230,3 +231,25 @@ class Tag(models.Model):
 
     def __unicode__(self):
         return self.title
+
+class Studio(models.Model):
+    # e.g. FL Studio
+    title = models.CharField(max_length=100)
+
+    # file extension of project files
+    # this should be a short string and unique.
+    # if every studio uses a different extension, then great,
+    # this will be used for css and making extensions.
+    # if it turns out that there exist studios that use the
+    # same extension, then we'll need another field to identify.
+    extension = models.CharField(max_length=50)
+
+    # description for info page
+    info = models.TextField(blank=True)
+
+    logo_large = models.ImageField(upload_to='img/studio', blank=True, null=True)
+    logo_16x16 = models.ImageField(upload_to='img/studio', blank=True, null=True)
+
+    def __unicode__(self):
+        return self.title
+
