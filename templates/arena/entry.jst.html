@@ -31,26 +31,3 @@
         </a>
     <% }%>
 </div>
-
-
-{% comment %}
-
-<% if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
-<% } else { %>
-    <% if (SCCompo.ongoingListeningParty() && i == json.party.index) { %>
-    <% } else { %>
-        <% if (entry.owner.id == json.user.id) { %>
-            <div class="entry-user">
-                <%= entry.song.band.title %> - <%= entry.song.title %>
-                (<%= Time.timeDisplay(entry.song.length) %>)
-            </div>
-        <% } else { %>
-            <div class="entry">
-                <%= entry.song.band.title %> - <%= entry.song.title %>
-                (<%= Time.timeDisplay(entry.song.length) %>)
-            </div>
-        <% } %>
-    <% } %>
-<% } %>
-
-{% endcomment %}

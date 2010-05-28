@@ -96,6 +96,12 @@
     display: block;
     width: 800px;
     height: 100px;
+}
+
+.player-large .wave-outer {
+    display: block;
+    width: 800px;
+    height: 100px;
     border-bottom: 1px solid #c7c7c7;
 }
 

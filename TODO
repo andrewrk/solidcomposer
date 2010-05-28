@@ -22,10 +22,16 @@
        - home
        - competition page
    > song player
+     - make pause/play button work
+     - disable pause/play during listening party
+     - volume controls
+     - make pause/play light up on mouse hover
+     - ability to click somewhere to scrub (disable during lp)
    > highlight username in chat when mentioned
    > entry area when there are more songs than can fit
      - use a scroll bar
      - when the current song changes, scroll it so that song is visible.
+   > sort entries by date submitted
  * refactor
    > tests to use url reverse
    > get rid of auto_now and auto_now_add 
@@ -34,6 +40,9 @@
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
+ * beginning of song gets cut off during listening party. set it up
+   so that it sets up a setTimeout() to play it right on time instead
+   of cutting into the time.
  * arena - the competitions aren't updating on a second based timer
    > make it a second-based timer but not suck to click the link
  * if creating a competition fails, have a message at the top saying

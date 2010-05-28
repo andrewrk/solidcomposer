@@ -1,10 +1,21 @@
+{% comment %}
+    inputs:
+        song - the song structure to play
+{% endcomment %}
 <div class="player-large">
     <div class="top-layer">
-        <span class="dl-project"><span class="unknown"><a href="#">Download Project</a></span></span>
-        <span class="dependencies"><span class="unknown"><a href="#">Dependencies</a></span></span>
-        <span class="dl-samples"><a href="#">Download Samples</a></span>
-        <span class="dl-mp3"><a href="#">Download MP3</a></span>
-        <span class="title">Title</span>
+        <% if (song.source_file) { %>
+            <span class="dl-project"><span class="unknown"><a href="{{ MEDIA_URL }}<%=song.source_file%>">Download Project</a></span></span>
+        <% } %>
+        {% comment %}
+            need to implement the workbench for this stuff to work.
+            <% if (song.studio) { %>
+                <span class="dependencies"><span class="<% if (song.dependency_check_passed) { %>good<% } else { %>bad<% } %>"><a href="#">Dependencies</a></span></span>
+            <% } %>
+            <span class="dl-samples"><a href="#">Download Samples</a></span>
+        {% endcomment %}
+        <span class="dl-mp3"><a href="{{ MEDIA_URL }}<%=song.mp3_file%>">Download MP3</a></span>
+        <span class="title"><%=song.band.title%> - <%=song.title%></span>
     </div>
     <div class="bottom-layer">
         <div class="button-layer">
@@ -16,9 +27,11 @@
             </div>
         </div>
         <div class="wave-layer">
-            <div class="wave" style="background-image: url({{ MEDIA_URL}}<%=song.waveform_img%>);">
-                <div class="overlay-border"style="width: <%=current_track.track_position/current_track.entry.song.length*100%>%;">
-                    <div class="overlay">
+            <div class="wave-outer">
+                <div class="wave" style="background-image: url({{ MEDIA_URL}}<% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
+                    <div class="overlay-border">
+                        <div class="overlay">
+                        </div>
                     </div>
                 </div>
             </div>
