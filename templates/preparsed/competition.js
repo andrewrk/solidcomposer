@@ -39,10 +39,28 @@ var SCCompo = function () {
         activity: null,
         muted: false,
         media_url: null,
-        urls: {% include "arena/urls.js" %}
+        urls: {% include "arena/urls.js" %},
+        theme_shown: true,
+        rules_shown: true
     };
 
     var jp = null;
+
+    // return whether an element is visible or not
+    function isVisible(div) {
+        return ! (div.css("visibility") == "hidden" || 
+                    div.css("display") == "none");
+    }
+
+    // show an element if it should be shown, hide if it should be hidden
+    function displayCorrectly(div, visible) {
+        var actuallyVisible = isVisible(div);
+        if (visible && ! actuallyVisible) {
+            div.show('fast');
+        } else if(! visible && actuallyVisible) {
+            div.hide('fast');
+        }
+    }
 
     // figure out what state we're on based on dates and state.json
     function getCurrentActivity() {
@@ -195,15 +213,19 @@ var SCCompo = function () {
             var index;
             var entry;
 
-            index = $(this).attr('entry_index');
-            state.current_track.index = index;
-            state.current_track.entry = state.json.entries[index];
-            state.current_track.track_position = 0;
-            jp.jPlayer("setFile",
-                state.media_url+state.current_track.entry.song.mp3_file);
-            jp.jPlayer("play");
-            updateCurrentEntry();
-            updateEntryArea();
+            // only play if it's the right time
+            if (that.votingActive() || that.compoClosed()) {
+                index = $(this).attr('entry_index');
+                state.current_track.index = index;
+                state.current_track.entry = state.json.entries[index];
+                state.current_track.track_position = 0;
+                jp.jPlayer("setFile",
+                    state.media_url+state.current_track.entry.song.mp3_file);
+                jp.jPlayer("play");
+                updateCurrentEntry();
+                updateEntryArea();
+            }
+
             return false;
         }
 
@@ -226,6 +248,25 @@ var SCCompo = function () {
             }
         }
     }
+
+    function updateCompoInfo() {
+        $("#info").html(Jst.evaluate(template_info_s, state));
+
+        // show/hide theme/rules
+        displayCorrectly($("#theme p"), state.theme_shown);
+        $("#theme .showhide a").click(function() {
+            state.theme_shown = !state.theme_shown;
+            updateCompoInfo();
+            return false;
+        });
+
+        displayCorrectly($("#rules p"), state.rules_shown);
+        $("#rules .showhide a").click(function() {
+            state.rules_shown = !state.rules_shown;
+            updateCompoInfo();
+            return false;
+        });
+    }
     
     function updateCompo() {
         var show_submission_form;
@@ -237,7 +278,7 @@ var SCCompo = function () {
         updateStatus();
         updateCurrentEntry();
         $("#vote-status").html(Jst.evaluate(template_vote_status_s, state));
-        $("#info").html(Jst.evaluate(template_info_s, state));
+        updateCompoInfo();
         updateEntryArea();
 
         // show/hide submission form
@@ -248,6 +289,7 @@ var SCCompo = function () {
         } else {
             $("#submission").hide('fast');
         }
+
     }
 
 

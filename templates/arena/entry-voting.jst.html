@@ -1,0 +1,9 @@
+<div class="entry-vote-box">
+    <% if (entry.voted_for) { %>
+        <span class="voted"><a href="#" id="unvote-<%= i %>" title="Undo this vote"></a></span>
+    <% } else { %>
+        <% if (json.votes.left > 0 && entry.owner.id != json.user.id) { %>
+            <span class="unvoted"><a href="#" id="vote-<%= i %>" title="Vote for this entry"></a></span>
+        <% } %>
+    <% } %>
+</div>

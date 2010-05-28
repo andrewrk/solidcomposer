@@ -83,6 +83,12 @@ h4 .sub {
     padding: 12px;
 }
 
+#infowrapper .showhide {
+    font-size: 12px;
+    font-weight: bold;
+    font-family: Verdana, Arial, sans-serif;
+}
+
 h3 {
     font-family: Verdana, Arial, sans-serif;
     font-size: 16px;
@@ -94,27 +100,77 @@ h3 {
 
 #entry-area {
     float: left;
-    width: 400px;
-    height: 300px;
-    margin: 0 8px 8px 8px;
+    margin: 0 8px 14px 8px;
     padding: 0;
     background: #242424;
     font-size: 12px;
     font-family: Verdana, Arial, sans-serif;
 }
 
-.entry a, .entry-playing a {
+#entry-list {
+    float: left;
+    width: 400px;
+    height: 300px;
+}
+
+#entry-voting {
+    float: left;
+    padding: 4px;
+    background: #343434;
+    height: 300px;
+}
+
+.entry-vote-box a {
+    background-repeat: no-repeat;
+    background-position: center middle;
+    width: 24px;
+    height: 24px;
+    display: block;
+    margin: 0 4px 0 0;
+}
+
+.entry-vote-box .voted a {
+    background-image: url("../img/thumbsup.png");
+}
+
+.entry-vote-box .voted a:hover {
+    background-image: url("../img/nothumbsup.png");
+}
+
+.entry-vote-box .unvoted a {
+    background-image: url("../img/thumbsup-gray.png");
+}
+
+.entry-vote-box .unvoted a:hover {
+    background-image: url("../img/thumbsup.png");
+}
+
+.entry-vote-box {
+    display: block;
+    margin: 0;
+    padding: 10px 0 0 8px;
+    height: 32px;
+}
+
+.entry .track {
     color: #ffffff;
     text-decoration: none;
     display: block;
     height: 32px;
-    padding: 4px 0 0 8px;
+    padding: 10px 0 0 8px;
+    margin: 0;
 }
 
-.entry-playing a {
+.entry-user .track {
+    color: #000000;
+    background: #dbe4ff;
+}
+
+.entry-playing .track {
     background: #ffb52b;
     color: #000000;
 }
+
 
 .entry .len, .entry-playing .len {
     float: right;
@@ -145,12 +201,19 @@ h3 {
 }
 
 #chatroom {
-    margin: 0 0 8px 8px;
+    margin: 0 0 14px 8px;
     padding: 0;
 }
 
 #submission {
     clear: both;
-    margin: 0
+    margin: 0 0 14px 8px;
+    padding: 0;
+    width: 850px;
 }
 
+#submit-entry {
+    margin: 0
+    padding: 4px 0 0 4px;
+    border: 1px solid #adc2d1;
+}

@@ -1,0 +1,56 @@
+{% comment %}
+    input:
+        entry - the entry object
+        i - index of entry in the list
+{% endcomment %}
+<% var current = ((SCCompo.ongoingListeningParty() && i == json.party.index)) || (current_track.index == i); %>
+<% var mine = (entry.owner.id == json.user.id); %>
+<% var cclass = current ? " entry-playing" : "" %>
+<% var uclass = mine ? " entry-user" : "" %>
+<div class="entry<%=cclass%><%=uclass%>">
+    <% if (SCCompo.submissionActive() || SCCompo.ongoingListeningParty()) { %>
+        <span class="track">
+    <% } else { %>
+        <a href="#" class="track" id="entry-<%= i %>">
+    <% }%>
+    <% if (current) { %><img src="{{ MEDIA_URL }}img/play24.png" alt="" /><% } %>
+    <span class="len"><%= Time.timeDisplay(entry.song.length) %></span>
+    <%= entry.song.band.title %> - <%= entry.song.title %>
+    <% if (SCCompo.compoClosed() && entry.vote_count > 0) { %>
+        <span class="votes">
+            <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="thumbs up" />
+            <span class="xamt">x <%= entry.vote_count %></span>
+        </span>
+    <% } %>
+    <% if (mine && SCCompo.submissionActive()) { %>
+        (<a href="#" id="resubmit">edit</a>)
+    <% } %>
+    <% if (SCCompo.submissionActive() || SCCompo.ongoingListeningParty()) { %>
+        </span>
+    <% } else { %>
+        </a>
+    <% }%>
+</div>
+
+
+{% comment %}
+
+<% if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
+<% } else { %>
+    <% if (SCCompo.ongoingListeningParty() && i == json.party.index) { %>
+    <% } else { %>
+        <% if (entry.owner.id == json.user.id) { %>
+            <div class="entry-user">
+                <%= entry.song.band.title %> - <%= entry.song.title %>
+                (<%= Time.timeDisplay(entry.song.length) %>)
+            </div>
+        <% } else { %>
+            <div class="entry">
+                <%= entry.song.band.title %> - <%= entry.song.title %>
+                (<%= Time.timeDisplay(entry.song.length) %>)
+            </div>
+        <% } %>
+    <% } %>
+<% } %>
+
+{% endcomment %}

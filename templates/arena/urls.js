@@ -15,7 +15,7 @@
         return "{% filter escapejs %}{% url arena.ajax_vote 0 %}{% endfilter %}".replace(0, id);
     },
     ajax_unvote: function (id) {
-        "{% filter escapejs %}{% url arena.ajax_unvote 0 %}{% endfilter %}".replace(0, id);
+        return "{% filter escapejs %}{% url arena.ajax_unvote 0 %}{% endfilter %}".replace(0, id);
     },
     ajax_submit_entry: "{% filter escapejs %}{% url arena.ajax_submit_entry %}{% endfilter %}",
     create: "{% filter escapejs %}{% url arena.create %}{% endfilter %}",

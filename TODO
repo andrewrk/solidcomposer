@@ -21,13 +21,10 @@
      = arena
        - home
        - competition page
-   > thumbs ups instead of voting
-   > chat colors
    > take full advantage of space on wide screens
-   > make the entry list look good
-     - highlight which song is currently playing
-   > right now when voting is over if you got 1 vote it says
-     "you got 1 votes"
+   > author comments too wide during listening party
+   > song player
+   > highlight username in chat when mentioned
  * refactor
    > tests to use url reverse
    > get rid of auto_now and auto_now_add 
