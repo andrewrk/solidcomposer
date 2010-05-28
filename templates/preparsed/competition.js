@@ -101,6 +101,7 @@ var SCCompo = function () {
                     // this will be pre-loaded because preload is 'auto'
                     // in the jplayer constructor.
                     jp.jPlayer("setFile", current_url);
+                    updateCurrentEntry(true);
                 }
                 if (state.json.party.track_position >= 0) {
                     jp.jPlayer("playHeadTime", state.json.party.track_position*1000);
@@ -160,7 +161,11 @@ var SCCompo = function () {
         var entryLoaded = false;
 
         if (that.ongoingListeningParty()) {
-            secondsPassed = state.json.party.track_position;
+            if (state.json.party.track_position < 0) {
+                secondsPassed = state.json.party.track_position;
+            } else {
+                secondsPassed = state.current_track.track_position;
+            }
             secondsTotal = state.json.party.entry.song.length;
             entryLoaded = true;
         } else if (state.current_track.entry) {
@@ -168,15 +173,32 @@ var SCCompo = function () {
             secondsTotal = state.current_track.entry.song.length;
             entryLoaded = true;
         }
+
+        var isPlaying = jp.jPlayer("getData", "diag.isPlaying");
         
         // only overwrite the div if it needs to.
         if (forcePlayerUpdate) {
             $("#current-entry").html(Jst.evaluate(template_current_entry_s, state));
             // clicks
-            $(".player-large .button a").click(function(){
-                return false;
-            });
+            if (that.votingActive() || that.compoClosed()) {
+                $(".player-large .button a").click(function(){
+                    var isPlaying = jp.jPlayer("getData", "diag.isPlaying");
+                    if (isPlaying) {
+                        jp.jPlayer("pause");
+                    } else {
+                        jp.jPlayer("play");
+                    }
+                    updateCurrentEntry();
+                    return false;
+                });
+            } else {
+                // disable play/pause button
+                $(".player-large .button a").hide();
+            }
         }
+        // show the correct button image
+        var showImg = isPlaying ? 'pause' : 'play';
+        $(".player-large .button a").attr('class', showImg);
 
         // update time and stuff
         var percent;

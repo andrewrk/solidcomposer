@@ -22,8 +22,6 @@
        - home
        - competition page
    > song player
-     - make pause/play button work
-     - disable pause/play during listening party
      - volume controls
      - make pause/play light up on mouse hover
      - ability to click somewhere to scrub (disable during lp)

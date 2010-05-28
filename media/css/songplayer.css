@@ -77,12 +77,18 @@
     display: block;
     width: 64px;
     height: 64px;
-    background-image: url("../img/play-circle64.png");
     background-repeat: no-repeat;
     background-position: center center;
     margin: 16px auto 0;
 }
 
+.player-large .button-layer a.play {
+    background-image: url("../img/play-circle64.png");
+}
+
+.player-large .button-layer a.pause {
+    background-image: url("../img/pause-circle64.png");
+}
 .player-large .button-layer .time {
     text-align: center;
     margin: 8px 0 0 0;
