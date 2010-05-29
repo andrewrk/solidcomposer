@@ -17,7 +17,7 @@ it outpus a space separated list of missing dependencies.
 """
 
 deps = [
-    'django-1.2',
+    'django-1.2.1',
     'south-0.7-rc1',
     'mutagen-1.15',
     'waveform',
@@ -38,10 +38,10 @@ except ImportError:
 # django
 try:
     import django
-    if django.get_version() == '1.2':
-        deps.remove('django-1.2')
+    if django.get_version() == '1.2.1':
+        deps.remove('django-1.2.1')
     else:
-        sys.stderr.write("installed django version %s does not equal %s" % (django.get_version(), '1.2'))
+        sys.stderr.write("installed django version %s does not equal %s" % (django.get_version(), '1.2.1'))
 except ImportError:
     pass
 
