@@ -355,8 +355,6 @@ var SCCompo = function () {
 
     }
 
-
-
     function ajaxRequestLoop() {
         that.ajaxRequest();
         setTimeout(ajaxRequestLoop, stateRequestTimeout);
@@ -436,6 +434,38 @@ var SCCompo = function () {
         });
     }
 
+    function sortEntries() {
+        // sort entries
+        var entryCount = 0;
+        if (state.json.entries.length) {
+            entryCount = state.json.entries.length;
+        }
+
+        if (entryCount > 0) {
+            if (that.compoClosed()) {
+                state.json.entries.sort(function(a,b){
+                    if (a.vote_count > b.vote_count) {
+                        return -1;
+                    } else if (a.vote_count < b.vote_count) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                state.json.entries.sort(function(a,b){
+                    if (a.submit_date > b.submit_date) {
+                        return 1;
+                    } else if (a.submit_date < b.submit_date) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        }
+    }
+
     that = {
         initialize: function (media_url) {
             state.media_url = media_url;
@@ -506,6 +536,8 @@ var SCCompo = function () {
                 }
 
                 state.json = data;
+
+                sortEntries();
 
                 state.activity = getCurrentActivity();
                 if (that.ongoingListeningParty()) {

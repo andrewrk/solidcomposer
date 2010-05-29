@@ -29,6 +29,9 @@
      - use a scroll bar
      - when the current song changes, scroll it so that song is visible.
    > sort entries by date submitted
+   > preload all images
+   > in chat, if a message goes from one day to the next, put a separator
+     bar in there indicating the new date
  * refactor
    > tests to use url reverse
    > get rid of auto_now and auto_now_add 

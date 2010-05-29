@@ -42,7 +42,7 @@ def ajax_hear(request):
 
     if last_message_str == 'null':
         # get entire log for this chat.
-        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room).order_by('timestamp')]
+        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room)]
     else:
         try:
             last_message_id = int(last_message_str)
@@ -50,7 +50,7 @@ def ajax_hear(request):
             last_message_id = 0
 
         last_message = get_object_or_404(ChatMessage, id=last_message_id)
-        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, id__gt=last_message_id).order_by('timestamp')]
+        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, id__gt=last_message_id)]
 
     if request.user.is_authenticated():
         # mark an appearance in the ChatRoom

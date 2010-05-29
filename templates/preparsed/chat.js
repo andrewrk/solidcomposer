@@ -230,6 +230,24 @@ var Chat = function() {
 
                 state.room = data.room;
                 state.user = data.user;
+
+                // sort incoming messages
+                var messageCount = 0;
+                if (data.messages.length) {
+                    messageCount = data.messages.length;
+                }
+                if (messageCount > 0) {
+                    data.messages.sort(function(a,b){
+                        if (a.id > b.id) {
+                            return 1;
+                        } else if (a.id < b.id) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    });
+                }
+
                 for (i=0; i<data.messages.length; ++i) {
                     // if it's a join or part, affect state.onliners
                     if (last_message_id && state.onliners) {

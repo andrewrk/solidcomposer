@@ -290,11 +290,7 @@ def ajax_compo(request, id):
             d['vote_count'] = ThumbsUp.objects.filter(entry=entry).count()
         return d
 
-    if compo_closed:
-        entries = compo.entry_set.annotate(vote_count=Count('thumbsup')).order_by('-vote_count')
-    else:
-        entries = compo.entry_set.order_by('submit_date')
-    data['entries'] = [add_to_entry(x) for x in entries]
+    data['entries'] = [add_to_entry(x) for x in compo.entry_set.all()]
 
     if request.user.is_authenticated():
         max_votes = max_vote_count(compo.entry_set.count())
@@ -385,6 +381,7 @@ def ajax_available(request):
         pkeys = request.user.get_profile().competitions_bookmarked.values_list('pk')
         compos = compos.exclude(pk__in=pkeys)
 
+    # we have to sort on the server due to paging
     compos = compos.order_by('-start_date')
 
     return compoRequest(request, compos)
@@ -400,7 +397,8 @@ def ajax_owned(request):
         return json_response(data)
 
     # only show bookmarked items
-    compos = request.user.get_profile().competitions_bookmarked.order_by('start_date')
+    # we have to sort on the server due to paging
+    compos = request.user.get_profile().competitions_bookmarked.order_by('-start_date')
     return compoRequest(request, compos)
 
 @login_required
