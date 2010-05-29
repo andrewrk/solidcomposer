@@ -17,13 +17,19 @@ def ajax_hear(request):
         room_id = 0
     room = get_object_or_404(ChatRoom, id=room_id)
 
+    def room_data(x):
+        d = safe_model_to_dict(x)
+        d['start_date'] = x.start_date
+        d['end_date'] = x.end_date
+        return d
+
     # make sure user has permission to be in this room
     data = {
         'user': {
             'is_authenticated': request.user.is_authenticated(),
             'has_permission': room.permission_to_chat(request.user),
         },
-        'room': safe_model_to_dict(room),
+        'room': room_data(room),
         'messages': [],
     }
 
