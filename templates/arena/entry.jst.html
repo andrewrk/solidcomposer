@@ -3,7 +3,7 @@
         entry - the entry object
         i - index of entry in the list
 {% endcomment %}
-<% var current = ((SCCompo.ongoingListeningParty() && i == json.party.index)) || (current_track.index == i); %>
+<% var current = ((SCCompo.ongoingListeningParty() && i == json.party.index)) || (player.current_track.index == i); %>
 <% var mine = (entry.owner.id == json.user.id); %>
 <% var cclass = current ? " entry-playing" : "" %>
 <% var uclass = mine ? " entry-user" : "" %>

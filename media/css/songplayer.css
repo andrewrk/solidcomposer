@@ -134,5 +134,38 @@
     height: 100px;
     width: 23px;
     border-bottom: 1px solid #c7c7c7;
+    background-image: url("../img/volume-bar.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.player-large .volume span.icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: relative;
+    top: 0;
+}
+
+.player-large .volume .bar3 span.icon {
+    background-image: url("../img/volume24-3bar.png");
+}
+
+.player-large .volume .bar2 span.icon {
+    background-image: url("../img/volume24-2bar.png");
+}
+
+.player-large .volume .bar1 span.icon {
+    background-image: url("../img/volume24-1bar.png");
+}
+
+.player-large .volume .bar0 span.icon {
+    background-image: url("../img/volume24-0bar.png");
+}
+
+.player-large .volume .mute span.icon {
+    background-image: url("../img/volume24-mute.png");
 }
 

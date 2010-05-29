@@ -2,8 +2,8 @@
     <% var entry = json.party.entry; %>
     {% include 'arena/entry-player.jst.html' %}
 <% } else if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
-    <% if (current_track.entry) { %>
-        <% var entry = current_track.entry; %>
+    <% if (player.current_track.entry) { %>
+        <% var entry = player.current_track.entry; %>
         {% include 'arena/entry-player.jst.html' %}
     <% } %>
 <% } %>

@@ -32,14 +32,15 @@ var SCCompo = function () {
     var state = {
         json: null,
         resubmitting: false,
-        current_track: {
-            index: -1,
-            entry: null,
-            load_percent: 0
+        player: {
+            current_track: {
+                index: -1,
+                entry: null,
+                load_percent: 0
+            }
         },
+        media_url: null, {# django MEDIA_URL #}
         activity: null,
-        muted: false,
-        media_url: null,
         urls: {% include "arena/urls.js" %},
         theme_shown: true,
         rules_shown: true
@@ -48,6 +49,7 @@ var SCCompo = function () {
     var jp = null;
 
     var ajaxForcePlayerUpdate = true;
+    var mouseDowns = 0;
 
     // return whether an element is visible or not
     function isVisible(div) {
@@ -141,14 +143,6 @@ var SCCompo = function () {
         $("#status").html(Jst.evaluate(template_status_s, state));
     }
 
-    function updateJPVolume() {
-        if (state.muted) {
-            jp.jPlayer("volumeMin");
-        } else {
-            jp.jPlayer("volumeMax");
-        }
-    }
-
     // set forcePlayerUpdate to true to force the player to refresh
     // html. should only be used when it switches which song is playing.
     function updateCurrentEntry(forcePlayerUpdate) {
@@ -164,13 +158,13 @@ var SCCompo = function () {
             if (state.json.party.track_position < 0) {
                 secondsPassed = state.json.party.track_position;
             } else {
-                secondsPassed = state.current_track.track_position;
+                secondsPassed = state.player.current_track.track_position;
             }
             secondsTotal = state.json.party.entry.song.length;
             entryLoaded = true;
-        } else if (state.current_track.entry) {
-            secondsPassed = state.current_track.track_position;
-            secondsTotal = state.current_track.entry.song.length;
+        } else if (state.player.current_track.entry) {
+            secondsPassed = state.player.current_track.track_position;
+            secondsTotal = state.player.current_track.entry.song.length;
             entryLoaded = true;
         }
 
@@ -195,12 +189,33 @@ var SCCompo = function () {
                 // disable play/pause button
                 $(".player-large .button a").hide();
             }
+
+            $(".player-large .volume").mousemove(function(e){
+                if (mouseDowns > 0) {
+                    var relativeY = e.pageY - this.offsetTop;
+                    var maxY = 90;
+                    var newVolume = 1 - (relativeY / maxY);
+                    jp.jPlayer("volume", newVolume * 100);
+                    updateCurrentEntry();
+                }
+                return false;
+            });
+            $(".player-large .volume").mousedown(function(e){
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
+            });
+            $(".player-large .volume .icon").mousedown(function(e){
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
+            });
         }
         // show the correct button image
         var showImg = isPlaying ? 'pause' : 'play';
         $(".player-large .button a").attr('class', showImg);
 
-        // update time and stuff
+        // update time and seek head
         var percent;
         var seekWidth; // pixels
         var seekMaxWidth = 800;
@@ -218,10 +233,32 @@ var SCCompo = function () {
 
             // seek head
             seekWidth = percent * seekMaxWidth;
-            waveWidth = state.current_track.load_percent * seekMaxWidth;
+            waveWidth = state.player.current_track.load_percent * seekMaxWidth;
             $(".player-large .overlay-border").css('width', seekWidth+"px");
             $(".player-large .wave").css('width', waveWidth+"px");
         }
+
+        // update volume
+        var volume = jp.jPlayer("getData", "volume") / 100;
+        var volumeClasses = [
+            [0.75, 'bar3'],
+            [0.50, 'bar2'],
+            [0.25, 'bar1'],
+            [0.01, 'bar0'],
+            [-1, 'mute']
+        ];
+        var i;
+        var volumeClass = null;
+        for (i=0; i<volumeClasses.length; ++i) {
+            $(".player-large .volume .icon-id").removeClass(volumeClasses[i][1]);
+            if (volumeClass === null && volume >= volumeClasses[i][0]) {
+                volumeClass = volumeClasses[i][1];
+            }
+        }
+        $(".player-large .volume .icon-id").addClass(volumeClass);
+        var maxY = 100 - 24;
+        var yPos = (1-volume) * maxY;
+        $(".player-large .volume .icon").css("top", yPos);
     }
 
     function updateEntryArea() {
@@ -276,11 +313,11 @@ var SCCompo = function () {
             // only play if it's the right time
             if (that.votingActive() || that.compoClosed()) {
                 index = $(this).attr('entry_index');
-                state.current_track.index = index;
-                state.current_track.entry = state.json.entries[index];
-                state.current_track.track_position = 0;
+                state.player.current_track.index = index;
+                state.player.current_track.entry = state.json.entries[index];
+                state.player.current_track.track_position = 0;
                 jp.jPlayer("setFile",
-                    state.media_url+state.current_track.entry.song.mp3_file);
+                    state.media_url+state.player.current_track.entry.song.mp3_file);
                 jp.jPlayer("play");
                 updateCurrentEntry(true);
                 updateEntryArea();
@@ -406,7 +443,6 @@ var SCCompo = function () {
         jp = $("#jplayer");
         jp.jPlayer({
             ready: function(){
-                updateJPVolume();
                 checkIfShouldPlaySong();
                 this.element.jPlayer("onSoundComplete", function(){
                     checkIfShouldPlaySong();
@@ -415,8 +451,8 @@ var SCCompo = function () {
                     function(loadPercent,playedPercentRelative,
                     playedPercentAbsolute,playedTime,totalTime)
                 {
-                    state.current_track.track_position = playedTime/1000;
-                    state.current_track.load_percent = loadPercent/100;
+                    state.player.current_track.track_position = playedTime/1000;
+                    state.player.current_track.load_percent = loadPercent/100;
                     if (that.ongoingListeningParty()) {
                         current_url = state.media_url+state.json.party.entry.song.mp3_file;
                         actually_playing = this.element.jPlayer("getData", "diag.src");
@@ -473,6 +509,13 @@ var SCCompo = function () {
             compileTemplates();
             ajaxRequestLoop();
             updateDatesLoop();
+
+            $(document).mousedown(function(){
+                ++mouseDowns;
+            });
+            $(document).mouseup(function(){
+                --mouseDowns;
+            });
         },
 
         // true if we are in the middle of a listening party
