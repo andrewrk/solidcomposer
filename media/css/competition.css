@@ -112,6 +112,8 @@ h3 {
     background: #242424;
     font-size: 12px;
     font-family: Verdana, Arial, sans-serif;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }
 
 #entry-list {

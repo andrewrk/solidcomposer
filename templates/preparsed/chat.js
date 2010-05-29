@@ -83,9 +83,6 @@ var Chat = function() {
         if (scroll) {
             scrollToLastMessage();
         }
-        
-        // set focus to this widget again
-        //$("#chat-say-text").focus();
     }
 
     function chatAddClicksToSay() {
@@ -146,6 +143,15 @@ var Chat = function() {
         } else {
             $("#chatroom-cannot-say").show();
             $("#chatroom-say").hide();
+        }
+
+        // highlight messages that mention the user
+        if (state.user !== null) {
+            $("#chatroom .msg .imsg").each(function(index, item){
+                if ($(item).html().indexOf(state.user.username) !== -1) {
+                    $(item).parent().addClass('highlight');
+                }
+            });
         }
     }
 

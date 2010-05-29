@@ -25,7 +25,6 @@
      - volume controls
      - make pause/play light up on mouse hover
      - ability to click somewhere to scrub (disable during lp)
-   > highlight username in chat when mentioned
    > entry area when there are more songs than can fit
      - use a scroll bar
      - when the current song changes, scroll it so that song is visible.
@@ -50,8 +49,8 @@
  * test song playback on google chrome 4.1.249.1064
    > I don't think jplayer is reporting the song position in chrome
  * make the chat more friendly to use for people who are used to IRC
-   > highlight when someone's name is mentioned and and make the page flash
-     (or change the title text to indicate)
+   > make the page flash (or change the title text to indicate) when 
+     someone's name is mentioned in IRC
    > tab completion for names
    > ability to private message?
    > page up / down to scroll up and down
