@@ -215,7 +215,7 @@ def ajax_submit_entry(request):
 
     # generate the waveform image
     try:
-        waveform.draw(mp3_safe_path, png_safe_path, (800, 100),
+        waveform.draw(mp3_safe_path, png_safe_path, design.waveform_size,
             fgGradientCenter=design.waveform_center_color,
             fgGradientOuter=design.waveform_outer_color)
         song.waveform_img = png_safe_path_relative

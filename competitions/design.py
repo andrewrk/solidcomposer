@@ -6,6 +6,7 @@ aspects of the source code. It's to provide a single place for editing
 the design so you don't have to peruse through code when designing.
 """
 # colors for waveforms
+waveform_size = (800, 100)
 waveform_center_color = (157, 203, 229, 255)
 waveform_outer_color = (36, 128, 215, 255)
 
