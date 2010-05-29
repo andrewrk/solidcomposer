@@ -19,7 +19,7 @@ it outpus a space separated list of missing dependencies.
 deps = [
     'django-1.2.1',
     'south-0.7.1',
-    'mutagen-1.15',
+    'mutagen-1.19',
     'waveform',
     'flp',
     'django_extensions-0.4.1',
@@ -48,10 +48,10 @@ except ImportError:
 # mutagen
 try:
     import mutagen
-    if mutagen.version_string == '1.15':
-        deps.remove('mutagen-1.15')
+    if mutagen.version_string == '1.19':
+        deps.remove('mutagen-1.19')
     else:
-        sys.stderr.write("installed mutagen version %s does not equal %s\n" % (mutagen.version_string, '1.15'))
+        sys.stderr.write("installed mutagen version %s does not equal %s\n" % (mutagen.version_string, '1.19'))
 except ImportError:
     pass
 
