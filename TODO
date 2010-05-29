@@ -22,7 +22,6 @@
        - home
        - competition page
    > song player
-     - make pause/play light up on mouse hover
      - ability to click somewhere to scrub (disable during lp)
    > entry area when there are more songs than can fit
      - use a scroll bar

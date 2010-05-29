@@ -213,7 +213,7 @@ var SCCompo = function () {
         }
         // show the correct button image
         var showImg = isPlaying ? 'pause' : 'play';
-        $(".player-large .button a").attr('class', showImg);
+        $(".player-large .button span").attr('class', showImg);
 
         // update time and seek head
         var percent;
