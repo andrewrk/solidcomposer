@@ -105,8 +105,6 @@ class ChatMessage(models.Model):
         """
         if self.type == SYSTEM:
             return u'SYSTEM: %s' % self.message[:30]
-        if self.type == NOTIFICATION:
-            return u'NOTIFICATION: %s' % self.message[:30]
         elif self.type == JOIN:
             return 'JOIN: %s' % self.author
         elif self.type == LEAVE:

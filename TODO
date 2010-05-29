@@ -1,4 +1,5 @@
 = sitewide =
+ * chat: urls and things that don't wrap screw up chat
  * use gravatar for avatars
  * password recovery
  * ability to change password
@@ -15,11 +16,8 @@
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
- * chrome doesn't work at all during listening parties
-   > refresh during the middle of a song
-   > preloading
-   > test song playback on google chrome 4.1.249.1064
-     - I don't think jplayer is reporting the song position in chrome
+ * when compo is closed or during voting, when a song completes, go to the
+   next one.
  * test in IE8
  * beginning of song gets cut off during listening party. set it up
    so that it sets up a setTimeout() to play it right on time instead
