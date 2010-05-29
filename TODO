@@ -10,22 +10,14 @@
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
      * http://attacklab.net/showdown/
- * better music player
-   > see notepad
-   > have a mute button during competitions but not pause/play
-   > ability to download mp3 and source file
-   > ability to comment on sections of the song
  * work on workbench
  * GUI Redesign
    > pages
      = arena
        - home
        - competition page
-   > entry area when there are more songs than can fit
-     - use a scroll bar
-     - when the current song changes, scroll it so that song is visible.
-   > entry area for long song names
-   > sort entries by date submitted
+   > entry area
+       > test long song names
    > preload all images
  * refactor
    > tests to use url reverse
@@ -35,6 +27,9 @@
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
+ * chrome doesn't work at all during listening parties
+   > refresh during the middle of a song
+   > preloading
  * beginning of song gets cut off during listening party. set it up
    so that it sets up a setTimeout() to play it right on time instead
    of cutting into the time.
@@ -109,6 +104,9 @@
  * band settings page
  * automatically upload competition entries to the project manager
  * obfuscate media URLs to protect people's stuff
+ * better music player
+   > ability to comment on sections of the song
+ * integrate into arena
 
  * make it look pretty
  * ability to customize css

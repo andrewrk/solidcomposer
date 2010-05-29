@@ -116,17 +116,23 @@ h3 {
     -webkit-border-radius: 5px;
 }
 
-#entry-list {
-    float: left;
+#entries-inside {
+    overflow: auto;
     width: 400px;
     height: 300px;
 }
 
-#entry-voting {
-    float: left;
-    padding: 4px;
+#entries table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#entries .voting {
     background: #343434;
-    height: 300px;
+}
+
+#entries .entrytd {
+    width: 100%;
 }
 
 .entry-vote-box a {
@@ -135,7 +141,8 @@ h3 {
     width: 24px;
     height: 24px;
     display: block;
-    margin: 0 4px 0 0;
+    margin: 0 8px 0 0;
+    padding: 0;
 }
 
 .entry-vote-box .voted a {
@@ -216,7 +223,7 @@ h3 {
 
 #submission {
     clear: both;
-    margin: 0 0 14px 8px;
+    margin: 0 auto 14px auto;
     padding: 0;
     width: 850px;
 }

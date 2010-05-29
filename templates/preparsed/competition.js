@@ -51,6 +51,16 @@ var SCCompo = function () {
     var ajaxForcePlayerUpdate = true;
     var mouseDowns = 0;
 
+    function scrollToNowPlaying() {
+        // scroll to new track in entry list
+        var container = $("#entries-inside");
+        var scrollMax = container.attr("scrollHeight") - container.height();
+        scrollMax += 20; // hax :(
+        var scrollPercent = state.json.party.index / state.json.entries.length;
+        var scrollPos = scrollPercent * scrollMax;
+        $("#entries-inside").animate({scrollTop: scrollPos}, 500);
+    }
+
     // return whether an element is visible or not
     function isVisible(div) {
         return ! (div.css("visibility") == "hidden" || 
@@ -104,6 +114,7 @@ var SCCompo = function () {
                     // in the jplayer constructor.
                     jp.jPlayer("setFile", current_url);
                     updateCurrentEntry(true);
+                    scrollToNowPlaying();
                 }
                 if (state.json.party.track_position >= 0) {
                     jp.jPlayer("playHeadTime", state.json.party.track_position*1000);
@@ -285,7 +296,11 @@ var SCCompo = function () {
             return;
         }
 
+        // remember scroll position
+        var scrollPos = $("#entries-inside").attr("scrollTop");
         $("#entry-area").html(Jst.evaluate(template_entries_s, state));
+        $("#entries-inside").attr("scrollTop", scrollPos);
+
 
         // clicks for entry-area
         $("#resubmit").click(function(){
@@ -504,9 +519,11 @@ var SCCompo = function () {
                 });
             } else {
                 state.json.entries.sort(function(a,b){
-                    if (a.submit_date > b.submit_date) {
+                    var aDate = Time.coerceDate(a.submit_date);
+                    var bDate = Time.coerceDate(b.submit_date);
+                    if (aDate > bDate) {
                         return 1;
-                    } else if (a.submit_date < b.submit_date) {
+                    } else if (aDate < bDate) {
                         return -1;
                     } else {
                         return 0;

@@ -1,6 +1,26 @@
 <div id="entries">
     <h4><span class="sub">(<%= json.entries.length %> so far)</span>Entries</h4>
     <div id="entries-inside">
+        <table>
+            <% for (var i=0; i<json.entries.length; ++i) { var entry = json.entries[i]; %>
+                <tr>
+                    <td id="entrytd-<%=i%>" class="entrytd">
+                        {% include 'arena/entry.jst.html' %}
+                    </td>
+                    <% if (SCCompo.votingActive()) { %>
+                        <% if (json.user.is_authenticated) { %>
+                            <td class="voting">
+                                {% include 'arena/entry-voting.jst.html' %}
+                            </td>
+                        <% } %>
+                    <% } %>
+                </tr>
+            <% } %>
+        </table>
+
+
+
+        {% comment %}
         <div id="entry-list">
             <% for (var i=0; i<json.entries.length; ++i) { var entry = json.entries[i]; %>
                 {% include 'arena/entry.jst.html' %}
@@ -16,5 +36,6 @@
             <% } %>
         <% } %>
         <div class="clear"></div>
+        {% endcomment %}
     </div>
 </div>

@@ -8,6 +8,7 @@
 #chatroom table {
     border-collapse: collapse;
     height: 100%;
+    width: 100%;
 }
 
 #chatroom .ts {
@@ -32,7 +33,6 @@
     vertical-align: top;
     margin: 0;
     padding: 0 0 0 2px;
-    width: 290px;
 }
 
 #chatroom .header {

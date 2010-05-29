@@ -282,6 +282,8 @@ def ajax_compo(request, id):
     compo_closed = compo.isClosed()
     def add_to_entry(entry):
         d = safe_model_to_dict(entry)
+        d['submit_date'] = entry.submit_date
+        d['edit_date'] = entry.edit_date
         d['owner'] = safe_model_to_dict(entry.owner)
         d['owner']['solo_band'] = safe_model_to_dict(entry.owner.get_profile().solo_band)
         d['song'] = safe_model_to_dict(entry.song)
