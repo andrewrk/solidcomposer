@@ -248,6 +248,11 @@ var Chat = function() {
                     });
                 }
 
+                // arbitrary early date ;)
+                var lastMessageDate = new Date("November 5, 1988 23:30:04");
+                if (state.messages.length > 0) {
+                    lastMessageDate = state.messages[state.messages.length-1].timestamp;
+                }
                 for (i=0; i<data.messages.length; ++i) {
                     // if it's a join or part, affect state.onliners
                     if (last_message_id && state.onliners) {
@@ -259,6 +264,18 @@ var Chat = function() {
                             state.onliners.push(data.messages[i].author);
                         }
                     }
+                    // if this message is on a different day than previous,
+                    // insert a heading
+                    if (Time.isDifferentDay(data.messages[i].timestamp,
+                        lastMessageDate))
+                    {
+                        state.messages.push({
+                            type: that.message_type.HEADER,
+                            timestamp: data.messages[i].timestamp
+                        });
+                        lastMessageDate = data.messages[i].timestamp;
+                    }
+
                     state.messages.push(data.messages[i]);
                 }
                 if (data.messages.length > 0) {
@@ -305,7 +322,9 @@ var Chat = function() {
             MESSAGE:2,
             JOIN:   3,
             LEAVE:  4,
-            NOTICE: 5
+            NOTICE: 5,
+
+            HEADER: 99
         },
 
         // public functions:

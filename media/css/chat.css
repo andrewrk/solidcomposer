@@ -32,6 +32,17 @@
     vertical-align: top;
     margin: 0;
     padding: 0 0 0 2px;
+    width: 290px;
+}
+
+#chatroom .header {
+    background: #d6d6d6;
+    text-align: center;
+}
+#chatroom .header td {
+    padding: 4px;
+    font-weight: bold;
+    color: #5a5a5a;
 }
 
 #chatroom .lastmsg {

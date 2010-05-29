@@ -27,6 +27,10 @@
                 <td class="name">*</td>
                 <td class="imsg"><%= msg.author.username %> <%= msg.message %></td>
             </tr>
+        <% } else if (msg.type == Chat.message_type.HEADER) { %>
+            <tr class="header">
+                <td colspan="3"><%= Time.formatDate(msg.timestamp) %></td>
+            </tr>
         <% } %>
     <% } %>
     <tr class="lastmsg">

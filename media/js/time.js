@@ -116,6 +116,7 @@ var Time = function () {
 
         // pretty print only a date
         formatDate: function (theDate) {
+            theDate = that.coerceDate(theDate);
             return month_names_full[theDate.getMonth()] + " " +
                 theDate.getDate() + ", " +
                 theDate.getFullYear();
@@ -218,6 +219,14 @@ var Time = function () {
             var current = new Date();
             // return the difference
             return (current - local)/1000;
+        },
+
+        isDifferentDay: function (date1, date2) {
+            date1 = that.coerceDate(date1);
+            date2 = that.coerceDate(date2);
+            return date1.getYear() !== date2.getYear() ||
+                   date1.getMonth() !== date2.getMonth() ||
+                   date1.getDate() !== date2.getDate();
         }
     };
     return that;
