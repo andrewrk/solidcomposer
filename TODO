@@ -21,8 +21,6 @@
      = arena
        - home
        - competition page
-   > song player
-     - ability to click somewhere to scrub (disable during lp)
    > entry area when there are more songs than can fit
      - use a scroll bar
      - when the current song changes, scroll it so that song is visible.

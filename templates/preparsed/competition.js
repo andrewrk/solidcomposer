@@ -185,11 +185,24 @@ var SCCompo = function () {
                     updateCurrentEntry();
                     return false;
                 });
+
+                // scrubbing
+                $(".player-large .wave-outer").mousedown(function(e){
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    }
+                    var relativeX = e.pageX - this.offsetLeft;
+                    var maxX = 800;
+                    var newSeek = (relativeX/maxX) * secondsTotal;
+                    jp.jPlayer("playHeadTime", newSeek*1000);
+                    updateCurrentEntry();
+                });
             } else {
                 // disable play/pause button
                 $(".player-large .button a").hide();
             }
 
+            // volume control
             $(".player-large .volume").mousemove(function(e){
                 if (mouseDowns > 0) {
                     var relativeY = e.pageY - this.offsetTop;
@@ -210,6 +223,7 @@ var SCCompo = function () {
                     e.preventDefault();
                 }
             });
+
         }
         // show the correct button image
         var showImg = isPlaying ? 'pause' : 'play';
@@ -514,7 +528,7 @@ var SCCompo = function () {
                 ++mouseDowns;
             });
             $(document).mouseup(function(){
-                --mouseDowns;
+                mouseDowns = 0;
             });
         },
 
