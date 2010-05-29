@@ -1,4 +1,5 @@
 import os
+import sys
 
 """
 this file checks to make sure python dependencies are installed.
@@ -16,32 +17,41 @@ it outpus a space separated list of missing dependencies.
 """
 
 deps = [
-    'django',
-    'south',
-    'mutagen',
+    'django-1.2',
+    'south-0.7-rc1',
+    'mutagen-1.15',
     'waveform',
     'flp',
-    'django_extensions',
+    'django_extensions-0.4.1',
 ]
 
 # south
 try:
     import south
-    deps.remove('south')
+    if south.__version__ == '0.7-rc1':
+        deps.remove('south-0.7-rc1')
+    else:
+        sys.stderr.write("installed south version %s does not equal %s" % (south.__version__, '0.7-rc1'))
 except ImportError:
     pass
 
 # django
 try:
     import django
-    deps.remove('django')
+    if django.get_version() == '1.2':
+        deps.remove('django-1.2')
+    else:
+        sys.stderr.write("installed django version %s does not equal %s" % (django.get_version(), '1.2'))
 except ImportError:
     pass
 
 # mutagen
 try:
     import mutagen
-    deps.remove('mutagen')
+    if mutagen.version_string == '1.15':
+        deps.remove('mutagen-1.15')
+    else:
+        sys.stderr.write("installed mutagen version %s does not equal %s" % (mutagen.version_string, '1.15'))
 except ImportError:
     pass
 
@@ -62,7 +72,10 @@ except ImportError:
 # django extensions
 try:
     import django_extensions
-    deps.remove('django_extensions')
+    if django_extensions.__version__:
+        deps.remove('django_extensions-0.4.1')
+    else:
+        sys.stderr.write("installed django_extensions version %s does not equal %s" % (django_extensions.__version__, '0.4.1'))
 except ImportError:
     pass
 
