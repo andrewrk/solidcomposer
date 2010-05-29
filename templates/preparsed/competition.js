@@ -138,8 +138,8 @@ var SCCompo = function () {
                     scrollToNowPlaying();
                 }
                 if (state.json.party.track_position >= 0) {
-                    jp.jPlayer("playHeadTime", state.json.party.track_position*1000);
                     jp.jPlayer("play");
+                    jp.jPlayer("playHeadTime", state.json.party.track_position*1000);
                 }
             }
         }
