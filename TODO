@@ -17,7 +17,6 @@
        - home
        - competition page
    > entry area
-       > test long song names
  * refactor
    > tests to use url reverse
    > get rid of auto_now and auto_now_add 

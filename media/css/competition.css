@@ -175,6 +175,7 @@ h3 {
     height: 32px;
     padding: 10px 0 0 8px;
     margin: 0;
+    line-height: 0;
 }
 
 .entry-user .track {
