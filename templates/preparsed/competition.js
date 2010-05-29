@@ -46,6 +46,26 @@ var SCCompo = function () {
         rules_shown: true
     };
 
+    var imagesToCache = [
+        "img/thumbsup.png",
+        "img/nothumbsup.png",
+        "img/thumbsup-gray.png",
+        "img/note16.png",
+        "img/dl-zip16.png",
+        "img/check16.png",
+        "img/warning16.png",
+        "img/flp16.png",
+        "img/play-circle64.png",
+        "img/pause-circle64.png",
+        "img/volume-bar.png",
+        "img/volume24-3bar.png",
+        "img/volume24-2bar.png",
+        "img/volume24-1bar.png",
+        "img/volume24-0bar.png",
+        "img/volume24-mute.png",
+        "img/play24.png"
+    ];
+
     var jp = null;
 
     var ajaxForcePlayerUpdate = true;
@@ -114,6 +134,7 @@ var SCCompo = function () {
                     // in the jplayer constructor.
                     jp.jPlayer("setFile", current_url);
                     updateCurrentEntry(true);
+                    updateEntryArea();
                     scrollToNowPlaying();
                 }
                 if (state.json.party.track_position >= 0) {
@@ -533,6 +554,14 @@ var SCCompo = function () {
         }
     }
 
+    function cacheImages() {
+        var i;
+        var img = new Image();
+        for (i=0; i<imagesToCache.length; ++i) {
+            img.src = state.media_url + imagesToCache[i];
+        }
+    }
+
     that = {
         initialize: function (media_url) {
             state.media_url = media_url;
@@ -540,6 +569,7 @@ var SCCompo = function () {
             compileTemplates();
             ajaxRequestLoop();
             updateDatesLoop();
+            cacheImages();
 
             $(document).mousedown(function(){
                 ++mouseDowns;
