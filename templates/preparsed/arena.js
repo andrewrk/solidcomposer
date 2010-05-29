@@ -75,7 +75,7 @@ var SCArena = function () {
         addClicksToSection(state.available);
 
         // page navigation
-        $("#public-nav a").click(function(){
+        $(".nav .available a").click(function(){
             available_page = $(this).attr('page');
             ajaxRequestAvailable();
             return false;
@@ -93,7 +93,7 @@ var SCArena = function () {
             addClicksToSection(state.owned);
 
             // page navigation
-            $("#owned-nav a").click(function(){
+            $(".nav .owned a").click(function(){
                 owned_page = $(this).attr('page');
                 ajaxRequestOwned();
                 return false;

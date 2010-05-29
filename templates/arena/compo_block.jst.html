@@ -1,10 +1,10 @@
 <div class="compo">
-    <% if (jst_compo.user_entered) { %>
+    <% if (jst_compo.user_entered && jst_compo.vote_count > 0) { %>
         <span class="vote-count">
             <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="+" /><%= jst_compo.vote_count %>
         </span>
     <% } %>
-    <h4><%= jst_compo.title %></h4>
+    <h4><a href="<%=urls.compete(jst_compo.id)%>" id="compo-<%= jst_compo.id %>-view"><%= jst_compo.title %></a></h4>
     <% if (Time.secondsUntil(jst_compo.start_date) > 0) { %>
         <p>starts in <%= Time.printableTimeUntil(jst_compo.start_date) %></p>
     <% } else if (Time.secondsUntil(jst_compo.submit_deadline) > 0) { %>
@@ -28,9 +28,9 @@
         <a href="<%=urls.compete(jst_compo.id)%>" id="compo-<%= jst_compo.id %>-view">view</a>
         <% if (user.is_authenticated) { %>
             <% if (jst_compo.bookmarked) { %>
-                <a href="#" id="compo-<%= jst_compo.id %>-remove"><img src="{{ MEDIA_URL }}img/close.png" alt="unbookmark"></a>
+                <a href="#" id="compo-<%= jst_compo.id %>-remove"><img src="{{ MEDIA_URL }}img/close.png" alt="">remove</a>
             <% } else { %>
-                <a href="#" id="compo-<%= jst_compo.id %>-bookmark"><img src="{{ MEDIA_URL }}img/favorite.png" alt="" />bookmark</a>
+                <a href="#" id="compo-<%= jst_compo.id %>-bookmark"><img src="{{ MEDIA_URL }}img/favorite.png" alt="" />join</a>
             <% } %>
         <% } %>
     </div>

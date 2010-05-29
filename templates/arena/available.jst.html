@@ -1,6 +1,7 @@
 <div id="public-competitions">
     <h2>Public Competitions</h2>
     <% var jst_compo_list = available; %>
+    <% var jst_list_name = 'available'; %>
     <% if (jst_compo_list.compos.length > 0) { %>
         {% include 'arena/compo_list.jst.html' %}
     <% } else { %>

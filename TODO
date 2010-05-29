@@ -1,8 +1,6 @@
 = sitewide =
  * make sure no messages can be said when chat room is closed.
    specifically join/part messages
- * ditch order_by in favor of client-side sorting.
-   > chat ajax messages
  * use gravatar for avatars
  * password recovery
  * ability to change password
@@ -11,12 +9,6 @@
      * provide some way to format themes, rules, comments, etc
      * http://attacklab.net/showdown/
  * work on workbench
- * GUI Redesign
-   > pages
-     = arena
-       - home
-       - competition page
-   > entry area
  * refactor
    > tests to use url reverse
    > get rid of auto_now and auto_now_add 
@@ -25,9 +17,13 @@
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
+ * arena home GUI Redesign
  * chrome doesn't work at all during listening parties
    > refresh during the middle of a song
    > preloading
+   > test song playback on google chrome 4.1.249.1064
+     - I don't think jplayer is reporting the song position in chrome
+ * test in IE8
  * beginning of song gets cut off during listening party. set it up
    so that it sets up a setTimeout() to play it right on time instead
    of cutting into the time.
@@ -36,9 +32,6 @@
  * if creating a competition fails, have a message at the top saying
    "please correct these errors."
  * edit competition
- * update to latest jplayer and use the preload feature
- * test song playback on google chrome 4.1.249.1064
-   > I don't think jplayer is reporting the song position in chrome
  * make the chat more friendly to use for people who are used to IRC
    > make the page flash (or change the title text to indicate) when 
      someone's name is mentioned in IRC

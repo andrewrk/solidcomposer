@@ -11,12 +11,19 @@
     <div id="create">
         <a href="/arena/create/">Create a Competition</a>
     </div>
-    <div id="owned">
-    {% include 'loading.html' %}
+    <div id="bread">
+        <a href="{% url home %}">Home</a>
+        &gt;
+        <span class="dest">Arena</span>
     </div>
-    <div id="available">
-    {% include 'loading.html' %}
+    <div id="compowrapper">
+        <div id="owned">
+        {% include 'loading.html' %}
+        </div>
+        <div id="available">
+        {% include 'loading.html' %}
+        </div>
+        <div class="clear"></div>
     </div>
-    <div class="clear"></div>
 {% endblock %}
 
