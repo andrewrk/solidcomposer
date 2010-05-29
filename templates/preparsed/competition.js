@@ -73,10 +73,16 @@ var SCCompo = function () {
 
     function scrollToNowPlaying() {
         // scroll to new track in entry list
+        var index;
+        if (that.ongoingListeningParty()) {
+            index = state.json.party.index;
+        } else {
+            index = state.player.current_track.index;
+        }
         var container = $("#entries-inside");
         var scrollMax = container.attr("scrollHeight") - container.height();
         scrollMax += 20; // hax :(
-        var scrollPercent = state.json.party.index / state.json.entries.length;
+        var scrollPercent = index / state.json.entries.length;
         var scrollPos = scrollPercent * scrollMax;
         $("#entries-inside").animate({scrollTop: scrollPos}, 500);
     }
@@ -363,7 +369,7 @@ var SCCompo = function () {
             // only play if it's the right time
             if (that.votingActive() || that.compoClosed()) {
                 index = $(this).attr('entry_index');
-                state.player.current_track.index = index;
+                state.player.current_track.index = parseInt(index);
                 state.player.current_track.entry = state.json.entries[index];
                 state.player.current_track.track_position = 0;
                 jp.jPlayer("setFile",
@@ -486,6 +492,27 @@ var SCCompo = function () {
             .removeAttr('selected');
     }
 
+    function goNextTrack() {
+        var current_url;
+        if (that.votingActive() || that.compoClosed()) {
+            // go to the next item in the playlist
+            if (state.player.current_track.index + 1 <
+                state.json.entries.length)
+            {
+                state.player.current_track.index += 1;
+                state.player.current_track.entry =
+                    state.json.entries[state.player.current_track.index];
+                current_url = state.media_url +
+                    state.player.current_track.entry.song.mp3_file;
+                jp.jPlayer("setFile", current_url);
+                updateCurrentEntry(true);
+                updateEntryArea();
+                scrollToNowPlaying();
+                jp.jPlayer("play");
+            }
+        }
+    }
+
     function initializeJPlayer() {
         var current_url;
         var actually_playing;
@@ -495,7 +522,10 @@ var SCCompo = function () {
             ready: function(){
                 checkIfShouldPlaySong();
                 this.element.jPlayer("onSoundComplete", function(){
+                    // listening party
                     checkIfShouldPlaySong();
+                    // non listening party
+                    goNextTrack();
                 });
                 this.element.jPlayer("onProgressChange",
                     function(loadPercent,playedPercentRelative,
