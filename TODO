@@ -28,6 +28,7 @@
    > entry area when there are more songs than can fit
      - use a scroll bar
      - when the current song changes, scroll it so that song is visible.
+   > entry area for long song names
    > sort entries by date submitted
    > preload all images
  * refactor
