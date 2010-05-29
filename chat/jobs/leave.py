@@ -24,5 +24,6 @@ class Job(BaseJob):
             m.type=LEAVE
             m.author=appearance.person
             m.save()
-            appearance.delete()
+
+        appearances.delete()
 

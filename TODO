@@ -15,7 +15,6 @@
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
- * arena home GUI Redesign
  * chrome doesn't work at all during listening parties
    > refresh during the middle of a song
    > preloading
@@ -70,6 +69,7 @@
  * google calendar integration
  * rss feed for competitions
  * ability to customize the design
+ * arena home GUI Redesign
 
 = workbench =
  * workbench page
