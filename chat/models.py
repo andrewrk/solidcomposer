@@ -52,6 +52,10 @@ class ChatRoom(models.Model):
             return True
 
     def is_active(self):
+        """
+        returns True if and only if the current date and time is
+        within the chat room's active period.
+        """
         now = datetime.now()
         if not self.start_date is None:
             if self.start_date > now:

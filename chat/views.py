@@ -52,8 +52,8 @@ def ajax_hear(request):
         last_message = get_object_or_404(ChatMessage, id=last_message_id)
         data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, id__gt=last_message_id)]
 
-    if request.user.is_authenticated():
-        # mark an appearance in the ChatRoom
+    # mark an appearance in the ChatRoom
+    if request.user.is_authenticated() and room.is_active():
         appearances = Appearance.objects.filter(person=request.user, room=room)
         if appearances.count() > 0:
             appearances[0].save() # update the timestamp

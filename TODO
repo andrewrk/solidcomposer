@@ -1,6 +1,4 @@
 = sitewide =
- * make sure no messages can be said when chat room is closed.
-   specifically join/part messages
  * use gravatar for avatars
  * password recovery
  * ability to change password
