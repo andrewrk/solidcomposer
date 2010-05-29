@@ -283,6 +283,8 @@ class SimpleTest(TestCase):
         self.assertEqual(data['user']['has_permission'], True)
         # 3 messages: join, join, leave
         self.assertEqual(len(data['messages']), 3)
+        # have to sort locally
+        data['messages'].sort(lambda x, y: cmp(x['id'], y['id']))
         self.assertEqual(data['messages'][2]['type'], LEAVE)
         self.assertEqual(data['messages'][2]['author']['username'], 'superjoe')
 
