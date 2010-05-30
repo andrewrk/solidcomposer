@@ -1,4 +1,11 @@
 = sitewide =
+ * competition: the listening party starts over after it ends. whoops.
+ * chat: make highlighting not case sensitive
+ * chat: sometimes duplicate messages show up
+   solution: in javascript make sure duplicate ids can't be shown.
+ * chat: hyperlinks
+ * chat: sorting onliners is case sensitive, whoops
+ * chat: increase onliners timeout
  * chat: urls and things that don't wrap screw up chat
  * use gravatar for avatars
  * password recovery
@@ -16,6 +23,8 @@
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
+ * show competition length as metadata
+ * auto theme generator
  * when compo is closed or during voting, when a song completes, go to the
    next one.
  * test in IE8
@@ -63,6 +72,7 @@
  * make the gui experience of clicking edit on a submission and then
    deciding not to better.
 
+ * allow uploading ogg
  * Integrate chat from an IRC channel.
  * google calendar integration
  * rss feed for competitions
