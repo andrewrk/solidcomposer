@@ -5,6 +5,7 @@
    solution: in javascript make sure duplicate ids can't be shown.
  * chat: hyperlinks
  * chat: sorting onliners is case sensitive, whoops
+ * chat: test when there are a crapton of onliners
  * chat: increase onliners timeout
  * chat: urls and things that don't wrap screw up chat
  * use gravatar for avatars
