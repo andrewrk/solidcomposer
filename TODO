@@ -3,10 +3,12 @@
  * chat: sometimes duplicate messages show up
    solution: in javascript make sure duplicate ids can't be shown.
  * chat: hyperlinks
+ * chat: sometimes the design gets put into multiple lines
  * chat: sorting onliners is case sensitive, whoops
  * chat: test when there are a crapton of onliners
  * chat: increase onliners timeout
  * chat: urls and things that don't wrap screw up chat
+ * entry list: "so far" is misleading. use a better word.
  * use gravatar for avatars
  * password recovery
  * ability to change password
