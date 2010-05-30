@@ -65,6 +65,7 @@ var SCCompo = function () {
         "img/volume24-mute.png",
         "img/play24.png"
     ];
+    var cachedImages = [];
 
     var jp = null;
 
@@ -586,9 +587,9 @@ var SCCompo = function () {
 
     function cacheImages() {
         var i;
-        var img = new Image();
         for (i=0; i<imagesToCache.length; ++i) {
-            img.src = state.media_url + imagesToCache[i];
+            cachedImages[i] = new Image();
+            cachedImages[i].src = state.media_url + imagesToCache[i];
         }
     }
 
