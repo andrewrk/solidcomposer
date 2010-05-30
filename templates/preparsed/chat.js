@@ -148,7 +148,9 @@ var Chat = function() {
         // highlight messages that mention the user
         if (state.user !== null) {
             $("#chatroom .msg .imsg").each(function(index, item){
-                if ($(item).html().indexOf(state.user.username) !== -1) {
+                if ($(item).html().toLowerCase().indexOf(
+                    state.user.username.toLowerCase()) !== -1)
+                {
                     $(item).parent().addClass('highlight');
                 }
             });

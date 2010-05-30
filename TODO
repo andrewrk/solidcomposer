@@ -1,6 +1,5 @@
 = sitewide =
  * competition: the listening party starts over after it ends. whoops.
- * chat: make highlighting not case sensitive
  * chat: sometimes duplicate messages show up
    solution: in javascript make sure duplicate ids can't be shown.
  * chat: hyperlinks
