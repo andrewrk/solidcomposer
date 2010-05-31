@@ -300,7 +300,7 @@ var Chat = function() {
                             lastMessageDate))
                         {
                             
-                            state.messages.splice(insertIndex+1, 0, {
+                            state.messages.splice(insertIndex, 0, {
                                 id: (data.messages[i].id + prevId) / 2,
                                 type: that.message_type.HEADER,
                                 timestamp: data.messages[i].timestamp
