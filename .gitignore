@@ -3,5 +3,6 @@
 *.swp
 media/js/pre
 media/compo/mp3/*
+media/band
 settings_user.py
 dump.json

@@ -25,6 +25,9 @@ def absolute(relative_path):
 class SimpleTest(TestCase):
     def setUp(self):
         self.dirtyFiles = []
+
+        # create the free account
+        AccountPlan.objects.create(usd_per_month=0, total_space=1024*1024*1024*0.5, customer_id=0) 
         # create some users
         register_url = reverse("register")
         for username in ("skiessi", "superjoe", "just64helpin"):

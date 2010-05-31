@@ -1,17 +1,12 @@
 from opensourcemusic import settings
-
-"""
-this file is a list of variables, like settings.py, that make up the design
-aspects of the source code. It's to provide a single place for editing
-the design so you don't have to peruse through code when designing.
-"""
-# colors for waveforms
-waveform_size = (800, 100)
-waveform_center_color = (157, 203, 229, 255)
-waveform_outer_color = (36, 128, 215, 255)
+from opensourcemusic.main import design
 
 # strings that are displayed to the user.
-this_field_is_required = 'This field is required.'
+this_field_is_required = design.this_field_is_required
+uploaded_file_must_be_mp3 = design.uploaded_file_must_be_mp3
+song_too_long = design.song_too_long
+sketchy_mp3_file = design.sketchy_mp3_file
+invalid_mp3_file = design.invalid_mp3_file
 must_submit_via_post = 'Must submit via POST.'
 competition_not_found = 'Competition not found.'
 past_submission_deadline = 'Past submission deadline.'
@@ -20,14 +15,9 @@ mp3_too_big = 'MP3 file is too large.'
 source_file_too_big = 'Project source file is too large.'
 entry_title_required = 'Entry title is required.'
 mp3_required = 'MP3 file submission is required.'
-invalid_mp3_file = 'Invalid MP3 file.'
-sketchy_mp3_file = 'Sketchy MP3 file.'
-song_too_long = 'Song is too long.'
-unable_to_save_id3_tags = 'Unable to save ID3 tags.'
 not_authenticated = 'You are not logged in.'
 cannot_vote_for_yourself = 'You may not vote for yourself.'
 no_votes_left = 'No votes left.'
-uploaded_file_must_be_mp3 = 'Uploaded file must be an MP3.'
 cannot_start_compo_in_the_past = 'You cannot start a competition in the past.'
 give_at_least_x_minutes_to_work = 'You have to give people at least %i minutes to work.' % settings.MINIMUM_COMPO_LENGTH
 if_you_want_lp_set_date = 'If you want a listening party, you need to set a date.'

@@ -9,6 +9,9 @@ import simplejson as json
 
 class SimpleTest(TestCase):
     def setUp(self):
+        # create the free account
+        AccountPlan.objects.create(usd_per_month=0, total_space=1024*1024*1024*0.5, customer_id=0) 
+
         # create some users
         for username in ("skiessi", "superjoe", "just64helpin"):
             response = self.client.post('/register/', {

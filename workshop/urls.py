@@ -11,6 +11,9 @@ urlpatterns = patterns('',
     url(r'^ajax/invite/ignore/$', 'opensourcemusic.workshop.views.ajax_ignore_invite', name="workbench.ajax_ignore_invite"),
     url(r'^ajax/invite/accept/$', 'opensourcemusic.workshop.views.ajax_accept_invite', name="workbench.ajax_accept_invite"),
 
-    url(r'^band/(.+)/$', 'opensourcemusic.workshop.views.band', name="workbench.band"),
     url(r'^create/$', 'opensourcemusic.workshop.views.create_band', name="workbench.create_band"),
+
+    url(r'^band/(\d+)/$', 'opensourcemusic.workshop.views.band', name="workbench.band"),
+    url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),
+    url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
 )

@@ -1,4 +1,5 @@
 = sitewide =
+ * refactor to explicitly have to add data to json instead of UNSAFE_KEYS
  * chat: clicking onliners should open a new window
  * download mp3: box instead of link
  * competition: the listening party starts over after it ends. whoops.
@@ -83,6 +84,18 @@
 = workbench =
  * workbench page
    > project manager page
+     - Filters
+       # All
+       # available
+       # checked out
+       # checked out to me
+       # scrapped
+     - filter search box
+     - new project button
+   > new project page
+     - title
+     - source project file
+     - mp3 preview
    > project page
    > ability to create band invitations
      - creating a link to hand out

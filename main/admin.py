@@ -3,6 +3,7 @@ from django.contrib import admin
 
 stuff = (
     Profile,
+    AccountPlan,
     Competition,
     ThumbsUp,
     Entry,

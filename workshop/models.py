@@ -38,11 +38,10 @@ class BandInvitation(models.Model):
 
 class ProjectVersion(models.Model):
     project = models.ForeignKey('Project')
-    title = models.CharField(max_length=100)
+    # comments, title, owner, and timestamp are in the song
     song = models.ForeignKey(Song)
+    # version counter like subversion
     version = models.IntegerField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(User)
 
 class Project(models.Model):
     band = models.ForeignKey(Band)
@@ -65,8 +64,7 @@ class Project(models.Model):
     subscribers = models.ManyToManyField(User, related_name='project_subscribers')
 
     def __unicode__(self):
-        return self.title
-
+        return self.get_title()
 
     def get_latest_version(self):
         versions = ProjectVersion.objects.filter(project=self).order_by('-version')
@@ -74,3 +72,6 @@ class Project(models.Model):
             return versions[0]
         else:
             return None
+
+    def get_title(self):
+        return self.get_latest_version().song.title

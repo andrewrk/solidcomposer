@@ -19,7 +19,7 @@ class SubmitEntryForm(forms.Form):
     def clean_file_mp3(self):
         filename = self.cleaned_data['file_mp3']
 
-        if filename[:3].lower() != 'mp3':
+        if filename[-3:].lower() != 'mp3':
             raise forms.ValidationError(design.uploaded_file_must_be_mp3)
 
         return filename

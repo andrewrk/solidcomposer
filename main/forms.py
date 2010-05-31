@@ -5,6 +5,7 @@ from opensourcemusic import settings
 from opensourcemusic.main import design
 
 from datetime import datetime, timedelta
+import string
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100,
@@ -38,8 +39,21 @@ class RegisterForm(forms.Form):
 
         return password2
 
+    def clean_artist_name(self):
+        artist_name = self.cleaned_data['artist_name']
+        disallowed_chars = Band.disallowed_chars
+        for c in artist_name:
+            if c in disallowed_chars:
+                raise forms.ValidationError(design.invalid_characters_in_artist_name % disallowed_chars)
+        return artist_name
+
     def clean_username(self):
         username = self.cleaned_data['username']
+
+        disallowed_chars = Profile.disallowed_chars
+        for c in username:
+            if c in disallowed_chars:
+                raise forms.ValidationError(design.invalid_characters_in_user_name % disallowed_chars)
 
         old_users = User.objects.filter(username=username)
         if old_users.count() > 0:

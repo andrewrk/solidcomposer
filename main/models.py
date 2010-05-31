@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from chat.models import ChatRoom
 
 from datetime import datetime, timedelta
+import string
 
 FULL_OPEN, OPEN_SOURCE, TRANSPARENT, NO_CRITIQUE, PRIVATE = range(5)
 
@@ -39,6 +40,12 @@ class Band(models.Model):
     )
 
     title = models.CharField(max_length=100)
+    # automatically created by create_paths. as close to title as possible yet unique.
+    url = models.CharField(max_length=110, unique=True, null=True)
+    # automatically created by create_paths. as close to title as possible yet completely file
+    # system safe as well as unique.
+    folder = models.CharField(max_length=110, unique=True, null=True)
+
     # openness is what applies to people who aren't explicitly in the 
     # band members list.
     openness = models.IntegerField(choices=OPENNESS_CHOICES, default=PRIVATE)
@@ -49,17 +56,85 @@ class Band(models.Model):
     # True if people have to check stuff out to work on it
     concurrent_editing = models.BooleanField(default=False)
 
+    def create_url(self):
+        # break title into url safe string
+        others = Band.objects.filter(url=self.title).count()
+        if others == 0:
+            self.url = self.title
+            return
+
+        # append digits until it is unique
+        suffix = 2
+        while others > 0:
+            proposed = self.title + str(suffix)
+            others = Band.objects.filter(url=proposed).count()
+            suffix += 1
+
+        self.url = proposed
+
+    def create_folder(self):
+        # break title into folder-safe string
+        allowed_chars = string.letters + string.digits + r'_-.'
+        replacement = '_'
+        safe_title = ''
+        for c in self.title:
+            if c in allowed_chars:
+                safe_title += c
+            else:
+                safe_title += replacement
+
+        others = Band.objects.filter(folder=safe_title).count()
+        if others == 0:
+            self.folder = safe_title
+            return
+
+        # append digits until it is unique
+        suffix = 2
+        while others > 0:
+            proposed = safe_title + str(suffix)
+            others = Band.objects.filter(folder=proposed).count()
+            suffix += 1
+
+        self.folder = proposed
+
+    def create_paths(self):
+        """
+        creates the url and folder for this object
+        """
+        self.create_url()
+        self.create_folder()
+
     def contributors(self):
         return BandMember.objects.filter(band=self, role=BAND_MEMBER)
 
     def __unicode__(self):
         return self.title
 
+    disallowed_chars = r'\./?'
+
+class AccountPlan(models.Model):
+    """
+    The payment plan and features that a user has
+    """
+    # how much the user has to pay per month
+    usd_per_month = models.FloatField()
+    # byte count limit of their account
+    total_space = models.IntegerField()
+    # the number that identifies a customer with the merchant
+    customer_id = models.IntegerField()
+
+    def __unicode__(self):
+        return "$%s/mo - %i bytes" % (self.usd_per_month, self.total_space)
+
+
 class Profile(models.Model):
     UNSAFE_KEYS = (
         'activate_code',
         'activated',
         'competitions_bookmarked',
+        'plan',
+        'total_space',
+        'used_space',
     )
 
     user = models.ForeignKey(User, unique=True)
@@ -74,11 +149,20 @@ class Profile(models.Model):
     # the competitions the player has bookmarked
     competitions_bookmarked = models.ManyToManyField('Competition', blank=True, related_name='competitions_bookmarked')
 
+    # how much space does the user have in their account in bytes
+    # when a user signs up for a plan, this is inherited from the plan's
+    # total_space, but it can be overridden here.
+    total_space = models.IntegerField()
+    used_space = models.IntegerField(default=0)
+    plan = models.ForeignKey(AccountPlan, null=True)
+
     def __unicode__(self):
         return self.user.username
 
     def get_points(self):
         return ThumbsUp.objects.filter(entry__owner=self).count()
+
+    disallowed_chars = r'\./?'
 
 class Competition(models.Model):
     UNSAFE_KEYS = (

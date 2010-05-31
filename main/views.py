@@ -5,75 +5,17 @@ from django.template.loader import get_template
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
 
 from opensourcemusic.main.forms import *
 from opensourcemusic import settings
 from opensourcemusic.main import design
 
-import simplejson as json
 from datetime import datetime, timedelta
-import string
-import random
 
-def json_response(data):
-    return HttpResponse(json_dump(data), mimetype="text/plain")
-
-def remove_unsafe_keys(hash, model):
-    """
-    look for UNSAFE_KEYS in the model. if it exists, delete all those entries
-    from the hash.
-    """
-    if issubclass(model, User):
-        check = (
-            'password',
-            'user_permissions',
-            'is_user',
-            'is_staff'
-            'is_superuser',
-            'email',
-            'first_name',
-            'last_name',
-            'groups',
-        )
-    else:
-        try:
-            check = model.UNSAFE_KEYS
-        except AttributeError:
-            return
-
-    for key in check:
-        if hash.has_key(key):
-            del hash[key]
-        
-def safe_model_to_dict(model_instance):
-    hash = model_to_dict(model_instance)
-    remove_unsafe_keys(hash, type(model_instance))
-    if issubclass(type(model_instance), User):
-        hash['get_profile'] = safe_model_to_dict(model_instance.get_profile())
-    return hash
-
-def json_dthandler(obj):
-    if isinstance(obj, datetime):
-        return obj.strftime('%B %d, %Y %H:%M:%S')
-    else:
-        return None
-
-def json_dump(obj):
-    return json.dumps(obj, default=json_dthandler)
-    
-def activeUser(request):
-    """
-    touch the request's user if they are authenticated in order
-    to update the last_activity field
-    """
-    if request.user.is_authenticated():
-        request.user.get_profile().save() # set active date
+from main.common import *
 
 def ajax_login_state(request):
-    activeUser(request)
-
     # build the object
     data = {
         'user': {
@@ -157,6 +99,7 @@ def user_register(request):
             # create a band
             band = Band()
             band.title = form.cleaned_data.get('artist_name')
+            band.create_paths()
             band.save()
 
             # create a profile
@@ -166,6 +109,9 @@ def user_register(request):
             profile.activated = False
             profile.activate_code = create_hash(32)
             profile.logon_count = 0
+            free_plan = AccountPlan.objects.filter(usd_per_month=0.0)[0]
+            profile.total_space = free_plan.total_space
+            profile.plan = free_plan
             profile.save()
 
             # make them a manager
@@ -186,16 +132,6 @@ def user_register(request):
     else:
         form = RegisterForm()
     return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))
-
-def create_hash(length):
-    """
-    returns a string of length length with random alphanumeric characters
-    """
-    chars = string.letters + string.digits
-    code = ""
-    for i in range(length):
-        code += chars[random.randint(0, len(chars)-1)]
-    return code
 
 def confirm(request, username, code):
     try:
