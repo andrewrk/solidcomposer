@@ -168,6 +168,13 @@ def user_register(request):
             profile.logon_count = 0
             profile.save()
 
+            # make them a manager
+            manager = BandMember()
+            manager.user = user
+            manager.band = band
+            manager.role = MANAGER
+            manager.save()
+
             # send an activation email
             subject = "Account Confirmation - SolidComposer"
             message = get_template('activation_email.txt').render(Context({ 'username': user.username, 'code': profile.activate_code}))
