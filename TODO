@@ -1,7 +1,7 @@
 = sitewide =
+ * chat: clicking onliners should open a new window
+ * download mp3: box instead of link
  * competition: the listening party starts over after it ends. whoops.
- * chat: sometimes duplicate messages show up
-   solution: in javascript make sure duplicate ids can't be shown.
  * chat: hyperlinks
  * chat: sometimes the design gets put into multiple lines
  * chat: increase onliners timeout
@@ -71,6 +71,7 @@
    people know they're running out of time
  * make the gui experience of clicking edit on a submission and then
    deciding not to better.
+ * play a noise that indicates listening party is starting
 
  * allow uploading ogg
  * Integrate chat from an IRC channel.

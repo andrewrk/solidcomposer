@@ -209,6 +209,21 @@ var Chat = function() {
     function userJoin(user_id) {
     }
 
+    // return the index of where a new message should be inserted.
+    // -1 if the message already exists
+    function getMessageIndex(id) {
+        // loop backwards through the array until we find the
+        // slot for the message
+        var i;
+        for (i=state.messages.length-1; i>=0; --i) {
+            if (state.messages[i].id < id) {
+                return i+1;
+            } else if (state.messages[i].id === id) {
+                return -1;
+            }
+        }
+    }
+
     function chatAjaxRequest() {
         $.getJSON(state.urls.hear,
             {
@@ -252,11 +267,10 @@ var Chat = function() {
                     });
                 }
 
-                // arbitrary early date ;)
-                var lastMessageDate = new Date("November 5, 1988 23:30:04");
-                if (state.messages.length > 0) {
-                    lastMessageDate = state.messages[state.messages.length-1].timestamp;
-                }
+                // insert the new messages into the sorted list
+                // if the id is already in the array, discard it.
+                var insertIndex;
+                var prevId;
                 for (i=0; i<data.messages.length; ++i) {
                     // if it's a join or part, affect state.onliners
                     if (last_message_id && state.onliners) {
@@ -268,19 +282,31 @@ var Chat = function() {
                             state.onliners.push(data.messages[i].author);
                         }
                     }
-                    // if this message is on a different day than previous,
-                    // insert a heading
-                    if (Time.isDifferentDay(data.messages[i].timestamp,
-                        lastMessageDate))
-                    {
-                        state.messages.push({
-                            type: that.message_type.HEADER,
-                            timestamp: data.messages[i].timestamp
-                        });
-                        lastMessageDate = data.messages[i].timestamp;
-                    }
+                    insertIndex = getMessageIndex(data.messages[i].id);
+                    if (insertIndex !== -1) {
+                        state.messages.splice(insertIndex, 0, data.messages[i]);
 
-                    state.messages.push(data.messages[i]);
+                        // if this message is on a different day than previous,
+                        // insert a heading
+                        if (insertIndex > 0) {
+                            lastMessageDate = state.messages[insertIndex-1].timestamp;
+                            prevId = state.messages[insertIndex-1].id;
+                        } else {
+                            // arbitrary early date ;)
+                            lastMessageDate = new Date("November 5, 1988 23:30:04");
+                            prevId = -1;
+                        }
+                        if (Time.isDifferentDay(data.messages[i].timestamp,
+                            lastMessageDate))
+                        {
+                            
+                            state.messages.splice(insertIndex+1, 0, {
+                                id: (data.messages[i].id + prevId) / 2,
+                                type: that.message_type.HEADER,
+                                timestamp: data.messages[i].timestamp
+                            });
+                        }
+                    }
                 }
                 if (data.messages.length > 0) {
                     last_message_id = data.messages[data.messages.length-1].id;
