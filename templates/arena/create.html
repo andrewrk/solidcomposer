@@ -17,9 +17,14 @@
 {% endblock %}
 
 {% block content %}
+    <div id="bread">
+        <a href="{% url home %}">Home</a>
+        &gt;
+        <a href="{% url arena.home %}">Arena</a>
+        &gt;
+        <span class="dest">Create Competition</span>
+    </div>
     <div class="textblock">
-        <h1>Arena</h1>
-        <h2>Create a Competition</h2>
         <form id="competition-form" method="post" action="." style="width: 500px;">
             {{ form.tz_offset }}
             <table>
