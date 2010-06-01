@@ -92,10 +92,6 @@
        # scrapped
      - filter search box
      - new project button
-   > new project page
-     - title
-     - source project file
-     - mp3 preview
    > project page
    > ability to create band invitations
      - creating a link to hand out

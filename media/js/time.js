@@ -171,19 +171,27 @@ var Time = function () {
             var years = days / 365;
 
             if (years >= 1) {
-                return this.plural(Math.floor(years), "year", "years");
+                months -= Math.floor(years) * 12;
+                return this.plural(Math.floor(years), "year", "years") + ", " +
+                    this.plural(Math.floor(months), "month", "months");
             }
 
             if (months >= 1) {
-                return this.plural(Math.floor(months), "month", "months");
+                days -= Math.floor(months) * 30;
+                return this.plural(Math.floor(months), "month", "months") + ", " +
+                    this.plural(Math.floor(days), "day", "days");
             }
 
             if (weeks >= 1) {
-                return this.plural(Math.floor(weeks), "week", "weeks");
+                days -= Math.floor(weeks) * 7;
+                return this.plural(Math.floor(weeks), "week", "weeks") + ", " +
+                    this.plural(Math.floor(days), "day", "days");
             }
 
             if (days >= 1) {
-                return this.plural(Math.floor(days), "day", "days");
+                hours -= Math.floor(days) * 24;
+                return this.plural(Math.floor(days), "day", "days") + ", " +
+                    this.plural(Math.floor(hours), "hour", "hours");
             }
 
             if (hours >= 1) {
@@ -193,7 +201,9 @@ var Time = function () {
             }
 
             if (minutes >= 1) {
-                return this.plural(Math.floor(minutes), "minute", "minutes");
+                seconds -= Math.floor(minutes) * 60;
+                return this.plural(Math.floor(minutes), "minute", "minutes") + ", " +
+                    this.plural(Math.floor(seconds), "second", "seconds");
             }
 
             return this.plural(Math.floor(seconds), "second", "seconds");
