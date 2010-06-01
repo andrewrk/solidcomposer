@@ -8,7 +8,7 @@ from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
 from django.db.models import Count
 
-from main.common import safe_model_to_dict, json_response
+from main.common import safe_model_to_dict, json_response, json_login_required
 from main.models import *
 from competitions.models import *
 from competitions.forms import *
@@ -193,27 +193,23 @@ def ajax_compo(request, id):
 
     return json_response(data)
 
+@json_login_required
 def ajax_unbookmark(request, id):
     id = int(id)
-    data = {'success': False}
-    if request.user.is_authenticated():
-        comp = get_object_or_404(Competition, id=id)
-        prof = request.user.get_profile()
-        prof.competitions_bookmarked.remove(comp)
-        prof.save()
-        data['success'] = True
-
+    comp = get_object_or_404(Competition, id=id)
+    prof = request.user.get_profile()
+    prof.competitions_bookmarked.remove(comp)
+    prof.save()
+    data = {'success': True}
     return json_response(data)
 
+@json_login_required
 def ajax_bookmark(request, id):
-    data = {'success': False}
-    if request.user.is_authenticated():
-        comp = get_object_or_404(Competition, id=int(id))
-        prof = request.user.get_profile()
-        prof.competitions_bookmarked.add(comp)
-        prof.save()
-        data['success'] = True
-
+    comp = get_object_or_404(Competition, id=int(id))
+    prof = request.user.get_profile()
+    prof.competitions_bookmarked.add(comp)
+    prof.save()
+    data = {'success': True}
     return json_response(data)
 
 def compo_to_dict(compo, user):
@@ -270,16 +266,8 @@ def ajax_available(request):
 
     return compoRequest(request, compos)
 
+@json_login_required
 def ajax_owned(request):
-    data = {
-        'user': {
-            'is_authenticated': request.user.is_authenticated(),
-        },
-    }
-
-    if not request.user.is_authenticated():
-        return json_response(data)
-
     # only show bookmarked items
     # we have to sort on the server due to paging
     compos = request.user.get_profile().competitions_bookmarked.order_by('-start_date')
@@ -377,6 +365,7 @@ def competition(request, id):
     return render_to_response('arena/competition.html', locals(),
         context_instance=RequestContext(request))
 
+@json_login_required
 def ajax_vote(request, entry_id):
     data = {'success': False}
 
@@ -385,10 +374,6 @@ def ajax_vote(request, entry_id):
     except ValueError:
         entry_id = 0
     entry = get_object_or_404(Entry, id=entry_id)
-
-    if not request.user.is_authenticated():
-        data['reason'] = design.not_authenticated
-        return json_response(data)
 
     # can't vote for yourself
     if entry.owner == request.user:
@@ -412,6 +397,7 @@ def ajax_vote(request, entry_id):
 
     return json_response(data)
 
+@json_login_required
 def ajax_unvote(request, entry_id):
     data = {'success': False}
 
@@ -420,10 +406,6 @@ def ajax_unvote(request, entry_id):
     except ValueError:
         entry_id = 0
     entry = get_object_or_404(Entry, id=entry_id)
-
-    if not request.user.is_authenticated():
-        data['reason'] = design.not_authenticated
-        return json_response(data)
 
     votes = ThumbsUp.objects.filter(owner=request.user, entry=entry)
     if votes.count() > 0:

@@ -11,31 +11,27 @@ from main.models import *
 from main.common import *
 from main.uploadsong import upload_song
 
+@json_login_required
 def ajax_home(request):
-    data = {
-        'user': {
-            'is_authenticated': request.user.is_authenticated(),
-        },
-    }
+    data = {}
 
-    if request.user.is_authenticated():
-        data['user'].update(safe_model_to_dict(request.user))
+    data['user'] = safe_model_to_dict(request.user)
 
-        # bands the user is a part of
-        def band_data(member):
-            d = safe_model_to_dict(member.band)
-            d['role'] = member.role
-            return d
-        members = BandMember.objects.filter(user=request.user)
-        data['bands'] = [band_data(x) for x in members]
+    # bands the user is a part of
+    def band_data(member):
+        d = safe_model_to_dict(member.band)
+        d['role'] = member.role
+        return d
+    members = BandMember.objects.filter(user=request.user)
+    data['bands'] = [band_data(x) for x in members]
 
-        # invitations
-        def invite_data(invite):
-            d = safe_model_to_dict(invite)
-            d['band'] = safe_model_to_dict(invite.band)
-            return d
-        invites = BandInvitation.objects.filter(invitee=request.user)
-        data['invites'] = [invite_data(x) for x in invites]
+    # invitations
+    def invite_data(invite):
+        d = safe_model_to_dict(invite)
+        d['band'] = safe_model_to_dict(invite.band)
+        return d
+    invites = BandInvitation.objects.filter(invitee=request.user)
+    data['invites'] = [invite_data(x) for x in invites]
 
 
     return json_response(data)

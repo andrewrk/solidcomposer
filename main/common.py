@@ -69,7 +69,11 @@ def json_login_required(function):
         if request.user.is_authenticated():
             return function(*args, **kwargs)
         else:
-            return json_failure(design.not_authenticated)
+            return json_response({
+                'success': False,
+                'reason': design.not_authenticated,
+                'user': {'is_authenticated': False},
+            })
 
     return decorated
 
