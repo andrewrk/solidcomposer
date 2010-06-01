@@ -29,7 +29,7 @@ var SCWorkbench = function () {
             "Fan",
             "Banned"
         ]
-    }
+    };
     
     // private functions
     function updateHome() {

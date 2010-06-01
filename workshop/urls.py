@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     url(r'^ajax/home/$', 'workshop.views.ajax_home', name="workbench.ajax_home"),
     url(r'^ajax/invite/ignore/$', 'workshop.views.ajax_ignore_invite', name="workbench.ajax_ignore_invite"),
     url(r'^ajax/invite/accept/$', 'workshop.views.ajax_accept_invite', name="workbench.ajax_accept_invite"),
+    url(r'^ajax/project_filters/$', 'workshop.views.ajax_project_filters', name="workbench.ajax_project_filters"),
 
     url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),
 
@@ -17,3 +18,4 @@ urlpatterns = patterns('',
     url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),
     url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
 )
+
