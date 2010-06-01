@@ -8,7 +8,7 @@ from workshop.models import *
 from workshop.forms import *
 from workshop import design
 from main.models import *
-from main.common import safe_model_to_dict, json_response, json_success, json_failure
+from main.common import *
 from main.uploadsong import upload_song
 
 def ajax_home(request):
@@ -69,15 +69,14 @@ def handle_invite(request, accept):
     data['success'] = True
     return json_response(data)
 
-@login_required
+@json_login_required
 def ajax_accept_invite(request):
     return handle_invite(request, accept=True)
     
-@login_required
+@json_login_required
 def ajax_ignore_invite(request):
     return handle_invite(request, accept=False)
 
-@login_required
 def band(request, band_id_str):
     band_id = int(band_id_str)
     band = get_object_or_404(Band, id=band_id)
@@ -85,9 +84,9 @@ def band(request, band_id_str):
             "band": band,
         }, context_instance=RequestContext(request))
 
+@json_login_required
+@json_get_required
 def ajax_project_filters(request):
-    if not request.user.is_authenticated:
-        return json_failure(design.not_authenticated)
     band_id_str = request.GET.get("band", 0)
     try:
         band_id = int(band_id_str)
@@ -107,23 +106,24 @@ def ajax_project_filters(request):
     ] 
     return json_success(results)
 
-@login_required
-def band_settings(request, band_id_str):
-    "todo"
-    pass
+@json_login_required
+@json_get_required
+def ajax_project(request):
+    """
+    return the project history. if a last_version is supplied, only
+    return newer ones. Also return the current state - who has it
+    checked out, etc.
+    """
 
+
+    return json_response({})
+
+@json_login_required
+@json_post_required
 def ajax_create_band(request):
     data = {
         'success': False,
     }
-
-    if not request.user.is_authenticated():
-        data['reason'] = design.not_authenticated
-        return json_response(data)
-    
-    if request.method != "POST":
-        data['reason'] = design.must_submit_via_post
-        return json_response(data)
 
     form = NewBandForm(request.POST)
     if form.is_valid():
@@ -145,6 +145,11 @@ def ajax_create_band(request):
     return json_response(data)
 
 @login_required
+def band_settings(request, band_id_str):
+    "todo"
+    pass
+
+@login_required
 def project(request, band_id_str, project_id_str):
     try:
         band_id = int(band_id_str)
@@ -155,8 +160,8 @@ def project(request, band_id_str, project_id_str):
     except ValueError:
         project_id = 0
 
-    band = get_object_or_404(Band, band_id)
-    project = get_object_or_404(Project, project_id)
+    band = get_object_or_404(Band, id=band_id)
+    project = get_object_or_404(Project, id=project_id)
     return render_to_response('workbench/project.html', locals(), context_instance=RequestContext(request))
 
 @login_required

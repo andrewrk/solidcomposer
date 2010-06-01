@@ -7,6 +7,8 @@ import string
 import random
 import simplejson as json
 
+from main import design
+
 def create_hash(length):
     """
     returns a string of length length with random alphanumeric characters
@@ -34,6 +36,43 @@ def json_success(data):
         "success": True,
         "data": data,
     })
+
+def json_post_required(function):
+    "decorator that ensures request is via POST"
+
+    def decorated(*args, **kwargs):
+        request = args[0]
+        if request.method == 'POST':
+            return function(*args, **kwargs)
+        else:
+            return json_failure(design.must_submit_via_get)
+
+    return decorated
+
+def json_get_required(function):
+    "decorator that ensures request is via GET"
+
+    def decorated(*args, **kwargs):
+        request = args[0]
+        if request.method == 'GET':
+            return function(*args, **kwargs)
+        else:
+            return json_failure(design.must_submit_via_get)
+
+    return decorated
+
+def json_login_required(function):
+    "decorator that ensures ajax views are logged in."
+
+    def decorated(*args, **kwargs):
+        request = args[0]
+        if request.user.is_authenticated():
+            return function(*args, **kwargs)
+        else:
+            return json_failure(design.not_authenticated)
+
+    return decorated
+
 def json_failure(reason):
     return json_response({
         "success": False,

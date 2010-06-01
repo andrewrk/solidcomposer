@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from chat.models import *
-from main.views import safe_model_to_dict, json_response
+from main.common import safe_model_to_dict, json_response
 import settings
 
 from datetime import datetime, timedelta
