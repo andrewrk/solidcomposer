@@ -1,6 +1,6 @@
 <% if (json.user.is_authenticated) { %>
     <div id="bands">
-        <a class="create-band" href="{% url workbench.create_band %}">Create a New Band</a>
+        <a class="create-band" href="#">Create a New Band</a>
         <ul>
             <% $.each(json.bands, function(i, item){ %>
                 <li class="band">

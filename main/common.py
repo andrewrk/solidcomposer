@@ -29,6 +29,17 @@ def json_dump(obj):
 def json_response(data):
     return HttpResponse(json_dump(data), mimetype="text/plain")
 
+def json_success(data):
+    return json_response({
+        "success": True,
+        "data": data,
+    })
+def json_failure(reason):
+    return json_response({
+        "success": False,
+        "reason": reason,
+    })
+
 def remove_unsafe_keys(hash, model):
     """
     look for UNSAFE_KEYS in the model. if it exists, delete all those entries

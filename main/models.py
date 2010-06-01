@@ -160,7 +160,6 @@ class Profile(models.Model):
     activate_code = models.CharField(max_length=256)
     date_activity = models.DateTimeField(auto_now=True)
 
-    avatar = models.ImageField(upload_to='img/avatars', blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
 
     # the competitions the player has bookmarked

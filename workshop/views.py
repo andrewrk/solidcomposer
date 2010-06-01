@@ -8,7 +8,7 @@ from workshop.models import *
 from workshop.forms import *
 from workshop import design
 from main.models import *
-from main.views import safe_model_to_dict, json_response
+from main.common import safe_model_to_dict, json_response, json_success, json_failure
 from main.uploadsong import upload_song
 
 def ajax_home(request):
@@ -79,8 +79,33 @@ def ajax_ignore_invite(request):
 
 @login_required
 def band(request, band_id_str):
-    "todo"
-    pass
+    band_id = int(band_id_str)
+    band = get_object_or_404(Band, id=band_id)
+    return render_to_response('workbench/band.html', {
+            "band": band,
+        }, context_instance=RequestContext(request))
+
+def ajax_project_filters(request):
+    if not request.user.is_authenticated:
+        return json_failure(design.not_authenticated)
+    band_id_str = request.GET.get("band", 0)
+    try:
+        band_id = int(band_id_str)
+    except ValueError:
+        band_id = 0
+    if band_id == 0:
+        return json_failure("bad band id")
+    projects = Project.objects.filter(band__pk=band_id)
+    visible = projects.filter(visible=True)
+    scrapped = projects.filter(visible=False)
+    results = [
+        ("all", "All", visible.count()),
+        ("available", "Available", visible.filter(checked_out_to=None).count()),
+        ("out", "Checked out", visible.exclude(checked_out_to=None).count()),
+        ("mine", "Checked out to me", visible.filter(checked_out_to=request.user).count()),
+        ("scrapped", "Scrapped", scrapped.count()),
+    ] 
+    return json_success(results)
 
 @login_required
 def band_settings(request, band_id_str):

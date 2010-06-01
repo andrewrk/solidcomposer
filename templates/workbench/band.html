@@ -1,0 +1,38 @@
+{% extends 'workbench/base.html' %}
+
+{% block extra_header %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var band_id = {{ band.id }};
+    </script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/workbench_band.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="bread">
+        <a href="{% url home %}">Home</a>
+        &gt;
+        <a href="{% url workbench.home %}">Workbench</a>
+        &gt;
+        <span class="dest">{{ band.title }}</span>
+    </div>
+
+    <div id="filters">
+        {% include 'loading.html' %}
+    </div>
+    <div id="page_nav">
+        {% include 'loading.html' %}
+    </div>
+    <div id="new_project">
+        <a href="{% url workbench.create_project band.id %}">New Project</a>
+    </div>
+    <div>
+        <input type="text" id="search" />
+    </div>
+    <div id="project_list">
+        {% include 'loading.html' %}
+    </div>
+{% endblock %}
+
