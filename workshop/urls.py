@@ -10,10 +10,10 @@ urlpatterns = patterns('',
     url(r'^ajax/home/$', 'workshop.views.ajax_home', name="workbench.ajax_home"),
     url(r'^ajax/invite/ignore/$', 'workshop.views.ajax_ignore_invite', name="workbench.ajax_ignore_invite"),
     url(r'^ajax/invite/accept/$', 'workshop.views.ajax_accept_invite', name="workbench.ajax_accept_invite"),
-
-    url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),
+    url(r'^ajax/create_band/$', 'workshop.views.ajax_create_band', name="workbench.ajax_create_band"),
 
     url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),
+    url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
     url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),
     url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
 )

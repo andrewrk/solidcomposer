@@ -1,13 +1,14 @@
-from workshop.models import *
-from workshop.forms import *
-from main.models import *
-from main.views import safe_model_to_dict, json_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response, get_object_or_404
 
+from workshop.models import *
+from workshop.forms import *
+from workshop import design
+from main.models import *
+from main.views import safe_model_to_dict, json_response
 from main.uploadsong import upload_song
 
 def ajax_home(request):
@@ -77,19 +78,61 @@ def ajax_ignore_invite(request):
     return handle_invite(request, accept=False)
 
 @login_required
-def band(request):
+def band(request, band_id_str):
     "todo"
     pass
 
 @login_required
-def create_band(request):
+def band_settings(request, band_id_str):
     "todo"
     pass
+
+def ajax_create_band(request):
+    data = {
+        'success': False,
+    }
+
+    if not request.user.is_authenticated():
+        data['reason'] = design.not_authenticated
+        return json_response(data)
+    
+    if request.method != "POST":
+        data['reason'] = design.must_submit_via_post
+        return json_response(data)
+
+    form = NewBandForm(request.POST)
+    if form.is_valid():
+        band = Band()
+        band.title = form.cleaned_data.get('band_name')
+        band.create_paths()
+        band.save()
+
+        manager = BandMember()
+        manager.user = user
+        manager.band = band
+        manager.role = MANAGER
+        manager.save()
+    else:
+        data['reason'] = "\n".join(['%s: %s' % (k, v) for k, v in form.errors])
+        return json_response(data)
+    
+    data['success'] = True
+    return json_response(data)
 
 @login_required
 def project(request, band_id_str, project_id_str):
-    "todo"
-    pass
+    try:
+        band_id = int(band_id_str)
+    except ValueError:
+        band_id = 0
+    try:
+        project_id = int(project_id_str)
+    except ValueError:
+        project_id = 0
+
+    band = get_object_or_404(Band, band_id)
+    project = get_object_or_404(Project, project_id)
+    return render_to_response('workbench/project.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def create_project(request, band_str):

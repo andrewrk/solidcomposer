@@ -20,6 +20,7 @@
    > tests to use url reverse
    > get rid of auto_now and auto_now_add 
    > change competitions to arena
+   > change workshop to workbench
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =

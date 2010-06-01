@@ -5,6 +5,9 @@ from chat.models import ChatRoom
 from datetime import datetime, timedelta
 import string
 
+import os
+import settings
+
 FULL_OPEN, OPEN_SOURCE, TRANSPARENT, NO_CRITIQUE, PRIVATE = range(5)
 
 MANAGER, BAND_MEMBER, CRITIC, FAN, BANNED = range(5)
@@ -72,6 +75,19 @@ class Band(models.Model):
 
         self.url = proposed
 
+    def band_folder(self):
+        return os.path.join(settings.MEDIA_ROOT, 'band', self.folder)
+
+    def rename(self, new_name):
+        # if the old folder is empty, remove it
+        try:
+            os.rmdir(self.band_folder())
+        except OSError:
+            pass
+
+        self.title = new_name
+        self.create_folder()
+
     def create_folder(self):
         # break title into folder-safe string
         allowed_chars = string.letters + string.digits + r'_-.'
@@ -83,19 +99,20 @@ class Band(models.Model):
             else:
                 safe_title += replacement
 
-        others = Band.objects.filter(folder=safe_title).count()
-        if others == 0:
-            self.folder = safe_title
+        self.folder = safe_title
+        if not os.path.exists(self.band_folder()):
+            os.makedirs(self.band_folder())
             return
 
         # append digits until it is unique
         suffix = 2
-        while others > 0:
-            proposed = safe_title + str(suffix)
-            others = Band.objects.filter(folder=proposed).count()
+        exists = True
+        while exists:
+            self.folder = safe_title + str(suffix)
+            exists = os.path.exists(self.band_folder())
             suffix += 1
 
-        self.folder = proposed
+        os.makedirs(self.band_folder())
 
     def create_paths(self):
         """
