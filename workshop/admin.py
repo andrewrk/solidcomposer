@@ -1,4 +1,4 @@
-from opensourcemusic.workshop.models import *
+from workshop.models import *
 from django.contrib import admin
 
 stuff = (

@@ -1,7 +1,7 @@
-from opensourcemusic.workshop.models import *
-from opensourcemusic.workshop.forms import *
-from opensourcemusic.main.models import *
-from opensourcemusic.main.views import safe_model_to_dict, json_response
+from workshop.models import *
+from workshop.forms import *
+from main.models import *
+from main.views import safe_model_to_dict, json_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext

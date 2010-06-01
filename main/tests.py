@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.test.client import Client
 from django.core import mail
 
-from opensourcemusic.main.models import *
+from main.models import *
 
 from datetime import datetime, timedelta
 import simplejson as json

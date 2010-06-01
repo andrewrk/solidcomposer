@@ -5,27 +5,27 @@ import os
 
 admin.autodiscover()
 
-from opensourcemusic import settings
+import settings
 
 urlpatterns = patterns('',
     url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),
-    (r'^arena/', include('opensourcemusic.competitions.urls')),
-    (r'^chat/', include('opensourcemusic.chat.urls')),
-    (r'^workbench/', include('opensourcemusic.workshop.urls')),
-    (r'^music/', include('opensourcemusic.music.urls')),
+    (r'^arena/', include('competitions.urls')),
+    (r'^chat/', include('chat.urls')),
+    (r'^workbench/', include('workshop.urls')),
+    (r'^music/', include('music.urls')),
     (r'^admin/', include(admin.site.urls)),
 
-    url(r'^user/(.+)/$', 'opensourcemusic.main.views.userpage', name='userpage'),
+    url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
 
-    url(r'^ajax/login_state/$', 'opensourcemusic.main.views.ajax_login_state', name="ajax_login_state"),
-    url(r'^ajax/login/$', 'opensourcemusic.main.views.ajax_login', name="ajax_login"),
-    url(r'^ajax/logout/$', 'opensourcemusic.main.views.ajax_logout', name="ajax_logout"),
+    url(r'^ajax/login_state/$', 'main.views.ajax_login_state', name="ajax_login_state"),
+    url(r'^ajax/login/$', 'main.views.ajax_login', name="ajax_login"),
+    url(r'^ajax/logout/$', 'main.views.ajax_logout', name="ajax_logout"),
 
-    url(r'^login/$', 'opensourcemusic.main.views.user_login', name="user_login"),
-    url(r'^logout/$', 'opensourcemusic.main.views.user_logout', name="user_logout"),
-    url(r'^register/$', 'opensourcemusic.main.views.user_register', name="register"),
+    url(r'^login/$', 'main.views.user_login', name="user_login"),
+    url(r'^logout/$', 'main.views.user_logout', name="user_logout"),
+    url(r'^register/$', 'main.views.user_register', name="register"),
     url(r'^register/pending/$', direct_to_template, {'template': 'pending.html'}, name="register_pending"),
-    url(r'^confirm/(.+)/(.+)/$', 'opensourcemusic.main.views.confirm', name="confirm"),
+    url(r'^confirm/(.+)/(.+)/$', 'main.views.confirm', name="confirm"),
 
     url(r'^about/$', direct_to_template, {'template': 'about.html'}, name="about"),
     url(r'^policy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),

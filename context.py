@@ -1,5 +1,5 @@
 from django.template import RequestContext
-from opensourcemusic.main.models import Profile
+from main.models import Profile
 
 import datetime
 

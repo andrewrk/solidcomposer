@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
-from opensourcemusic import settings
-from opensourcemusic.chat.models import *
-from opensourcemusic.main.views import safe_model_to_dict, json_response
+from chat.models import *
+from main.views import safe_model_to_dict, json_response
+import settings
 
 from datetime import datetime, timedelta
 

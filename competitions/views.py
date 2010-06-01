@@ -8,12 +8,13 @@ from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
 from django.db.models import Count
 
-from opensourcemusic import settings
-from opensourcemusic.main.common import safe_model_to_dict, json_response
-from opensourcemusic.competitions.models import *
-from opensourcemusic.competitions.forms import *
-from opensourcemusic.competitions import design
-from opensourcemusic.chat.models import *
+from main.common import safe_model_to_dict, json_response
+from main.models import *
+from competitions.models import *
+from competitions.forms import *
+from competitions import design
+from chat.models import *
+import settings
 
 from datetime import datetime, timedelta
 

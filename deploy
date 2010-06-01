@@ -6,7 +6,7 @@ REMOTE_TMP="/home/superjoe/temp"
 INSTALL_PATH="/home/superjoe/django_code"
 
 ######### initial checking before deploying #########
-PRJ_PATH="$INSTALL_PATH/opensourcemusic"
+PRJ_PATH="$INSTALL_PATH/solidcomposer"
 # crash if any program has error status code
 set -e
 
@@ -39,7 +39,7 @@ cd $WORKING
 # export the old git revision to a temp folder
 echo "Getting old version hash from server..."
 OLDHASH=$(ssh $SSH "source .bashrc; cd $PRJ_PATH; cat deploy_revision;")
-OLD=$(mktemp -d)/opensourcemusic
+OLD=$(mktemp -d)/solidcomposer
 mkdir $OLD
 
 git archive $OLDHASH | tar -x -C $OLD

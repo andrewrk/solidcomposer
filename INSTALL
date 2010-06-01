@@ -1,5 +1,8 @@
 The first time you install this project, you need to:
     * copy the code to the server
+    * put the project in the path so that statements like these will work:
+      import settings
+      import main.views
     * configure settings_user.py to override the system-specific settings
       from settings.py
     * python manage.py syncdb --noinput
@@ -8,7 +11,7 @@ The first time you install this project, you need to:
       django. the files that are served here should be a softlink to
       media/static/.
     * set up cron jobs
-        <minute>     python /path/to/project/manage.py runjob opensourcemusic.chat leave
+        <minute>     python /path/to/project/manage.py runjob chat leave
         <hourly>     python /path/to/project/manage.py runjobs hourly
         <daily>      python /path/to/project/manage.py runjobs daily
         <weekly>     python /path/to/project/manage.py runjobs weekly

@@ -1,5 +1,5 @@
-from opensourcemusic import settings
-from opensourcemusic.main import design
+from main import design
+import settings
 
 # strings that are displayed to the user.
 this_field_is_required = design.this_field_is_required

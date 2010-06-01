@@ -6,6 +6,6 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', direct_to_template, {'template': 'music/home.html'}, name="music.home"),
-    url(r'^band/(.+)/$', 'opensourcemusic.music.views.band', name="music.band"),
+    url(r'^band/(.+)/$', 'music.views.band', name="music.band"),
 )
 

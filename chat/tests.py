@@ -2,13 +2,13 @@ from django.test import TestCase
 from django.test.client import Client
 from django.core import mail
 
-from opensourcemusic.main.models import *
-from opensourcemusic.chat.models import *
+from main.models import *
+from chat.models import *
 
 from datetime import datetime, timedelta
 import simplejson as json
 
-from opensourcemusic import settings
+import settings
 
 import os
 import subprocess
@@ -272,7 +272,7 @@ class SimpleTest(TestCase):
         self.assertEqual(appear.timestamp, new_ts)
 
         # run the job
-        job = get_job('opensourcemusic.chat', 'leave')
+        job = get_job('chat', 'leave')
         job().execute()
 
         # there should be a part message in the chat room

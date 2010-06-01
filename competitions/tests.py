@@ -3,14 +3,12 @@ from django.test.client import Client
 from django.core import mail
 from django.core.urlresolvers import reverse
 
-from opensourcemusic.main.models import *
-from opensourcemusic.competitions.models import *
-from opensourcemusic.chat.models import *
-
-from opensourcemusic.competitions.forms import *
-
-from opensourcemusic import settings
-from opensourcemusic.competitions import design
+from main.models import *
+from chat.models import *
+from competitions.models import *
+from competitions.forms import *
+from competitions import design
+import settings
 
 from datetime import datetime, timedelta
 import simplejson as json

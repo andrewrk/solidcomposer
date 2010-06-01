@@ -1,8 +1,8 @@
 from django import forms
 
-from opensourcemusic.main.models import *
-from opensourcemusic import settings
-from opensourcemusic.main import design
+from main.models import *
+from main import design
+import settings
 
 from datetime import datetime, timedelta
 import string

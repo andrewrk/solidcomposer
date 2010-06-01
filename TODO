@@ -20,10 +20,11 @@
    > tests to use url reverse
    > get rid of auto_now and auto_now_add 
    > change competitions to arena
-   > change opensourcemusic to solidcomposer
  * make the login ALWAYS ajax. the consistency will help user confidence.
 
 = arena =
+ * if you're listening to an entry during voting, and then voting ends
+   and the entries re-order, it will show you as listening to the wrong entry.
  * show competition length as metadata
  * auto theme generator
  * when compo is closed or during voting, when a song completes, go to the

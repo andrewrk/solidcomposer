@@ -1,4 +1,4 @@
-# Django settings for opensourcemusic project.
+# Django settings for project.
 # you can override any of this with settings_user.py, which does not get
 # committed to source control.
 
@@ -62,13 +62,13 @@ MEDIA_ROOT = absolute('media')
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 # this is something you may want to override in settings_user.py
-MEDIA_URL = 'http://localhost:8080/django/opensourcemusic/'
+MEDIA_URL = 'http://localhost:8080/django/solidcomposer/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 # this is something you may want to override in settings_user.py
-ADMIN_MEDIA_PREFIX = 'http://localhost:8080/django/opensourcemusic/admin/'
+ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '2_l-92-j(^)a=vsynmsw1d(efi!w@w#j#v@ucv^2i7cfsk=!8='
@@ -77,7 +77,6 @@ SECRET_KEY = '2_l-92-j(^)a=vsynmsw1d(efi!w@w#j#v@ucv^2i7cfsk=!8='
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -86,7 +85,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
-ROOT_URLCONF = 'opensourcemusic.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -113,7 +112,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 	'django.core.context_processors.debug',
 	'django.core.context_processors.media',
     'django.core.context_processors.request',
-    'opensourcemusic.context.global_values',
+    'context.global_values',
 )
 
 INSTALLED_APPS = (
@@ -124,11 +123,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'south',
     'django_extensions',
-    'opensourcemusic.main',
-    'opensourcemusic.competitions',
-    'opensourcemusic.chat',
-    'opensourcemusic.workshop',
-    'opensourcemusic.music',
+    'main',
+    'competitions',
+    'chat',
+    'workshop',
+    'music',
 )
 
 LOGIN_URL = "/login/"

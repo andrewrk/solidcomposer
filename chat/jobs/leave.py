@@ -1,8 +1,8 @@
 from django_extensions.management.jobs import BaseJob
 
 from datetime import datetime, timedelta
-from opensourcemusic.chat.models import *
-from opensourcemusic.settings import CHAT_TIMEOUT
+from chat.models import *
+import settings
 
 class Job(BaseJob):
     """
@@ -14,7 +14,7 @@ class Job(BaseJob):
     help = __doc__
 
     def execute(self):
-        expire_date = datetime.now() - timedelta(seconds=CHAT_TIMEOUT)
+        expire_date = datetime.now() - timedelta(seconds=settings.CHAT_TIMEOUT)
         appearances = Appearance.objects.filter(timestamp__lte=expire_date)
         
         for appearance in appearances:

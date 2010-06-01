@@ -1,7 +1,7 @@
 from django import forms
 
-from opensourcemusic.workshop.models import *
-from opensourcemusic.workshop import design
+from workshop.models import *
+from workshop import design
 
 class NewProjectForm(forms.Form):
     title = forms.CharField(max_length=100,

@@ -7,13 +7,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response, get_object_or_404
 
-from opensourcemusic.main.forms import *
-from opensourcemusic import settings
-from opensourcemusic.main import design
+from main.forms import *
+from main.common import *
+from main import design
+import settings
 
 from datetime import datetime, timedelta
-
-from main.common import *
 
 def ajax_login_state(request):
     # build the object

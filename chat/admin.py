@@ -1,4 +1,4 @@
-from opensourcemusic.chat.models import *
+from chat.models import *
 from django.contrib import admin
 
 stuff = (

@@ -1,4 +1,4 @@
-from opensourcemusic.competitions.models import *
+from competitions.models import *
 from django.contrib import admin
 
 stuff = (
