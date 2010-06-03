@@ -31,10 +31,3 @@ urlpatterns = patterns('',
     url(r'^policy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),
     url(r'^account/$', direct_to_template, {'template': 'account.html'}, name="account"),
 )
-# exceptions to media url
-if settings.DEBUG:
-    urlpatterns += patterns('',
-        (r'^static/(?P<path>.*)$', 'django.views.static.serve',
-            {'document_root': os.path.join(settings.MEDIA_ROOT, 'static')}),
-    )
-

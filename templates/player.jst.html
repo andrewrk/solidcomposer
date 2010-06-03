@@ -20,16 +20,16 @@
     <div class="bottom-layer">
         <div class="button-layer">
             <div class="button">
-                <span><a href="#"></a></span>
+                <span class="play"><a href="#"></a></span>
             </div>
             <div class="time">
-                0:00 / 0:00
+                0:00 / <%=Time.timeDisplay(song.length)%>
             </div>
         </div>
         <div class="wave-layer">
             <div class="wave-outer">
                 <div class="wave" style="background-image: url({{ MEDIA_URL}}<% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
-                    <div class="overlay-border">
+                    <div class="overlay-border" style="width: 0;">
                         <div class="overlay">
                         </div>
                     </div>

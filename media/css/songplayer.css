@@ -94,6 +94,16 @@
     background-image: url("../img/play-circle64.png");
 }
 
+.player-large .button-layer .disabled a {
+    opacity: 0.20;
+    filter:alpha(opacity=20);
+}
+
+.player-large .button-layer .disabled a:hover {
+    opacity: 0.20;
+    filter:alpha(opacity=20);
+}
+
 .player-large .button-layer .pause a {
     background-image: url("../img/pause-circle64.png");
 }

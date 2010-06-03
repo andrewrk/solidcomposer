@@ -7,9 +7,6 @@ The first time you install this project, you need to:
       from settings.py
     * python manage.py syncdb --noinput
     * python manage.py migrate
-    * configure files in the /static/* URL to be served statically, bypassing
-      django. the files that are served here should be a softlink to
-      media/static/.
     * set up cron jobs
         <minute>     python /path/to/project/manage.py runjob chat leave
         <hourly>     python /path/to/project/manage.py runjobs hourly

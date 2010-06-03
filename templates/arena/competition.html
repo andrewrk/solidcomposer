@@ -7,20 +7,15 @@
 {% block extra_header %}
     {{ block.super }}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/webtoolkit.aim.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.jplayer-1.1.7.js"></script>
     <script type="text/javascript">
-var competition_id = {{ competition.id }};
-var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{% else %}null{% endif %};
-var MEDIA_URL = "{{ MEDIA_URL }}";
+        var competition_id = {{ competition.id }};
+        var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{% else %}null{% endif %};
     </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/time.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/chat.js"></script>
+    {% include 'script_player.html' %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/competition.js"></script>
-{% endblock %}
-
-{% block extra_body %}
-    <div id="jplayer"></div>
 {% endblock %}
 
 {% block content %}

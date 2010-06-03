@@ -40,6 +40,8 @@ var SCProject = function () {
 
         if (forceUpdate) {
             $("#projects").html(Jst.evaluate(template_version_list_s, state));
+            Player.addUi("#projects");
+
             $("#footer-data").html(Jst.evaluate(template_footer_s, state));
         }
     }
@@ -138,9 +140,12 @@ var SCProject = function () {
         
         // public functions
         initialize: function (init_band_id, init_project_id) {
+            compileTemplates();
             band_id = init_band_id;
             project_id = init_project_id;
-            compileTemplates();
+
+            Player.initialize();
+
             ajaxRequestLoop();
         },
         

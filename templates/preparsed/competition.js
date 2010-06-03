@@ -3,7 +3,6 @@ var SCCompo = function () {
     var that;
     
     // configurable stuff
-    var jPlayerSwfPath = "/static";
     var stateRequestTimeout = 10000;
 
     // templates
@@ -39,7 +38,7 @@ var SCCompo = function () {
                 load_percent: 0
             }
         },
-        media_url: null, {# django MEDIA_URL #}
+        media_url: "{{ MEDIA_URL }}",
         activity: null,
         urls: {% include "arena/urls.js" %},
         theme_shown: true,
@@ -50,27 +49,10 @@ var SCCompo = function () {
         "img/thumbsup.png",
         "img/nothumbsup.png",
         "img/thumbsup-gray.png",
-        "img/note16.png",
-        "img/dl-zip16.png",
-        "img/check16.png",
-        "img/warning16.png",
-        "img/flp16.png",
-        "img/play-circle64.png",
-        "img/pause-circle64.png",
-        "img/volume-bar.png",
-        "img/volume24-3bar.png",
-        "img/volume24-2bar.png",
-        "img/volume24-1bar.png",
-        "img/volume24-0bar.png",
-        "img/volume24-mute.png",
-        "img/play24.png"
     ];
     var cachedImages = [];
 
-    var jp = null;
-
     var ajaxForcePlayerUpdate = true;
-    var mouseDowns = 0;
 
     function scrollToNowPlaying() {
         // scroll to new track in entry list
@@ -134,19 +116,16 @@ var SCCompo = function () {
         
         if (that.ongoingListeningParty()) {
             // figure out what currently playing song should be
-            if (! jp.jPlayer("getData", "diag.isPlaying")) {
+            if (! Player.isPlaying()) {
                 current_url = state.media_url+state.json.party.entry.song.mp3_file;
-                if (jp.jPlayer("getData", "diag.src") != current_url) {
-                    // this will be pre-loaded because preload is 'auto'
-                    // in the jplayer constructor.
-                    jp.jPlayer("setFile", current_url);
+                if (Player.url() !== current_url) {
                     updateCurrentEntry(true);
                     updateEntryArea();
                     scrollToNowPlaying();
                 }
                 if (state.json.party.track_position >= 0) {
-                    jp.jPlayer("play");
-                    jp.jPlayer("playHeadTime", state.json.party.track_position*1000);
+                    Player.play();
+                    Player.seek(state.json.party.track_position);
                 }
             }
         }
@@ -189,129 +168,15 @@ var SCCompo = function () {
             return;
         }
 
-        var secondsPassed;
-        var secondsTotal;
-        var entryLoaded = false;
-
-        if (that.ongoingListeningParty()) {
-            if (state.json.party.track_position < 0) {
-                secondsPassed = state.json.party.track_position;
-            } else {
-                secondsPassed = state.player.current_track.track_position;
-            }
-            secondsTotal = state.json.party.entry.song.length;
-            entryLoaded = true;
-        } else if (state.player.current_track.entry) {
-            secondsPassed = state.player.current_track.track_position;
-            secondsTotal = state.player.current_track.entry.song.length;
-            entryLoaded = true;
-        }
-
-        var isPlaying = jp.jPlayer("getData", "diag.isPlaying");
-        
         // only overwrite the div if it needs to.
         if (forcePlayerUpdate) {
             $("#current-entry").html(Jst.evaluate(template_current_entry_s, state));
             // clicks
-            if (that.votingActive() || that.compoClosed()) {
-                $(".player-large .button a").click(function(){
-                    var isPlaying = jp.jPlayer("getData", "diag.isPlaying");
-                    if (isPlaying) {
-                        jp.jPlayer("pause");
-                    } else {
-                        jp.jPlayer("play");
-                    }
-                    updateCurrentEntry();
-                    return false;
-                });
-
-                // scrubbing
-                $(".player-large .wave-outer").mousedown(function(e){
-                    if (e.preventDefault) {
-                        e.preventDefault();
-                    }
-                    var relativeX = e.pageX - this.offsetLeft;
-                    var maxX = 800;
-                    var newSeek = (relativeX/maxX) * secondsTotal;
-                    jp.jPlayer("playHeadTime", newSeek*1000);
-                    updateCurrentEntry();
-                });
-            } else {
-                // disable play/pause button
-                $(".player-large .button a").hide();
-            }
-
-            // volume control
-            $(".player-large .volume").mousemove(function(e){
-                if (mouseDowns > 0) {
-                    var relativeY = e.pageY - this.offsetTop;
-                    var maxY = 90;
-                    var newVolume = 1 - (relativeY / maxY);
-                    jp.jPlayer("volume", newVolume * 100);
-                    updateCurrentEntry();
-                }
-                return false;
-            });
-            $(".player-large .volume").mousedown(function(e){
-                if (e.preventDefault) {
-                    e.preventDefault();
-                }
-            });
-            $(".player-large .volume .icon").mousedown(function(e){
-                if (e.preventDefault) {
-                    e.preventDefault();
-                }
-            });
-
-        }
-        // show the correct button image
-        var showImg = isPlaying ? 'pause' : 'play';
-        $(".player-large .button span").attr('class', showImg);
-
-        // update time and seek head
-        var percent;
-        var seekWidth; // pixels
-        var seekMaxWidth = 800;
-        if (entryLoaded) {
-            // time display
-            if (secondsPassed < 0) {
-                $(".player-large .time").html("Buffering... " +
-                    (-Math.ceil(secondsPassed)) + "s");
-                percent = 0;
-            } else {
-                $(".player-large .time").html(Time.timeDisplay(secondsPassed)
-                    + " / " + Time.timeDisplay(secondsTotal));
-                percent = secondsPassed / secondsTotal;
-            }
-
-            // seek head
-            seekWidth = percent * seekMaxWidth;
-            waveWidth = state.player.current_track.load_percent * seekMaxWidth;
-            $(".player-large .overlay-border").css('width', seekWidth+"px");
-            $(".player-large .wave").css('width', waveWidth+"px");
+            Player.addUi("#current-entry");
+            Player.setCurrentPlayer($("#current-entry .player-large"));
         }
 
-        // update volume
-        var volume = jp.jPlayer("getData", "volume") / 100;
-        var volumeClasses = [
-            [0.75, 'bar3'],
-            [0.50, 'bar2'],
-            [0.25, 'bar1'],
-            [0.01, 'bar0'],
-            [-1, 'mute']
-        ];
-        var i;
-        var volumeClass = null;
-        for (i=0; i<volumeClasses.length; ++i) {
-            $(".player-large .volume .icon-id").removeClass(volumeClasses[i][1]);
-            if (volumeClass === null && volume >= volumeClasses[i][0]) {
-                volumeClass = volumeClasses[i][1];
-            }
-        }
-        $(".player-large .volume .icon-id").addClass(volumeClass);
-        var maxY = 100 - 24;
-        var yPos = (1-volume) * maxY;
-        $(".player-large .volume .icon").css("top", yPos);
+        Player.setUiEnabled(! that.ongoingListeningParty());
     }
 
     function updateEntryArea() {
@@ -373,10 +238,8 @@ var SCCompo = function () {
                 state.player.current_track.index = parseInt(index);
                 state.player.current_track.entry = state.json.entries[index];
                 state.player.current_track.track_position = 0;
-                jp.jPlayer("setFile",
-                    state.media_url+state.player.current_track.entry.song.mp3_file);
-                jp.jPlayer("play");
                 updateCurrentEntry(true);
+                Player.play();
                 updateEntryArea();
             }
 
@@ -505,51 +368,14 @@ var SCCompo = function () {
                     state.json.entries[state.player.current_track.index];
                 current_url = state.media_url +
                     state.player.current_track.entry.song.mp3_file;
-                jp.jPlayer("setFile", current_url);
                 updateCurrentEntry(true);
                 updateEntryArea();
                 scrollToNowPlaying();
-                jp.jPlayer("play");
+                Player.play();
             }
         }
     }
 
-    function initializeJPlayer() {
-        var current_url;
-        var actually_playing;
-        
-        jp = $("#jplayer");
-        jp.jPlayer({
-            ready: function(){
-                checkIfShouldPlaySong();
-                this.element.jPlayer("onSoundComplete", function(){
-                    // listening party
-                    checkIfShouldPlaySong();
-                    // non listening party
-                    goNextTrack();
-                });
-                this.element.jPlayer("onProgressChange",
-                    function(loadPercent,playedPercentRelative,
-                    playedPercentAbsolute,playedTime,totalTime)
-                {
-                    state.player.current_track.track_position = playedTime/1000;
-                    state.player.current_track.load_percent = loadPercent/100;
-                    if (that.ongoingListeningParty()) {
-                        current_url = state.media_url+state.json.party.entry.song.mp3_file;
-                        actually_playing = this.element.jPlayer("getData", "diag.src");
-                        if (state.json.party.track_position < 0 &&
-                            current_url === actually_playing)
-                        {
-                            this.element.jPlayer("pause");
-                        }
-                    }
-                    updateCurrentEntry();
-                });
-            },
-            swfPath: jPlayerSwfPath,
-            preload: 'auto'
-        });
-    }
 
     function sortEntries() {
         // sort entries
@@ -561,25 +387,13 @@ var SCCompo = function () {
         if (entryCount > 0) {
             if (that.compoClosed()) {
                 state.json.entries.sort(function(a,b){
-                    if (a.vote_count > b.vote_count) {
-                        return -1;
-                    } else if (a.vote_count < b.vote_count) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+                    return b.vote_count - a.vote_count;
                 });
             } else {
                 state.json.entries.sort(function(a,b){
                     var aDate = Time.coerceDate(a.submit_date);
                     var bDate = Time.coerceDate(b.submit_date);
-                    if (aDate > bDate) {
-                        return 1;
-                    } else if (aDate < bDate) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
+                    return aDate - bDate;
                 });
             }
         }
@@ -593,21 +407,40 @@ var SCCompo = function () {
         }
     }
 
+    function onPlayerReady() {
+        checkIfShouldPlaySong();
+    }
+
+    function onSoundComplete() {
+        // listening party
+        checkIfShouldPlaySong();
+        // non listening party
+        goNextTrack();
+    }
+
+    function onProgressChange(loadPercent, playedPercentRelative,
+        playedPercentAbsolute, playedTime, totalTime)
+    {
+        if (that.ongoingListeningParty()) {
+            current_url = state.media_url+state.json.party.entry.song.mp3_file;
+            actually_playing = Player.url();
+            if (state.json.party.track_position < 0 &&
+                current_url === actually_playing)
+            {
+                Player.pause();
+            }
+        }
+    }
+
     that = {
-        initialize: function (media_url) {
-            state.media_url = media_url;
-            initializeJPlayer();
+        initialize: function () {
+            Player.initialize(onPlayerReady);
+            Player.onSoundComplete = onSoundComplete;
+            Player.onProgressChange = onProgressChange;
             compileTemplates();
             ajaxRequestLoop();
             updateDatesLoop();
             cacheImages();
-
-            $(document).mousedown(function(){
-                ++mouseDowns;
-            });
-            $(document).mouseup(function(){
-                mouseDowns = 0;
-            });
         },
 
         // true if we are in the middle of a listening party
@@ -705,6 +538,6 @@ $(document).ready(function(){
     Login.initialize();
     Login.addStateChangeCallback(SCCompo.ajaxRequest);
 
-    SCCompo.initialize(MEDIA_URL);
+    SCCompo.initialize();
 });
 
