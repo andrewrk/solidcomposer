@@ -110,9 +110,63 @@ def ajax_project(request):
     return newer ones. Also return the current state - who has it
     checked out, etc.
     """
+    last_version_str = request.GET.get('last_version', 'null')
+    project_id = request.GET.get('project', 0)
+    try:
+        project_id = int(project_id)
+    except ValueError:
+        project_id = 0
+    project = get_object_or_404(Project, id=project_id)
 
+    # make sure the user has permission
+    data = {
+        'user': {
+            'is_authenticated': request.user.is_authenticated(),
+            'has_permission': project.band.permission_to_work(request.user),
+        },
+        'success': False,
+    }
 
-    return json_response({})
+    if not data['user']['has_permission']:
+        data['reason'] = design.you_dont_have_permission_to_work_on_this_band
+        return json_response(data)
+
+    def project_data(x):
+        d = safe_model_to_dict(x)
+        d['get_title'] = x.get_title()
+        d['band'] = safe_model_to_dict(x.band)
+        return d
+    data['project'] = project_data(project)
+
+    def version_data(x):
+        from workshop import design
+        d = safe_model_to_dict(x)
+        d['song'] = safe_model_to_dict(x.song)
+        d['song']['owner'] = safe_model_to_dict(x.song.owner)
+        d['song']['date_added'] = x.song.date_added
+        d['song']['owner']['gravatar'] = gravatar_url(x.song.owner.email, design.project_gravatar_size)
+        return d
+
+    if last_version_str == 'null':
+        # get entire version list
+        data['versions'] = [version_data(x) for x in ProjectVersion.objects.filter(project=project)]
+    else:
+        try:
+            last_version_id = int(last_version_str)
+        except ValueError:
+            last_version_id = 0
+        data['versions'] = [version_data(x) for x in ProjectVersion.objects.filter(project=project, id__gt=last_version_id)]
+
+    def user_data(x):
+        from workshop import design
+        d = safe_model_to_dict(x)
+        d['gravatar'] = gravatar_url(x.email, design.project_gravatar_size)
+        return d
+
+    data['user'].update(user_data(request.user))
+
+    data['success'] = True
+    return json_response(data)
 
 @json_login_required
 @json_post_required

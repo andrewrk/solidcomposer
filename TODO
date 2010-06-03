@@ -1,4 +1,6 @@
 = sitewide =
+ * when you click something to load the next page, replace the contents with
+   the loading thing
  * refactor to explicitly have to add data to json instead of UNSAFE_KEYS
  * chat: clicking onliners should open a new window
  * download mp3: box instead of link
@@ -22,8 +24,11 @@
    > change competitions to arena
    > change workshop to workbench
  * make the login ALWAYS ajax. the consistency will help user confidence.
+ * 
 
 = arena =
+ * new competition form: if you uncheck "have listening party," it should hide
+   "listening party date"
  * if you're listening to an entry during voting, and then voting ends
    and the entries re-order, it will show you as listening to the wrong entry.
  * show competition length as metadata

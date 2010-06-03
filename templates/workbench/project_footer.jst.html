@@ -1,0 +1,13 @@
+<% if (project.forked_from) { %>
+    <p>Forked from <a href="<%=urls.project_version(project.forked_from.project.id, project.forked_from.version)%>"><%=project.forked_from.song.title%></a></p>
+<% } else if (project.merged_from) { %>
+    <div id="merge">
+        <ul>
+            <% for (var i=0; i<project.merged_from.length; ++i) { var merge = project.merged_from[i]; %>
+                <li>
+                    <a href="<%=urls.project_version(merge.project.id, merge.version)%>"><%=project.merged_from[i].song.title%></a>
+                </li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>

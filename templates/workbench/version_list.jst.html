@@ -1,0 +1,16 @@
+<% if (versions.length) { %>
+    <% for (var i=versions.length-1; i>=0; --i) { var version = versions[i]; %>
+        <div id="version<%=i%>" class="version">
+            <div class="owner">
+                <img src="<%=version.song.owner.gravatar%>" alt="" />
+                <%=version.song.owner.username%>
+            </div>
+            <div class="version-data">
+                <a name="version<%=i%>"></a>
+                Version <%=version.version%> on <%=Time.formatDateTime(Time.localTime(version.song.date_added))%>
+            </div>
+            <% var song = version.song; song.band = project.band; %>
+            {% include 'player.jst.html' %}
+        </div>
+    <% } %>
+<% } %>

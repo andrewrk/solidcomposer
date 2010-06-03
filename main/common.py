@@ -5,9 +5,13 @@ from django.contrib.auth.models import User
 from datetime import datetime
 import string
 import random
+import hashlib
 import simplejson as json
 
 from main import design
+
+def gravatar_url(email, size):
+    return "http://www.gravatar.com/avatar/%s?s=%s&r=pg&d=identicon" % (hashlib.md5(email).hexdigest(), str(size))
 
 def create_hash(length):
     """

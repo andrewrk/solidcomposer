@@ -29,7 +29,7 @@ class BandMember(models.Model):
 
 class Band(models.Model):
     OPENNESS_CHOICES = (
-        # completely open. anyone can contribute
+        # completely open. anyone with an account and not banned can contribute.
         (FULL_OPEN, 'Fully open'),
         # open source but only band members can contribute
         (OPEN_SOURCE, 'Open source'),
@@ -121,8 +121,19 @@ class Band(models.Model):
         self.create_url()
         self.create_folder()
 
-    def contributors(self):
-        return BandMember.objects.filter(band=self, role=BAND_MEMBER)
+    def permission_to_work(self, user):
+        "Returns whether a user can check out and check in projects."
+        if not user.is_authenticated():
+            return False
+
+        # get the BandMember for this user
+        members = BandMember.objects.filter(user=user, band=self)
+        if members.count() != 1:
+            # not in this band. if the band is FULL_OPEN they can edit.
+            return self.openness == FULL_OPEN
+
+        member = members[0]
+        return member.role in (MANAGER, BAND_MEMBER)
 
     def __unicode__(self):
         return self.title
