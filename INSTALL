@@ -17,6 +17,8 @@ The first time you install this project, you need to:
         <weekly>     python /path/to/project/manage.py runjobs weekly
         <monthly>    python /path/to/project/manage.py runjobs monthly 
     * follow the directions below for deploying
+    * set up mp3 on the media server to be served with
+      content-disposition: attachment
 
 After that, you get to use the happy funtime deploy script (tm)!
 
