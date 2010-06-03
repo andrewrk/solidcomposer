@@ -27,7 +27,8 @@ def ajax_hear(request):
     data = {
         'user': {
             'is_authenticated': request.user.is_authenticated(),
-            'has_permission': room.permission_to_chat(request.user),
+            'permission_read': room.permission_to_hear(request.user),
+            'permission_write': room.permission_to_chat(request.user),
         },
         'room': room_data(room),
         'messages': [],
@@ -37,44 +38,45 @@ def ajax_hear(request):
         data['user']['get_profile'] = safe_model_to_dict(request.user.get_profile())
         data['user']['username'] = request.user.username
 
-    def add_to_message(msg):
-        d = safe_model_to_dict(msg)
-        d['author'] = {
-            'username': msg.author.username,
-            'id': msg.author.id,
-        }
-        d['timestamp'] = msg.timestamp
-        return d
+    if data['user']['permission_read']:
+        def add_to_message(msg):
+            d = safe_model_to_dict(msg)
+            d['author'] = {
+                'username': msg.author.username,
+                'id': msg.author.id,
+            }
+            d['timestamp'] = msg.timestamp
+            return d
 
-    if last_message_str == 'null':
-        # get entire log for this chat.
-        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room)]
-    else:
-        try:
-            last_message_id = int(last_message_str)
-        except ValueError:
-            last_message_id = 0
-
-        last_message = get_object_or_404(ChatMessage, id=last_message_id)
-        data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, id__gt=last_message_id)]
-
-    # mark an appearance in the ChatRoom
-    if request.user.is_authenticated() and room.is_active():
-        appearances = Appearance.objects.filter(person=request.user, room=room)
-        if appearances.count() > 0:
-            appearances[0].save() # update the timestamp
+        if last_message_str == 'null':
+            # get entire log for this chat.
+            data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room)]
         else:
-            new_appearance = Appearance()
-            new_appearance.room = room
-            new_appearance.person = request.user
-            new_appearance.save()
+            try:
+                last_message_id = int(last_message_str)
+            except ValueError:
+                last_message_id = 0
 
-            # join message
-            m = ChatMessage()
-            m.room=room
-            m.type=JOIN
-            m.author=request.user
-            m.save()
+            data['messages'] = [add_to_message(x) for x in ChatMessage.objects.filter(room=room, id__gt=last_message_id)]
+
+    if data['user']['permission_write']:
+        # mark an appearance in the ChatRoom
+        if request.user.is_authenticated() and room.is_active():
+            appearances = Appearance.objects.filter(person=request.user, room=room)
+            if appearances.count() > 0:
+                appearances[0].save() # update the timestamp
+            else:
+                new_appearance = Appearance()
+                new_appearance.room = room
+                new_appearance.person = request.user
+                new_appearance.save()
+
+                # join message
+                m = ChatMessage()
+                m.room=room
+                m.type=JOIN
+                m.author=request.user
+                m.save()
 
     return json_response(data)
 
@@ -89,7 +91,8 @@ def ajax_say(request):
     data = {
         'user': {
             'is_authenticated': request.user.is_authenticated(),
-            'has_permission': False,
+            'permission_read': room.permission_to_hear(request.user),
+            'permission_write': room.permission_to_chat(request.user),
         },
         'success': False,
     }
@@ -102,8 +105,7 @@ def ajax_say(request):
     if message == "" or not request.user.is_authenticated():
         return json_response(data)
 
-    data['user']['has_permission'] = room.permission_to_chat(request.user)
-    if not data['user']['has_permission']:
+    if not data['user']['permission_write']:
         return json_response(data)
 
     # we're clear. add the message

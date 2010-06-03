@@ -124,7 +124,7 @@ var Chat = function() {
         
         new_chat_can_say = that.chatRoomActive(state.room) &&
             state.user.is_authenticated &&
-            state.user.has_permission;
+            state.user.permission_write;
         different = new_chat_can_say !== chat_can_say;
         chat_can_say = new_chat_can_say;
         if (different) {
@@ -209,21 +209,6 @@ var Chat = function() {
     function userJoin(user_id) {
     }
 
-    // return the index of where a new message should be inserted.
-    // -1 if the message already exists
-    function getMessageIndex(id) {
-        // loop backwards through the array until we find the
-        // slot for the message
-        var i;
-        for (i=state.messages.length-1; i>=0; --i) {
-            if (state.messages[i].id < id) {
-                return i+1;
-            } else if (state.messages[i].id === id) {
-                return -1;
-            }
-        }
-    }
-
     function chatAjaxRequest() {
         $.getJSON(state.urls.hear,
             {
@@ -231,9 +216,6 @@ var Chat = function() {
                 "room": chatroom_id
             },
             function(data){
-                var scroll;
-                var i;
-                
                 if (data === null) {
                     return;
                 }
@@ -245,7 +227,7 @@ var Chat = function() {
                 }
 
                 // see if we're at the bottom of the div
-                scroll = scrolledToBottom();
+                var scroll = scrolledToBottom();
 
                 state.room = data.room;
                 state.user = data.user;
@@ -257,27 +239,40 @@ var Chat = function() {
                 }
                 if (messageCount > 0) {
                     data.messages.sort(function(a,b){
-                        if (a.id > b.id) {
-                            return 1;
-                        } else if (a.id < b.id) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
+                        return a.id - b.id;
                     });
+                }
+
+                // return the index of where a new message should be inserted.
+                // -1 if the message already exists
+                function getMessageIndex(id) {
+                    // loop backwards through the array until we find the
+                    // slot for the message
+                    var i;
+                    for (i=state.messages.length-1; i>=0; --i) {
+                        if (state.messages[i].id < id) {
+                            return i+1;
+                        } else if (state.messages[i].id === id) {
+                            return -1;
+                        }
+                    }
+                    // there are no messages
+                    return 0;
                 }
 
                 // insert the new messages into the sorted list
                 // if the id is already in the array, discard it.
                 var insertIndex;
                 var prevId;
-                for (i=0; i<data.messages.length; ++i) {
+                var i;
+                function removeOnliner(index) {
+                    state.onliners.splice(index, 1);
+                }
+                for (i=0; i<messageCount; ++i) {
                     // if it's a join or part, affect state.onliners
                     if (last_message_id && state.onliners) {
                         if (data.messages[i].type === that.message_type.JOIN) {
-                            onlinerAction(data.messages[i].author.id, function(index) {
-                                state.onliners.splice(index, 1);
-                            });
+                            onlinerAction(data.messages[i].author.id, removeOnliner);
                         } else if (data.messages[i].type === that.message_type.LEAVE) {
                             state.onliners.push(data.messages[i].author);
                         }
@@ -308,8 +303,8 @@ var Chat = function() {
                         }
                     }
                 }
-                if (data.messages.length > 0) {
-                    last_message_id = data.messages[data.messages.length-1].id;
+                if (messageCount > 0) {
+                    last_message_id = data.messages[messageCount-1].id;
                 }
 
                 if (that.beforeChatRoomActive(state.room)) {

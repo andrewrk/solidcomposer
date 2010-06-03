@@ -72,7 +72,8 @@ class SimpleTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(data['user']['permission_read'], True)
+        self.assertEqual(data['user']['permission_write'], False)
         self.assertEqual(len(data['messages']), 3)
 
         # anon requesting all messages, no permission
@@ -83,7 +84,8 @@ class SimpleTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['user']['has_permission'], False)
+        self.assertEqual(data['user']['permission_read'], True)
+        self.assertEqual(data['user']['permission_write'], False)
         # can't talk but can still read messages
         self.assertEqual(len(data['messages']), 3)
 
@@ -97,7 +99,8 @@ class SimpleTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(data['user']['permission_read'], True)
+        self.assertEqual(data['user']['permission_write'], True)
         self.assertEqual(len(data['messages']), 2)
 
         # whitelist not authorized
@@ -107,9 +110,10 @@ class SimpleTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['user']['has_permission'], False)
-        # can still read messages
-        self.assertEqual(len(data['messages']), 3)
+        self.assertEqual(data['user']['permission_read'], False)
+        self.assertEqual(data['user']['permission_write'], False)
+        # private room, cannot read messages
+        self.assertEqual(len(data['messages']), 0)
 
         # whitelist has permission
         self.white_room.whitelist.add(self.superjoe)
@@ -120,8 +124,18 @@ class SimpleTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['user']['has_permission'], True)
-        # second check of whitelist, has join message
+        self.assertEqual(data['user']['permission_read'], True)
+        self.assertEqual(data['user']['permission_write'], True)
+        # first check, has 3 messages
+        self.assertEqual(len(data['messages']), 3)
+
+        response = self.client.get('/chat/ajax/hear/', {
+            'last_message': 'null',
+            'room': self.white_room.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        # second check, has join message
+        data = json.loads(response.content)
         self.assertEqual(len(data['messages']), 4)
 
         # blacklist has permission
@@ -131,7 +145,8 @@ class SimpleTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(data['user']['permission_read'], True)
+        self.assertEqual(data['user']['permission_write'], True)
         # second peek of  black_room, contains join message
         self.assertEqual(len(data['messages']), 4)
 
@@ -144,7 +159,8 @@ class SimpleTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['user']['has_permission'], False)
+        self.assertEqual(data['user']['permission_read'], True)
+        self.assertEqual(data['user']['permission_write'], False)
         # can still read messages
         self.assertEqual(len(data['messages']), 4)
 
@@ -158,7 +174,8 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['user']['is_authenticated'], True)
-        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(data['user']['permission_read'], True)
+        self.assertEqual(data['user']['permission_write'], True)
         self.assertEqual(data['success'], True)
         msg = ChatMessage.objects.filter(room=self.open_room, author=self.skiessi).order_by('-id')[0]
         self.assertEqual(msg.message, 'this is my message 1 2 3')
@@ -282,7 +299,8 @@ class SimpleTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(data['user']['permission_read'], True)
+        self.assertEqual(data['user']['permission_write'], True)
         # 3 messages: join, join, leave
         self.assertEqual(len(data['messages']), 3)
         # have to sort locally

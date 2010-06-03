@@ -1,8 +1,6 @@
 <% if (Chat.chatRoomActive(room)) { %>
     <% if (user.is_authenticated) { %>
-        <% if (user.has_permission) { %>
-            
-        <% } else { %>
+        <% if (! user.permission_write) { %>
             <p>You may only observe in this chat room.</p>
         <% } %>
     <% } else { %>

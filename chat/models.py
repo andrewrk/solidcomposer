@@ -29,17 +29,23 @@ class ChatRoom(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
 
+    def permission_to_hear(self, user):
+        "whether a user has permission to read messages in this channel"
+        if self.permission_type in (OPEN, BLACKLIST):
+            return True
+        else:
+            # user has to be signed in and on the whitelist
+            return user.is_authenticated() and self.whitelist.filter(pk=user.id).count() == 1
+
     def permission_to_chat(self, user):
-        """
-        returns True if and only if user has access to this room.
-        """
+        "whether a user has permission to talk in this channel"
+        # user has to be signed in
+        if not user.is_authenticated():
+            return False
+
         if self.permission_type == OPEN:
             return True
         else:
-            # user has to be signed in
-            if not user.is_authenticated():
-                return False
-
             if self.permission_type == WHITELIST:
                 # user has to be on the whitelist
                 if self.whitelist.filter(pk=user.id).count() != 1:
