@@ -27,6 +27,8 @@
  * 
 
 = arena =
+ * show listening party buffer time
+ * make sure Player works seamlessly
  * new competition form: if you uncheck "have listening party," it should hide
    "listening party date"
  * if you're listening to an entry during voting, and then voting ends
