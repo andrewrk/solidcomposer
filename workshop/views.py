@@ -144,13 +144,19 @@ def ajax_project(request):
         return d
     data['project'] = project_data(project)
 
+    def user_data(x):
+        from workshop import design
+        d = safe_model_to_dict(x)
+        d['gravatar'] = gravatar_url(x.email, design.project_gravatar_size)
+        d['get_profile']['get_points'] = x.get_profile().get_points()
+        return d
+
     def version_data(x):
         from workshop import design
         d = safe_model_to_dict(x)
         d['song'] = safe_model_to_dict(x.song)
-        d['song']['owner'] = safe_model_to_dict(x.song.owner)
+        d['song']['owner'] = user_data(x.song.owner)
         d['song']['date_added'] = x.song.date_added
-        d['song']['owner']['gravatar'] = gravatar_url(x.song.owner.email, design.project_gravatar_size)
         return d
 
     if last_version_str == 'null':
@@ -162,12 +168,6 @@ def ajax_project(request):
         except ValueError:
             last_version_id = 0
         data['versions'] = [version_data(x) for x in ProjectVersion.objects.filter(project=project, id__gt=last_version_id)]
-
-    def user_data(x):
-        from workshop import design
-        d = safe_model_to_dict(x)
-        d['gravatar'] = gravatar_url(x.email, design.project_gravatar_size)
-        return d
 
     data['user'].update(user_data(request.user))
 

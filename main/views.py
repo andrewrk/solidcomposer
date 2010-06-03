@@ -26,6 +26,7 @@ def ajax_login_state(request):
     if request.user.is_authenticated():
         data['user'].update(safe_model_to_dict(request.user))
         data['user']['get_profile']['get_points'] = request.user.get_profile().get_points()
+        data['user']['gravatar_icon'] = gravatar_url(request.user.email, design.gravatar_icon_size)
 
     return json_response(data)
 

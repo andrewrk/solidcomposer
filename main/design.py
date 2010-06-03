@@ -9,6 +9,9 @@ waveform_size = (800, 100)
 waveform_center_color = (157, 203, 229, 255)
 waveform_outer_color = (36, 128, 215, 255)
 
+# gravatar size
+gravatar_icon_size = 24;
+
 # strings that are displayed to the user.
 must_submit_via_post = 'Must submit via POST.'
 must_submit_via_get = 'Must submit via GET.'

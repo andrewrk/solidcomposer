@@ -1,10 +1,35 @@
 <% if (versions.length) { %>
+    <div id="next-version" class="version">
+        <% if (project.checked_out_to !== null) { %>
+            <% var version_user = project.checked_out_to; %>
+            {% include 'workbench/version_owner.jst.html' %}
+        <% } else { %>
+            <% var version_user = user; %>
+            {% include 'workbench/version_owner.jst.html' %}
+        <% } %>
+        <div id="status">
+            <% if (project.checked_out_to === user.id) { %>
+                Checked out to <strong>you</strong>.
+            <% } else if (project.checked_out_to !== null) { %>
+                Checked out.
+            <% } else { %>
+                Available.
+            <% } %>
+        </div>
+        <div id="action">
+            <% if (project.checked_out_to === user.id) { %>
+                Check in.
+            <% } else if (project.checked_out_to !== null) { %>
+                Poke them.
+            <% } else { %>
+                Check out.
+            <% } %>
+        </div>
+    </div>
     <% for (var i=versions.length-1; i>=0; --i) { var version = versions[i]; %>
         <div id="version<%=i%>" class="version">
-            <div class="owner">
-                <img src="<%=version.song.owner.gravatar%>" alt="" />
-                <%=version.song.owner.username%>
-            </div>
+            <% var version_user = version.song.owner; %>
+            {% include 'workbench/version_owner.jst.html' %}
             <div class="version-data">
                 <a name="version<%=i%>"></a>
                 Version <%=version.version%> on <%=Time.formatDateTime(Time.localTime(version.song.date_added))%>

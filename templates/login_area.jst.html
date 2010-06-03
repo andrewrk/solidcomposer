@@ -1,5 +1,6 @@
 <% if (json.user.is_authenticated) { %>
     <div id="loginStatusDiv">
+        <% var the_user = json.user; %>
         {% include 'username.jst.html' %}
         <a href="{% url account %}">settings</a>
         <a href="#" id="signOut">sign out</a>

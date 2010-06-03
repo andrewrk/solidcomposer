@@ -91,6 +91,7 @@
  * arena home GUI Redesign
 
 = workbench =
+ * make logging out and logging in nice.
  * workbench page
    > project manager page
      - Filters
