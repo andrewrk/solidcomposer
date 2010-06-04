@@ -28,6 +28,7 @@
 
 = arena =
  * show listening party buffer time
+ * ability to just set a delay for a listening party as opposed to a date
  * make sure Player works seamlessly
  * new competition form: if you uncheck "have listening party," it should hide
    "listening party date"

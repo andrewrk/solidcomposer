@@ -21,7 +21,7 @@ deps = [
     'south-0.7.1',
     'mutagen-1.19',
     'waveform',
-    'flp',
+    'daw-0.2',
     'django_extensions-0.4.1',
 ]
 
@@ -62,10 +62,13 @@ try:
 except ImportError:
     pass
 
-# PyFlp
+# PyDaw
 try:
-    import flp
-    deps.remove('flp')
+    import daw
+    if daw.__version__ == '0.2':
+        deps.remove('daw-0.2')
+    else:
+        sys.stderr.write("installed PyDaw version %s does not equal %s\n" % (daw.__version__, '0.2'))
 except ImportError:
     pass
 
