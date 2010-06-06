@@ -200,6 +200,7 @@ def ajax_project_list(request):
         d['owner'] = safe_model_to_dict(x.owner)
         if x.studio:
             d['studio'] = safe_model_to_dict(x.studio)
+            d['studio']['logo_16x16'] = x.studio.logo_16x16.url
         else:
             d['studio'] = None
         d['samples'] = [safe_model_to_dict(y) for y in x.samples.all()]
@@ -287,6 +288,8 @@ def ajax_project(request):
         from workshop import design
         d = safe_model_to_dict(x)
         d['song'] = safe_model_to_dict(x.song)
+        d['song']['studio'] = safe_model_to_dict(x.song.studio)
+        d['song']['studio']['logo_16x16'] = x.song.studio.logo_16x16.url
         d['song']['owner'] = user_data(x.song.owner)
         d['song']['date_added'] = x.song.date_added
         return d
@@ -394,7 +397,7 @@ def create_project(request, band_str):
                     version.project = project
                     version.song = song
                     version.version = 1
-                    version.save()
+                    version.saveNewVersion()
 
                     # subscribe the creator
                     project.subscribers.add(request.user)

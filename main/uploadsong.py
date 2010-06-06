@@ -166,6 +166,13 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
             dawProject = daw.load(handle.name)
             dawExt = dawProject.extension() 
 
+            # assign the correct studio
+            try:
+                song.studio = Studio.objects.get(identifier=dawProject.identifier)
+            except DoesNotExist:
+                pass
+            
+
             generators = dawProject.generators()
             for generator in generators:
                 # see if it already exists

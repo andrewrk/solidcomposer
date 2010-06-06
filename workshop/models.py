@@ -113,7 +113,10 @@ class Project(models.Model):
     subscribers = models.ManyToManyField(User, related_name='project_subscribers')
 
     def __unicode__(self):
-        return self.title
+        if self.title is not None:
+            return self.title
+
+        return "error: title not cached"
 
     def save(self, *args, **kwargs):
         self.date_activity = datetime.now()
@@ -140,8 +143,8 @@ class Studio(models.Model):
     # description for info page
     info = models.TextField(blank=True)
 
-    logo_large = models.ImageField(upload_to='img/studio', blank=True, null=True)
-    logo_16x16 = models.ImageField(upload_to='img/studio', blank=True, null=True)
+    logo_large = models.ImageField(upload_to='img/studio', blank=True, null=True, max_length=512)
+    logo_16x16 = models.ImageField(upload_to='img/studio', blank=True, null=True, max_length=512)
 
     def __unicode__(self):
         return self.title

@@ -51,10 +51,9 @@
     background-image: url("../img/warning16.png");
 }
 
-.player-large .dl-project .flp a {
+.player-large .dl-project .icon a {
     margin: 0 2px 0 0;
-    padding: 2px 12px 2px 2px;
-    background-image: url("../img/flp16.png");
+    padding: 2px 17px 2px 2px;
 }
 
 .player-large .top-layer .title {

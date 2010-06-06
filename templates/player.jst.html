@@ -5,7 +5,19 @@
 <div class="player-large">
     <div class="top-layer">
         <% if (song.source_file) { %>
-            <span class="dl-project"><span class="unknown"><a href="{{ MEDIA_URL }}<%=song.source_file%>">Download Project</a></span></span>
+            <span class="dl-project">
+                <% if (song.studio && song.studio.logo_16x16 !== null) { %>
+                    <span class="icon">
+                <% } else { %>
+                    <span>
+                <% } %>
+                    <a href="{{ MEDIA_URL }}<%=song.source_file%>"
+                        <% if (song.studio && song.studio.logo_16x16 !== null) { %>
+                            style="background-image: url(<%=song.studio.logo_16x16%>);"
+                        <% } %>
+                        >Download Project</a>
+                </span>
+            </span>
         <% } %>
         {% comment %}
             need to implement the workbench for this stuff to work.
