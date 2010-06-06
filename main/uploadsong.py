@@ -206,7 +206,6 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
             samples = dawProject.samples()
             for sample in samples:
                 title = sample.split('/')[-1]
-                # first check the user's uploaded dependencies
                 # if the title matches anthing the user has already uploaded,
                 # establish a link.
                 user_samples = UserSampleDependency.objects.filter(user=user, title=title)
@@ -217,10 +216,12 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
                     dep = SampleDependency()
                     dep.title = user_sample.title
                     dep.sample_file = user_sample.sample_file
+                    dep.save()
+                    song.samples.add(dep)
                     continue
 
                 # next check the band's dependencies
-                band_samples = BandSampleDependency.objects.filter(title=title)
+                band_samples = BandSampleDependency.objects.filter(band=band, title=title)
 
                 if band_samples.count() > 0:
                     # band has already uploaded this file.
@@ -228,12 +229,16 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
                     dep = SampleDependency()
                     dep.title = band_sample.title
                     dep.sample_file = band_sample.sample_file
+                    dep.save()
+                    song.samples.add(dep)
                     continue
 
                 # unresolved dependency
-                dep = SampleDependency()
+                dep = BandSampleDependency()
+                dep.band = band
                 dep.title = title
                 dep.save()
+                song.samples.add(dep)
             
             if dawExt:
                 source_file_title += "." + dawExt

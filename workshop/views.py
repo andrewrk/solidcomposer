@@ -152,6 +152,60 @@ def performFilter(filterId, projects, user=None):
 
     return FILTERS[filterId]['func'](projects)
 
+def user_to_dict(x):
+    from workshop import design
+    d = safe_model_to_dict(x)
+    d['gravatar'] = gravatar_url(x.email, design.project_gravatar_size)
+    d['get_profile']['get_points'] = x.get_profile().get_points()
+    return d
+
+def song_to_dict(x, user):
+    d = safe_model_to_dict(x)
+    d['owner'] = user_to_dict(x.owner)
+    if x.studio:
+        d['studio'] = safe_model_to_dict(x.studio)
+        d['studio']['logo_16x16'] = x.studio.logo_16x16.url
+    else:
+        d['studio'] = None
+
+    allSamples = x.samples.all()
+    allEffects = x.effects.all()
+    allGenerators = x.generators.all()
+    d['samples'] = [safe_model_to_dict(y) for y in allSamples]
+    d['effects'] = [safe_model_to_dict(y) for y in allEffects]
+    d['generators'] = [safe_model_to_dict(y) for y in allGenerators]
+
+    ownedEffects = user.get_profile().effects.all()
+    ownedGenerators = user.get_profile().generators.all()
+    d['missing_samples'] = [safe_model_to_dict(y) for y in filter(lambda x: x.sample_file is None, allSamples)]
+    d['missing_generators'] = [safe_model_to_dict(y) for y in filter(lambda x: x not in ownedGenerators, allGenerators)]
+    d['missing_effects'] = [safe_model_to_dict(y) for y in filter(lambda x: x not in ownedEffects, allEffects)]
+    return d
+    
+def version_to_dict(x, user):
+    d = {
+        'song': song_to_dict(x.song, user),
+        'version': x.version,
+    }
+    return d
+
+def project_to_dict(x, user):
+    d = {
+        'latest_version': version_to_dict(x.latest_version, user),
+        'date_activity': x.date_activity,
+        'checked_out_to': None,
+        'visible': x.visible,
+        'tags': [safe_model_to_dict(tag) for tag in x.tags.all()],
+        'scrap_voters': x.scrap_voters.count(),
+        'promote_voters': x.promote_voters.count(),
+        'id': x.id,
+        'band': safe_model_to_dict(x.band),
+    }
+    if x.checked_out_to is not None:
+        d['checked_out_to'] = safe_model_to_dict(x.checked_out_to)
+
+    return d
+
 @json_login_required
 @json_get_required
 def ajax_project_list(request):
@@ -195,42 +249,6 @@ def ajax_project_list(request):
     paginator = Paginator(projects, settings.ITEMS_PER_PAGE)
 
     # build the json object
-    def song_to_dict(x):
-        d = safe_model_to_dict(x)
-        d['owner'] = safe_model_to_dict(x.owner)
-        if x.studio:
-            d['studio'] = safe_model_to_dict(x.studio)
-            d['studio']['logo_16x16'] = x.studio.logo_16x16.url
-        else:
-            d['studio'] = None
-        d['samples'] = [safe_model_to_dict(y) for y in x.samples.all()]
-        d['effects'] = [safe_model_to_dict(y) for y in x.effects.all()]
-        d['generators'] = [safe_model_to_dict(y) for y in x.generators.all()]
-        return d
-        
-    def version_to_dict(x):
-        d = {
-            'song': song_to_dict(x.song),
-            'version': x.version,
-        }
-        return d
-
-    def project_to_dict(x, user):
-        d = {
-            'latest_version': version_to_dict(x.latest_version),
-            'date_activity': x.date_activity,
-            'checked_out_to': None,
-            'visible': x.visible,
-            'tags': [safe_model_to_dict(tag) for tag in x.tags.all()],
-            'scrap_voters': x.scrap_voters.count(),
-            'promote_voters': x.promote_voters.count(),
-            'id': x.id,
-        }
-
-        if x.checked_out_to is not None:
-            d['checked_out_to'] = safe_model_to_dict(x.checked_out_to)
-
-        return d
 
     data = {
         'projects': [project_to_dict(x, request.user) for x in paginator.page(page_number).object_list],
@@ -270,41 +288,19 @@ def ajax_project(request):
         data['reason'] = design.you_dont_have_permission_to_work_on_this_band
         return json_response(data)
 
-    def project_data(x):
-        d = safe_model_to_dict(x)
-        d['title'] = x.title
-        d['band'] = safe_model_to_dict(x.band)
-        return d
-    data['project'] = project_data(project)
-
-    def user_data(x):
-        from workshop import design
-        d = safe_model_to_dict(x)
-        d['gravatar'] = gravatar_url(x.email, design.project_gravatar_size)
-        d['get_profile']['get_points'] = x.get_profile().get_points()
-        return d
-
-    def version_data(x):
-        from workshop import design
-        d = safe_model_to_dict(x)
-        d['song'] = safe_model_to_dict(x.song)
-        d['song']['studio'] = safe_model_to_dict(x.song.studio)
-        d['song']['studio']['logo_16x16'] = x.song.studio.logo_16x16.url
-        d['song']['owner'] = user_data(x.song.owner)
-        d['song']['date_added'] = x.song.date_added
-        return d
+    data['project'] = project_to_dict(project, request.user)
 
     if last_version_str == 'null':
         # get entire version list
-        data['versions'] = [version_data(x) for x in ProjectVersion.objects.filter(project=project)]
+        data['versions'] = [version_to_dict(x, request.user) for x in ProjectVersion.objects.filter(project=project)]
     else:
         try:
             last_version_id = int(last_version_str)
         except ValueError:
             last_version_id = 0
-        data['versions'] = [version_data(x) for x in ProjectVersion.objects.filter(project=project, id__gt=last_version_id)]
+        data['versions'] = [version_to_dict(x, request.user) for x in ProjectVersion.objects.filter(project=project, id__gt=last_version_id)]
 
-    data['user'].update(user_data(request.user))
+    data['user'].update(user_to_dict(request.user))
 
     data['success'] = True
     return json_response(data)

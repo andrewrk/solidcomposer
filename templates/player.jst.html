@@ -19,13 +19,12 @@
                 </span>
             </span>
         <% } %>
-        {% comment %}
-            need to implement the workbench for this stuff to work.
-            <% if (song.studio) { %>
-                <span class="dependencies"><span class="<% if (song.dependency_check_passed) { %>good<% } else { %>bad<% } %>"><a href="#">Dependencies</a></span></span>
+        <% if (song.studio) { %>
+            <span class="dependencies"><span class="<% if (song.missing_samples.length === 0) { %>good<% } else { %>bad<% } %>"><a href="#">Dependencies</a></span></span>
+            <% if (song.samples.length > song.missing_samples.length) { %>
+                <span class="dl-samples"><a href="#">Download Samples</a></span>
             <% } %>
-            <span class="dl-samples"><a href="#">Download Samples</a></span>
-        {% endcomment %}
+        <% } %>
         <span class="dl-mp3"><a href="{{ MEDIA_URL }}<%=song.mp3_file%>">Download MP3</a></span>
         <span class="title"><%=song.band.title%> - <%=song.title%></span>
     </div>
