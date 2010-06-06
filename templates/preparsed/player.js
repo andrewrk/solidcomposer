@@ -13,7 +13,6 @@ var Player = function() {
 
     // if true, the user cannot alter playback, other than volume.
     var disabledUi = false;
-    var mouseDowns = 0;
 
     // volume is global to Player
     var volume = null;
@@ -55,6 +54,22 @@ var Player = function() {
         [0.01, 'bar0'],
         [-1, 'mute']
     ];
+
+    var offsetTop = null;
+    var volumeMouseMove = function(e) {
+        e.preventDefault();
+
+        var relativeY = e.pageY - offsetTop;
+        var maxY = waveformHeight-10;
+        var newVolume = 1 - (relativeY / maxY);
+        that.setVolume(newVolume);
+        updateVolume();
+    }
+    var volumeMouseUp = function(e) {
+        e.preventDefault();
+        $(this).unbind('mousemove', volumeMouseMove);
+        $(this).unbind('mouseup', volumeMouseUp);
+    }
 
     function onSoundComplete() {
         if (that.onSoundComplete) {
@@ -136,29 +151,21 @@ var Player = function() {
         });
 
         // volume control
-        jdom.find(".player-large .volume").mousemove(function(e){
-            if (mouseDowns > 0) {
-                var relativeY = e.pageY - this.offsetTop;
-                var maxY = waveformHeight-10;
-                var newVolume = 1 - (relativeY / maxY);
-                that.setVolume(newVolume);
-                updateCurrentPlayer();
-            }
-            e.preventDefault();
-            return false;
-        });
         jdom.find(".player-large .volume").mousedown(function(e){
             e.preventDefault();
+            offsetTop = this.offsetTop;
+            $(document).bind('mousemove', volumeMouseMove);
+            $(document).bind('mouseup', volumeMouseUp);
         });
-        jdom.find(".player-large .volume .icon").mousedown(function(e){
+
+        /*jdom.find(".player-large .volume .icon").mousedown(function(e){
             e.preventDefault();
-        });
+        });*/
 
         updateCurrentPlayer();
     }
 
-    function updateCurrentPlayer() {
-        // update volume - this affects every player on the page
+    function updateVolume() {
         var volume = that.volume();
         var volumeClass = null;
         var i;
@@ -174,6 +181,12 @@ var Player = function() {
         var maxY = waveformHeight - volumeIconHeight;
         var yPos = (1-volume) * maxY;
         $(".player-large .volume .icon").css("top", yPos);
+
+    }
+
+    function updateCurrentPlayer() {
+        // update volume - this affects every player on the page
+        updateVolume();
 
         // everything below affects only currentPlayer
         if (currentPlayer === null) {
@@ -226,13 +239,6 @@ var Player = function() {
         initialize: function(readyFunc) {
             initializeJPlayer(readyFunc);
             cacheImages();
-
-            $(document).mousedown(function(){
-                ++mouseDowns;
-            });
-            $(document).mouseup(function(){
-                mouseDowns = 0;
-            });
         },
         play: function() {
             jp.jPlayer("play");
