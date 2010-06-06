@@ -169,7 +169,7 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
             # assign the correct studio
             try:
                 song.studio = Studio.objects.get(identifier=dawProject.identifier)
-            except DoesNotExist:
+            except Studio.DoesNotExist:
                 pass
             
 
