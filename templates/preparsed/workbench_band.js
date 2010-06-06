@@ -21,7 +21,7 @@ var SCBand = function() {
 
     var page = 1;
     var filter = null;
-    var searchText = null;
+    var searchTextActive = false;
 
     function compileTemplates() {
         template_filters_s = Jst.compile(template_filters);
@@ -62,10 +62,11 @@ var SCBand = function() {
     }
 
     function ajaxRequestProjectList() {
+        var searchText = searchTextActive ? $("#search").val() : "";
         var sendData = {
             band: band_id,
             page: page,
-            search: $("#search").val()
+            search: searchText
         }
         if (filter !== null) {
             sendData.filter = filter;
@@ -83,6 +84,24 @@ var SCBand = function() {
         $.getJSON(state.urls.ajax_project_list, sendData, respond);
     }
 
+    function addStaticClicks() {
+        $("#search").keydown(function(e) {
+            if (e.keyCode === 13) {
+                ajaxRequestProjectList();
+                
+                e.preventDefault();
+                return false;
+            }
+        });
+        $("#search").focus(function(e) {
+            if (! searchTextActive) {
+                $(this).val("");
+                $(this).attr('class', 'active');
+                searchTextActive = true;
+            }
+        });
+    }
+
     that = {
         // public variables
         
@@ -91,6 +110,7 @@ var SCBand = function() {
             compileTemplates();
             band_id = _band_id;
 
+            addStaticClicks();
             Player.initialize();
 
             ajaxRequestLoop();
