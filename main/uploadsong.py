@@ -2,6 +2,7 @@ import settings
 from main.upload import *
 from main.common import create_hash
 from main.models import Song
+from workshop.models import *
 
 import os
 import stat
@@ -164,8 +165,6 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
         try:
             dawProject = daw.load(handle.name)
             dawExt = dawProject.extension() 
-            if dawExt:
-                source_file_title += "." + dawExt
 
             generators = dawProject.generators()
             for generator in generators:
@@ -217,6 +216,9 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
                 dep.save()
                 song.samples.add(dep)
             
+            if dawExt:
+                source_file_title += "." + dawExt
+
             usingDaw = True
         except:
             usingDaw = False
@@ -235,6 +237,10 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
             os.remove(handle.name)
         else:
             shutil.move(handle.name, source_safe_path)
+
+        # give it read permissions
+        os.chmod(source_safe_path, stat.S_IWUSR|stat.S_IRUSR|stat.S_IRGRP|stat.S_IROTH)
+
 
     data['song'] = song
     data['success'] = True
