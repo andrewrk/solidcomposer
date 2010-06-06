@@ -209,19 +209,25 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
                 # first check the user's uploaded dependencies
                 # if the title matches anthing the user has already uploaded,
                 # establish a link.
-                user_samples = user.samples.filter(title=title)
+                user_samples = UserSampleDependency.objects.filter(user=user, title=title)
 
                 if user_samples.count() > 0:
                     # user has already uploaded this file. 
-                    song.samples.add(user_samples[0])
+                    user_sample = user_samples[0]
+                    dep = SampleDependency()
+                    dep.title = user_sample.title
+                    dep.sample_file = user_sample.sample_file
                     continue
 
                 # next check the band's dependencies
-                band_samples = band.samples.filter(title=title)
+                band_samples = BandSampleDependency.objects.filter(title=title)
 
                 if band_samples.count() > 0:
                     # band has already uploaded this file.
-                    song.samples.add(band_samples[0])
+                    band_sample = band_samples[0]
+                    dep = SampleDependency()
+                    dep.title = band_sample.title
+                    dep.sample_file = band_sample.sample_file
                     continue
 
                 # unresolved dependency
@@ -233,7 +239,7 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
                 source_file_title += "." + dawExt
 
             usingDaw = True
-        except:
+        except daw.exceptions.LoadError:
             usingDaw = False
             # ok forget about processing it with the daw
             # add the extension from before

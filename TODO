@@ -1,4 +1,5 @@
 = sitewide =
+ * daw: protect against empty string output
  * when you click something to load the next page, replace the contents with
    the loading thing
  * refactor to explicitly have to add data to json instead of UNSAFE_KEYS
@@ -97,6 +98,7 @@
  * arena home GUI Redesign
 
 = workbench =
+ * the wavform, mp3, and project file should all be in different obscured urls
  * support uploading .zip files for checkins
    > find the extension of a project file
    > treat any other file as a sample dependency

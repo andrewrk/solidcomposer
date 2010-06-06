@@ -59,9 +59,6 @@ class Band(models.Model):
     # True if people have to check stuff out to work on it
     concurrent_editing = models.BooleanField(default=False)
 
-    # the samples uploaded by anyone to the band's songs
-    samples = models.ManyToManyField('workshop.SampleDependency', related_name='band_samples')
-
     def create_url(self):
         # break title into url safe string
         others = Band.objects.filter(url=self.title).count()
@@ -186,8 +183,6 @@ class Profile(models.Model):
     used_space = models.IntegerField(default=0)
     plan = models.ForeignKey(AccountPlan, null=True)
 
-    # the samples that the user has uploaded
-    samples = models.ManyToManyField('workshop.SampleDependency', blank=True, related_name='profile_samples')
     # the plugins that the user owns
     generators = models.ManyToManyField('workshop.GeneratorDependency', blank=True, related_name='profile_generators')
     effects = models.ManyToManyField('workshop.EffectDependency', blank=True, related_name='profile_effects')

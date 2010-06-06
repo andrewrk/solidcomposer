@@ -47,11 +47,13 @@ class BandInvitation(models.Model):
 
 class SampleFile(models.Model):
     # md5 hash of the binary data of the sample
-    # null if we don't know what the hex digest of it is.
     hex_digest = models.CharField(max_length=32, unique=True)
 
     # where it is on disk, relative to MEDIA_ROOT
     path = models.CharField(max_length=256)
+
+    def __unicode__(self):
+        return self.path
 
 class SampleDependency(models.Model):
     # the file title of the dependency. it may contain path 
@@ -61,13 +63,32 @@ class SampleDependency(models.Model):
     # link to the sample file. null if the link is unresolved.
     sample_file = models.ForeignKey(SampleFile, null=True, blank=True)
 
+    def __unicode__(self):
+        if self.sample_file is None:
+            resolution = "not resolved"
+        else:
+            resolution = "resolved"
+        return "%s (%s)" % (self.title, resolution)
+
+class UserSampleDependency(SampleDependency):
+    user = models.ForeignKey(User)
+
+class BandSampleDependency(SampleDependency):
+    band = models.ForeignKey('main.Band')
+
 class EffectDependency(models.Model):
     # the name of the effect. this identifies it.
     title = models.CharField(max_length=256, unique=True)
 
+    def __unicode__(self):
+        return self.title
+
 class GeneratorDependency(models.Model):
     # the name of the generator. this identifies it.
     title = models.CharField(max_length=256, unique=True)
+
+    def __unicode__(self):
+        return self.title
 
 class ProjectVersion(models.Model):
     project = models.ForeignKey('Project')
@@ -86,6 +107,9 @@ class ProjectVersion(models.Model):
 
     def baseSave(self, *args, **kwargs):
         super(ProjectVersion, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return "%s version %i" % (self.song.title, self.version)
 
 class Project(models.Model):
     # title is simply a cache of the latest version's song's title
