@@ -1,4 +1,6 @@
 = sitewide =
+ * have to click on the volume widget to slide it. it installs a mousemove
+   listener page-wide to track it, then destroys it when it's done
  * when you click something to load the next page, replace the contents with
    the loading thing
  * refactor to explicitly have to add data to json instead of UNSAFE_KEYS
@@ -27,6 +29,7 @@
  * 
 
 = arena =
+ * userpage open in a new window
  * send emails when voting results are in
  * don't render ALL the chat messages every time.
  * there's a security hole - javascript knows where the song mp3s are way

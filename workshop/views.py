@@ -238,23 +238,14 @@ def create_project(request, band_str):
             if new_used_space > prof.total_space:
                 err_msg = design.reached_upload_quota
             else:
-                # create the first version
-                version = ProjectVersion()
-                version.project = project
-                version.song = song
-                version.version = 1
-                version.save()
-
                 # upload the song
                 result = upload_song(request.user,
                     file_mp3_handle=mp3_file,
                     file_source_handle=source_file, 
                     band=band,
-                    song_title=form.cleaned_data.get('title'),
-                    version=version)
+                    song_title=form.cleaned_data.get('title'))
                 if not result['success']:
                     err_msg = result['reason']
-                    version.delete()
                 else:
                     # fill in the rest of the fields
                     song = result['song']
@@ -265,6 +256,13 @@ def create_project(request, band_str):
                     project = Project()
                     project.band = band
                     project.save()
+
+                    # create the first version
+                    version = ProjectVersion()
+                    version.project = project
+                    version.song = song
+                    version.version = 1
+                    version.save()
 
                     # subscribe the creator
                     project.subscribers.add(request.user)
