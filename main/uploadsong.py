@@ -198,23 +198,29 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
 
             samples = dawProject.samples()
             for sample in samples:
+                title = sample.split('/')[-1]
+                # first check the user's uploaded dependencies
                 # if the title matches anthing the user has already uploaded,
                 # establish a link.
-                title = sample.split('/')[-1]
                 user_samples = user.samples.filter(title=title)
 
-                dep = SampleDependency()
-                if user_samples.count() == 1:
+                if user_samples.count() > 0:
                     # user has already uploaded this file. 
-                    user_sample = user_samples[0]
-                    dep.title = user_sample.title
-                    dep.sample_file = user_sample.sample_file
-                else:
-                    # unresolved dependency
-                    dep.title = title
+                    song.samples.add(user_samples[0])
+                    continue
 
+                # next check the band's dependencies
+                band_samples = band.samples.filter(title=title)
+
+                if band_samples.count() > 0:
+                    # band has already uploaded this file.
+                    song.samples.add(band_samples[0])
+                    continue
+
+                # unresolved dependency
+                dep = SampleDependency()
+                dep.title = title
                 dep.save()
-                song.samples.add(dep)
             
             if dawExt:
                 source_file_title += "." + dawExt

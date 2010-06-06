@@ -1,5 +1,5 @@
 <ul>
-<% for (var i = 0; i < json.length; i++) { %>
-    <li><a id="<%=json[i][0]%>" href="#"><%=json[i][1]%> (<%=json[i][2]%>)</a></li>
+<% for (var filterId in filters) { %>
+    <li><a id="filter-<%=filterId%>" href="#"><%=filters[filterId].caption%> (<%=filters[filterId].count%>)</a></li>
 <% } %>
 </ul>

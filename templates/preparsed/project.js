@@ -11,16 +11,7 @@ var SCProject = function () {
     var template_footer_s = null;
 
     var state = {
-        urls: {
-            ajax_project: "{% filter escapejs %}{% url workbench.ajax_project %}{% endfilter %}",
-            project: function(id) {
-                return "{% filter escapejs %}{% url workbench.project 0 1 %}{% endfilter %}".replace("0",
-                    "[~~band_id~~]").replace("1", id).replace("[~id~band_id~~]", band_id);
-            },
-            project_version: function(project_id, version_number) {
-                return this.project(project_id) + "#version" + version_number;
-            }
-        },
+        urls: {% include 'workbench/urls.jst.html' %},
         versions: [],
         project: null,
         user: null

@@ -59,6 +59,9 @@ class Band(models.Model):
     # True if people have to check stuff out to work on it
     concurrent_editing = models.BooleanField(default=False)
 
+    # the samples uploaded by anyone to the band's songs
+    samples = models.ManyToManyField('workshop.SampleDependency', related_name='band_samples')
+
     def create_url(self):
         # break title into url safe string
         others = Band.objects.filter(url=self.title).count()

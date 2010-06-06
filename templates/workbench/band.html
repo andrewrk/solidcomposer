@@ -1,5 +1,7 @@
 {% extends 'workbench/base.html' %}
 
+{% block css %}band.css{% endblock %}
+
 {% block extra_header %}
     {{ block.super }}
     <script type="text/javascript">
@@ -7,6 +9,7 @@
     </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/time.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
+    {% include 'script_player.html' %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/workbench_band.js"></script>
 {% endblock %}
 
@@ -22,16 +25,13 @@
     <div id="filters">
         {% include 'loading.html' %}
     </div>
-    <div id="page_nav">
-        {% include 'loading.html' %}
-    </div>
     <div id="new_project">
         <a href="{% url workbench.create_project band.id %}">New Project</a>
     </div>
     <div>
         <input type="text" id="search" />
     </div>
-    <div id="project_list">
+    <div id="project-list">
         {% include 'loading.html' %}
     </div>
 {% endblock %}

@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^ajax/invite/accept/$', 'workshop.views.ajax_accept_invite', name="workbench.ajax_accept_invite"),
     url(r'^ajax/create_band/$', 'workshop.views.ajax_create_band', name="workbench.ajax_create_band"),
     url(r'^ajax/project_filters/$', 'workshop.views.ajax_project_filters', name="workbench.ajax_project_filters"),
+    url(r'^ajax/project_list/$', 'workshop.views.ajax_project_list', name="workbench.ajax_project_list"),
     url(r'^ajax/project/$', 'workshop.views.ajax_project', name="workbench.ajax_project"),
 
     url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),

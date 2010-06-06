@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -10,6 +11,39 @@ from workshop import design
 from main.models import *
 from main.common import *
 from main.uploadsong import upload_song
+
+DEFAULT_FILTER = 'all'
+JFILTERS = {
+    'all': {
+        'caption': "All",
+    },
+    'available': {
+        'caption': "Available",
+    },
+    'out': {
+        'caption': "Checked out", 
+    },
+    'mine': {
+        'caption': "Checked out to me", 
+    },
+    'scrapped': {
+        'caption': "Scrapped", 
+    },
+}
+
+FILTERS = dict(JFILTERS)
+FILTERS['all']['func'] = lambda projects: filterVisible(projects)
+FILTERS['available']['func'] = lambda projects: filterVisible(projects).filter(checked_out_to=None)
+FILTERS['out']['func'] = lambda projects: filterVisible(projects).exclude(checked_out_to=None)
+FILTERS['mine']['func'] = lambda projects, user: filterVisible(projects).filter(checked_out_to=user)
+FILTERS['scrapped']['func'] = lambda projects: filterScrapped(projects)
+
+
+def filterVisible(projects):
+    return projects.filter(visible=True)
+
+def filterScrapped(projects):
+    return projects.filter(visible=False)
 
 def ajax_home(request):
     data = {
@@ -94,19 +128,117 @@ def ajax_project_filters(request):
         band_id = int(band_id_str)
     except ValueError:
         band_id = 0
-    if band_id == 0:
-        return json_failure("bad band id")
-    projects = Project.objects.filter(band__pk=band_id)
-    visible = projects.filter(visible=True)
-    scrapped = projects.filter(visible=False)
-    results = [
-        ("all", "All", visible.count()),
-        ("available", "Available", visible.filter(checked_out_to=None).count()),
-        ("out", "Checked out", visible.exclude(checked_out_to=None).count()),
-        ("mine", "Checked out to me", visible.filter(checked_out_to=request.user).count()),
-        ("scrapped", "Scrapped", scrapped.count()),
-    ] 
+
+    try:
+        band = Band.objects.get(pk=band_id)
+    except:
+        return json_failure(design.bad_band_id)
+
+    if not band.permission_to_work(request.user):
+        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    projects = Project.objects.filter(band=band)
+
+    results = dict(JFILTERS)
+    for filterId, filterData in results.iteritems():
+        filterData['count'] = performFilter(filterId, projects, request.user).count()
+
     return json_success(results)
+
+def performFilter(filterId, projects, user=None):
+    if filterId == 'mine':
+        assert user is not None
+        return FILTERS[filterId]['func'](projects, user)
+
+    return FILTERS[filterId]['func'](projects)
+
+@json_login_required
+@json_get_required
+def ajax_project_list(request):
+    # validate input
+    page_str = request.GET.get('page', 1) 
+    try:
+        page_number = int(page_str)
+    except ValueError:
+        page_number = 1
+
+    filterName = request.GET.get('filter', 'all')
+    if not FILTERS.has_key(filterName):
+        filterName = DEFAULT_FILTER
+
+    searchText = request.GET.get('search', '')
+
+    band_str = request.GET.get('band', 0)
+    try:
+        band_id = int(band_str)
+    except ValueError:
+        band_id = 0
+
+    try:
+        band = Band.objects.get(pk=band_id)
+    except:
+        return json_failure(design.bad_band_id)
+
+    if not band.permission_to_work(request.user):
+        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    # get a list of filtered projects 
+    projects = performFilter(filterName, Project.objects.filter(band=band), request.user)
+    
+    # apply search text to query
+    if searchText:
+        # limit to 10 words
+        words = searchText.split()[:10]
+        for word in words:
+            projects = projects.filter(title__icontains=word)
+
+    paginator = Paginator(projects, settings.ITEMS_PER_PAGE)
+
+    # build the json object
+    def song_to_dict(x):
+        d = safe_model_to_dict(x)
+        d['owner'] = safe_model_to_dict(x.owner)
+        if x.studio:
+            d['studio'] = safe_model_to_dict(x.studio)
+        else:
+            d['studio'] = None
+        d['samples'] = [safe_model_to_dict(y) for y in x.samples.all()]
+        d['effects'] = [safe_model_to_dict(y) for y in x.effects.all()]
+        d['generators'] = [safe_model_to_dict(y) for y in x.generators.all()]
+        return d
+        
+    def version_to_dict(x):
+        d = {
+            'song': song_to_dict(x.song),
+            'version': x.version,
+        }
+        return d
+
+    def project_to_dict(x, user):
+        d = {
+            'latest_version': version_to_dict(x.latest_version),
+            'date_activity': x.date_activity,
+            'checked_out_to': None,
+            'visible': x.visible,
+            'tags': [safe_model_to_dict(tag) for tag in x.tags.all()],
+            'scrap_voters': x.scrap_voters.count(),
+            'promote_voters': x.promote_voters.count(),
+            'id': x.id,
+        }
+
+        if x.checked_out_to is not None:
+            d['checked_out_to'] = safe_model_to_dict(x.checked_out_to)
+
+        return d
+
+    data = {
+        'projects': [project_to_dict(x, request.user) for x in paginator.page(page_number).object_list],
+        'page_count': paginator.num_pages,
+        'page_number': page_number,
+        'band': safe_model_to_dict(band),
+    }
+
+    return json_success(data)
 
 @json_login_required
 @json_get_required
@@ -139,7 +271,7 @@ def ajax_project(request):
 
     def project_data(x):
         d = safe_model_to_dict(x)
-        d['get_title'] = x.get_title()
+        d['title'] = x.title
         d['band'] = safe_model_to_dict(x.band)
         return d
     data['project'] = project_data(project)

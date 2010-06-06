@@ -72,6 +72,7 @@ var Player = function() {
     }
 
     function onSoundComplete() {
+        currentMp3File = null;
         if (that.onSoundComplete) {
             that.onSoundComplete();
         }
@@ -158,10 +159,16 @@ var Player = function() {
             $(document).bind('mouseup', volumeMouseUp);
         });
 
-        /*jdom.find(".player-large .volume .icon").mousedown(function(e){
-            e.preventDefault();
-        });*/
-
+        if (currentMp3File !== null) {
+            // find the dom with mp3 file
+            $(".dl-mp3 a").each(function(index, element) {
+                var mp3file = $(this).attr('href');
+                if (mp3file === currentMp3File) {
+                    currentPlayer = $(this).closest(".player-large");
+                    return;
+                }
+            });
+        }
         updateCurrentPlayer();
     }
 
@@ -284,7 +291,8 @@ var Player = function() {
                 return;
             }
             if (currentPlayer !== null) {
-                that.pause();
+                that.seek(0);
+                that.stop();
                 updateCurrentPlayer();
             }
             currentPlayer = $(dom);

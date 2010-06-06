@@ -10,7 +10,7 @@ class BandInvitation(models.Model):
     # who sent the invite
     inviter = models.ForeignKey(User, related_name="inviter")
     band = models.ForeignKey(Band)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     role = models.IntegerField(choices=ROLE_CHOICES, default=BAND_MEMBER)
 
     # when the invite becomes inactive. null means never
@@ -35,6 +35,15 @@ class BandInvitation(models.Model):
         else:
             from django.core.urlresolvers import reverse
             return reverse('redeem_invitation', args=[self.code])
+            
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.timestamp = datetime.now()
+        self.baseSave(*args, **kwargs)
+
+    def baseSave(self, *args, **kwargs):
+        super(BandInvitation, self).save(*args, **kwargs)
+
 
 class SampleFile(models.Model):
     # md5 hash of the binary data of the sample
@@ -67,9 +76,25 @@ class ProjectVersion(models.Model):
     # version counter like subversion
     version = models.IntegerField()
 
+    # when we save, update the Project's cache
+    def saveNewVersion(self, *args, **kwargs):
+        self.project.title = self.song.title
+        if not self.id:
+            self.baseSave(*args, **kwargs)
+        self.project.latest_version = self
+        self.baseSave(*args, **kwargs)
+
+    def baseSave(self, *args, **kwargs):
+        super(ProjectVersion, self).save(*args, **kwargs)
+
 class Project(models.Model):
+    # title is simply a cache of the latest version's song's title
+    title = models.CharField(max_length=100, null=True, blank=True)
+    # latest_version is a cache of the latest version
+    latest_version = models.ForeignKey('ProjectVersion', null=True, blank=True, related_name='latest_version')
+
     band = models.ForeignKey(Band)
-    date_activity = models.DateTimeField(auto_now=True)
+    date_activity = models.DateTimeField()
 
     # who has it checked out, null if nobody
     checked_out_to = models.ForeignKey(User, null=True, blank=True, related_name='checked_out_to')
@@ -88,17 +113,14 @@ class Project(models.Model):
     subscribers = models.ManyToManyField(User, related_name='project_subscribers')
 
     def __unicode__(self):
-        return self.get_title()
+        return self.title
 
-    def get_latest_version(self):
-        versions = ProjectVersion.objects.filter(project=self).order_by('-version')
-        if versions.count() > 0:
-            return versions[0]
-        else:
-            return None
+    def save(self, *args, **kwargs):
+        self.date_activity = datetime.now()
+        self.baseSave(*args, **kwargs)
 
-    def get_title(self):
-        return self.get_latest_version().song.title
+    def baseSave(self, *args, **kwargs):
+        super(Project, self).save(*args, **kwargs)
 
 class Studio(models.Model):
     # e.g. FL Studio

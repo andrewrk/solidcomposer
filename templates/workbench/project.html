@@ -1,6 +1,6 @@
 {% extends 'workbench/base.html' %}
 
-{% block title %}{{ project.get_title }} - {{ block.super }}{% endblock %}
+{% block title %}{{ project.title }} - {{ block.super }}{% endblock %}
 
 {% block css %}project.css{% endblock %}
 
@@ -25,7 +25,7 @@
         &gt;
         <a href="{% url workbench.band band.id %}">{{ band.title }}</a>
         &gt;
-        <span class="dest">{{ project.get_title }}</span>
+        <span class="dest">{{ project.title }}</span>
     </div>
     <div id="projects">
         {% include 'loading.html' %}

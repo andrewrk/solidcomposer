@@ -1,0 +1,12 @@
+{
+    ajax_project_filters: "{% filter escapejs %}{% url workbench.ajax_project_filters %}{% endfilter %}",
+    ajax_project_list: "{% filter escapejs %}{% url workbench.ajax_project_list %}{% endfilter %}",
+    ajax_project: "{% filter escapejs %}{% url workbench.ajax_project %}{% endfilter %}",
+    project: function(id) {
+        return "{% filter escapejs %}{% url workbench.project 0 1 %}{% endfilter %}".replace("0",
+            "[~~band_id~~]").replace("1", id).replace("[~~band_id~~]", band_id);
+    },
+    project_version: function(project_id, version_number) {
+        return this.project(project_id) + "#version" + version_number;
+    }
+}
