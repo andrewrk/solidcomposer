@@ -36,6 +36,30 @@ class BandInvitation(models.Model):
             from django.core.urlresolvers import reverse
             return reverse('redeem_invitation', args=[self.code])
 
+class SampleFile(models.Model):
+    # md5 hash of the binary data of the sample
+    # null if we don't know what the hex digest of it is.
+    hex_digest = models.CharField(max_length=32, unique=True)
+
+    # where it is on disk, relative to MEDIA_ROOT
+    path = models.CharField(max_length=256)
+
+class SampleDependency(models.Model):
+    # the file title of the dependency. it may contain path 
+    # separators in the form of forward slashes.
+    title = models.CharField(max_length=512)
+
+    # link to the sample file. null if the link is unresolved.
+    sample_file = models.ForeignKey(SampleFile, null=True, blank=True)
+
+class EffectDependency(models.Model):
+    # the name of the effect. this identifies it.
+    title = models.CharField(max_length=256, unique=True)
+
+class GeneratorDependency(models.Model):
+    # the name of the generator. this identifies it.
+    title = models.CharField(max_length=256, unique=True)
+
 class ProjectVersion(models.Model):
     project = models.ForeignKey('Project')
     # comments, title, owner, and timestamp are in the song
@@ -75,3 +99,28 @@ class Project(models.Model):
 
     def get_title(self):
         return self.get_latest_version().song.title
+
+class Studio(models.Model):
+    # e.g. FL Studio
+    title = models.CharField(max_length=100)
+
+    # studio identifier, also used as the url
+    identifier = models.CharField(max_length=50, unique=True)
+
+    # capabilities - what we can do with the studio
+    # whether we have dependency support
+    canReadFile = models.BooleanField()
+    # whether we can merge two project files
+    canMerge = models.BooleanField()
+    # whether we can render a project on the server
+    canRender = models.BooleanField()
+
+    # description for info page
+    info = models.TextField(blank=True)
+
+    logo_large = models.ImageField(upload_to='img/studio', blank=True, null=True)
+    logo_16x16 = models.ImageField(upload_to='img/studio', blank=True, null=True)
+
+    def __unicode__(self):
+        return self.title
+

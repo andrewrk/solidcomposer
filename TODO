@@ -27,6 +27,10 @@
  * 
 
 = arena =
+ * send emails when voting results are in
+ * don't render ALL the chat messages every time.
+ * there's a security hole - javascript knows where the song mp3s are way
+   before it should.
  * show listening party buffer time
  * ability to just set a delay for a listening party as opposed to a date
  * make sure Player works seamlessly
@@ -92,6 +96,10 @@
  * arena home GUI Redesign
 
 = workbench =
+ * support uploading .zip files for checkins
+   > find the extension of a project file
+   > treat any other file as a sample dependency
+ * support uploading samples at any time  
  * make logging out and logging in nice.
  * workbench page
    > project manager page

@@ -5,6 +5,10 @@ stuff = (
     ProjectVersion,
     Project,
     BandInvitation,
+    Studio,
+    GeneratorDependency,
+    SampleDependency,
+    EffectDependency,
 )
 
 map(lambda x: admin.site.register(x), stuff)

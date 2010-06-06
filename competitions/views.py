@@ -81,7 +81,7 @@ def ajax_submit_entry(request):
         data['reason'] = design.entry_title_required
         return json_response(data)
 
-    result = upload_song(
+    result = upload_song(request.user,
         file_mp3_handle=mp3_file,
         file_source_handle=source_file, 
         max_song_len=settings.COMPO_ENTRY_MAX_LEN,
@@ -108,7 +108,6 @@ def ajax_submit_entry(request):
         old_length = 0
         buffer_time = settings.LISTENING_PARTY_BUFFER_TIME
 
-    song.owner = request.user
     song.comments = comments
     song.save()
 
