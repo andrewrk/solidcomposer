@@ -93,7 +93,6 @@
  * arena home GUI Redesign
 
 = workbench =
- * daw: protect against empty string output
  * the wavform, mp3, and project file should all be in different obscured urls
  * support uploading .zip files for checkins
    > find the extension of a project file

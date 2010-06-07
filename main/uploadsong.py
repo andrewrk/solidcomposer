@@ -175,6 +175,10 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
 
             generators = dawProject.generators()
             for generator in generators:
+                # if it's an invalid name, ignore
+                if generator.strip() == '':
+                    continue
+
                 # see if it already exists
                 genObjects = GeneratorDependency.objects.filter(title=generator)
                 if genObjects.count() == 0:
@@ -190,6 +194,10 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
 
             effects = dawProject.effects()
             for effect in effects:
+                # if it's an invalid name, ignore
+                if effect.strip() == '':
+                    continue
+
                 # see if it already exists
                 effObjects = EffectDependency.objects.filter(title=effect)
                 if effObjects.count() == 0:
@@ -205,6 +213,10 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
 
             samples = dawProject.samples()
             for sample in samples:
+                # if it's an invalid name, ignore
+                if sample.strip() == '':
+                    continue
+
                 title = sample.split('/')[-1]
                 # if the title matches anthing the user has already uploaded,
                 # establish a link.
