@@ -1,16 +1,7 @@
 = sitewide =
- * daw: protect against empty string output
  * when you click something to load the next page, replace the contents with
    the loading thing
  * refactor to explicitly have to add data to json instead of UNSAFE_KEYS
- * chat: clicking onliners should open a new window
- * download mp3: box instead of link
- * competition: the listening party starts over after it ends. whoops.
- * chat: hyperlinks
- * chat: sometimes the design gets put into multiple lines
- * chat: increase onliners timeout
- * chat: urls and things that don't wrap screw up chat
- * entry list: "so far" is misleading. use a better word.
  * use gravatar for avatars
  * password recovery
  * ability to change password
@@ -18,19 +9,36 @@
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
      * http://attacklab.net/showdown/
- * work on workbench
+ * make the login ALWAYS ajax. the consistency will help user confidence.
+ * IE8 support
  * refactor
-   > tests to use url reverse
-   > get rid of auto_now and auto_now_add 
    > change competitions to arena
    > change workshop to workbench
- * make the login ALWAYS ajax. the consistency will help user confidence.
- * 
+
+= chat =
+ * don't render ALL the chat messages every time.
+ * clicking onliners should open a new window
+ * download mp3: box instead of link
+ * hyperlinks
+ * sometimes the design gets put into multiple lines
+ * increase onliners timeout
+ * urls and things that don't wrap screw up chat
+ * make the chat more friendly to use for people who are used to IRC
+   > make the page flash (or change the title text to indicate) when 
+     someone's name is mentioned in IRC
+   > tab completion for names
+   > ability to private message?
+   > page up / down to scroll up and down
+   > /me action
+   > display error when chat message doesn't go through
+ * display how many invisible observers there are
+   - by IP address?
 
 = arena =
+ * entry list: "so far" is misleading. use a better word.
+ * the listening party starts over after it ends. whoops.
  * userpage open in a new window
  * send emails when voting results are in
- * don't render ALL the chat messages every time.
  * there's a security hole - javascript knows where the song mp3s are way
    before it should.
  * show listening party buffer time
@@ -42,9 +50,6 @@
    and the entries re-order, it will show you as listening to the wrong entry.
  * show competition length as metadata
  * auto theme generator
- * when compo is closed or during voting, when a song completes, go to the
-   next one.
- * test in IE8
  * beginning of song gets cut off during listening party. set it up
    so that it sets up a setTimeout() to play it right on time instead
    of cutting into the time.
@@ -53,14 +58,6 @@
  * if creating a competition fails, have a message at the top saying
    "please correct these errors."
  * edit competition
- * make the chat more friendly to use for people who are used to IRC
-   > make the page flash (or change the title text to indicate) when 
-     someone's name is mentioned in IRC
-   > tab completion for names
-   > ability to private message?
-   > page up / down to scroll up and down
-   > /me action
-   > display error when chat message doesn't go through
  * show upcoming/new competitions before old ones in bookmarked
    competitions. there should be a clear divide.
    > better competition ordering in arena
@@ -82,8 +79,6 @@
  * protect against h4xz0rz by adding a @method to views which do things like
    login, logout, etc. The method would make sure the referrer was us and not
    some other website.
- * chat: display how many invisible observers there are
-   - by IP address?
  * color the time differently when there isn't much time left so that 
    people know they're running out of time
  * make the gui experience of clicking edit on a submission and then
@@ -98,23 +93,31 @@
  * arena home GUI Redesign
 
 = workbench =
+ * daw: protect against empty string output
  * the wavform, mp3, and project file should all be in different obscured urls
  * support uploading .zip files for checkins
    > find the extension of a project file
    > treat any other file as a sample dependency
  * support uploading samples at any time  
+ * song player: resolve dependencies, download samples, etc
  * make logging out and logging in nice.
+   > log out - should hide everything on the page and say you need to log in
+   > log in - everything should appear
+   > should never have to leave the page
+ * create band page
+   > Choose a name and then proceeed directly to band settings page
+ * band settings page
+ * project manager (band page)
+   > make filters work
+   > quick ui for actions
+   > status ui
+   > vote to scrap
+   > vote to promote
+ * project page
+   > check out
+   > check in 
+   > poke
  * workbench page
-   > project manager page
-     - Filters
-       # All
-       # available
-       # checked out
-       # checked out to me
-       # scrapped
-     - filter search box
-     - new project button
-   > project page
    > ability to create band invitations
      - creating a link to hand out
      - direct invitation on the person's user page
@@ -128,9 +131,6 @@
      - download count in the past 24 hours
      - play count in the past 24 hours
      - new fan count in the past 24 hours
- * create band page
-   > Choose a name and then proceeed directly to band settings page
- * band settings page
  * automatically upload competition entries to the project manager
  * obfuscate media URLs to protect people's stuff
  * better music player
@@ -139,6 +139,7 @@
  * make it so that a user's plan gives him a certain amount of 
    credits, which can be spent on any band.
 
+ * ability to set up your band so that anyone who donates credits gets critic access, etc
  * make it look pretty
  * ability to customize css
    > on fan page
