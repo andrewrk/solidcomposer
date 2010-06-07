@@ -1,6 +1,10 @@
 <div class="owner">
-    <img src="<%=version_user.gravatar%>" alt="" />
-    <%=version_user.username%>
-    <img src="{{ MEDIA_URL }}img/star.png" alt="stars" /> 
-    x <%=version_user.get_profile.get_points%>
+    <div class="gravatar">
+        <img src="<%=version_user.gravatar%>" alt="" />
+    </div>
+    <div class="owner-name">
+        <%=version_user.username%>
+        <img src="{{ MEDIA_URL }}img/star.png" alt="stars" /> 
+        x <%=version_user.get_profile.get_points%>
+    </div>
 </div>
