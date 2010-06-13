@@ -1,4 +1,12 @@
 = sitewide =
+ * stats
+   # on songs
+     > how many plays
+       - partial
+       - complete
+     > how many downloads
+   # band page views
+   # fans
  * when you click something to load the next page, replace the contents with
    the loading thing
  * refactor to explicitly have to add data to json instead of UNSAFE_KEYS
@@ -93,6 +101,8 @@
  * arena home GUI Redesign
 
 = workbench =
+ * ability to rename band
+ * project filenames should be <artist> - <title>_<version>.<ext>
  * the wavform, mp3, and project file should all be in different obscured urls
  * support uploading .zip files for checkins
    > find the extension of a project file

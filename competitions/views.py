@@ -341,7 +341,7 @@ def create(request):
 
             # automatically bookmark it
             prof.competitions_bookmarked.add(comp)
-            prof.save();
+            prof.save()
 
             return HttpResponseRedirect(reverse("arena.home"))
     else:

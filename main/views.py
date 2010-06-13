@@ -101,6 +101,7 @@ def user_register(request):
             band = Band()
             band.title = form.cleaned_data.get('artist_name')
             band.create_paths()
+            band.total_space = settings.BAND_INIT_SPACE
             band.save()
 
             # create a profile
@@ -110,9 +111,7 @@ def user_register(request):
             profile.activated = False
             profile.activate_code = create_hash(32)
             profile.logon_count = 0
-            free_plan = AccountPlan.objects.filter(usd_per_month=0.0)[0]
-            profile.total_space = free_plan.total_space
-            profile.plan = free_plan
+            profile.band_count_limit = settings.FREE_BAND_LIMIT
             profile.save()
 
             # make them a manager

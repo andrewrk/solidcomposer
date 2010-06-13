@@ -158,6 +158,12 @@ ITEMS_PER_PAGE = 5
 # how long does a user have to activate before it expires
 ACTIVATION_EXPIRE_DAYS = 1
 
+# free acount info
+# how much disk space do bands get for freeeee
+BAND_INIT_SPACE = 1024 * 1024 * 1024 * 0.5 # 0.5 GB
+# how many bands can free users create
+FREE_BAND_LIMIT = 10
+
 # leave this at the very end
 if os.path.exists("settings_user.py"):
     from settings_user import *

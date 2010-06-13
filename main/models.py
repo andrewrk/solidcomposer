@@ -59,6 +59,27 @@ class Band(models.Model):
     # True if people have to check stuff out to work on it
     concurrent_editing = models.BooleanField(default=False)
 
+    # how much space does the band have in their account in bytes
+    # users can dole out their total_space to a band.
+    # the default should be the total_space from the free plan in the database.
+    total_space = models.BigIntegerField()
+    used_space = models.BigIntegerField(default=0)
+    # how long has it been since used_space > total_space
+    abandon_date = models.DateTimeField(blank=True, null=True)
+
+    def isReadOnly(self):
+        return used_space > total_space
+
+    def save(self, *args, **kwargs):
+        if used_space > total_space and self.abandon_date is None:
+            self.abandon_date = datetime.now()
+        elif used_space <= total_space and self.abandon_date is not None:
+            self.abandon_date = None
+        self.baseSave(*args, **kwargs)
+
+    def baseSave(self, *args, **kwargs):
+        super(Band, self).save(*args, **kwargs)
+
     def create_url(self):
         # break title into url safe string
         others = Band.objects.filter(url=self.title).count()
@@ -144,15 +165,16 @@ class AccountPlan(models.Model):
     """
     The payment plan and features that a user has
     """
+    title = models.CharField(max_length=50)
     # how much the user has to pay per month
     usd_per_month = models.FloatField()
     # byte count limit of their account
-    total_space = models.IntegerField()
-    # the number that identifies a customer with the merchant
-    customer_id = models.IntegerField()
+    total_space = models.BigIntegerField()
+    # how many bands can they make
+    band_count_limit = models.IntegerField()
 
     def __unicode__(self):
-        return "$%s/mo - %i bytes" % (self.usd_per_month, self.total_space)
+        return "%s - $%s/mo" % (self.title, self.usd_per_month)
 
 
 class Profile(models.Model):
@@ -176,12 +198,18 @@ class Profile(models.Model):
     # the competitions the player has bookmarked
     competitions_bookmarked = models.ManyToManyField('competitions.Competition', blank=True, related_name='competitions_bookmarked')
 
+    # account stuff. When a user signs up for a plan, this is inherited from
+    # the plan's data, but it can be overridden here.
+    plan = models.ForeignKey(AccountPlan, blank=True, null=True)
     # how much space does the user have in their account in bytes
-    # when a user signs up for a plan, this is inherited from the plan's
-    # total_space, but it can be overridden here.
-    total_space = models.IntegerField()
-    used_space = models.IntegerField(default=0)
-    plan = models.ForeignKey(AccountPlan, null=True)
+    # the actual accounting is done in Band. this field is simply where purchased bytes
+    # are accumulated, which are then doled out to one or more Bands' total_space
+    purchased_bytes = models.BigIntegerField(default=0)
+    usd_per_month = models.FloatField(default=0.0)
+    # how many bands can the user create
+    band_count_limit = models.IntegerField(default=1)
+    # the string that identifies a customer with the merchant
+    customer_id = models.CharField(max_length=256, blank=True)
 
     # the plugins that the user owns
     generators = models.ManyToManyField('workshop.GeneratorDependency', blank=True, related_name='profile_generators')
