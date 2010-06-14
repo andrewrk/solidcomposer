@@ -103,8 +103,7 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
         # pick a nice safe unique path for mp3_file, source_file, and wave form
         # obscure the URL so that people can't steal songs
         hash_str = create_hash(16)
-        media_path = os.path.join('band', band.folder, hash_str)
-        os.makedirs(os.path.join(settings.MEDIA_ROOT, media_path))
+        media_path = os.path.join('band', band.url, hash_str)
 
         if song_album != None:
             mp3_file_title = "%s - %s (%s).mp3" % (band.title, song_title, song_album)
@@ -120,9 +119,7 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
         png_safe_path_relative = os.path.join(media_path, png_safe_title)
 
         # move the mp3 file
-        shutil.move(handle.name, mp3_safe_path)
-        # give it read permissions
-        os.chmod(mp3_safe_path, stat.S_IWUSR|stat.S_IRUSR|stat.S_IRGRP|stat.S_IROTH)
+        move_to_storage(handle.name, mp3_safe_path)
 
     song = Song()
 
@@ -272,10 +269,7 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
             dawProject.save(source_safe_path)
             os.remove(handle.name)
         else:
-            shutil.move(handle.name, source_safe_path)
-
-        # give it read permissions
-        os.chmod(source_safe_path, stat.S_IWUSR|stat.S_IRUSR|stat.S_IRGRP|stat.S_IROTH)
+            move_to_storage(handle.name, source_safe_path)
 
 
     data['song'] = song

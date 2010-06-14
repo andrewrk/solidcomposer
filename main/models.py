@@ -42,12 +42,11 @@ class Band(models.Model):
         (PRIVATE, 'Private'),
     )
 
+    # if you want to change the title, you need to do band.rename(new_title)
     title = models.CharField(max_length=100)
-    # automatically created by create_paths. as close to title as possible yet unique.
+    # automatically created. as close to title as possible yet unique and
+    # file system safe.
     url = models.CharField(max_length=110, unique=True, null=True)
-    # automatically created by create_paths. as close to title as possible yet completely file
-    # system safe as well as unique.
-    folder = models.CharField(max_length=110, unique=True, null=True)
 
     # openness is what applies to people who aren't explicitly in the 
     # band members list.
@@ -71,76 +70,47 @@ class Band(models.Model):
         return used_space > total_space
 
     def save(self, *args, **kwargs):
-        if used_space > total_space and self.abandon_date is None:
+        if self.used_space > self.total_space and self.abandon_date is None:
             self.abandon_date = datetime.now()
-        elif used_space <= total_space and self.abandon_date is not None:
+        elif self.used_space <= self.total_space and self.abandon_date is not None:
             self.abandon_date = None
+
+        if self.url is None:
+            self.create_url()
+
         self.baseSave(*args, **kwargs)
 
     def baseSave(self, *args, **kwargs):
         super(Band, self).save(*args, **kwargs)
 
+    url_allowed_chars = string.letters + string.digits + r'_-.'
     def create_url(self):
         # break title into url safe string
-        others = Band.objects.filter(url=self.title).count()
+        replacement = '_'
+        safe_title = ''
+        for c in self.title:
+            if c in self.url_allowed_chars:
+                safe_title += c
+            else:
+                safe_title += replacement
+
+        others = Band.objects.filter(url=safe_title).count()
         if others == 0:
-            self.url = self.title
+            self.url = safe_title
             return
 
         # append digits until it is unique
         suffix = 2
         while others > 0:
-            proposed = self.title + str(suffix)
+            proposed = safe_title + str(suffix)
             others = Band.objects.filter(url=proposed).count()
             suffix += 1
 
         self.url = proposed
 
-    def band_folder(self):
-        return os.path.join(settings.MEDIA_ROOT, 'band', self.folder)
-
     def rename(self, new_name):
-        # if the old folder is empty, remove it
-        try:
-            os.rmdir(self.band_folder())
-        except OSError:
-            pass
-
         self.title = new_name
-        self.create_folder()
-
-    def create_folder(self):
-        # break title into folder-safe string
-        allowed_chars = string.letters + string.digits + r'_-.'
-        replacement = '_'
-        safe_title = ''
-        for c in self.title:
-            if c in allowed_chars:
-                safe_title += c
-            else:
-                safe_title += replacement
-
-        self.folder = safe_title
-        if not os.path.exists(self.band_folder()):
-            os.makedirs(self.band_folder())
-            return
-
-        # append digits until it is unique
-        suffix = 2
-        exists = True
-        while exists:
-            self.folder = safe_title + str(suffix)
-            exists = os.path.exists(self.band_folder())
-            suffix += 1
-
-        os.makedirs(self.band_folder())
-
-    def create_paths(self):
-        """
-        creates the url and folder for this object
-        """
         self.create_url()
-        self.create_folder()
 
     def permission_to_work(self, user):
         "Returns whether a user can check out and check in projects."
@@ -159,7 +129,6 @@ class Band(models.Model):
     def __unicode__(self):
         return self.title
 
-    disallowed_chars = r'\./?'
 
 class AccountPlan(models.Model):
     """

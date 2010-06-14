@@ -323,7 +323,6 @@ def ajax_create_band(request):
     if form.is_valid():
         band = Band()
         band.title = form.cleaned_data.get('band_name')
-        band.create_paths()
         band.save()
 
         manager = BandMember()

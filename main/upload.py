@@ -1,12 +1,27 @@
 import os
 import stat
 import string
+import tempfile
 
-def upload_file(f, new_name):
-    handle = open(new_name, 'wb+')
-    upload_file_h(f, handle)
-    handle.close()
-    os.chmod(new_name, stat.S_IRUSR|stat.S_IRGRP|stat.S_IROTH)
+def move_to_storage(full_path, file_key):
+    """
+    moves file at full_path to storage with key file_key
+    """
+    import storage
+    storage.engine.store(full_path, file_key)
+    os.remove(full_path)
+
+def upload_file(f, filename):
+    """
+    uses the storage engine to store uploaded file f with key filename
+    """
+    # pick a nice temp file
+    import storage
+    tmp_h = tempfile.NamedTemporaryFile(delete=False)
+    upload_file_h(f, tmp_h)
+    tmp_h.close()
+    storage.engine.store(tmp_h.name, filename)
+    os.remove(tmp_h.name)
 
 def upload_file_h(f, handle):
     for chunk in f.chunks():

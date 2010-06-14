@@ -10,6 +10,8 @@ import simplejson as json
 
 from main import design
 
+import os
+
 def gravatar_url(email, size):
     return "http://www.gravatar.com/avatar/%s?s=%s&r=pg&d=identicon" % (hashlib.md5(email).hexdigest(), str(size))
 

@@ -26,13 +26,6 @@ class NewBandForm(forms.Form):
     band_name = forms.CharField(max_length=100,
         error_messages={'required': design.this_field_is_required})
 
-    def clean_band_name(self):
-        band_name = self.cleaned_data['band_name']
-        disallowed_chars = Band.disallowed_chars
-        for c in band_name:
-            if c in disallowed_chars:
-                raise forms.ValidationError(design.cannot_use_x_in_band_name % disallowed_chars)
-        return band_name
-
 class BandSettingsForm(forms.Form):
+    # TODO
     pass

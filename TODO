@@ -1,4 +1,5 @@
 = sitewide =
+ * refactor: don't import settings, from django.conf import settings
  * stats
    # on songs
      > how many plays

@@ -100,7 +100,6 @@ def user_register(request):
             # create a band
             band = Band()
             band.title = form.cleaned_data.get('artist_name')
-            band.create_paths()
             band.total_space = settings.BAND_INIT_SPACE
             band.save()
 

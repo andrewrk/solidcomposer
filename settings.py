@@ -164,6 +164,12 @@ BAND_INIT_SPACE = 1024 * 1024 * 1024 * 0.5 # 0.5 GB
 # how many bands can free users create
 FREE_BAND_LIMIT = 10
 
+# amazon s3 details
+AWS_ACCESS_KEY_ID = 'AKIAII3Z2JMVTAJ6R4CQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'solidcomposer'
+#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
 # leave this at the very end
 if os.path.exists("settings_user.py"):
     from settings_user import *

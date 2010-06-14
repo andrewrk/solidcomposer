@@ -39,14 +39,6 @@ class RegisterForm(forms.Form):
 
         return password2
 
-    def clean_artist_name(self):
-        artist_name = self.cleaned_data['artist_name']
-        disallowed_chars = Band.disallowed_chars
-        for c in artist_name:
-            if c in disallowed_chars:
-                raise forms.ValidationError(design.invalid_characters_in_artist_name % disallowed_chars)
-        return artist_name
-
     def clean_username(self):
         username = self.cleaned_data['username']
 
