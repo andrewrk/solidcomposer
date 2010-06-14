@@ -118,9 +118,6 @@ var Player = function() {
     }
 
     function addUiToDom(jdom) {
-        // TODO: each click function needs to identify which
-        // play is getting clicked on. if it's not the current one
-        // it needs to switch before doing the action.
         jdom.find(".player-large .button a").click(function(){
             if (! disabledUi) {
                 var parentPlayer = $(this).closest('.player-large');
