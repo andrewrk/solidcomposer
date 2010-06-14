@@ -9,6 +9,8 @@ var SCProject = function () {
     var template_version_list_s = null;
     var template_footer = "{% filter escapejs %}{% include 'workbench/project_footer.jst.html' %}{% endfilter %}";
     var template_footer_s = null;
+    var template_sample_upload_row = "{% filter escapejs %}{% include 'workbench/sample_upload_row.jst.html' %}{% endfilter %}";
+    var template_sample_upload_row_s = null;
 
     var state = {
         urls: {% include 'workbench/urls.jst.html' %},
@@ -24,6 +26,43 @@ var SCProject = function () {
     var project_id;
     
     // private functions
+    function uploadSamplesStartCallback() {
+
+    }
+
+    function uploadSamplesCompleteCallback(response) {
+        // sometimes the response is wrapped in <pre></pre>
+        // for some strange reason
+        if (response.indexOf('<pre>') === 0) {
+            response = response.substr(5, response.length-'<pre>'.length-'</pre>'.length);
+        }
+
+        var result = eval('(' + response + ')');
+        if (result.success === true) {
+            
+        } else {
+            alert("Unable to process upload:\n\n" + result.reason);
+        }
+    }
+
+    function addClicksToProjects() {
+        var missing_upload_f = function() {
+            return AIM.submit(this, {
+                'onStart': uploadSamplesStartCallback,
+                'onComplete': uploadSamplesCompleteCallback
+            });
+        };
+        var add_file_f = function() {
+            $(this).closest('tr').before(Jst.evaluate(template_sample_upload_row_s, {}));
+            return false;
+        };
+
+        for (var i=0; i<state.versions.length; ++i) {
+            $("#missing-upload-"+i).submit(missing_upload_f);
+            $("#add-file-"+i).click(add_file_f);
+        }
+    }
+
     function updateProjects(forceUpdate) {
         if (state.json === null) {
             return;
@@ -32,6 +71,7 @@ var SCProject = function () {
         if (forceUpdate) {
             $("#projects").html(Jst.evaluate(template_version_list_s, state));
             Player.addUi("#projects");
+            addClicksToProjects();
 
             $("#footer-data").html(Jst.evaluate(template_footer_s, state));
         }
@@ -45,6 +85,7 @@ var SCProject = function () {
     function compileTemplates() {
         template_version_list_s = Jst.compile(template_version_list);
         template_footer_s = Jst.compile(template_footer);
+        template_sample_upload_row_s = Jst.compile(template_sample_upload_row);
     }
     
     function scrollToNewestVersion() {

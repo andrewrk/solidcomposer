@@ -101,6 +101,7 @@
  * arena home GUI Redesign
 
 = workbench =
+ * have a progress bar during uploads
  * ability to rename band
  * project filenames should be <artist> - <title>_<version>.<ext>
  * the wavform, mp3, and project file should all be in different obscured urls
@@ -147,6 +148,7 @@
  * integrate into arena
  * make it so that a user's plan gives him a certain amount of 
    credits, which can be spent on any band.
+ * make it so that a band is read-only when its bytes_used < bytes_total
 
  * ability to set up your band so that anyone who donates credits gets critic access, etc
  * make it look pretty

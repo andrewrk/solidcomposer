@@ -10,7 +10,13 @@ from workshop.forms import *
 from workshop import design
 from main.models import *
 from main.common import *
+from main.upload import *
 from main.uploadsong import upload_song
+
+import zipfile
+import tempfile
+import shutil
+import hashlib
 
 DEFAULT_FILTER = 'all'
 JFILTERS = {
@@ -186,6 +192,7 @@ def version_to_dict(x, user):
     d = {
         'song': song_to_dict(x.song, user),
         'version': x.version,
+        'id': x.id,
     }
     return d
 
@@ -331,6 +338,95 @@ def ajax_create_band(request):
     data['success'] = True
     return json_response(data)
 
+def handle_sample_upload(fileHandle, user, band):
+    """
+    uploads fileHandle, and runs handle_sample_file.
+    """
+    # copy it to temp file
+    handle = tempfile.NamedTemporaryFile(delete=False)
+    upload_file_h(fileHandle, handle)
+    handle.close()
+
+    handle_sample_file(handle.name)
+
+def handle_sample_file(filename, user, band):
+    """
+    creates the database entries necessary for filename as a sample.
+    moves filename to a better path or deletes it if there was a problem.
+    """
+    TODO
+    # check if it is a zip file
+    if filename.name[-4:].lower() == '.zip':
+        try:
+            z = zipfile.ZipFile(filename, 'r')
+        except zipfile.BadZipfile:
+            # don't upload this sample 
+            os.remove(filename)
+            return
+
+        # extract every file to a temp folder 
+        tmpdir = tempfile.mkdtemp()
+        z.extractall(path=tmpdir)
+        os.remove(filename)
+        for extracted_file in superwalk(tmpdir):
+            handle_sample_file(extracted_file)
+
+        # clean up
+        shutil.rmtree(tmpdir)
+        return
+
+    # check the hash
+    handle = open(filename, 'rb')
+    md5sum = hashlib.md5(handle.read()).hexdigest()
+    handle.close()
+
+    # pick a good path for what the band sees
+    hash_str = create_hash(16)
+
+    #if we have it already:
+        # make an entry for the user linking to the real deal
+
+    #else:
+        # pick a good path for the file
+
+        # move it to good path
+
+    # softlink the band path to the real path
+
+    # count it against the band's size quota
+    band.used_space = band.used_space + fileHandle
+    fileHandle.size
+
+@json_login_required
+@json_post_required
+def ajax_upload_samples(request):
+    version_id_str = request.POST.get("version", 0)
+    try:
+        version_id = int(version_id_str)
+    except ValueError:
+        version_id = 0
+
+    try:
+        version = ProjectVersion.objects.get(pk=version_id)
+    except:
+        return json_failure(design.bad_version_id)
+
+    band = version.project.band
+
+    if not band.permission_to_work(request.user):
+        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    files = request.FILES.getlist('file')
+
+    for item in files:
+        handle_sample_upload(item, request.user, band)
+
+    data = {
+        'success': True,
+    }
+    
+    return json_response(data)
+
 @login_required
 def band_settings(request, band_id_str):
     "todo"
@@ -364,42 +460,37 @@ def create_project(request, band_str):
             mp3_file = request.FILES.get('file_mp3')
             source_file = request.FILES.get('file_source')
 
-            # make sure we have not hit the user's quota
-            new_used_space = prof.used_space + mp3_file.size + source_file.size
-            if new_used_space > prof.total_space:
-                err_msg = design.reached_upload_quota
+            # upload the song
+            result = upload_song(request.user,
+                file_mp3_handle=mp3_file,
+                file_source_handle=source_file, 
+                band=band,
+                song_title=form.cleaned_data.get('title'))
+            if not result['success']:
+                err_msg = result['reason']
             else:
-                # upload the song
-                result = upload_song(request.user,
-                    file_mp3_handle=mp3_file,
-                    file_source_handle=source_file, 
-                    band=band,
-                    song_title=form.cleaned_data.get('title'))
-                if not result['success']:
-                    err_msg = result['reason']
-                else:
-                    # fill in the rest of the fields
-                    song = result['song']
-                    song.comments = form.cleaned_data.get('comments', '')
-                    song.save()
+                # fill in the rest of the fields
+                song = result['song']
+                song.comments = form.cleaned_data.get('comments', '')
+                song.save()
 
-                    # create the project
-                    project = Project()
-                    project.band = band
-                    project.save()
+                # create the project
+                project = Project()
+                project.band = band
+                project.save()
 
-                    # create the first version
-                    version = ProjectVersion()
-                    version.project = project
-                    version.song = song
-                    version.version = 1
-                    version.saveNewVersion()
+                # create the first version
+                version = ProjectVersion()
+                version.project = project
+                version.song = song
+                version.version = 1
+                version.saveNewVersion()
 
-                    # subscribe the creator
-                    project.subscribers.add(request.user)
-                    project.save()
+                # subscribe the creator
+                project.subscribers.add(request.user)
+                project.save()
 
-                    return HttpResponseRedirect(reverse("workbench.project", args=[band.id, project.id]))
+                return HttpResponseRedirect(reverse("workbench.project", args=[band.id, project.id]))
     else:
         form = NewProjectForm()
     return render_to_response('workbench/new_project.html', {

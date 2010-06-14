@@ -6,6 +6,7 @@
 
 {% block extra_header %}
     {{ block.super }}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/webtoolkit.aim.js"></script>
     <script type="text/javascript">
         var band_id = {{ band.id }};
         var project_id = {{ project.id }};

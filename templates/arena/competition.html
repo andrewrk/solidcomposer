@@ -52,7 +52,12 @@
     <div style="display: none;" id="submission">
         <h4>Your entry</h4>
         <div id="submit-entry">
-            <form id="submission-form" method="post" enctype="multipart/form-data" action="/arena/ajax/submit-entry/" onsubmit="return AIM.submit(this, {'onStart': SCCompo.submitEntryStartCallback, 'onComplete': SCCompo.submitEntryCompleteCallback})">
+            <form
+                id="submission-form"
+                method="post"
+                enctype="multipart/form-data"
+                action="{% url arena.ajax_submit_entry %}"
+                onsubmit="return AIM.submit(this, {'onStart': SCCompo.submitEntryStartCallback, 'onComplete': SCCompo.submitEntryCompleteCallback})">
             <fieldset>
             <input type="hidden" name="compo" value="{{ competition.id }}" />
                 <table>

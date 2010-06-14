@@ -120,4 +120,14 @@ def safe_model_to_dict(model_instance):
     if issubclass(type(model_instance), User):
         hash['get_profile'] = safe_model_to_dict(model_instance.get_profile())
     return hash
-    
+
+def superwalk(folder):
+    for dirpath, dirnames, filenames in os.walk(folder):
+        for filename in filenames:
+            yield os.path.join(dirpath, filename)
+
+def file_title(filename):
+    """
+    Returns only the file title of the path
+    """
+    return filename.split(os.sep)[-1]

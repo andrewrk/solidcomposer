@@ -479,6 +479,8 @@ var SCCompo = function () {
         submitEntryCompleteCallback: function (response) {
             var result;
             
+            // sometimes the response is wrapped in <pre></pre>
+            // for some strange reason
             if (response.indexOf('<pre>') === 0) {
                 response = response.substr(5, response.length-'<pre>'.length-'</pre>'.length);
             }
