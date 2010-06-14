@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: synchronize media with amazon s3
+
 URL="http://solidcomposer.com/"
 SSH="web" # the ssh connection to make (here I am using one from .ssh/config)
 REMOTE_TMP="/home/superjoe/temp"

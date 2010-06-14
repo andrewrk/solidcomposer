@@ -6,10 +6,12 @@ def fileHash(filename):
     f = open(filename, 'rb')
     md5.update(f.read())
     f.close()
-    return md5.digest()
+    return md5.hexdigest()
 
 def ensurePathExists(filename):
-    os.makedirs(filePath(filename))
+    path = filePath(filename)
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 def filePath(filename):
     "get the part that isn't the title"

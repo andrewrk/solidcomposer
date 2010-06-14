@@ -1,7 +1,8 @@
-from .DummyStorage import DummyStorage, ensurePathExists
+from .DummyStorage import DummyStorage, ensurePathExists, fileHash
 from boto import s3
 
 import settings
+import os
 
 class S3Storage(DummyStorage):
     def __init__(self):
@@ -16,13 +17,20 @@ class S3Storage(DummyStorage):
         localHash = fileHash(inFilename)
         if k is not None:
             remoteHash = k.etag
+            # sometimes remotehash is surrounded by quotes
+            if len(remoteHash) == 34:
+                remoteHash = remoteHash[1:-1]
             if remoteHash == localHash:
                 # contents are identical
                 return
         else:
             k = s3.Key(bucket=self.bucket, name=file_id)
 
-        k.set_contents_from_filename(inFilename, policy='public-read', md5=localHash)
+        k.set_contents_from_filename(
+            inFilename,
+            policy='public-read',
+            reduced_redundancy=reducedRedundancy
+        )
 
     def retrieve(self, file_id, outFilename):
         k = self.bucket.get_key(file_id)
@@ -31,6 +39,9 @@ class S3Storage(DummyStorage):
         if os.path.exists(outFilename):
             localHash = fileHash(outFilename)
             remoteHash = k.etag
+            # sometimes remotehash is surrounded by quotes
+            if len(remoteHash) == 34:
+                remoteHash = remoteHash[1:-1]
             if localHash == remoteHash:
                 # contents are identical
                 return
@@ -40,4 +51,5 @@ class S3Storage(DummyStorage):
 
     def delete(self, file_id):
         k = self.bucket.get_key(file_id)
-        k.delete()
+        if k is not None:
+            k.delete()

@@ -9,9 +9,13 @@ import time
 from django.core.management import setup_environ
 import settings
 setup_environ(settings)
+from django.conf import settings
 
 from django.template import Template, Context
 from django.template.loader import *
+
+import storage
+import tempfile
 
 """
 Requires some things in your settings.py file:
@@ -92,29 +96,22 @@ def walk(compile_func):
         source file absolute path
         dest file absolute path
     """
-    force = examine_watchlist()
-    for root, dirs, files in os.walk(settings.PREPARSE_DIR, followlinks=True):
-        relative = root.replace(settings.PREPARSE_DIR, "")
-        if len(relative) > 0 and relative[0] == os.sep:
-            relative = relative[1:]
+    if examine_watchlist():
+        for root, dirs, files in os.walk(settings.PREPARSE_DIR, followlinks=True):
+            relative = root.replace(settings.PREPARSE_DIR, "")
+            if len(relative) > 0 and relative[0] == os.sep:
+                relative = relative[1:]
 
-        for file in files:
-            in_file = os.path.join(root, file)
-            if not is_hidden(in_file):
-                out_file = os.path.join(settings.PREPARSE_OUTPUT, relative, file)
-                compile_func(in_file, out_file, force)
-
-def compare_file_date(in_file, out_file):
-    """
-    standard file compare: if in_file is newer, return true
-    """
-    in_file_modified = os.path.getmtime(in_file)
-    out_file_modified = -1
-    if os.path.exists(out_file):
-        out_file_modified = os.path.getmtime(out_file)
-    return in_file_modified > out_file_modified
+            for file in files:
+                in_file = os.path.join(root, file)
+                if not is_hidden(in_file):
+                    out_file = os.path.join(settings.PREPARSE_OUTPUT, relative, file)
+                    compile_func(in_file, out_file)
 
 watchlist = {}
+ignored_extensions = (
+    'swp',
+)
 def examine_watchlist():
     """
     if any template files have changed since this function was last called,
@@ -124,6 +121,11 @@ def examine_watchlist():
     for template_dir in settings.TEMPLATE_DIRS:
         for root, dirs, files in os.walk(template_dir):
             for file in files:
+                parts = file.split('.')
+                if len(parts) > 1:
+                    if parts[-1] in ignored_extensions:
+                        continue
+                
                 full_path = os.path.join(root, file)
                 file_modified = os.path.getmtime(full_path)
                 if watchlist.has_key(full_path):
@@ -135,26 +137,26 @@ def examine_watchlist():
 
     return new_item
 
-def compile_file(source, dest, force):
+def compile_file(source, dest):
     """
-    parse source and write to dest, only if source is newer
-    force will make it definitely compile
+    parse source and write to dest
     """
-    if force or compare_file_date(source, dest):
-        print("Parsing %s." % file_title(source))
-        file = open(dest, 'w')
-        in_text = open(source, 'r').read().decode()
-        template = Template(in_text)
+    print("Parsing %s." % file_title(source))
+    in_text = open(source, 'r').read().decode()
+    template = Template(in_text)
 
-        # manually add settings from settings.py :(
-        hash = settings.PREPARSE_CONTEXT
-        hash.update({
-            'MEDIA_URL': settings.MEDIA_URL,
-        })
-        
-        context = Context(hash)
-        file.write(template.render(context))
-        file.close()
+    # manually add settings from settings.py :(
+    context_hash = {
+        'MEDIA_URL': settings.MEDIA_URL,
+    }
+    
+    context = Context(context_hash)
+
+    f = tempfile.NamedTemporaryFile(delete=False)
+    f.write(template.render(context))
+    f.close()
+    storage.engine.store(f.name, dest, reducedRedundancy=True)
+    os.remove(f.name)
 
 def clean_file(source, dest, force):
     if os.path.exists(dest):

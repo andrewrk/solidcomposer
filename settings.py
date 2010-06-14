@@ -11,6 +11,8 @@ def absolute(relative_path):
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+# set this to True to actually use the amazon services 
+USE_AWS = False
 
 ADMINS = (
     ('Andy Kelley', 'superjoe30@gmail.com'),
@@ -54,6 +56,13 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = False
 
+# amazon s3 details
+AWS_ACCESS_KEY_ID = 'xxxxxxxxxxxxxxxxxxxx'
+AWS_SECRET_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+AWS_STORAGE_BUCKET_NAME = 'solidcomposer-test'
+# copy and uncomment in settings_user.py to use s3 storage
+#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = absolute('media')
@@ -94,18 +103,13 @@ TEMPLATE_DIRS = (
     absolute('templates'),
 )
 
-# where processed java script files will be output to. folder structure
-# will be mirrored.
-PREPARSE_OUTPUT = os.path.join(MEDIA_ROOT, 'js', 'pre')
+# where processed java script files will be output to.
+# relative to MEDIA_ROOT. respects storage engine.
+PREPARSE_OUTPUT = os.path.join('js', 'pre')
 
 # these will be processed with django's templating system and moved
 # to the PREPARSE_OUTPUT folder, mirroring folder structure.
 PREPARSE_DIR = os.path.join('templates', 'preparsed')
-
-# the dictionary that will be available to your preparsed code.
-PREPARSE_CONTEXT = {
-    'server_time': datetime.datetime.today().strftime("%B %d, %Y %H:%M:%S"),
-}
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',
@@ -163,12 +167,6 @@ ACTIVATION_EXPIRE_DAYS = 1
 BAND_INIT_SPACE = 1024 * 1024 * 1024 * 0.5 # 0.5 GB
 # how many bands can free users create
 FREE_BAND_LIMIT = 10
-
-# amazon s3 details
-AWS_ACCESS_KEY_ID = 'AKIAII3Z2JMVTAJ6R4CQ'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'solidcomposer'
-#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 # leave this at the very end
 if os.path.exists("settings_user.py"):

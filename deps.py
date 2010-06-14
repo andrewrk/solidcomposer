@@ -1,3 +1,8 @@
+# set django environment
+from django.core.management import setup_environ
+import settings
+setup_environ(settings)
+
 import os
 import sys
 
@@ -13,7 +18,8 @@ it outpus a space separated list of missing dependencies.
  * mutagen - http://code.google.com/p/mutagen/
  * PyWaveform - http://github.com/superjoe30/PyWaveform
  * PyFlp - http://github.com/superjoe30/PyFlp
-
+ * django-storages - http://code.welldev.org/django-storages/wiki/S3Storage
+ * boto - http://code.google.com/p/boto/
 """
 
 deps = [
@@ -23,7 +29,23 @@ deps = [
     'waveform',
     'daw-0.3.2',
     'django_extensions-0.4.1',
+    'django-storages',
+    'boto',
 ]
+
+# boto
+try:
+    import boto.s3
+    deps.remove('boto')
+except ImportError:
+    pass
+
+# django-storages
+try:
+    import storages.backends.s3boto
+    deps.remove('django-storages')
+except ImportError:
+    pass
 
 # south
 try:
