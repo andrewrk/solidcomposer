@@ -14,7 +14,7 @@ from competitions.models import *
 from competitions.forms import *
 from competitions import design
 from chat.models import *
-import settings
+from django.conf import settings
 
 from datetime import datetime, timedelta
 

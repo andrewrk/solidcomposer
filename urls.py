@@ -5,7 +5,7 @@ import os
 
 admin.autodiscover()
 
-import settings
+from django.conf import settings
 
 urlpatterns = patterns('',
     url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),

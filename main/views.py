@@ -11,7 +11,7 @@ from main.models import *
 from main.forms import *
 from main.common import *
 from main import design
-import settings
+from django.conf import settings
 
 from datetime import datetime, timedelta
 

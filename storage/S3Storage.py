@@ -1,7 +1,7 @@
 from .DummyStorage import DummyStorage, ensurePathExists, fileHash
 from boto import s3
 
-import settings
+from django.conf import settings
 import os
 
 class S3Storage(DummyStorage):

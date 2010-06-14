@@ -1,6 +1,5 @@
 = sitewide =
  * song player: have a song length override so that it's not guessing
- * refactor: don't import settings, from django.conf import settings
  * refactor: django already has a storage engine type thing. use it instead
    of my own hacked class
  * stats

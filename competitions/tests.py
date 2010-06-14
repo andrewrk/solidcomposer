@@ -8,7 +8,7 @@ from chat.models import *
 from competitions.models import *
 from competitions.forms import *
 from competitions import design
-import settings
+from django.conf import settings
 
 from datetime import datetime, timedelta
 import simplejson as json

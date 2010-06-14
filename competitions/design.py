@@ -1,5 +1,5 @@
 from main import design
-import settings
+from django.conf import settings
 
 # strings that are displayed to the user.
 this_field_is_required = design.this_field_is_required

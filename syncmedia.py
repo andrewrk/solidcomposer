@@ -6,6 +6,7 @@ this script copies local media to amazon s3
 from django.core.management import setup_environ
 import settings
 setup_environ(settings)
+from django.conf import settings
 
 from main.common import superwalk
 import storage

@@ -8,7 +8,7 @@ from chat.models import *
 from datetime import datetime, timedelta
 import simplejson as json
 
-import settings
+from django.conf import settings
 
 import os
 import subprocess

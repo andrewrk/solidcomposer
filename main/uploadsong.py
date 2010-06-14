@@ -1,4 +1,4 @@
-import settings
+from django.conf import settings
 from main.upload import *
 from main.common import create_hash
 from main.models import Song

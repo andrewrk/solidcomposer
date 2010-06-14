@@ -2,7 +2,7 @@ from django import forms
 
 from main.models import *
 from main import design
-import settings
+from django.conf import settings
 
 from datetime import datetime, timedelta
 import string

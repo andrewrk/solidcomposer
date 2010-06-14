@@ -2,7 +2,7 @@ from django import forms
 
 from competitions.models import *
 from competitions import design
-import settings
+from django.conf import settings
 
 from datetime import datetime, timedelta
 

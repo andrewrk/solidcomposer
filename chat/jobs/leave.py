@@ -2,7 +2,7 @@ from django_extensions.management.jobs import BaseJob
 
 from datetime import datetime, timedelta
 from chat.models import *
-import settings
+from django.conf import settings
 
 class Job(BaseJob):
     """

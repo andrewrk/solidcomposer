@@ -1,5 +1,5 @@
 from .DummyStorage import DummyStorage, ensurePathExists
-import settings
+from django.conf import settings
 
 import os
 import stat

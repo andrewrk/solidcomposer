@@ -1,6 +1,6 @@
 from .S3Storage import S3Storage
 from .LocalFileStorage import LocalFileStorage
-import settings
+from django.conf import settings
 
 if settings.USE_AWS:
     engine = S3Storage()

@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import string
 
 import os
-import settings
+from django.conf import settings
 
 FULL_OPEN, OPEN_SOURCE, TRANSPARENT, NO_CRITIQUE, PRIVATE = range(5)
 
