@@ -77,18 +77,8 @@ def is_hidden(path):
     """
     Check if a file or folder is hidden.
     """
-    title = file_title(path)
+    name, title = os.path.split(path)
     return title[-1] == '~' or title[0] == '.'
-
-def file_title(path):
-    """
-    Get only the title of a path.
-    """
-    names = path.split(os.sep)
-    if len(names) == 0:
-        return path
-    else:
-        return names[-1]
 
 def walk(compile_func):
     """
@@ -141,7 +131,8 @@ def compile_file(source, dest):
     """
     parse source and write to dest
     """
-    print("Parsing %s." % file_title(source))
+    source_path, source_title = os.path.split(source)
+    print("Parsing %s." % source_title)
     in_text = open(source, 'r').read().decode()
     template = Template(in_text)
 

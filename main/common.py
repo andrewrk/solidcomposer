@@ -128,8 +128,3 @@ def superwalk(folder):
         for filename in filenames:
             yield os.path.join(dirpath, filename)
 
-def file_title(filename):
-    """
-    Returns only the file title of the path
-    """
-    return filename.split(os.sep)[-1]
