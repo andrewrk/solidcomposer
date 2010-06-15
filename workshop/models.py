@@ -75,6 +75,9 @@ class UploadedSample(models.Model):
     # for what band was the sample uploaded
     band = models.ForeignKey('main.Band', null=True, blank=True)
 
+    def __unicode__(self):
+        return "%s (%s): %s" % (self.user.username, self.band.title, self.title)
+
 class SampleDependency(models.Model):
     """
     Represents the title of a sample, used in a song.

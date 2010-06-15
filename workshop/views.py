@@ -349,13 +349,13 @@ def handle_sample_upload(fileHandle, user, band):
     handle.close()
 
     path, title = os.path.split(fileHandle.name)
-    import pdb; pdb.set_trace()
-    handle_sample_file(handle.name, title)
+    handle_sample_file(handle.name, title, user, band)
 
 def handle_sample_file(filename, file_id, user, band):
     """
     creates the database entries necessary for filename as a sample.
     moves filename to a better path or deletes it if there was a problem.
+    increments the band's used space. be sure to save after calling.
     """
     if band.isReadOnly():
         return
@@ -392,10 +392,18 @@ def handle_sample_file(filename, file_id, user, band):
     except SampleFile.DoesNotExist:
         existing_sample = None
 
-    dep = UploadedSample()
-    dep.title = file_id
+    sample = UploadedSample()
+    sample.title = file_id
     if existing_sample is not None:
-        dep.sample_file = existing_sample
+        sample.sample_file = existing_sample
+
+        # if it already exists, don't create a duplicate
+        if UploadedSample.objects.filter(user=user, band=band, sample_file=existing_sample).count() > 0:
+            return
+
+        # if user or user's band already uploaded it, don't count it
+        # against the band's quota.
+        skip_byte_count = UploadedSample.objects.filter(title=sample.title).filter(Q(user=user)|Q(band=band)).count() > 0
     else:
         # pick a good path for the sample
         sample_path = os.path.join('sample', md5sum)
@@ -407,16 +415,25 @@ def handle_sample_file(filename, file_id, user, band):
         sf.save()
 
         # move it to good path
+        import storage
         storage.engine.store(filename, sample_path) 
 
-        dep.sample_file = sf
+        sample.sample_file = sf
 
-    dep.user = user
-    dep.band = band
-    dep.save()
+    sample.user = user
+    sample.band = band
+    sample.save()
 
-    # count it against the band's size quota
-    band.used_space = band.used_space + os.path.getsize(filename)
+    # if any songs of any of the user's bands are missing this sample,
+    # resolve the dependency.
+    deps = SampleDependency.objects.filter(title=sample.title, song__band=sample.band)
+    for dep in deps:
+        dep.uploaded_sample = sample
+        dep.save()
+
+    if not skip_byte_count:
+        # count it against the band's size quota
+        band.used_space = band.used_space + os.path.getsize(filename)
 
 @json_login_required
 @json_post_required
@@ -441,6 +458,7 @@ def ajax_upload_samples(request):
 
     for item in files:
         handle_sample_upload(item, request.user, band)
+    band.save()
 
     data = {
         'success': True,

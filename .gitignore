@@ -5,5 +5,6 @@ media/js/pre
 media/compo/mp3/*
 media/band
 media/img/studio
+media/sample
 settings_user.py
 dump.json

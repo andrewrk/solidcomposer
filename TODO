@@ -107,6 +107,7 @@
  * arena home GUI Redesign
 
 = workbench =
+ * creating a project should add to the band's used space
  * new project page: ability to upload a zip as source project
  * new project page: login div is broken
  * handle ambiguous samples with a choice when the song is uploaded.

@@ -67,7 +67,7 @@ class Band(models.Model):
     abandon_date = models.DateTimeField(blank=True, null=True)
 
     def isReadOnly(self):
-        return used_space > total_space
+        return self.used_space > self.total_space
 
     def save(self, *args, **kwargs):
         if self.used_space > self.total_space and self.abandon_date is None:
