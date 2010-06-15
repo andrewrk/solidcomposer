@@ -18,7 +18,7 @@ it outpus a space separated list of missing dependencies.
  * django extensions - http://code.google.com/p/django-command-extensions/
  * mutagen - http://code.google.com/p/mutagen/
  * PyWaveform - http://github.com/superjoe30/PyWaveform
- * PyFlp - http://github.com/superjoe30/PyFlp
+ * PyDaw - http://github.com/superjoe30/PyDaw
  * django-storages - http://code.welldev.org/django-storages/wiki/S3Storage
  * boto - http://code.google.com/p/boto/
 """
@@ -28,7 +28,7 @@ deps = [
     'south-0.7.1',
     'mutagen-1.19',
     'waveform',
-    'daw-0.3.2',
+    'PyDaw-0.3.3',
     'django_extensions-0.4.1',
     'django-storages',
     'boto',
@@ -88,10 +88,10 @@ except ImportError:
 # PyDaw
 try:
     import daw
-    if daw.__version__ == '0.3.2':
-        deps.remove('daw-0.3.2')
+    if daw.__version__ == '0.3.3':
+        deps.remove('PyDaw-0.3.3')
     else:
-        sys.stderr.write("installed PyDaw version %s does not equal %s\n" % (daw.__version__, '0.3.2'))
+        sys.stderr.write("installed PyDaw version %s does not equal %s\n" % (daw.__version__, '0.3.3'))
 except ImportError:
     pass
 
