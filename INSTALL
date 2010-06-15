@@ -17,6 +17,10 @@ The first time you install this project, you need to:
       content-disposition: attachment
     * follow the directions below for deploying
 
+Whenever PyDaw is updated (and initially) you need to run
+
+    ./syncdaw
+
 After that, you get to use the happy funtime deploy script (tm)!
 
   ./deploy
