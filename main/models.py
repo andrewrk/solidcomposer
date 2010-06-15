@@ -248,9 +248,9 @@ class SongCommentThread(models.Model):
     """
     song = models.ForeignKey('Song')
 
-    # position in the song the comment was made.
+    # how many seconds into the song the comment was made.
     # null indicates no particular position
-    position = models.FloatField(blank=True, null=True)
+    position = models.IntegerField(blank=True, null=True)
 
     def __unicode__(self):
         return "%s at position %s" % (entry, position)
