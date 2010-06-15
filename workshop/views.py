@@ -358,6 +358,7 @@ def handle_sample_file(filename, file_id, user, band):
     increments the band's used space. be sure to save after calling.
     """
     if band.isReadOnly():
+        os.remove(filename)
         return
 
     # check if it is a zip file
@@ -399,6 +400,7 @@ def handle_sample_file(filename, file_id, user, band):
 
         # if it already exists, don't create a duplicate
         if UploadedSample.objects.filter(user=user, band=band, sample_file=existing_sample).count() > 0:
+            os.remove(filename)
             return
 
         # if user or user's band already uploaded it, don't count it
@@ -414,7 +416,7 @@ def handle_sample_file(filename, file_id, user, band):
         sf.path = sample_path
         sf.save()
 
-        # move it to good path
+        # copy it to good path
         import storage
         storage.engine.store(filename, sample_path) 
 
@@ -434,6 +436,8 @@ def handle_sample_file(filename, file_id, user, band):
     if not skip_byte_count:
         # count it against the band's size quota
         band.used_space = band.used_space + os.path.getsize(filename)
+
+    os.remove(filename)
 
 @json_login_required
 @json_post_required
