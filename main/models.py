@@ -225,7 +225,6 @@ class Song(models.Model):
     date_added = models.DateTimeField()
 
     # dependencies
-    samples = models.ManyToManyField('workshop.SampleDependency', related_name='song_samples')
     effects = models.ManyToManyField('workshop.EffectDependency', related_name='song_effects')
     generators = models.ManyToManyField('workshop.GeneratorDependency', related_name='song_generators')
 

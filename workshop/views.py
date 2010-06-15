@@ -174,7 +174,7 @@ def song_to_dict(x, user):
     else:
         d['studio'] = None
 
-    allSamples = x.samples.all()
+    allSamples = SampleDependency.objects.filter(song=x)
     allEffects = x.effects.all()
     allGenerators = x.generators.all()
     d['samples'] = [safe_model_to_dict(y) for y in allSamples]
@@ -183,7 +183,7 @@ def song_to_dict(x, user):
 
     ownedEffects = user.get_profile().effects.all()
     ownedGenerators = user.get_profile().generators.all()
-    d['missing_samples'] = [safe_model_to_dict(y) for y in filter(lambda x: x.sample_file is None, allSamples)]
+    d['missing_samples'] = [safe_model_to_dict(y) for y in filter(lambda x: x.uploaded_sample is None, allSamples)]
     d['missing_generators'] = [safe_model_to_dict(y) for y in filter(lambda x: x not in ownedGenerators, allGenerators)]
     d['missing_effects'] = [safe_model_to_dict(y) for y in filter(lambda x: x not in ownedEffects, allEffects)]
     return d
@@ -342,20 +342,27 @@ def handle_sample_upload(fileHandle, user, band):
     uploads fileHandle, and runs handle_sample_file.
     """
     # copy it to temp file
-    handle = tempfile.NamedTemporaryFile(delete=False)
+    name, ext = os.path.splitext(fileHandle.name)
+
+    handle = tempfile.NamedTemporaryFile(suffix=ext, delete=False)
     upload_file_h(fileHandle, handle)
     handle.close()
 
-    handle_sample_file(handle.name)
+    path, title = os.path.split(fileHandle.name)
+    import pdb; pdb.set_trace()
+    handle_sample_file(handle.name, title)
 
-def handle_sample_file(filename, user, band):
+def handle_sample_file(filename, file_id, user, band):
     """
     creates the database entries necessary for filename as a sample.
     moves filename to a better path or deletes it if there was a problem.
     """
-    TODO
+    if band.isReadOnly():
+        return
+
     # check if it is a zip file
-    if filename.name[-4:].lower() == '.zip':
+    name, ext = os.path.splitext(filename)
+    if ext.lower() == '.zip':
         try:
             z = zipfile.ZipFile(filename, 'r')
         except zipfile.BadZipfile:
@@ -368,7 +375,8 @@ def handle_sample_file(filename, user, band):
         z.extractall(path=tmpdir)
         os.remove(filename)
         for extracted_file in superwalk(tmpdir):
-            handle_sample_file(extracted_file)
+            path, title = os.path.split(extracted_file)
+            handle_sample_file(extracted_file, title, user, band)
 
         # clean up
         shutil.rmtree(tmpdir)
@@ -379,22 +387,36 @@ def handle_sample_file(filename, user, band):
     md5sum = hashlib.md5(handle.read()).hexdigest()
     handle.close()
 
-    # pick a good path for what the band sees
-    hash_str = create_hash(16)
+    try:
+        existing_sample = SampleFile.objects.get(hex_digest=md5sum)
+    except SampleFile.DoesNotExist:
+        existing_sample = None
 
-    #if we have it already:
-        # make an entry for the user linking to the real deal
+    dep = UploadedSample()
+    dep.title = file_id
+    if existing_sample is not None:
+        dep.sample_file = existing_sample
+    else:
+        # pick a good path for the sample
+        sample_path = os.path.join('sample', md5sum)
 
-    #else:
-        # pick a good path for the file
+        # create the SampleFile
+        sf = SampleFile()
+        sf.hex_digest = md5sum
+        sf.path = sample_path
+        sf.save()
 
         # move it to good path
+        storage.engine.store(filename, sample_path) 
 
-    # softlink the band path to the real path
+        dep.sample_file = sf
+
+    dep.user = user
+    dep.band = band
+    dep.save()
 
     # count it against the band's size quota
-    band.used_space = band.used_space + fileHandle
-    fileHandle.size
+    band.used_space = band.used_space + os.path.getsize(filename)
 
 @json_login_required
 @json_post_required

@@ -46,6 +46,9 @@ class BandInvitation(models.Model):
 
 
 class SampleFile(models.Model):
+    """
+    represents the actual data for a sample file.
+    """
     # md5 hash of the binary data of the sample
     hex_digest = models.CharField(max_length=32, unique=True)
 
@@ -55,26 +58,44 @@ class SampleFile(models.Model):
     def __unicode__(self):
         return self.path
 
-class SampleDependency(models.Model):
+class UploadedSample(models.Model):
+    """
+    A sample that a user has uploaded for a band. Links to a SampleFile.
+    """
     # the file title of the dependency. it may contain path 
     # separators in the form of forward slashes.
     title = models.CharField(max_length=512)
 
     # link to the sample file. null if the link is unresolved.
-    sample_file = models.ForeignKey(SampleFile, null=True, blank=True)
+    sample_file = models.ForeignKey(SampleFile)
+    
+    # who uploaded the sample
+    user = models.ForeignKey(User, null=True, blank=True)
+
+    # for what band was the sample uploaded
+    band = models.ForeignKey('main.Band', null=True, blank=True)
+
+class SampleDependency(models.Model):
+    """
+    Represents the title of a sample, used in a song.
+    Links to an UploadedSample if it is resolved.
+    """
+    # the file title of the dependency. it may contain path 
+    # separators in the form of forward slashes.
+    title = models.CharField(max_length=512)
+
+    # link to the UploadedSample, null if unresolved
+    uploaded_sample = models.ForeignKey('UploadedSample', null=True, blank=True)
+
+    # what song uses the dependency
+    song = models.ForeignKey('main.Song')
 
     def __unicode__(self):
-        if self.sample_file is None:
+        if self.uploaded_sample is None:
             resolution = "not resolved"
         else:
             resolution = "resolved"
         return "%s (%s)" % (self.title, resolution)
-
-class UserSampleDependency(SampleDependency):
-    user = models.ForeignKey(User)
-
-class BandSampleDependency(SampleDependency):
-    band = models.ForeignKey('main.Band')
 
 class EffectDependency(models.Model):
     # the name of the effect. this identifies it.

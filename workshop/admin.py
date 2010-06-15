@@ -7,8 +7,10 @@ stuff = (
     BandInvitation,
     Studio,
     GeneratorDependency,
-    SampleDependency,
     EffectDependency,
+    SampleDependency,
+    UploadedSample,
+    SampleFile,
 )
 
 map(lambda x: admin.site.register(x), stuff)

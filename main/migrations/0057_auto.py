@@ -5,43 +5,22 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    depends_on = (
-        ('competitions', '0002_auto__add_entry__add_competition__add_thumbsup'),
-    )
 
     def forwards(self, orm):
         
-        # Adding M2M table for field new_competitions_bookmarked on 'Profile'
-        db.create_table('main_profile_new_competitions_bookmarked', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('profile', models.ForeignKey(orm['main.profile'], null=False)),
-            ('competition', models.ForeignKey(orm['competitions.competition'], null=False))
-        ))
-        db.create_unique('main_profile_new_competitions_bookmarked', ['profile_id', 'competition_id'])
-
-        # Deleting field 'SongCommentThread.entry'
-        db.delete_column('main_songcommentthread', 'entry_id')
-
-        # Adding field 'SongCommentThread.song'
-        db.add_column('main_songcommentthread', 'song', self.gf('django.db.models.fields.related.ForeignKey')(default=0, to=orm['main.Song']), keep_default=False)
-
-        # Changing field 'SongCommentThread.position'
-        db.alter_column('main_songcommentthread', 'position', self.gf('django.db.models.fields.FloatField')(null=True, blank=True))
+        # Removing M2M table for field samples on 'Song'
+        db.delete_table('main_song_samples')
 
 
     def backwards(self, orm):
         
-        # Removing M2M table for field new_competitions_bookmarked on 'Profile'
-        db.delete_table('main_profile_new_competitions_bookmarked')
-
-        # Adding field 'SongCommentThread.entry'
-        db.add_column('main_songcommentthread', 'entry', self.gf('django.db.models.fields.related.ForeignKey')(default=0, to=orm['main.Entry']), keep_default=False)
-
-        # Deleting field 'SongCommentThread.song'
-        db.delete_column('main_songcommentthread', 'song_id')
-
-        # Changing field 'SongCommentThread.position'
-        db.alter_column('main_songcommentthread', 'position', self.gf('django.db.models.fields.FloatField')())
+        # Adding M2M table for field samples on 'Song'
+        db.create_table('main_song_samples', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('song', models.ForeignKey(orm['main.song'], null=False)),
+            ('sampledependency', models.ForeignKey(orm['workshop.sampledependency'], null=False))
+        ))
+        db.create_unique('main_song_samples', ['song_id', 'sampledependency_id'])
 
 
     models = {
@@ -85,10 +64,10 @@ class Migration(SchemaMigration):
         },
         'competitions.competition': {
             'Meta': {'object_name': 'Competition'},
-            'chat_room': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'competition_chat_room2'", 'null': 'True', 'to': "orm['chat.ChatRoom']"}),
+            'chat_room': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['chat.ChatRoom']", 'null': 'True', 'blank': 'True'}),
             'date_created': ('django.db.models.fields.DateTimeField', [], {}),
             'have_listening_party': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'host': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'competition_host2'", 'to': "orm['auth.User']"}),
+            'host': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'listening_party_end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'listening_party_start_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
@@ -111,20 +90,23 @@ class Migration(SchemaMigration):
         },
         'main.accountplan': {
             'Meta': {'object_name': 'AccountPlan'},
-            'customer_id': ('django.db.models.fields.IntegerField', [], {}),
+            'band_count_limit': ('django.db.models.fields.IntegerField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'total_space': ('django.db.models.fields.IntegerField', [], {}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'total_space': ('django.db.models.fields.BigIntegerField', [], {}),
             'usd_per_month': ('django.db.models.fields.FloatField', [], {})
         },
         'main.band': {
             'Meta': {'object_name': 'Band'},
+            'abandon_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'bio': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'concurrent_editing': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'folder': ('django.db.models.fields.CharField', [], {'max_length': '110', 'unique': 'True', 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'openness': ('django.db.models.fields.IntegerField', [], {'default': '4'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'url': ('django.db.models.fields.CharField', [], {'max_length': '110', 'unique': 'True', 'null': 'True'})
+            'total_space': ('django.db.models.fields.BigIntegerField', [], {}),
+            'url': ('django.db.models.fields.CharField', [], {'max_length': '110', 'unique': 'True', 'null': 'True'}),
+            'used_space': ('django.db.models.fields.BigIntegerField', [], {'default': '0'})
         },
         'main.bandmember': {
             'Meta': {'object_name': 'BandMember'},
@@ -133,47 +115,22 @@ class Migration(SchemaMigration):
             'role': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
-        'main.competition': {
-            'Meta': {'object_name': 'Competition'},
-            'chat_room': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['chat.ChatRoom']", 'null': 'True', 'blank': 'True'}),
-            'date_created': ('django.db.models.fields.DateTimeField', [], {}),
-            'have_listening_party': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'host': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'listening_party_end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'listening_party_start_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'preview_rules': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
-            'preview_theme': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'rules': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'start_date': ('django.db.models.fields.DateTimeField', [], {}),
-            'submit_deadline': ('django.db.models.fields.DateTimeField', [], {}),
-            'theme': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'vote_deadline': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'vote_period_length': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'main.entry': {
-            'Meta': {'object_name': 'Entry'},
-            'competition': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.Competition']"}),
-            'edit_date': ('django.db.models.fields.DateTimeField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'song': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.Song']"}),
-            'submit_date': ('django.db.models.fields.DateTimeField', [], {})
-        },
         'main.profile': {
             'Meta': {'object_name': 'Profile'},
             'activate_code': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
             'activated': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'band_count_limit': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
             'bio': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'competitions_bookmarked': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'competitions_bookmarked'", 'blank': 'True', 'to': "orm['main.Competition']"}),
+            'competitions_bookmarked': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'competitions_bookmarked'", 'blank': 'True', 'to': "orm['competitions.Competition']"}),
+            'customer_id': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
             'date_activity': ('django.db.models.fields.DateTimeField', [], {}),
+            'effects': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'profile_effects'", 'blank': 'True', 'to': "orm['workshop.EffectDependency']"}),
+            'generators': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'profile_generators'", 'blank': 'True', 'to': "orm['workshop.GeneratorDependency']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'new_competitions_bookmarked': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'competitions_bookmarked2'", 'blank': 'True', 'to': "orm['competitions.Competition']"}),
-            'plan': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.AccountPlan']", 'null': 'True'}),
+            'plan': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.AccountPlan']", 'null': 'True', 'blank': 'True'}),
+            'purchased_bytes': ('django.db.models.fields.BigIntegerField', [], {'default': '0'}),
             'solo_band': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.Band']"}),
-            'total_space': ('django.db.models.fields.IntegerField', [], {}),
-            'used_space': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'usd_per_month': ('django.db.models.fields.FloatField', [], {'default': '0.0'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'})
         },
         'main.song': {
@@ -181,12 +138,14 @@ class Migration(SchemaMigration):
             'band': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.Band']"}),
             'comments': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'date_added': ('django.db.models.fields.DateTimeField', [], {}),
+            'effects': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'song_effects'", 'symmetrical': 'False', 'to': "orm['workshop.EffectDependency']"}),
+            'generators': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'song_generators'", 'symmetrical': 'False', 'to': "orm['workshop.GeneratorDependency']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'length': ('django.db.models.fields.FloatField', [], {}),
             'mp3_file': ('django.db.models.fields.CharField', [], {'max_length': '500'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
             'source_file': ('django.db.models.fields.CharField', [], {'max_length': '500', 'blank': 'True'}),
-            'studio': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.Studio']", 'null': 'True', 'blank': 'True'}),
+            'studio': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['workshop.Studio']", 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'waveform_img': ('django.db.models.fields.CharField', [], {'max_length': '500', 'blank': 'True'})
         },
@@ -204,26 +163,32 @@ class Migration(SchemaMigration):
             'position': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'song': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.Song']"})
         },
-        'main.studio': {
-            'Meta': {'object_name': 'Studio'},
-            'extension': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'info': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'logo_16x16': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'logo_large': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
         'main.tag': {
             'Meta': {'object_name': 'Tag'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '30'})
         },
-        'main.thumbsup': {
-            'Meta': {'object_name': 'ThumbsUp'},
-            'date_given': ('django.db.models.fields.DateTimeField', [], {}),
-            'entry': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['main.Entry']"}),
+        'workshop.effectdependency': {
+            'Meta': {'object_name': 'EffectDependency'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+            'title': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
+        },
+        'workshop.generatordependency': {
+            'Meta': {'object_name': 'GeneratorDependency'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
+        },
+        'workshop.studio': {
+            'Meta': {'object_name': 'Studio'},
+            'canMerge': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'canReadFile': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'canRender': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
+            'info': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'logo_16x16': ('django.db.models.fields.files.ImageField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'}),
+            'logo_large': ('django.db.models.fields.files.ImageField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         }
     }
 

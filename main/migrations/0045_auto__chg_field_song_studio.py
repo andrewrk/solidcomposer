@@ -5,6 +5,10 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
+    depends_on = (
+        ('workshop', '0007_auto__add_samplefile__add_generatordependency__add_studio__add_sampled'),
+    )
+
 
     def forwards(self, orm):
         

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.conf import settings
 from main.upload import *
 from main.common import create_hash
@@ -214,41 +215,25 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
                 if sample.strip() == '':
                     continue
 
-                title = sample.split('/')[-1]
-                # if the title matches anthing the user has already uploaded,
-                # establish a link.
-                user_samples = UserSampleDependency.objects.filter(user=user, title=title)
+                path, title = os.path.split(sample)
 
-                if user_samples.count() > 0:
-                    # user has already uploaded this file. 
-                    user_sample = user_samples[0]
-                    dep = SampleDependency()
-                    dep.title = user_sample.title
-                    dep.sample_file = user_sample.sample_file
-                    dep.save()
-                    song.samples.add(dep)
-                    continue
-
-                # next check the band's dependencies
-                band_samples = BandSampleDependency.objects.filter(band=band, title=title)
-
-                if band_samples.count() > 0:
-                    # band has already uploaded this file.
-                    band_sample = band_samples[0]
-                    dep = SampleDependency()
-                    dep.title = band_sample.title
-                    dep.sample_file = band_sample.sample_file
-                    dep.save()
-                    song.samples.add(dep)
-                    continue
-
-                # unresolved dependency
-                dep = BandSampleDependency()
-                dep.band = band
+                # create the dependency
+                dep = SampleDependency()
                 dep.title = title
+                dep.song = song
+                    
+                # if the title matches anthing the user or band has already uploaded,
+                # establish a link.
+                existing_samples = UploadedSample.objects.filter(title=title).filter(Q(user=user)|Q(band=band))
+
+                if existing_samples.count() > 0:
+                    # TODO: handle title ambiguity
+                    # copy the dependency to this song
+                    existing_sample = existing_samples[0]
+                    dep.uploaded_sample = existing_sample
+
                 dep.save()
-                song.samples.add(dep)
-            
+
             if dawExt:
                 source_file_title += "." + dawExt
 
