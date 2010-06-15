@@ -19,6 +19,9 @@ import daw
 
 from main import design
 
+def studio_extensions():
+    return [item for sublist in [x.fileExtensions for x in daw._class_dict.values()] for item in sublist]
+
 def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album=None):
     """
     inputs: 

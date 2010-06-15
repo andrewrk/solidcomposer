@@ -107,7 +107,6 @@
  * arena home GUI Redesign
 
 = workbench =
- * when uploading sample .zip files: ignore known studio extensions
  * creating a project should add to the band's used space
  * new project page: ability to upload a zip as source project
  * new project page: login div is broken

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, HttpResponse
@@ -11,7 +12,7 @@ from workshop import design
 from main.models import *
 from main.common import *
 from main.upload import *
-from main.uploadsong import upload_song
+from main.uploadsong import upload_song, studio_extensions
 
 import zipfile
 import tempfile
@@ -362,6 +363,7 @@ def handle_sample_file(filename, file_id, user, band):
         return
 
     # check if it is a zip file
+    skipExts = studio_extensions()
     name, ext = os.path.splitext(filename)
     if ext.lower() == '.zip':
         try:
@@ -377,6 +379,13 @@ def handle_sample_file(filename, file_id, user, band):
         os.remove(filename)
         for extracted_file in superwalk(tmpdir):
             path, title = os.path.split(extracted_file)
+
+            # skip studio files when uploading sample zips
+            prefix, ext = os.path.splitext(title)
+            if ext[1:].lower() in skipExts:
+                os.remove(extracted_file)
+                continue
+
             handle_sample_file(extracted_file, title, user, band)
 
         # clean up
