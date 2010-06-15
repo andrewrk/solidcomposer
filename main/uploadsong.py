@@ -254,7 +254,11 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
         song.source_file = source_safe_path_relative
 
         if usingDaw:
-            dawProject.save(source_safe_path)
+            out_handle = tempfile.NamedTemporaryFile(mode='r+b')
+            dawProject.save(out_handle.name)
+            import storage
+            storage.engine.store(out_handle.name, source_safe_path)
+            out_handle.close()
             os.remove(handle.name)
         else:
             move_to_storage(handle.name, source_safe_path)
