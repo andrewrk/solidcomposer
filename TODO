@@ -117,11 +117,14 @@
  * arena home GUI Redesign
 
 = workbench =
- * make it so that there is maximum song length for compos but not projects.
  * song player
    > download samples
    > resolve dependencies
    > ability to comment on sections of the song
+   > volume control should move by offset, not absolute
+   > UI for when mp3 is missing
+   > UI for when project file is missing
+   > UI for when project file is not to be shared with people
  * project page
    > check out
    > check in 
@@ -156,7 +159,8 @@
    credits, which can be spent on any band.
  * make it so that a band is read-only when its bytes_used < bytes_total
  * project filenames should be <artist> - <title>_<version>.<ext>
- * song player: volume control should move by offset, not absolute
+ * allow uploading only mp3 or only project file
+   > provide UI for providing the file for it
 
  * handle ambiguous samples with a choice when the song is uploaded.
    > one of the choices should be: use sample X, and delete the other one
@@ -173,6 +177,7 @@
    > should never have to leave the page
  * automatically upload competition entries to the project manager
  * integrate into arena
+   > checkbox next to project source file "Share this with the world"
  * tests
 
  * ability to create albums and organize like that

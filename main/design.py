@@ -26,9 +26,12 @@ passwords_do_not_match = 'Your passwords do not match.'
 user_x_already_exists = 'The user "%s" already exists.'
 email_already_exists = 'This email address already exists.'
 invalid_characters_in_user_name = 'You may not use any of these characters in your username: %s'
-invalid_characters_in_artist_name = 'You may not use any of these characters in your artist name: %s'
+invalid_characters_in_artist_name = 'You may not use any of these characters in your solo band name: %s'
 song_too_long = 'Song is too long.'
 invalid_mp3_file = 'Invalid MP3 file.'
 sketchy_mp3_file = 'Sketchy MP3 file.'
 unable_to_save_id3_tags = 'Unable to save ID3 tags.'
 not_authenticated = 'You are not logged in.'
+
+# form labels
+label_artist_name = 'Solo band name'

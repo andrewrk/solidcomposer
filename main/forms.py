@@ -21,7 +21,8 @@ class RegisterForm(forms.Form):
     username = forms.CharField(max_length=30,
         error_messages={'required': design.this_field_is_required})
     artist_name = forms.CharField(max_length=80,
-        error_messages={'required': design.this_field_is_required})
+        error_messages={'required': design.this_field_is_required},
+        label=design.label_artist_name)
     email = forms.EmailField(max_length=80,
         error_messages={'required': design.this_field_is_required})
     password = forms.CharField(max_length=50,
