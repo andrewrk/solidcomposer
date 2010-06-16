@@ -118,7 +118,6 @@
 
 = workbench =
  * new project page
-   > ability to upload a zip as source project
    > creating a project should add to the band's used space
  * song player
    > download samples

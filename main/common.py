@@ -6,6 +6,9 @@ from datetime import datetime
 import string
 import random
 import hashlib
+import zipfile
+import tempfile
+import shutil
 import simplejson as json
 
 from main import design
@@ -14,6 +17,13 @@ import os
 
 def gravatar_url(email, size):
     return "http://www.gravatar.com/avatar/%s?s=%s&r=pg&d=identicon" % (hashlib.md5(email).hexdigest(), str(size))
+
+def file_hash(filename):
+    md5 = hashlib.md5()
+    f = open(filename, 'rb')
+    md5.update(f.read())
+    f.close()
+    return md5.hexdigest()
 
 def create_hash(length):
     """
@@ -122,6 +132,36 @@ def safe_model_to_dict(model_instance):
     if issubclass(type(model_instance), User):
         hash['get_profile'] = safe_model_to_dict(model_instance.get_profile())
     return hash
+
+def zip_walk(zip_filename, callback):
+    """
+    unzip zip_filename to a temporary folder and execute
+        callback(extracted_filename) on each one.
+    returns the number of times callback was called.
+        (0 means empty, -1 means error)
+    there will be no leftover temp files when this function returns.
+        (it cleans up after itself.)
+        it will not delete zip_filename, however.
+    """
+    try:
+        z = zipfile.ZipFile(zip_filename, 'r')
+    except zipfile.BadZipfile:
+        return -1
+
+    # extract every file to a temp folder 
+    tmpdir = tempfile.mkdtemp()
+    z.extractall(path=tmpdir)
+    extracted_files = superwalk(tmpdir)
+    for extracted_file in extracted_files:
+        callback(extracted_file)
+        try:
+            os.remove(extracted_file)
+        except OSError:
+            pass
+
+    # clean up
+    shutil.rmtree(tmpdir)
+    return
 
 def superwalk(folder):
     for dirpath, dirnames, filenames in os.walk(folder):
