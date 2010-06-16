@@ -2,6 +2,10 @@
 
 {% block title %}New Project - {{ block.super }}{% endblock %}
 
+{% block login %}
+{% include 'login_area.html' %}
+{% endblock %}
+
 {% block content %}
     <div id="bread">
         <a href="{% url home %}">Home</a>
