@@ -11,7 +11,7 @@ import tempfile
 import shutil
 import simplejson as json
 
-from main import design
+import main
 
 import os
 
@@ -61,7 +61,7 @@ def json_post_required(function):
         if request.method == 'POST':
             return function(*args, **kwargs)
         else:
-            return json_failure(design.must_submit_via_get)
+            return json_failure(main.design.must_submit_via_get)
 
     return decorated
 
@@ -73,7 +73,7 @@ def json_get_required(function):
         if request.method == 'GET':
             return function(*args, **kwargs)
         else:
-            return json_failure(design.must_submit_via_get)
+            return json_failure(main.design.must_submit_via_get)
 
     return decorated
 
@@ -87,7 +87,7 @@ def json_login_required(function):
         else:
             return json_response({
                 'success': False,
-                'reason': design.not_authenticated,
+                'reason': main.design.not_authenticated,
                 'user': {'is_authenticated': False},
             })
 
