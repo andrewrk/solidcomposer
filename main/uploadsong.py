@@ -116,7 +116,7 @@ def handle_sample_file(filename, file_id, user, band):
 
     if not skip_byte_count:
         # count it against the band's size quota
-        band.used_space = band.used_space + os.path.getsize(filename)
+        band.used_space += os.path.getsize(filename)
 
     os.remove(filename)
 
@@ -220,11 +220,20 @@ def handle_project_file(filename, user, song):
     if usingDaw:
         out_handle = tempfile.NamedTemporaryFile(mode='r+b')
         dawProject.save(out_handle.name)
+
+        # count it against the band's size quota
+        song.band.used_space += os.path.getsize(out_handle.name)
+
+        # move to storage
         import storage
         storage.engine.store(out_handle.name, song.source_file)
         out_handle.close()
+
         os.remove(filename)
     else:
+        # count it against the band's size quota
+        song.band.used_space += os.path.getsize(filename)
+        # move to storage
         move_to_storage(filename, song.source_file)
 
 def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album=None):
@@ -254,7 +263,9 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
             mp3_file
             band
             title
+            album
             length
+            studio
             samples
             effects
             generators
@@ -322,6 +333,9 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
 
         generate_waveform(song, mp3_tmp_handle.name)
 
+        # count mp3 against the band's size quota
+        band.used_space += os.path.getsize(mp3_tmp_handle.name)
+
         # move mp3 file to storage
         move_to_storage(mp3_tmp_handle.name, song.mp3_file)
 
@@ -337,6 +351,9 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
         handle.close()
 
         handle_project_file(handle.name, user, song)
+
+    # we incremented bytes_used in band, so save it now
+    band.save()
 
     data['song'] = song
     data['success'] = True

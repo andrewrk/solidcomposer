@@ -117,8 +117,7 @@
  * arena home GUI Redesign
 
 = workbench =
- * new project page
-   > creating a project should add to the band's used space
+ * make it so that there is maximum song length for compos but not projects.
  * song player
    > download samples
    > resolve dependencies
