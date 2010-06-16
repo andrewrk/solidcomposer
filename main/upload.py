@@ -27,10 +27,9 @@ def upload_file_h(f, handle):
     for chunk in f.chunks():
         handle.write(chunk)
 
-def safe_file(path, title):
+def clean_filename(title):
     """
-    returns a tuple (title joined with path, only title). paths are guaranteed
-    to be unique and safe.
+    returns title except now it's safe to use as a filename
     """
     allowed = string.letters + string.digits + "_-."
     clean = ""
@@ -39,23 +38,5 @@ def safe_file(path, title):
             clean += c
         else:
             clean += "_"
-
-    # break into title and extension
-    parts = clean.split(".")
-    if len(parts) > 0:
-        clean = ".".join(parts[:-1])
-        ext = "." + parts[-1]
-    else:
-        ext = ""
+    return clean
     
-    if os.path.exists(os.path.join(path, clean + ext)):
-        # use digits
-        suffix = 2
-        while os.path.exists(os.path.join(path, clean + str(suffix) + ext)):
-            suffix += 1
-        unique = clean + str(suffix) + ext
-    else:
-        unique = clean + ext
-
-    return (os.path.join(path,unique), unique)
-

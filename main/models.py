@@ -203,7 +203,7 @@ class Profile(models.Model):
 
 class Song(models.Model):
     # filename where mp3 can be found
-    mp3_file = models.CharField(max_length=500)
+    mp3_file = models.CharField(max_length=500, null=True, blank=True)
 
     # in case the artist was generous enough to provide source
     source_file = models.CharField(max_length=500, blank=True)
@@ -216,6 +216,7 @@ class Song(models.Model):
     owner = models.ForeignKey(User) # who uploaded it
     band = models.ForeignKey(Band) # who this song is attributed to
     title = models.CharField(max_length=100)
+    album = models.CharField(max_length=100, null=True, blank=True)
     # length in seconds, grabbed from mp3_file metadata
     length = models.FloatField()
 
@@ -229,7 +230,16 @@ class Song(models.Model):
     generators = models.ManyToManyField('workshop.GeneratorDependency', related_name='song_generators')
 
     def __unicode__(self):
-        return "%s - %s" % (self.owner, self.title)
+        return self.displayString()
+
+    def displayString(self):
+        """
+        returns a string fit for representing this song
+        """
+        if self.album is None:
+            return "%s - %s" % (self.band.title, self.title)
+        else:
+            return "%s - %s (%s)" % (self.band.title, self.title, self.album)
 
     def save(self, *args, **kwargs):
         "Update auto-populated fields before saving"

@@ -22,6 +22,21 @@ from main import design
 def studio_extensions():
     return [item for sublist in [x.fileExtensions for x in daw._class_dict.values()] for item in sublist]
 
+def obfuscated_url(band):
+    return os.path.join('band', band.url, create_hash(16))   
+
+def generate_waveform(song, mp3_file):
+    png_tmp_handle = tempfile.NamedTemporaryFile(mode='r+b', suffix='.png')
+    waveform.draw(mp3_file, png_tmp_handle.name, design.waveform_size,
+        fgGradientCenter=design.waveform_center_color,
+        fgGradientOuter=design.waveform_outer_color)
+    # move to storage
+    song.waveform_img = os.path.join(obfuscated_url(song.band), clean_filename(song.displayString()))
+    import storage
+    storage.engine.store(png_tmp_handle.name, song.waveform_img, reducedRedundancy=True)
+    # clean up
+    png_tmp_handle.close()
+
 def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album=None):
     """
     inputs: 
@@ -60,17 +75,25 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
     }
 
     assert band != None, "Band parameter isn't optional."
+    assert song_title != None, "Song title parameter isn't optional."
+
+    song = Song()
+    song.band = band
+    song.owner = user
+    song.title = song_title
+    song.length = 0
+    song.album = song_album
 
     if file_mp3_handle != None:
         # upload mp3 file to temp folder
-        handle = tempfile.NamedTemporaryFile(suffix='mp3', delete=False)
-        upload_file_h(file_mp3_handle, handle)
-        handle.close()
+        mp3_tmp_handle = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
+        upload_file_h(file_mp3_handle, mp3_tmp_handle)
+        mp3_tmp_handle.close()
 
         # read the length tag
         try:
-            audio = MP3(handle.name, ID3=EasyID3)
-            audio_length = audio.info.length
+            audio = MP3(mp3_tmp_handle.name, ID3=EasyID3)
+            song.length = audio.info.length
         except:
             data['reason'] = design.invalid_mp3_file
             return data
@@ -104,49 +127,19 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
             data['reason'] = design.unable_to_save_id3_tags
             return data
 
-        # pick a nice safe unique path for mp3_file, source_file, and wave form
-        # obscure the URL so that people can't steal songs
-        hash_str = create_hash(16)
-        media_path = os.path.join('band', band.url, hash_str)
+        # pick a path for the mp3 file. obscure the URL so that people can't steal songs
+        song.mp3_file = os.path.join(obfuscated_url(band), clean_filename(song.displayString() + '.mp3'))
 
-        if song_album != None:
-            mp3_file_title = "%s - %s (%s).mp3" % (band.title, song_title, song_album)
-            png_file_title = "%s - %s (%s).png" % (band.title, song_title, song_album)
-        else:
-            mp3_file_title = "%s - %s.mp3" % (band.title, song_title)
-            png_file_title = "%s - %s.png" % (band.title, song_title)
+        generate_waveform(song, mp3_tmp_handle.name)
 
-        mp3_safe_path, mp3_safe_title = safe_file(os.path.join(settings.MEDIA_ROOT, media_path), mp3_file_title)
-        mp3_safe_path_relative = os.path.join(media_path, mp3_safe_title)
-
-        png_safe_path, png_safe_title = safe_file(os.path.join(settings.MEDIA_ROOT, media_path), png_file_title)
-        png_safe_path_relative = os.path.join(media_path, png_safe_title)
-
-        # move the mp3 file
-        move_to_storage(handle.name, mp3_safe_path)
-
-    song = Song()
-
-    # generate the waveform image
-    try:
-        waveform.draw(mp3_safe_path, png_safe_path, design.waveform_size,
-            fgGradientCenter=design.waveform_center_color,
-            fgGradientOuter=design.waveform_outer_color)
-        song.waveform_img = png_safe_path_relative
-    except:
-        pass
-
-    song.mp3_file = mp3_safe_path_relative
-    song.band = band
-    song.title = song_title
-    song.length = audio_length
-    song.owner = user
-
-    # save so we can use the ManyToManyFields 
-    song.save()
+        # move mp3 file to storage
+        move_to_storage(mp3_tmp_handle.name, song.mp3_file)
 
     # upload the source file
     if file_source_handle != None:
+        # save so we can use the ManyToManyFields 
+        song.save()
+
         # upload project file to temp file
         handle = tempfile.NamedTemporaryFile(delete=False)
         upload_file_h(file_source_handle, handle)
@@ -174,43 +167,28 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
                 pass
             
 
-            generators = dawProject.generators()
-            for generator in generators:
-                # if it's an invalid name, ignore
-                if generator.strip() == '':
-                    continue
+            stuff = (
+                (dawProject.generators(), GeneratorDependency, song.generators),
+                (dawProject.effects(), EffectDependency, song.effects),
+            )
+            for plugins, PluginModel, songField in stuff:
+                for plugin in plugins:
+                    # if it's an invalid name, ignore
+                    if plugin.strip() == '':
+                        continue
 
-                # see if it already exists
-                genObjects = GeneratorDependency.objects.filter(title=generator)
-                if genObjects.count() == 0:
-                    # create it
-                    genObject = GeneratorDependency()
-                    genObject.title = generator
-                    genObject.save()
-                else:
-                    genObject = genObjects[0]
+                    # see if it already exists
+                    depObjects = PluginModel.objects.filter(title=plugin)
+                    if depObjects.count() == 0:
+                        # create it
+                        depObject = PluginModel()
+                        depObject.title = plugin
+                        depObject.save()
+                    else:
+                        depObject = depObjects[0]
 
-                # add it as a dependency 
-                song.generators.add(genObject)
-
-            effects = dawProject.effects()
-            for effect in effects:
-                # if it's an invalid name, ignore
-                if effect.strip() == '':
-                    continue
-
-                # see if it already exists
-                effObjects = EffectDependency.objects.filter(title=effect)
-                if effObjects.count() == 0:
-                    # create it
-                    effObject = EffectDependency()
-                    effObject.title = effect
-                    effObject.save()
-                else:
-                    effObject = effObjects[0]
-
-                # add it as a dependency 
-                song.effects.add(effObject)
+                    # add it as a dependency
+                    songField.add(depObject)
 
             samples = dawProject.samples()
             for sample in samples:
@@ -248,21 +226,17 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
             if source_ext:
                 source_file_title += "." + source_ext
 
-        source_safe_path, source_safe_file_title = safe_file(os.path.join(settings.MEDIA_ROOT, media_path), source_file_title)
-        source_safe_path_relative = os.path.join(media_path, source_safe_file_title)
-
-        song.source_file = source_safe_path_relative
+        song.source_file = os.path.join(obfuscated_url(band), clean_filename(source_file_title))
 
         if usingDaw:
             out_handle = tempfile.NamedTemporaryFile(mode='r+b')
             dawProject.save(out_handle.name)
             import storage
-            storage.engine.store(out_handle.name, source_safe_path)
+            storage.engine.store(out_handle.name, song.source_file)
             out_handle.close()
             os.remove(handle.name)
         else:
-            move_to_storage(handle.name, source_safe_path)
-
+            move_to_storage(handle.name, song.source_file)
 
     data['song'] = song
     data['success'] = True

@@ -1,4 +1,5 @@
 = sitewide =
+ * have a backup plan for the database
  * pricing & signup page
  * code to bill customers monthly
    > set it up so that it sends me an email of what it's about to do, then
@@ -36,6 +37,7 @@
    > change workshop to workbench
  * user settings: connect a user's account with last.fm to scrobble tracks
    that they listen to
+ * javascript tests
 
 = chat =
  * don't render ALL the chat messages every time.
@@ -115,8 +117,7 @@
  * arena home GUI Redesign
 
 = workbench =
- * the wavform, mp3, and project file should all be in different obscured urls
- * obfuscate media URLs to protect people's stuff
+ * project filenames should be <artist> - <title>_<version>.<ext>
  * creating a project should add to the band's used space
  * song player
    > download samples
@@ -161,7 +162,6 @@
  * allow clearing samples or deleting individual ones
  * have a progress bar during uploads
  * ability to rename band
- * project filenames should be <artist> - <title>_<version>.<ext>
  * new project page: ability to upload a zip as source project
  * support uploading .zip files for checkins
    > find the extension of a project file
@@ -173,7 +173,9 @@
    > new project page: login div is broken
  * automatically upload competition entries to the project manager
  * integrate into arena
+ * tests
 
+ * ability to create albums and organize like that
  * ability to set up your band so that anyone who donates credits gets critic access, etc
  * make it look pretty
  * ability to customize css
