@@ -13,7 +13,7 @@ from workshop import design
 from main.models import *
 from main.common import *
 from main.upload import *
-from main.uploadsong import upload_song, studio_extensions
+from main.uploadsong import upload_song, studio_extensions, handle_sample_file
 
 import zipfile
 import tempfile

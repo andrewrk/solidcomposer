@@ -279,6 +279,16 @@ var Player = function() {
         }
     }
 
+    function anyTrueForSamples(song, func) {
+        for (var i=0; i<song.samples.length; ++i) {
+            sample = song.samples[i];
+            if (func(sample)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     that = {
         // public variables
         onProgressChange: null,
@@ -351,15 +361,13 @@ var Player = function() {
             jp.jPlayer("volume", vol * 100);
             updateCurrentPlayer();
         },
+        // returns true if song has any available samples
+        anyAvailableSamples: function(song) {
+            return anyTrueForSamples(song, function(sample) { return ! sample.missing; });
+        },
         // returns true if song has any missing samples
         anyMissingSamples: function(song) {
-            for (var i=0; i<song.samples.length; ++i) {
-                sample = song.samples[i];
-                if (sample.missing) {
-                    return true;
-                }
-            }
-            return false;
+            return anyTrueForSamples(song, function(sample) { return sample.missing; });
         },
         // used for formatting source file to display to the user.
         fileTitle: function(path) {

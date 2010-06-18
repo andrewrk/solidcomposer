@@ -26,6 +26,13 @@ var SCProject = function () {
     var project_id;
     
     // private functions
+    function reloadEverything() {
+        last_version_id = null;
+        temp_version_count = 0;
+        state.versions = []
+        that.ajaxRequest();
+    }
+
     function uploadSamplesStartCallback() {
 
     }
@@ -39,7 +46,7 @@ var SCProject = function () {
 
         var result = eval('(' + response + ')');
         if (result.success === true) {
-            
+            reloadEverything();
         } else {
             alert("Unable to process upload:\n\n" + result.reason);
         }
