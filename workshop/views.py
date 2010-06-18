@@ -185,19 +185,13 @@ def song_to_dict(song, user):
 
     d['samples'] = [sample_to_dict(x) for x in SampleDependency.objects.filter(song=song)]
 
-    def plugin_to_dict(x, ownedList):
+    owned_plugins = profile.plugins.all()
+    def plugin_to_dict(x):
         d = safe_model_to_dict(x)
-        d['missing'] = x not in ownedList
+        d['missing'] = x not in owned_plugins
         return d
 
-    allEffects = song.effects.all()
-    allGenerators = song.generators.all()
-
-    ownedEffects = profile.effects.all()
-    ownedGenerators = profile.generators.all()
-
-    d['effects'] = [plugin_to_dict(x, ownedEffects) for x in allEffects]
-    d['generators'] = [plugin_to_dict(x, ownedGenerators) for x in allGenerators]
+    d['plugins'] = [plugin_to_dict(x) for x in song.plugins.all()]
 
     return d
     

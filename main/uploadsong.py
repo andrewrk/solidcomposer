@@ -158,27 +158,34 @@ def handle_project_file(filename, user, song):
             pass
 
         stuff = (
-            (dawProject.generators(), GeneratorDependency, song.generators),
-            (dawProject.effects(), EffectDependency, song.effects),
+            (dawProject.generators(), PluginDepenency.GENERATOR),
+            (dawProject.effects(), PluginDepenency.EFFECT),
         )
-        for plugins, PluginModel, songField in stuff:
+        for plugins, plugin_type in stuff:
             for plugin in plugins:
                 # if it's an invalid name, ignore
                 if plugin.strip() == '':
                     continue
 
                 # see if it already exists
-                depObjects = PluginModel.objects.filter(title=plugin)
-                if depObjects.count() == 0:
+                deps = PluginDepenency.objects.filter(title=plugin)
+                if deps.count() == 0:
                     # create it
-                    depObject = PluginModel()
-                    depObject.title = plugin
-                    depObject.save()
+                    dep = PluginDepenency()
+                    dep.title = plugin
+                    dep.plugin_type = plugin_type
+                    dep.save()
                 else:
-                    depObject = depObjects[0]
+                    dep = deps[0]
 
                 # add it as a dependency
-                songField.add(depObject)
+                song.plugins.add(dep)
+
+                # assume that the user owns this dependency
+                profile = user.get_profile()
+                if profile.assume_uploaded_plugins_owned:
+                    profile.plugins.add(dep)
+                    profile.save()
 
         samples = dawProject.samples()
         for sample in samples:

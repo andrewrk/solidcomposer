@@ -100,15 +100,17 @@ class SampleDependency(models.Model):
             resolution = "resolved"
         return "%s (%s)" % (self.title, resolution)
 
-class EffectDependency(models.Model):
-    # the name of the effect. this identifies it.
-    title = models.CharField(max_length=256, unique=True)
+class PluginDepenency(models.Model):
+    GENERATOR, EFFECT = range(2)
 
-    def __unicode__(self):
-        return self.title
+    PLUGIN_TYPE_CHOICES = (
+        (GENERATOR, 'Generator'),
+        (EFFECT, 'Effect'),
+    )
 
-class GeneratorDependency(models.Model):
-    # the name of the generator. this identifies it.
+    plugin_type = models.IntegerField(choices=PLUGIN_TYPE_CHOICES)
+
+    # the name of the plugin. this identifies it.
     title = models.CharField(max_length=256, unique=True)
 
     def __unicode__(self):

@@ -181,8 +181,11 @@ class Profile(models.Model):
     customer_id = models.CharField(max_length=256, blank=True)
 
     # the plugins that the user owns
-    generators = models.ManyToManyField('workshop.GeneratorDependency', blank=True, related_name='profile_generators')
-    effects = models.ManyToManyField('workshop.EffectDependency', blank=True, related_name='profile_effects')
+    plugins = models.ManyToManyField('workshop.PluginDepenency', blank=True, related_name='profile_plugins')
+
+    # user controlled settings
+    # if a user uploads a project with a plugin, do we assume they own it?
+    assume_uploaded_plugins_owned = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.user.username
@@ -193,9 +196,9 @@ class Profile(models.Model):
     def save(self, *args, **kwargs):
         "Update auto-populated fields before saving"
         self.date_activity = datetime.now()
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         "Save without any auto field population"
         super(Profile, self).save(*args, **kwargs)
 
@@ -226,8 +229,7 @@ class Song(models.Model):
     date_added = models.DateTimeField()
 
     # dependencies
-    effects = models.ManyToManyField('workshop.EffectDependency', related_name='song_effects')
-    generators = models.ManyToManyField('workshop.GeneratorDependency', related_name='song_generators')
+    plugins = models.ManyToManyField('workshop.PluginDepenency', blank=True, related_name='song_plugins')
 
     def __unicode__(self):
         return self.displayString()
@@ -249,9 +251,9 @@ class Song(models.Model):
         "Update auto-populated fields before saving"
         if not self.id:
             self.date_added = datetime.now()
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         "Save without any auto field population"
         super(Song, self).save(*args, **kwargs)
 
