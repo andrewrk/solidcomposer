@@ -73,9 +73,9 @@ class Competition(models.Model):
         "Update populated fields before saving"
         if not self.id:
             self.date_created = datetime.now()
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         "Save without any auto field population"
         super(Competition, self).save(*args, **kwargs)
 
@@ -94,9 +94,9 @@ class ThumbsUp(models.Model):
     def save(self, *args, **kwargs):
         "Update populated fields before saving"
         self.date_given = datetime.now()
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         "Save without any auto field population"
         super(ThumbsUp, self).save(*args, **kwargs)
 
@@ -114,13 +114,11 @@ class Entry(models.Model):
         return "%s in %s" % (self.song, self.competition)
 
     def save(self, *args, **kwargs):
-        "Update auto-populated fields before saving"
         self.edit_date = datetime.now()
         if not self.id:
             self.submit_date = self.edit_date
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
-        "Save without any auto field population"
+    def _save(self, *args, **kwargs):
         super(Entry, self).save(*args, **kwargs)
 

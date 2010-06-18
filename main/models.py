@@ -78,9 +78,9 @@ class Band(models.Model):
         if self.url is None:
             self.create_url()
 
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         super(Band, self).save(*args, **kwargs)
 
     url_allowed_chars = string.letters + string.digits + r'_-.'
@@ -285,14 +285,12 @@ class SongComment(models.Model):
         return "%s - %" % (owner, content[:30])
         
     def save(self, *args, **kwargs):
-        "Update auto-populated fields before saving"
         self.date_edited = datetime.now()
         if not self.id:
             self.date_created = self.date_edited
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
-        "Save without any auto field population"
+    def _save(self, *args, **kwargs):
         super(SongComment, self).save(*args, **kwargs)
     
 

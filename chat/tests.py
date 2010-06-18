@@ -282,7 +282,7 @@ class SimpleTest(TestCase):
         appear = Appearance.objects.filter(person=self.superjoe)[0]
         new_ts = datetime.now() - timedelta(seconds=(settings.CHAT_TIMEOUT+1))
         appear.timestamp = new_ts
-        appear.baseSave() # bypass the auto timestamp update
+        appear._save() # bypass the auto timestamp update
         appear = Appearance.objects.filter(person=self.superjoe)[0]
         self.assertEqual(appear.timestamp, new_ts)
 

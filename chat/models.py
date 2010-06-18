@@ -98,9 +98,9 @@ class ChatMessage(models.Model):
     def save(self, *args, **kwargs):
         "Update populated fields before saving"
         self.timestamp = datetime.now()
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         "Save without any auto field population"
         super(ChatMessage, self).save(*args, **kwargs)
 
@@ -128,12 +128,10 @@ class Appearance(models.Model):
     timestamp = models.DateTimeField(editable=False)
 
     def save(self, *args, **kwargs):
-        "Update populated fields before saving"
         self.timestamp = datetime.now()
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
-        "Save without any auto field population"
+    def _save(self, *args, **kwargs):
         super(Appearance, self).save(*args, **kwargs)
 
     def __unicode__(self):

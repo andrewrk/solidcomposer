@@ -39,9 +39,9 @@ class BandInvitation(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.timestamp = datetime.now()
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         super(BandInvitation, self).save(*args, **kwargs)
 
 
@@ -127,11 +127,11 @@ class ProjectVersion(models.Model):
     def saveNewVersion(self, *args, **kwargs):
         self.project.title = self.song.title
         if not self.id:
-            self.baseSave(*args, **kwargs)
+            self._save(*args, **kwargs)
         self.project.latest_version = self
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         super(ProjectVersion, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -170,9 +170,9 @@ class Project(models.Model):
 
     def save(self, *args, **kwargs):
         self.date_activity = datetime.now()
-        self.baseSave(*args, **kwargs)
+        self._save(*args, **kwargs)
 
-    def baseSave(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         super(Project, self).save(*args, **kwargs)
 
 class Studio(models.Model):
