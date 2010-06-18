@@ -27,7 +27,7 @@
         </div>
     </div>
     <% for (var i=versions.length-1; i>=0; --i) { var version = versions[i]; %>
-        <div id="version<%=i%>" class="version">
+        <div id="version-<%=i%>" class="version">
             <% var version_user = version.song.owner; %>
             {% include 'workbench/version_owner.jst.html' %}
             <div class="version-data">
@@ -36,16 +36,18 @@
             </div>
             <% var song = version.song; song.band = project.band; %>
             {% include 'player.jst.html' %}
-            <% if (version.song.missing_samples.length > 0) { %>
+            <% if (Player.anyMissingSamples(version.song)) { %>
                 <div id="missing-<%=i%>">
                     <h2><a href="#">Missing Samples</a></h2>
                     <div class="missing-list">
                         <ul>
-                            <% for (var sampleIndex=0; sampleIndex<version.song.missing_samples.length; ++sampleIndex) {
-                               var sample = version.song.missing_samples[sampleIndex]; %>
-                                <li>
-                                    <%= sample.title %>
-                                </li>
+                            <% for (var sampleIndex=0; sampleIndex<version.song.samples.length; ++sampleIndex) {
+                               var sample = version.song.samples[sampleIndex]; %>
+                                <% if (sample.missing) { %>
+                                    <li>
+                                        <%= sample.title %>
+                                    </li>
+                                <% } %>
                             <% } %>
                         </ul>
                     </div>

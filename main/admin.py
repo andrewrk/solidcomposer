@@ -10,6 +10,7 @@ stuff = (
     Band,
     BandMember,
     Tag,
+    TempFile,
 )
 
 map(lambda x: admin.site.register(x), stuff)

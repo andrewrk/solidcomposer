@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.core.urlresolvers import reverse
+from django.core.servers.basehttp import FileWrapper
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
@@ -166,27 +167,38 @@ def user_to_dict(x):
     d['get_profile']['get_points'] = x.get_profile().get_points()
     return d
 
-def song_to_dict(x, user):
-    d = safe_model_to_dict(x)
-    d['owner'] = user_to_dict(x.owner)
-    if x.studio:
-        d['studio'] = safe_model_to_dict(x.studio)
-        d['studio']['logo_16x16'] = x.studio.logo_16x16.url
+def song_to_dict(song, user):
+    profile = user.get_profile()
+
+    d = safe_model_to_dict(song)
+    d['owner'] = user_to_dict(song.owner)
+    if song.studio:
+        d['studio'] = safe_model_to_dict(song.studio)
+        d['studio']['logo_16x16'] = song.studio.logo_16x16.url
     else:
         d['studio'] = None
 
-    allSamples = SampleDependency.objects.filter(song=x)
-    allEffects = x.effects.all()
-    allGenerators = x.generators.all()
-    d['samples'] = [safe_model_to_dict(y) for y in allSamples]
-    d['effects'] = [safe_model_to_dict(y) for y in allEffects]
-    d['generators'] = [safe_model_to_dict(y) for y in allGenerators]
+    def sample_to_dict(x):
+        d = safe_model_to_dict(x)
+        d['missing'] = x.uploaded_sample is None
+        return d
 
-    ownedEffects = user.get_profile().effects.all()
-    ownedGenerators = user.get_profile().generators.all()
-    d['missing_samples'] = [safe_model_to_dict(y) for y in filter(lambda x: x.uploaded_sample is None, allSamples)]
-    d['missing_generators'] = [safe_model_to_dict(y) for y in filter(lambda x: x not in ownedGenerators, allGenerators)]
-    d['missing_effects'] = [safe_model_to_dict(y) for y in filter(lambda x: x not in ownedEffects, allEffects)]
+    d['samples'] = [sample_to_dict(x) for x in SampleDependency.objects.filter(song=song)]
+
+    def plugin_to_dict(x, ownedList):
+        d = safe_model_to_dict(x)
+        d['missing'] = x not in ownedList
+        return d
+
+    allEffects = song.effects.all()
+    allGenerators = song.generators.all()
+
+    ownedEffects = profile.effects.all()
+    ownedGenerators = profile.generators.all()
+
+    d['effects'] = [plugin_to_dict(x, ownedEffects) for x in allEffects]
+    d['generators'] = [plugin_to_dict(x, ownedGenerators) for x in allGenerators]
+
     return d
     
 def version_to_dict(x, user):
@@ -454,3 +466,78 @@ def create_project(request, band_str):
             'err_msg': err_msg,
         }, context_instance=RequestContext(request))
     
+@json_login_required
+@json_get_required
+def download_zip(request):
+    song_id_str = request.GET.get('song', 0)
+    try:
+        song_id = int(song_id_str)
+    except ValueError:
+        song_id = 0
+
+    try:
+        song = Song.objects.get(pk=song_id)
+    except Song.DoesNotExist:
+        return json_failure(design.bad_song_id)
+
+    if not song.permission_to_view_source(request.user):
+        return json_failure(design.you_dont_have_permission_to_view_source)
+
+    wanted_samples = request.GET.getlist('s')
+    if len(wanted_samples) == 0:
+        want_project = True
+        deps = SampleDependency.objects.filter(song=song).exclude(uploaded_sample=None)
+    else:
+        want_project = False
+
+        wanted_sample_ids = []
+        
+        for wanted_sample in wanted_samples:
+            if wanted_sample == 'project':
+                want_project = True
+                continue
+            try:
+                wanted_sample_id = int(wanted_sample)
+            except ValueError:
+                continue
+
+            wanted_sample_ids.append(wanted_sample_id)
+
+        deps = SampleDependency.objects.filter(pk__in=wanted_sample_ids, song=song).exclude(uploaded_sample=None)
+
+    zip_file_h = make_timed_temp_file()
+    z = zipfile.ZipFile(zip_file_h, mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True)
+
+    import storage
+
+    def store_file_id(file_id, title):
+        tmp = tempfile.NamedTemporaryFile(mode='r+b')
+        storage.engine.retrieve(file_id, tmp.name)
+        z.write(tmp.name, title)
+        tmp.close()
+        
+    if want_project:
+        path, title = os.path.split(song.source_file)
+        store_file_id(song.source_file, title)
+
+    for dep in deps:
+        file_id = dep.uploaded_sample.sample_file.path
+        store_file_id(file_id, dep.title)
+
+    z.close()
+
+    response = HttpResponse(FileWrapper(zip_file_h), mimetype='application/zip')
+    response['Content-Disposition'] = "attachment; filename=%s" % clean_filename(song.displayString() + '.zip')
+    response['Content-Length'] = zip_file_h.tell()
+
+    zip_file_h.seek(0)
+    return response
+
+def make_timed_temp_file():
+    handle = tempfile.NamedTemporaryFile(mode='r+b', delete=False)
+
+    tmp_file = TempFile()
+    tmp_file.path = handle.name
+    tmp_file.save()
+
+    return handle

@@ -232,6 +232,10 @@ class Song(models.Model):
     def __unicode__(self):
         return self.displayString()
 
+    def permission_to_view_source(self, user):
+        "Returns whether a user can download the project file and samples of the song."
+        return self.band.permission_to_work(user) # TODO: or self.is_open_source 
+
     def displayString(self):
         """
         returns a string fit for representing this song
@@ -296,3 +300,13 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.title
 
+class TempFile(models.Model):
+    """
+    Represents a temp file sitting on the hard drive that needs to be deleted.
+    """
+    path = models.CharField(max_length=256)
+    death_time = models.DateTimeField(default=datetime.now()+timedelta(hours=3))
+
+    def __unicode__(self):
+        return self.path
+        

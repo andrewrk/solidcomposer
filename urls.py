@@ -15,11 +15,11 @@ urlpatterns = patterns('',
     (r'^music/', include('music.urls')),
     (r'^admin/', include(admin.site.urls)),
 
-    url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
-
     url(r'^ajax/login_state/$', 'main.views.ajax_login_state', name="ajax_login_state"),
     url(r'^ajax/login/$', 'main.views.ajax_login', name="ajax_login"),
     url(r'^ajax/logout/$', 'main.views.ajax_logout', name="ajax_logout"),
+
+    url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
 
     url(r'^login/$', 'main.views.user_login', name="user_login"),
     url(r'^logout/$', 'main.views.user_logout', name="user_logout"),

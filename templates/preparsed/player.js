@@ -11,6 +11,10 @@ var Player = function() {
     var jPlayerSwfPath = media_url + "swf";
     var jp = null;
 
+    var urls = {
+        download_zip: "{% filter escapejs %}{% url workbench.download_zip %}{% endfilter %}"
+    };
+
     // if true, the user cannot alter playback, other than volume.
     var disabledUi = false;
 
@@ -158,7 +162,7 @@ var Player = function() {
 
         if (currentMp3File !== null) {
             // find the dom with mp3 file
-            $(".dl-mp3 a").each(function(index, element) {
+            $(".player-large .dl-mp3 a").each(function(index, element) {
                 var mp3file = $(this).attr('href');
                 if (mp3file === currentMp3File) {
                     currentPlayer = $(this).closest(".player-large");
@@ -166,7 +170,48 @@ var Player = function() {
                 }
             });
         }
+
+        // downloading samples
+        jdom.find(".player-large .dl-samples-dialog").dialog({
+            modal: true,
+            title: "Download Project Files",
+            autoOpen: false
+        });
+
+        jdom.find(".player-large .dl-samples a").click(function() {
+            var song_id = parseInt($(this).attr('data-songid'));
+            var dialog = $("#dl-samples-dialog-"+song_id);
+            dialog.dialog('open');
+
+            var dlAll = dialog.find('.dl-all');
+            dlAll.unbind('click');
+            dlAll.click(function(){
+                var song_id = parseInt($(this).attr('data-songid'));
+                downloadZip(song_id, "");
+                return false;
+            });
+
+            var dlSelected = dialog.find('.dl-selected');
+            dlSelected.unbind('click');
+            dlSelected.click(function(){
+                var song_id = parseInt($(this).attr('data-songid'));
+                var selectBox = $(this).closest(".select").find('select');
+                downloadZip(song_id, selectBox.serialize());
+                return false;
+            });
+
+            return false;
+        });
+
         updateCurrentPlayer();
+    }
+
+    function downloadZip(song_id, samples) {
+        var url = urls.download_zip + "?song=" + song_id;
+        if (samples) {
+            url += "&" + samples;
+        }
+        location.href = url;
     }
 
     function updateVolume() {
@@ -305,6 +350,25 @@ var Player = function() {
         setVolume: function(vol) {
             jp.jPlayer("volume", vol * 100);
             updateCurrentPlayer();
+        },
+        // returns true if song has any missing samples
+        anyMissingSamples: function(song) {
+            for (var i=0; i<song.samples.length; ++i) {
+                sample = song.samples[i];
+                if (sample.missing) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        // used for formatting source file to display to the user.
+        fileTitle: function(path) {
+            var parts = path.split('/');
+            if (parts.length === 0) {
+                return path;
+            } else {
+                return parts[parts.length-1];
+            }
         }
     };
     return that;

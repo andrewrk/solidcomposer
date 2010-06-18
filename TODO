@@ -1,4 +1,5 @@
 = sitewide =
+ * make sure the tempfile cron job is working
  * have a backup plan for the database
  * pricing & signup page
  * code to bill customers monthly
@@ -118,7 +119,6 @@
 
 = workbench =
  * song player
-   > download samples
    > resolve dependencies
    > ability to comment on sections of the song
    > volume control should move by offset, not absolute

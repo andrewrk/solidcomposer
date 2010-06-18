@@ -20,4 +20,7 @@ urlpatterns = patterns('',
     url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
     url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),
     url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
+
+    url(r'^download/zip/$', 'workshop.views.download_zip', name="workbench.download_zip"),
+
 )
