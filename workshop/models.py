@@ -101,7 +101,9 @@ class SampleDependency(models.Model):
         return "%s (%s)" % (self.title, resolution)
 
 class PluginDepenency(models.Model):
-    GENERATOR, EFFECT = range(2)
+    # studio is only used when talking about users having or not having
+    # dependencies.
+    GENERATOR, EFFECT, STUDIO = range(3)
 
     PLUGIN_TYPE_CHOICES = (
         (GENERATOR, 'Generator'),

@@ -1,3 +1,9 @@
+/*  Requires that you call Player.processSong(song) for each song data
+ *  structure that you want the player to use.
+ *  After you generate the dom for the player, run Player.addUiToDom(dom) on it.
+ *  At this point, Player takes care of the rest!
+ */
+
 var Player = function() {
     var that;
 
@@ -18,7 +24,8 @@ var Player = function() {
         },
         studio: function(studio_identifier) {
             return "{% filter escapejs %}{% url workbench.studio '[~~~~]' %}{% endfilter %}".replace("[~~~~]", studio_identifier);
-        }
+        },
+        dependency_ownership: "{% filter escapejs %}{% url workbench.ajax_dependency_ownership %}{% endfilter %}",
     };
 
     // if true, the user cannot alter playback, other than volume.
@@ -67,7 +74,8 @@ var Player = function() {
 
     var pluginTypeEnum = {
         GENERATOR: 0,
-        EFFECT: 1
+        EFFECT: 1,
+        STUDIO: 2
     };
 
     var offsetTop = null;
@@ -186,7 +194,9 @@ var Player = function() {
         jdom.find(".player-large .dl-samples-dialog").dialog({
             modal: true,
             title: "Download Project Files",
-            autoOpen: false
+            autoOpen: false,
+            maxWidth: 400,
+            maxHeight: 500
         });
 
         jdom.find(".player-large .dl-samples a").click(function() {
@@ -218,12 +228,60 @@ var Player = function() {
         jdom.find(".player-large .dependencies-dialog").dialog({
             modal: true,
             title: "Song Dependencies",
-            autoOpen: false
+            autoOpen: false,
+            maxWidth: 400,
+            maxHeight: 500
         });
+
         jdom.find(".player-large .dependencies a").click(function() {
             var song_id = parseInt($(this).attr('data-songid'));
             var dialog = $("#dependencies-dialog-" + song_id);
             dialog.dialog('open');
+
+            var donothaves = dialog.find('.donothave');
+            donothaves.unbind('click');
+            donothaves.click(function(){
+                var dependency_id = parseInt($(this).parent().attr('data-dependencyid'));
+                var plugin_type = parseInt($(this).parent().attr('data-plugintype'));
+                $.post(urls.dependency_ownership, {
+                    dependency_id: dependency_id,
+                    dependency_type: plugin_type
+                }, function(data) {
+                    if (data === null) {
+                        return;
+                    }
+                    if (! data.success) {
+                        return;
+                    }
+                    // replace the do not have link with the have link
+                    // TODO
+                }, 'json');
+                return false;
+            });
+
+            var haves = dialog.find('.have');
+            haves.unbind('click');
+            haves.click(function(){
+                var dependency_id = parseInt($(this).parent().attr('data-dependencyid'));
+                var plugin_type = parseInt($(this).parent().attr('data-plugintype'));
+
+                $.post(urls.dependency_ownership, {
+                    dependency_id: dependency_id,
+                    dependency_type: plugin_type,
+                    have: true
+                }, function(data) {
+                    if (data === null) {
+                        return;
+                    }
+                    if (! data.success) {
+                        return;
+                    }
+                    // replace the have link with the do not have link
+                    // TODO
+                }, 'json');
+
+                return false;
+            });
 
             return false;
         });
@@ -319,6 +377,7 @@ var Player = function() {
         onProgressChange: null,
         onSoundComplete: null,
         urls: urls,
+        pluginTypeEnum: pluginTypeEnum,
         
         // public methods
         initialize: function(readyFunc) {
@@ -401,7 +460,7 @@ var Player = function() {
             }
             return anyTrue(song.plugins, isMissing) || song.studio.missing;
         },
-        breakPluginsIntoFXAndGen: function(song) {
+        processSong: function(song) {
             song.effects = [];
             song.generators = [];
             for (var i=0; i<song.plugins.length; ++i) {
@@ -421,6 +480,9 @@ var Player = function() {
             } else {
                 return parts[parts.length-1];
             }
+        },
+        formatCurrency: function(amt) {
+            return amt.toFixed(2);
         }
     };
     return that;

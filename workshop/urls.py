@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^ajax/project_list/$', 'workshop.views.ajax_project_list', name="workbench.ajax_project_list"),
     url(r'^ajax/project/$', 'workshop.views.ajax_project', name="workbench.ajax_project"),
     url(r'^ajax/upload_samples/$', 'workshop.views.ajax_upload_samples', name="workbench.ajax_upload_samples"),
+    url(r'^ajax/dependency_ownership/$', 'workshop.views.ajax_dependency_ownership', name="workbench.ajax_dependency_ownership"),
 
     url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),
     url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),

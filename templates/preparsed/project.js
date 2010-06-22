@@ -156,6 +156,7 @@ var SCProject = function () {
                 var i;
                 var insertIndex;
                 for (i=0; i<versionCount; ++i) {
+                    Player.processSong(data.versions[i].song);
                     insertIndex = getVersionIndex(data.versions[i].id);
                     if (insertIndex !== -1) {
                         state.versions.splice(insertIndex, 0, data.versions[i]);

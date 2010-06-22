@@ -153,6 +153,48 @@ def ajax_project_filters(request):
 
     return json_success(results)
 
+@json_login_required
+@json_post_required
+def ajax_dependency_ownership(request):
+    profile = request.user.get_profile()
+
+    dependency_type_str = request.POST.get('dependency_type', -1)
+    try:
+        dep_type_int = int(dependency_type_str)
+    except ValueError:
+        dep_type_int = -1
+
+    if dep_type_int == PluginDepenency.STUDIO:
+        dep_type = Studio
+        collection = profile.studios
+    else:
+        dep_type = PluginDepenency
+        collection = profile.plugins
+
+    dep_id_str = request.POST.get('dependency_id', 0)
+    try:
+        dep_id = int(dep_id_str)
+    except ValueError:
+        dep_id = 0
+
+    try:
+        dep = dep_type.objects.get(pk=dep_id)
+    except dep_type.DoesNotExist:
+        return json_failure(design.bad_dependency_id)
+
+    have = request.POST.get('have', False)
+    if have == 'false':
+        have = False
+
+    if have:
+        collection.add(dep)
+    else:
+        collection.remove(dep)
+
+    profile.save()
+    
+    return json_success()
+
 def performFilter(filterId, projects, user=None):
     if filterId == 'mine':
         assert user is not None

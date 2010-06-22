@@ -79,6 +79,11 @@ var SCBand = function() {
                 return;
             }
             state.projects = data.data;
+
+            for (var i=0; i<state.projects.projects.length; ++i) {
+                Player.processSong(state.projects.projects[i].latest_version.song);
+            }
+
             updateProjectList();
         }
         $.getJSON(state.urls.ajax_project_list, sendData, respond);

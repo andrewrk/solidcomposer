@@ -21,12 +21,13 @@
         <% } %>
         <% if (song.studio) { %>
             <div id="dependencies-dialog-<%=song.id%>" class="dependencies-dialog" style="display: none;">
-                <% if (song.plugins.length > 0) { Player.breakPluginsIntoFXAndGen(song); %>
+                <% if (song.plugins.length > 0) { %>
                     <h4>Studio</h4>
                     <ul>
                         <%
                             var dependency = song.studio;
                             dependency.full_url = Player.urls.studio(song.studio.identifier);
+                            dependency.plugin_type = Player.pluginTypeEnum.STUDIO;
                         %>
                         {% include 'dependency_line.jst.html' %}
                     </ul>

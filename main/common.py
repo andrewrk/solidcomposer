@@ -48,11 +48,11 @@ def json_dump(obj):
 def json_response(data):
     return HttpResponse(json_dump(data), mimetype="text/plain")
 
-def json_success(data):
-    return json_response({
-        "success": True,
-        "data": data,
-    })
+def json_success(data=None):
+    out_data = {'success': True}
+    if data is not None:
+        out_data['data'] = data
+    return json_response(out_data)
 
 def json_post_required(function):
     "decorator that ensures request is via POST"
