@@ -527,11 +527,6 @@ def download_zip(request):
     zip_file_h.seek(0)
     return response
 
-def make_timed_temp_file():
-    handle = tempfile.NamedTemporaryFile(mode='r+b', delete=False)
-
-    tmp_file = TempFile()
-    tmp_file.path = handle.name
-    tmp_file.save()
-
-    return handle
+def plugin(request, plugin_url):
+    plugin = get_object_or_404(PluginDepenency, url=plugin_url)
+    return render_to_response('workbench/plugin.html', locals(), context_instance=RequestContext(request))

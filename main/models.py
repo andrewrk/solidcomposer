@@ -19,6 +19,34 @@ ROLE_CHOICES = (
     (BANNED, 'Banned'), # this person is blacklisted
 )
 
+def create_url(title, is_unique=None):
+    """
+    creates a clean and safe url to use based on a name.
+    calls is_unique with a candidate to see if it is unique.
+    """
+    allowed_chars = string.letters + string.digits + r'_-.'
+    replacement = '_'
+
+    # break title into url safe string
+    safe_title = ''
+    for c in title:
+        if c in allowed_chars:
+            safe_title += c
+        else:
+            safe_title += replacement
+
+    if is_unique is None:
+        return safe_title
+
+    # append digits until it is unique
+    suffix = 2
+    proposed = safe_title
+    while not is_unique(proposed):
+        proposed = safe_title + str(suffix)
+        suffix += 1
+
+    return proposed
+
 class BandMember(models.Model):
     user = models.ForeignKey(User)
     band = models.ForeignKey('Band')
@@ -83,30 +111,8 @@ class Band(models.Model):
     def _save(self, *args, **kwargs):
         super(Band, self).save(*args, **kwargs)
 
-    url_allowed_chars = string.letters + string.digits + r'_-.'
     def create_url(self):
-        # break title into url safe string
-        replacement = '_'
-        safe_title = ''
-        for c in self.title:
-            if c in self.url_allowed_chars:
-                safe_title += c
-            else:
-                safe_title += replacement
-
-        others = Band.objects.filter(url=safe_title).count()
-        if others == 0:
-            self.url = safe_title
-            return
-
-        # append digits until it is unique
-        suffix = 2
-        while others > 0:
-            proposed = safe_title + str(suffix)
-            others = Band.objects.filter(url=proposed).count()
-            suffix += 1
-
-        self.url = proposed
+        self.url = create_url(self.title, lambda proposed: Band.objects.filter(url=proposed).count() > 0)
 
     def rename(self, new_name):
         self.title = new_name

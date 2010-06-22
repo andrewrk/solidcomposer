@@ -168,3 +168,12 @@ def superwalk(folder):
         for filename in filenames:
             yield os.path.join(dirpath, filename)
 
+
+def make_timed_temp_file():
+    handle = tempfile.NamedTemporaryFile(mode='r+b', delete=False)
+
+    tmp_file = TempFile()
+    tmp_file.path = handle.name
+    tmp_file.save()
+
+    return handle

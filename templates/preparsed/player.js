@@ -12,7 +12,10 @@ var Player = function() {
     var jp = null;
 
     var urls = {
-        download_zip: "{% filter escapejs %}{% url workbench.download_zip %}{% endfilter %}"
+        download_zip: "{% filter escapejs %}{% url workbench.download_zip %}{% endfilter %}",
+        plugin: function(plugin_url) {
+            return "{% filter escapejs %}{% url workbench.plugin '[~~~~]' %}{% endfilter %}".replace("[~~~~]", plugin_url);
+        }
     };
 
     // if true, the user cannot alter playback, other than volume.
@@ -58,6 +61,11 @@ var Player = function() {
         [0.01, 'bar0'],
         [-1, 'mute']
     ];
+
+    var pluginTypeEnum = {
+        GENERATOR: 0,
+        EFFECT: 1
+    };
 
     var offsetTop = null;
     var volumeMouseMove = function(e) {
@@ -203,6 +211,20 @@ var Player = function() {
             return false;
         });
 
+        // dependencies
+        jdom.find(".player-large .dependencies-dialog").dialog({
+            modal: true,
+            title: "Song Dependencies",
+            autoOpen: false
+        });
+        jdom.find(".player-large .dependencies a").click(function() {
+            var song_id = parseInt($(this).attr('data-songid'));
+            var dialog = $("#dependencies-dialog-" + song_id);
+            dialog.dialog('open');
+
+            return false;
+        });
+
         updateCurrentPlayer();
     }
 
@@ -279,10 +301,10 @@ var Player = function() {
         }
     }
 
-    function anyTrueForSamples(song, func) {
-        for (var i=0; i<song.samples.length; ++i) {
-            sample = song.samples[i];
-            if (func(sample)) {
+    // returns true if func(element) is true for any element in list.
+    function anyTrue(list, func) {
+        for (var i=0; i<list.length; ++i) {
+            if (func(list[i])) {
                 return true;
             }
         }
@@ -293,6 +315,7 @@ var Player = function() {
         // public variables
         onProgressChange: null,
         onSoundComplete: null,
+        urls: urls,
         
         // public methods
         initialize: function(readyFunc) {
@@ -363,11 +386,29 @@ var Player = function() {
         },
         // returns true if song has any available samples
         anyAvailableSamples: function(song) {
-            return anyTrueForSamples(song, function(sample) { return ! sample.missing; });
+            return anyTrue(song.samples, function(sample) { return ! sample.missing; });
         },
         // returns true if song has any missing samples
         anyMissingSamples: function(song) {
-            return anyTrueForSamples(song, function(sample) { return sample.missing; });
+            return anyTrue(song.samples, function(sample) { return sample.missing; });
+        },
+        anyMissingDependencies: function(song) {
+            function isMissing(dep) {
+                return dep.missing;
+            }
+            return anyTrue(song.plugins, isMissing);
+        },
+        breakPluginsIntoFXAndGen: function(song) {
+            song.effects = [];
+            song.generators = [];
+            for (var i=0; i<song.plugins.length; ++i) {
+                var plugin = song.plugins[i];
+                if (plugin.plugin_type === pluginTypeEnum.GENERATOR) {
+                    song.generators.push(plugin);
+                } else if (plugin.plugin_type === pluginTypeEnum.EFFECT) {
+                    song.effects.push(plugin);
+                }
+            }
         },
         // used for formatting source file to display to the user.
         fileTitle: function(path) {

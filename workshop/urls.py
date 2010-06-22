@@ -23,4 +23,6 @@ urlpatterns = patterns('',
 
     url(r'^download/zip/$', 'workshop.views.download_zip', name="workbench.download_zip"),
 
+    url(r'^plugin/(.+)/$', 'workshop.views.plugin', name="workbench.plugin"),
+
 )

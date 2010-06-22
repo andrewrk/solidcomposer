@@ -113,6 +113,24 @@ class PluginDepenency(models.Model):
     # the name of the plugin. this identifies it.
     title = models.CharField(max_length=256, unique=True)
 
+    # identifier string to use in urls. same as title except safe.
+    url = models.CharField(max_length=100, unique=True)
+
+    # best link to download or buy the plugin
+    external_url = models.CharField(max_length=500, null=True, blank=True)
+
+    # price, to the best of our knowledge. if it's free it means external_url
+    # is as close to a download link as we can get.
+    price = models.FloatField(default=0)
+
+    def save(self, *args, **kwargs):
+        if self.url is None:
+            self.url = create_url(self.title, lambda proposed: PluginDepenency.objects.filter(url=proposed).count() > 0)
+        self._save(*args, **kwargs)
+
+    def _save(self, *args, **kwargs):
+        super(PluginDepenency, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return self.title
 
