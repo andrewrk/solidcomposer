@@ -399,7 +399,7 @@ var Player = function() {
             function isMissing(dep) {
                 return dep.missing;
             }
-            return anyTrue(song.plugins, isMissing);
+            return anyTrue(song.plugins, isMissing) || song.studio.missing;
         },
         breakPluginsIntoFXAndGen: function(song) {
             song.effects = [];

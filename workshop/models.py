@@ -127,8 +127,8 @@ class PluginDepenency(models.Model):
     comes_with_studio = models.ForeignKey('Studio', null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        if self.url is None:
-            self.url = create_url(self.title, lambda proposed: PluginDepenency.objects.filter(url=proposed).count() > 0)
+        if not self.url:
+            self.url = create_url(self.title, lambda proposed: PluginDepenency.objects.filter(url=proposed).count() == 0)
         if self.comes_with_studio is not None:
             self.associate_with_studio(self.comes_with_studio)
         self._save(*args, **kwargs)

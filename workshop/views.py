@@ -175,6 +175,7 @@ def song_to_dict(song, user):
     if song.studio:
         d['studio'] = safe_model_to_dict(song.studio)
         d['studio']['logo_16x16'] = song.studio.logo_16x16.url
+        d['studio']['missing'] = song.studio not in profile.studios.all()
     else:
         d['studio'] = None
 

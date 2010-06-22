@@ -1,11 +1,12 @@
 <% if (plugin_list.list.length > 0) { %>
     <h4><%=plugin_list.name%></h4>
     <ul>
-        <% for (var plugin_list_index=0; plugin_list_index<plugin_list.list.length; ++plugin_list_index) {
-           var plugin = plugin_list.list[plugin_list_index]; %>
-            <li class="<% if (plugin.missing) { %>bad<% } else { %>good<% } %>">
-                <a href="<%= Player.urls.plugin(plugin.url) %>"><%= plugin.title %></a>
-            </li>
+        <% for (var plugin_list_index=0; plugin_list_index<plugin_list.list.length; ++plugin_list_index) { %>
+            <%
+               var dependency = plugin_list.list[plugin_list_index];
+               dependency.full_url = Player.urls.plugin(dependency.url);
+            %>
+            {% include 'dependency_line.jst.html' %}
         <% } %>
     </ul>
 <% } %>

@@ -127,6 +127,7 @@ def handle_project_file(filename, user, song):
     increments the band's used space. be sure to save song and song.band after calling.
     """
     prefix, ext = os.path.splitext(filename)
+    profile = user.get_profile()
 
     # handle zip files
     if ext.lower() == '.zip':
@@ -154,6 +155,10 @@ def handle_project_file(filename, user, song):
         # assign the correct studio
         try:
             song.studio = Studio.objects.get(identifier=dawProject.identifier)
+
+            # assume the user owns the studio
+            profile.studios.add(song.studio)
+            profile_save_required = True
         except Studio.DoesNotExist:
             pass
 
@@ -182,10 +187,9 @@ def handle_project_file(filename, user, song):
                 song.plugins.add(dep)
 
                 # assume that the user owns this dependency
-                profile = user.get_profile()
                 if profile.assume_uploaded_plugins_owned:
                     profile.plugins.add(dep)
-                    profile.save()
+                    profile_save_required = True
 
         samples = dawProject.samples()
         for sample in samples:
@@ -215,12 +219,17 @@ def handle_project_file(filename, user, song):
         if dawExt:
             source_file_title += "." + dawExt
 
+        profile.save()
+
         usingDaw = True
     except daw.exceptions.LoadError:
         usingDaw = False
         # ok forget about processing it with the daw
         # add the extension from before
         source_file_title += source_ext
+    finally:
+        if profile_save_required:
+            profile.save()
 
     song.source_file = os.path.join(obfuscated_url(song.band), clean_filename(source_file_title))
 

@@ -24,9 +24,11 @@
                 <% if (song.plugins.length > 0) { Player.breakPluginsIntoFXAndGen(song); %>
                     <h4>Studio</h4>
                     <ul>
-                        <li>
-                            <a href="<%= Player.urls.studio(song.studio.identifier) %>"><%= song.studio.title %></a>
-                        </li>
+                        <%
+                            var dependency = song.studio;
+                            dependency.full_url = Player.urls.studio(song.studio.identifier);
+                        %>
+                        {% include 'dependency_line.jst.html' %}
                     </ul>
                     <% var plugin_list = {name: "Generators", list: song.generators}; %>
                     {% include 'plugin_list.jst.html' %}
