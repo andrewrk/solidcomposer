@@ -22,6 +22,12 @@
         <% if (song.studio) { %>
             <div id="dependencies-dialog-<%=song.id%>" class="dependencies-dialog" style="display: none;">
                 <% if (song.plugins.length > 0) { Player.breakPluginsIntoFXAndGen(song); %>
+                    <h4>Studio</h4>
+                    <ul>
+                        <li>
+                            <a href="<%= Player.urls.studio(song.studio.identifier) %>"><%= song.studio.title %></a>
+                        </li>
+                    </ul>
                     <% var plugin_list = {name: "Generators", list: song.generators}; %>
                     {% include 'plugin_list.jst.html' %}
                     <% var plugin_list = {name: "Effects", list: song.effects}; %>

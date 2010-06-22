@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ studio.title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="textblock">
+    <h1>{{ studio.title }}</h1>
+    {% if studio.external_url %}
+        {% if studio.price %}
+            <h2><a href="{{ studio.external_url }}">Buy for ${{ studio.price|floatformat:2 }}</a></h2>
+        {% else %}
+            <h2><a href="{{ studio.external_url }}">Download for free</a></h2>
+        {% endif %}
+    {% endif %}
+    <p>
+        No studio description.
+    </p>
+</div>
+{% endblock %}

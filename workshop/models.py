@@ -121,15 +121,27 @@ class PluginDepenency(models.Model):
 
     # price, to the best of our knowledge. if it's free it means external_url
     # is as close to a download link as we can get.
-    price = models.FloatField(default=0)
+    price = models.FloatField(null=True, blank=True)
+
+    # if this plugin automatically comes with a studio, this links to that studio
+    comes_with_studio = models.ForeignKey('Studio', null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.url is None:
             self.url = create_url(self.title, lambda proposed: PluginDepenency.objects.filter(url=proposed).count() > 0)
+        if self.comes_with_studio is not None:
+            self.associate_with_studio(self.comes_with_studio)
         self._save(*args, **kwargs)
 
     def _save(self, *args, **kwargs):
         super(PluginDepenency, self).save(*args, **kwargs)
+
+    def associate_with_studio(self, studio):
+        self.comes_with_studio = studio
+        # every user that has studio should be marked as having self
+        for profile in Profile.objects.filter(studios=studio):
+            profile.plugins.add(self)
+            profile.save()
 
     def __unicode__(self):
         return self.title
@@ -199,6 +211,12 @@ class Studio(models.Model):
 
     # studio identifier, also used as the url
     identifier = models.CharField(max_length=50, unique=True)
+
+    # url to get to the studio's website
+    external_url = models.CharField(max_length=500, unique=True, null=True, blank=True)
+
+    # best estimate of how much it costs
+    price = models.FloatField(null=True, blank=True)
 
     # capabilities - what we can do with the studio
     # whether we have dependency support

@@ -189,12 +189,23 @@ class Profile(models.Model):
     # the plugins that the user owns
     plugins = models.ManyToManyField('workshop.PluginDepenency', blank=True, related_name='profile_plugins')
 
+    # the studios that the user owns
+    studios = models.ManyToManyField('workshop.Studio', blank=True, related_name='profile_studios')
+
     # user controlled settings
     # if a user uploads a project with a plugin, do we assume they own it?
     assume_uploaded_plugins_owned = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.user.username
+
+    def own_studio(self, studio):
+        self.studios.add(studio)
+        self.plugins.add(PluginDepenency.objects.filter(comes_with_studio=studio))
+
+    def disown_studio(self, studio):
+        self.studios.remove(studio)
+        self.plugins.remove(PluginDepenency.objects.filter(comes_with_studio=studio))
 
     def get_points(self):
         return ThumbsUp.objects.filter(entry__owner=self).count()

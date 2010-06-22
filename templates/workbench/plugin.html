@@ -7,7 +7,7 @@
     <h1>{{ plugin.title }}</h1>
     {% if plugin.external_url %}
         {% if plugin.price %}
-            <h2><a href="{{ plugin.external_url }}">Buy for ${{ plugin.price }}</a></h2>
+            <h2><a href="{{ plugin.external_url }}">Buy for ${{ plugin.price|floatformat:2 }}</a></h2>
         {% else %}
             <h2><a href="{{ plugin.external_url }}">Download for free</a></h2>
         {% endif %}

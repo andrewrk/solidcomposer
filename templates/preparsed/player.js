@@ -15,6 +15,9 @@ var Player = function() {
         download_zip: "{% filter escapejs %}{% url workbench.download_zip %}{% endfilter %}",
         plugin: function(plugin_url) {
             return "{% filter escapejs %}{% url workbench.plugin '[~~~~]' %}{% endfilter %}".replace("[~~~~]", plugin_url);
+        },
+        studio: function(studio_identifier) {
+            return "{% filter escapejs %}{% url workbench.studio '[~~~~]' %}{% endfilter %}".replace("[~~~~]", studio_identifier);
         }
     };
 

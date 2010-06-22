@@ -527,6 +527,10 @@ def download_zip(request):
     zip_file_h.seek(0)
     return response
 
-def plugin(request, plugin_url):
-    plugin = get_object_or_404(PluginDepenency, url=plugin_url)
+def plugin(request, url):
+    plugin = get_object_or_404(PluginDepenency, url=url)
     return render_to_response('workbench/plugin.html', locals(), context_instance=RequestContext(request))
+
+def studio(request, identifier):
+    studio = get_object_or_404(Studio, identifier=identifier)
+    return render_to_response('workbench/studio.html', locals(), context_instance=RequestContext(request))
