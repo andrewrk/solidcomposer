@@ -12,6 +12,7 @@ import shutil
 import simplejson as json
 
 import main
+from main.models import TempFile
 
 import os
 
