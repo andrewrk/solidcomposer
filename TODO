@@ -27,10 +27,6 @@
  * use gravatar for avatars
  * password recovery
  * ability to change password
- * support some kind of formatting for author comments and such. minimum:
-   honor line breaks. maximum: a bb-like system or markdown.
-     * provide some way to format themes, rules, comments, etc
-     * http://attacklab.net/showdown/
  * make the login ALWAYS ajax. the consistency will help user confidence.
  * IE8 support
  * refactor
@@ -120,11 +116,14 @@
  * arena home GUI Redesign
 
 = workbench =
+ * support some kind of formatting for author comments and such. minimum:
+   honor line breaks. maximum: a bb-like system or markdown.
+     * provide some way to format themes, rules, comments, etc
+     * http://attacklab.net/showdown/
  * song player
    > ability to comment on sections of the song
    > UI for when mp3 is missing
      - "provide an mp3"
-     - hide the download mp3 link
      - allow uploads without mp3 preview in workshop
    > UI for when project file is missing
    > UI for when project file is not to be shared with people
@@ -173,6 +172,8 @@
      notify that information is outdated?)
  * refactor: PluginDepenency mispelled
  * maxWidth and maxHeight don't work in jquery dialog
+ * warning when you upload a song to a band, if any of the band members are
+   missing dependencies
 
  * handle ambiguous samples with a choice when the song is uploaded.
    > one of the choices should be: use sample X, and delete the other one

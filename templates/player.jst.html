@@ -46,36 +46,40 @@
                 <span class="dl-samples"><a data-songid="<%=song.id%>" href="#">Download Samples</a></span>
             <% } %>
         <% } %>
-        <span class="dl-mp3"><a href="{{ MEDIA_URL }}<%=song.mp3_file%>">Download MP3</a></span>
+        <% if (song.mp3_file) { %>
+            <span class="dl-mp3"><a href="{{ MEDIA_URL }}<%=song.mp3_file%>">Download MP3</a></span>
+        <% } %>
         <span class="title"><%=song.band.title%> - <%=song.title%></span>
     </div>
-    <div class="bottom-layer">
-        <div class="button-layer">
-            <div class="button">
-                <span class="play"><a href="#"></a></span>
+    <% if (song.mp3_file) { %>
+        <div class="bottom-layer">
+            <div class="button-layer">
+                <div class="button">
+                    <span class="play"><a href="#"></a></span>
+                </div>
+                <div class="time">
+                    0:00 / <%=Time.timeDisplay(song.length)%>
+                </div>
             </div>
-            <div class="time">
-                0:00 / <%=Time.timeDisplay(song.length)%>
-            </div>
-        </div>
-        <div class="wave-layer">
-            <div class="wave-outer">
-                <div class="wave" style="background-image: url({{ MEDIA_URL}}<% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
-                    <div class="overlay-border" style="width: 0;">
-                        <div class="overlay">
+            <div class="wave-layer">
+                <div class="wave-outer">
+                    <div class="wave" style="background-image: url({{ MEDIA_URL}}<% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
+                        <div class="overlay-border" style="width: 0;">
+                            <div class="overlay">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="right-layer">
-            <div class="volume">
-                <span class="icon-id"><span class="icon"></span><span>
-            </div>
-            <div class="comment-btn">
+            <div class="right-layer">
+                <div class="volume">
+                    <span class="icon-id"><span class="icon"></span><span>
+                </div>
+                <div class="comment-btn">
 
+                </div>
             </div>
+            <div class="clear"></div>
         </div>
-        <div class="clear"></div>
-    </div>
+    <% } %>
 </div>
