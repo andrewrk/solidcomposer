@@ -70,18 +70,16 @@ var SCProject = function () {
         }
     }
 
-    function updateProjects(forceUpdate) {
+    function updateProjects() {
         if (state.json === null) {
             return;
         }
 
-        if (forceUpdate) {
-            $("#projects").html(Jst.evaluate(template_version_list_s, state));
-            Player.addUi("#projects");
-            addClicksToProjects();
+        $("#projects").html(Jst.evaluate(template_version_list_s, state));
+        Player.addUi("#projects");
+        addClicksToProjects();
 
-            $("#footer-data").html(Jst.evaluate(template_footer_s, state));
-        }
+        $("#footer-data").html(Jst.evaluate(template_footer_s, state));
     }
 
     function ajaxRequestLoop() {
@@ -164,11 +162,7 @@ var SCProject = function () {
                 }
                 if (versionCount > 0) {
                     last_version_id = data.versions[versionCount-1].id;
-                }
-
-                updateProjects(versionCount > 0);
-
-                if (versionCount > 0) {
+                    updateProjects();
                     scrollToNewestVersion();
                 }
             }
@@ -184,7 +178,7 @@ var SCProject = function () {
             band_id = init_band_id;
             project_id = init_project_id;
 
-            Player.initialize();
+            Player.initialize(null, updateProjects);
 
             ajaxRequestLoop();
         },

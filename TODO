@@ -128,7 +128,9 @@
      - allow uploads without mp3 preview in workshop
    > UI for when project file is missing
    > UI for when project file is not to be shared with people
-   > upload a song with a lot of missing samples. upload the samples. click the download samples button. they're missing.
+   > dependencies dialog: have a samples link which closes the dialog and opens the samples dialog.
+   > upload a song with a lot of missing samples. upload the samples.
+     click the download samples button. they're missing from the box.
  * project page
    > check out
    > check in 
