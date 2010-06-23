@@ -23,8 +23,8 @@
             <div id="dependencies-dialog-<%=song.id%>" class="dependencies-dialog-init" style="display: none;">
                 {% include 'player_deps_dialog.jst.html' %}
             </div>
-            <span class="dependencies"><span class="<% if (! Player.anyMissingDependencies(song)) { %>good<% } else { %>bad<% } %>"><a href="#" data-songid="<%=song.id%>">Dependencies</a></span></span>
-            <% if (Player.anyAvailableSamples(song)) { %>
+            <span class="dependencies"><span class="<% if (! song.anyMissingDependencies) { %>good<% } else { %>bad<% } %>"><a href="#" data-songid="<%=song.id%>">Dependencies</a></span></span>
+            <% if (song.anyAvailableSamples) { %>
                 <div id="dl-samples-dialog-<%=song.id%>" class="dl-samples-dialog-init" style="display: none;">
                     <div class="all">
                         <a class="dl-all" href="#" data-songid="<%=song.id%>">Download All Samples + Project File</a>

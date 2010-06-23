@@ -641,7 +641,7 @@ class SimpleTest(TestCase):
         self.assertEqual(entry.song.band.id, self.superjoe.get_profile().solo_band.id)
         self.assertEqual(entry.song.title, 'superjoe title 123')
 
-        # submit a good file, provide source and commentts
+        # submit a good file, provide source and comments. open source.
         # flstudio exported, tags
         self.assertEqual(self.client.login(username='just64helpin', password='temp1234'), True)
         mp3file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
@@ -652,6 +652,7 @@ class SimpleTest(TestCase):
             'entry-file-source': sourcefile,
             'entry-title': "just64helpin title 123",
             'entry-comments': "just64helpin comments 123",
+            'entry-open-source': "1",
         })
         mp3file.close()
         sourcefile.close()
@@ -666,8 +667,9 @@ class SimpleTest(TestCase):
         self.assertEqual(entry.song.band.id, self.just64helpin.get_profile().solo_band.id)
         self.assertEqual(entry.song.title, 'just64helpin title 123')
         self.assertEqual(entry.song.comments, 'just64helpin comments 123')
+        self.assertEqual(entry.song.is_open_source, True)
 
-        # submit a good file, provide source but no comments
+        # submit a good file, provide source but no comments. not open source.
         # no tags, vbr
         self.assertEqual(self.client.login(username='skiessi', password='temp1234'), True)
         mp3file = open(absolute('fixtures/silence10s-notags-vbr.mp3'),'rb')
@@ -678,6 +680,7 @@ class SimpleTest(TestCase):
             'entry-file-source': sourcefile,
             'entry-title': "skiessi title 123",
             #'entry-comments': "skiessi comments 123",
+            #'entry-open-source': "1",
         })
         mp3file.close()
         sourcefile.close()
@@ -691,6 +694,7 @@ class SimpleTest(TestCase):
         self.assertEqual(os.path.exists(os.path.join(settings.MEDIA_ROOT, entry.song.waveform_img)), True)
         self.assertEqual(entry.song.band.id, self.skiessi.get_profile().solo_band.id)
         self.assertEqual(entry.song.title, 'skiessi title 123')
+        self.assertEqual(entry.song.is_open_source, False)
 
         # resubmit
         mp3file = open(absolute('fixtures/silence10s-notags-vbr.mp3'),'rb')

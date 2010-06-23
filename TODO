@@ -58,6 +58,10 @@
    - by IP address?
 
 = arena =
+ * tests need to use storage instead of file system
+ * do we cap file size on source file? count it against their quota?
+ * it's possible to double-vote for someone
+ * user-highlighted song text is mis-aligned
  * entry list: "so far" is misleading. use a better word.
  * the listening party starts over after it ends. whoops.
  * userpage open in a new window
@@ -120,11 +124,14 @@
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
      * http://attacklab.net/showdown/
+ * integrate into arena
+   > checkbox next to project source file "Share this with the world"
  * song player
    > ability to comment on sections of the song
    > UI for when mp3 is missing
      - "provide an mp3"
    > UI for when project file is missing
+     - "provide the project file"
    > UI for when project file is not to be shared with people
    > dependencies dialog: have a samples link which closes the dialog and opens the samples dialog.
    > upload a song with a lot of missing samples. upload the samples.
@@ -188,8 +195,6 @@
    > log in - everything should appear
    > should never have to leave the page
  * automatically upload competition entries to the project manager
- * integrate into arena
-   > checkbox next to project source file "Share this with the world"
  * tests
 
  * ability to create albums and organize like that

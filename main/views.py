@@ -117,7 +117,7 @@ def user_register(request):
             manager = BandMember()
             manager.user = user
             manager.band = band
-            manager.role = MANAGER
+            manager.role = BandMember.MANAGER
             manager.save()
 
             # send an activation email

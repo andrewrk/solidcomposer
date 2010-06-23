@@ -8,7 +8,7 @@ from django.forms.models import model_to_dict
 from django.shortcuts import render_to_response, get_object_or_404
 from django.db.models import Count
 
-from main.common import safe_model_to_dict, json_response, json_login_required
+from main.common import *
 from main.models import *
 from competitions.models import *
 from competitions.forms import *
@@ -20,22 +20,9 @@ from datetime import datetime, timedelta
 
 from main.uploadsong import upload_song
 
+@json_login_required
+@json_post_required
 def ajax_submit_entry(request):
-    data = {
-        'user': {
-            'is_authenticated': request.user.is_authenticated(),
-        },
-        'success': False,
-        'reason': '',
-    }
-    if not request.user.is_authenticated():
-        data['reason'] = design.not_authenticated
-        return json_response(data)
-
-    if request.method != 'POST':
-        data['reason'] = design.must_submit_via_post
-        return json_response(data)
-
     compo_id = request.POST.get('compo', 0)
     try:
         compo_id = int(compo_id)
@@ -45,41 +32,35 @@ def ajax_submit_entry(request):
     try:
         compo = Competition.objects.get(pk=compo_id)
     except Competition.DoesNotExist:
-        data['reason'] = design.competition_not_found
-        return json_response(data)
+        return json_failure(design.competition_not_found)
 
     # make sure it's still submission time
     now = datetime.now()
     if now >= compo.submit_deadline:
-        data['reason'] = design.past_submission_deadline
-        return json_response(data)
+        return json_failure(design.past_submission_deadline)
 
     if now <= compo.start_date:
-        data['reason'] = design.competition_not_started
-        return json_response(data)
+        return json_failure(design.competition_not_started)
 
     title = request.POST.get('entry-title','')
     comments = request.POST.get('entry-comments', '')
     mp3_file = request.FILES.get('entry-file-mp3')
     source_file = request.FILES.get('entry-file-source')
+    is_open_source = request.POST.get('entry-open-source', False)
 
     # make sure files are small enough
     if mp3_file is None:
-        data['reason'] = design.mp3_required
-        return json_response(data)
+        return json_failure(design.mp3_required)
 
     if mp3_file.size > settings.FILE_UPLOAD_SIZE_CAP:
-        data['reason'] = design.mp3_too_big
-        return json_response(data)
+        return json_failure(design.mp3_too_big)
 
     if not source_file is None:
         if source_file.size > settings.FILE_UPLOAD_SIZE_CAP:
-            data['reason'] = design.source_file_too_big
-            return json_response(data)
+            return json_failure(design.source_file_too_big)
 
     if title == '':
-        data['reason'] = design.entry_title_required
-        return json_response(data)
+        return json_failure(design.entry_title_required)
 
     result = upload_song(request.user,
         file_mp3_handle=mp3_file,
@@ -90,10 +71,10 @@ def ajax_submit_entry(request):
         song_album=compo.title)
 
     if not result['success']:
-        data['reason'] = result['reason']
-        return json_response(data)
+        return json_failure(result['reason'])
 
     song = result['song']
+    song.is_open_source = is_open_source
 
     entries = Entry.objects.filter(owner=request.user, competition=compo)
     if entries.count() > 0:
@@ -129,10 +110,7 @@ def ajax_submit_entry(request):
     chatroom.end_date = compo.listening_party_end_date + timedelta(hours=1)
     chatroom.save()
 
-    data['success'] = True
-    del data['reason']
-
-    return json_response(data)
+    return json_response({'success': True})
 
 def max_vote_count(entry_count):
     """
@@ -146,7 +124,10 @@ def max_vote_count(entry_count):
 
 def ajax_compo(request, id):
     id = int(id)
-    compo = get_object_or_404(Competition, id=id)
+    try:
+        compo = get_object_or_404(Competition, id=id)
+    except Competition.DoesNotExist:
+        return json_failure(design.competition_not_found)
 
     data = {
         'user': {

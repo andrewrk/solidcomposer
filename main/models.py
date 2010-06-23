@@ -8,17 +8,6 @@ import string
 import os
 from django.conf import settings
 
-FULL_OPEN, OPEN_SOURCE, TRANSPARENT, NO_CRITIQUE, PRIVATE = range(5)
-
-MANAGER, BAND_MEMBER, CRITIC, FAN, BANNED = range(5)
-ROLE_CHOICES = (
-    (MANAGER, 'Manager'), # full privileges
-    (BAND_MEMBER, 'Band member'), # full privileges except band admin
-    (CRITIC, 'Critic'), # can view and post comments in project manager
-    (FAN, 'Fan'), # regular site user
-    (BANNED, 'Banned'), # this person is blacklisted
-)
-
 def create_url(title, is_unique=None):
     """
     creates a clean and safe url to use based on a name.
@@ -48,6 +37,15 @@ def create_url(title, is_unique=None):
     return proposed
 
 class BandMember(models.Model):
+    MANAGER, BAND_MEMBER, CRITIC, FAN, BANNED = range(5)
+    ROLE_CHOICES = (
+        (MANAGER, 'Manager'), # full privileges
+        (BAND_MEMBER, 'Band member'), # full privileges except band admin
+        (CRITIC, 'Critic'), # can view and post comments in project manager
+        (FAN, 'Fan'), # regular site user
+        (BANNED, 'Banned'), # this person is blacklisted
+    )
+
     user = models.ForeignKey(User)
     band = models.ForeignKey('Band')
     role = models.IntegerField(choices=ROLE_CHOICES, default=MANAGER)
@@ -55,7 +53,9 @@ class BandMember(models.Model):
     def __unicode__(self):
         return u'%s - %s: %s' % (str(self.band), dict(ROLE_CHOICES)[self.role], str(self.user))
 
+
 class Band(models.Model):
+    FULL_OPEN, OPEN_SOURCE, TRANSPARENT, NO_CRITIQUE, PRIVATE = range(5)
     OPENNESS_CHOICES = (
         # completely open. anyone with an account and not banned can contribute.
         (FULL_OPEN, 'Fully open'),
@@ -130,7 +130,7 @@ class Band(models.Model):
             return self.openness == FULL_OPEN
 
         member = members[0]
-        return member.role in (MANAGER, BAND_MEMBER)
+        return member.role in (BandMember.MANAGER, BandMember.BAND_MEMBER)
 
     def __unicode__(self):
         return self.title
@@ -219,14 +219,13 @@ class Profile(models.Model):
         "Save without any auto field population"
         super(Profile, self).save(*args, **kwargs)
 
-    disallowed_chars = r'\./?'
-
 class Song(models.Model):
     # filename where mp3 can be found
     mp3_file = models.CharField(max_length=500, null=True, blank=True)
 
     # in case the artist was generous enough to provide source
     source_file = models.CharField(max_length=500, blank=True)
+    is_open_source = models.BooleanField(default=False)
     studio = models.ForeignKey('workshop.Studio', null=True, blank=True)
 
     # filename where generated waveform img can be found
@@ -253,7 +252,7 @@ class Song(models.Model):
 
     def permission_to_view_source(self, user):
         "Returns whether a user can download the project file and samples of the song."
-        return self.band.permission_to_work(user) # TODO: or self.is_open_source 
+        return self.is_open_source or self.band.permission_to_work(user)
 
     def displayString(self):
         """

@@ -36,8 +36,37 @@
             </div>
             <% var song = version.song; song.band = project.band; %>
             {% include 'player.jst.html' %}
-            <% if (Player.anyMissingSamples(version.song)) { %>
-                <div id="missing-<%=i%>">
+            <% if (! version.song.mp3_file) { %>
+                <div id="missing-mp3-<%=i%>" class="missing-thing">
+                    <h2><a href="#">Missing Project File</a></h2>
+                    <div class="missing-project-form">
+                        <form id="missing-project-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_upload_project %}">
+                            <fieldset>
+                                <input type="hidden" name="version" value="<%=version.id%>" />
+                                <table>
+                                    <tr>
+                                        <td>
+                                            Project file:
+                                        </td>
+                                        <td>
+                                            <input type="file" name="file" multiple="multiple" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <input type="submit" value="Upload" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            <% } %>
+            <% if (version.song.anyMissingSamples) { %>
+                <div id="missing-samples-<%=i%>" class="missing-thing">
                     <h2><a href="#">Missing Samples</a></h2>
                     <div class="missing-list">
                         <ul>
@@ -52,8 +81,8 @@
                         </ul>
                     </div>
                     <p>Upload them here. Feel free to use a .zip file.</p>
-                    <div class="missing-form">
-                        <form id="missing-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_upload_samples %}">
+                    <div class="missing-samples-form">
+                        <form id="missing-samples-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_upload_samples %}">
                             <fieldset>
                                 <input type="hidden" name="version" value="<%=version.id%>" />
                                 <table>

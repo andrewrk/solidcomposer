@@ -168,6 +168,8 @@ BAND_INIT_SPACE = 1024 * 1024 * 1024 * 0.5 # 0.5 GB
 # how many bands can free users create
 FREE_BAND_LIMIT = 10
 
+URL_DISALLOWED_CHARS = r'\./?'
+
 # leave this at the very end
 if os.path.exists("settings_user.py"):
     from settings_user import *

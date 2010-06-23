@@ -11,7 +11,7 @@ class BandInvitation(models.Model):
     inviter = models.ForeignKey(User, related_name="inviter")
     band = models.ForeignKey(Band)
     timestamp = models.DateTimeField()
-    role = models.IntegerField(choices=ROLE_CHOICES, default=BAND_MEMBER)
+    role = models.IntegerField(choices=BandMember.ROLE_CHOICES, default=BandMember.BAND_MEMBER)
 
     # when the invite becomes inactive. null means never
     # (only applies if isLink() is True)

@@ -202,66 +202,6 @@ def performFilter(filterId, projects, user=None):
 
     return FILTERS[filterId]['func'](projects)
 
-def user_to_dict(x):
-    from workshop import design
-    d = safe_model_to_dict(x)
-    d['gravatar'] = gravatar_url(x.email, design.project_gravatar_size)
-    d['get_profile']['get_points'] = x.get_profile().get_points()
-    return d
-
-def song_to_dict(song, user):
-    profile = user.get_profile()
-
-    d = safe_model_to_dict(song)
-    d['owner'] = user_to_dict(song.owner)
-    if song.studio:
-        d['studio'] = safe_model_to_dict(song.studio)
-        d['studio']['logo_16x16'] = song.studio.logo_16x16.url
-        d['studio']['missing'] = song.studio not in profile.studios.all()
-    else:
-        d['studio'] = None
-
-    def sample_to_dict(x):
-        d = safe_model_to_dict(x)
-        d['missing'] = x.uploaded_sample is None
-        return d
-
-    d['samples'] = [sample_to_dict(x) for x in SampleDependency.objects.filter(song=song)]
-
-    owned_plugins = profile.plugins.all()
-    def plugin_to_dict(x):
-        d = safe_model_to_dict(x)
-        d['missing'] = x not in owned_plugins
-        return d
-
-    d['plugins'] = [plugin_to_dict(x) for x in song.plugins.all()]
-
-    return d
-    
-def version_to_dict(x, user):
-    d = {
-        'song': song_to_dict(x.song, user),
-        'version': x.version,
-        'id': x.id,
-    }
-    return d
-
-def project_to_dict(x, user):
-    d = {
-        'latest_version': version_to_dict(x.latest_version, user),
-        'date_activity': x.date_activity,
-        'checked_out_to': None,
-        'visible': x.visible,
-        'tags': [safe_model_to_dict(tag) for tag in x.tags.all()],
-        'scrap_voters': x.scrap_voters.count(),
-        'promote_voters': x.promote_voters.count(),
-        'id': x.id,
-        'band': safe_model_to_dict(x.band),
-    }
-    if x.checked_out_to is not None:
-        d['checked_out_to'] = safe_model_to_dict(x.checked_out_to)
-
-    return d
 
 @json_login_required
 @json_get_required
@@ -378,7 +318,7 @@ def ajax_create_band(request):
         manager = BandMember()
         manager.user = user
         manager.band = band
-        manager.role = MANAGER
+        manager.role = BandMember.MANAGER
         manager.save()
     else:
         data['reason'] = "\n".join(['%s: %s' % (k, v) for k, v in form.errors])
@@ -577,3 +517,68 @@ def plugin(request, url):
 def studio(request, identifier):
     studio = get_object_or_404(Studio, identifier=identifier)
     return render_to_response('workbench/studio.html', locals(), context_instance=RequestContext(request))
+
+
+
+
+
+
+def user_to_dict(x):
+    d = safe_model_to_dict(x)
+    d['gravatar'] = gravatar_url(x.email, design.project_gravatar_size)
+    d['get_profile']['get_points'] = x.get_profile().get_points()
+    return d
+
+def song_to_dict(song, user):
+    profile = user.get_profile()
+
+    d = safe_model_to_dict(song)
+    d['owner'] = user_to_dict(song.owner)
+    if song.studio:
+        d['studio'] = safe_model_to_dict(song.studio)
+        d['studio']['logo_16x16'] = song.studio.logo_16x16.url
+        d['studio']['missing'] = song.studio not in profile.studios.all()
+    else:
+        d['studio'] = None
+
+    def sample_to_dict(x):
+        d = safe_model_to_dict(x)
+        d['missing'] = x.uploaded_sample is None
+        return d
+
+    d['samples'] = [sample_to_dict(x) for x in SampleDependency.objects.filter(song=song)]
+
+    owned_plugins = profile.plugins.all()
+    def plugin_to_dict(x):
+        d = safe_model_to_dict(x)
+        d['missing'] = x not in owned_plugins
+        return d
+
+    d['plugins'] = [plugin_to_dict(x) for x in song.plugins.all()]
+
+    return d
+    
+def version_to_dict(x, user):
+    d = {
+        'song': song_to_dict(x.song, user),
+        'version': x.version,
+        'id': x.id,
+    }
+    return d
+
+def project_to_dict(x, user):
+    d = {
+        'latest_version': version_to_dict(x.latest_version, user),
+        'date_activity': x.date_activity,
+        'checked_out_to': None,
+        'visible': x.visible,
+        'tags': [safe_model_to_dict(tag) for tag in x.tags.all()],
+        'scrap_voters': x.scrap_voters.count(),
+        'promote_voters': x.promote_voters.count(),
+        'id': x.id,
+        'band': safe_model_to_dict(x.band),
+    }
+    if x.checked_out_to is not None:
+        d['checked_out_to'] = safe_model_to_dict(x.checked_out_to)
+
+    return d

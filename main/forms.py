@@ -43,7 +43,7 @@ class RegisterForm(forms.Form):
     def clean_username(self):
         username = self.cleaned_data['username']
 
-        disallowed_chars = Profile.disallowed_chars
+        disallowed_chars = settings.URL_DISALLOWED_CHARS
         for c in username:
             if c in disallowed_chars:
                 raise forms.ValidationError(design.invalid_characters_in_user_name % disallowed_chars)

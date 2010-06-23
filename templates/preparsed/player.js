@@ -288,6 +288,8 @@ var Player = function() {
                     song.pluginLink[dependency_id].missing = true;
                 }
 
+                that.processSong(song);
+
                 // re-render the dialog
                 dialog.html(Jst.evaluate(templateDepsDialogCompiled, {song: song}));
                 addUiToDependencyDialog(dialog, song);
@@ -320,6 +322,9 @@ var Player = function() {
                 } else {
                     song.pluginLink[dependency_id].missing = false;
                 }
+
+                that.processSong(song);
+
                 // re-render the dialog
                 dialog.html(Jst.evaluate(templateDepsDialogCompiled, {song: song}));
                 addUiToDependencyDialog(dialog, song);
@@ -494,23 +499,19 @@ var Player = function() {
             jp.jPlayer("volume", vol * 100);
             updateCurrentPlayer();
         },
-        // returns true if song has any available samples
-        anyAvailableSamples: function(song) {
-            return anyTrue(song.samples, function(sample) { return ! sample.missing; });
-        },
-        // returns true if song has any missing samples
-        anyMissingSamples: function(song) {
-            return anyTrue(song.samples, function(sample) { return sample.missing; });
-        },
-        anyMissingDependencies: function(song) {
-            function isMissing(dep) {
-                return dep.missing;
-            }
-            return anyTrue(song.plugins, isMissing) || song.studio.missing;
-        },
         processSong: function(song) {
             // sneaky, sneaky!
             songs[song.id] = song;
+
+            song.anyAvailableSamples = anyTrue(song.samples, function(sample){
+                return ! sample.missing;
+            });
+            song.anyMissingSamples = anyTrue(song.samples, function(sample){
+                return sample.missing;
+            });
+            song.anyMissingDependencies = song.studio.missing || anyTrue(song.plugins, function(plugin){
+                return plugin.missing;
+            });
 
             song.effects = [];
             song.generators = [];
