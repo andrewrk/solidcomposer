@@ -254,6 +254,7 @@ class Song(SerializableModel):
         'album',
         'length',
         'comments',
+        'date_added'
     )
 
     OWNER_ATTRS = (

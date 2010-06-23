@@ -36,6 +36,7 @@
    > ability to check/uncheck plugins that a user owns
    > whether to bleepy boop when people chat
  * javascript tests
+ * serializablemodel: should only follow chains if the names match
 
 = chat =
  * don't render ALL the chat messages every time.
