@@ -236,7 +236,7 @@ class Song(models.Model):
     owner = models.ForeignKey(User) # who uploaded it
     band = models.ForeignKey(Band) # who this song is attributed to
     title = models.CharField(max_length=100)
-    album = models.CharField(max_length=100, null=True, blank=True)
+    album = models.CharField(max_length=100, blank=True)
     # length in seconds, grabbed from mp3_file metadata
     length = models.FloatField()
 
@@ -259,7 +259,7 @@ class Song(models.Model):
         """
         returns a string fit for representing this song
         """
-        if self.album is None:
+        if self.album == "":
             return "%s - %s" % (self.band.title, self.title)
         else:
             return "%s - %s (%s)" % (self.band.title, self.title, self.album)

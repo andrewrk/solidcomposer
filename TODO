@@ -123,6 +123,9 @@
  * song player
    > ability to comment on sections of the song
    > UI for when mp3 is missing
+     - "provide an mp3"
+     - hide the download mp3 link
+     - allow uploads without mp3 preview in workshop
    > UI for when project file is missing
    > UI for when project file is not to be shared with people
    > upload a song with a lot of missing samples. upload the samples. click the download samples button. they're missing.
