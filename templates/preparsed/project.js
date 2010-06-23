@@ -53,20 +53,38 @@ var SCProject = function () {
     }
 
     function addClicksToProjects() {
-        var missing_upload_f = function() {
+        var missing_samples_upload_f = function() {
             return AIM.submit(this, {
                 'onStart': uploadSamplesStartCallback,
                 'onComplete': uploadSamplesCompleteCallback
             });
         };
+
         var add_file_f = function() {
             $(this).closest('tr').before(Jst.evaluate(template_sample_upload_row_s, {}));
             return false;
         };
 
+        var missing_project_upload_f = function() {
+            return AIM.submit(this, {
+                'onStart': uploadSamplesStartCallback,
+                'onComplete': uploadSamplesCompleteCallback
+            });
+        };
+
+        var missing_mp3_upload_f = function() {
+            return AIM.submit(this, {
+                'onStart': uploadSamplesStartCallback,
+                'onComplete': uploadSamplesCompleteCallback
+            });
+        };
+
         for (var i=0; i<state.versions.length; ++i) {
-            $("#missing-upload-"+i).submit(missing_upload_f);
+            $("#missing-samples-upload-"+i).submit(missing_samples_upload_f);
             $("#add-file-"+i).click(add_file_f);
+
+            $("#missing-project-upload-"+i).submit(missing_project_upload_f);
+            $("#missing-mp3-upload-"+i).submit(missing_mp3_upload_f);
         }
     }
 

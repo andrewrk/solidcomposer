@@ -253,6 +253,75 @@ def handle_project_file(filename, user, song):
         # move to storage
         move_to_storage(filename, song.source_file)
 
+def handle_mp3_upload(file_mp3_handle, song, max_song_len=None):
+    data = {'success': False}
+
+    # upload mp3 file to temp folder
+    mp3_tmp_handle = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
+    upload_file_h(file_mp3_handle, mp3_tmp_handle)
+    mp3_tmp_handle.close()
+
+    # read the length tag
+    try:
+        audio = MP3(mp3_tmp_handle.name, ID3=EasyID3)
+        song.length = audio.info.length
+    except:
+        data['reason'] = design.invalid_mp3_file
+        return data
+
+    # reject if invalid
+    if audio.info.sketchy:
+        data['reason'] = design.sketchy_mp3_file
+        return data
+
+    # reject if too long
+    if max_song_len != None:
+        if audio.info.length > max_song_len:
+            data['reason'] = design.song_too_long
+            return data
+
+    # enforce ID3 tags
+    try:
+        audio.add_tags(ID3=EasyID3)
+    except MutagenID3Error:
+        pass
+
+    audio['artist'] = song.band.title
+    if song.title != None:
+        audio['title'] = song.title
+    if song.album != None:
+        audio['album'] = song.album
+
+    try:
+        audio.save()
+    except:
+        data['reason'] = design.unable_to_save_id3_tags
+        return data
+
+    # pick a path for the mp3 file. obscure the URL so that people can't steal songs
+    song.mp3_file = os.path.join(obfuscated_url(song.band), clean_filename(song.displayString() + '.mp3'))
+
+    generate_waveform(song, mp3_tmp_handle.name)
+
+    # count mp3 against the band's size quota
+    song.band.used_space += os.path.getsize(mp3_tmp_handle.name)
+
+    # move mp3 file to storage
+    move_to_storage(mp3_tmp_handle.name, song.mp3_file)
+
+    song.band.save()
+    data = {'success': True}
+    return data
+
+def handle_project_upload(file_source_handle, user, song):
+    # upload project file to temp file
+    source_prefix, source_ext = os.path.splitext(file_source_handle.name)
+    handle = tempfile.NamedTemporaryFile(suffix=source_ext, delete=False)
+    upload_file_h(file_source_handle, handle)
+    handle.close()
+
+    handle_project_file(handle.name, user, song)
+
 def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album=""):
     """
     inputs: 
@@ -303,71 +372,15 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
     song.album = song_album
 
     if file_mp3_handle != None:
-        # upload mp3 file to temp folder
-        mp3_tmp_handle = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
-        upload_file_h(file_mp3_handle, mp3_tmp_handle)
-        mp3_tmp_handle.close()
-
-        # read the length tag
-        try:
-            audio = MP3(mp3_tmp_handle.name, ID3=EasyID3)
-            song.length = audio.info.length
-        except:
-            data['reason'] = design.invalid_mp3_file
-            return data
-
-        # reject if invalid
-        if audio.info.sketchy:
-            data['reason'] = design.sketchy_mp3_file
-            return data
-
-        # reject if too long
-        if max_song_len != None:
-            if audio.info.length > max_song_len:
-                data['reason'] = design.song_too_long
-                return data
-
-        # enforce ID3 tags
-        try:
-            audio.add_tags(ID3=EasyID3)
-        except MutagenID3Error:
-            pass
-
-        audio['artist'] = band.title
-        if song_title != None:
-            audio['title'] = song_title
-        if song_album != None:
-            audio['album'] = song_album
-
-        try:
-            audio.save()
-        except:
-            data['reason'] = design.unable_to_save_id3_tags
-            return data
-
-        # pick a path for the mp3 file. obscure the URL so that people can't steal songs
-        song.mp3_file = os.path.join(obfuscated_url(band), clean_filename(song.displayString() + '.mp3'))
-
-        generate_waveform(song, mp3_tmp_handle.name)
-
-        # count mp3 against the band's size quota
-        band.used_space += os.path.getsize(mp3_tmp_handle.name)
-
-        # move mp3 file to storage
-        move_to_storage(mp3_tmp_handle.name, song.mp3_file)
+        result = handle_mp3_upload(file_mp3_handle, song, max_song_len)
+        if not result['success']:
+            return result
 
     # upload the source file
     if file_source_handle != None:
         # save so we can use the ManyToManyFields 
         song.save()
-
-        # upload project file to temp file
-        source_prefix, source_ext = os.path.splitext(file_source_handle.name)
-        handle = tempfile.NamedTemporaryFile(suffix=source_ext, delete=False)
-        upload_file_h(file_source_handle, handle)
-        handle.close()
-
-        handle_project_file(handle.name, user, song)
+        handle_project_upload(file_source_handle, user, song)
 
     # we incremented bytes_used in band, so save it now
     band.save()

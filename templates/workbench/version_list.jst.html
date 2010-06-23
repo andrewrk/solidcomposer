@@ -38,29 +38,22 @@
             {% include 'player.jst.html' %}
             <% if (! version.song.mp3_file) { %>
                 <div id="missing-mp3-<%=i%>" class="missing-thing">
+                    <h2><a href="#">Missing MP3 File</a></h2>
+                    <div class="missing-mp3-form">
+                        <form id="missing-mp3-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_provide_mp3 %}">
+                            <% var upload_caption = "MP3 file"; %>
+                            {% include 'workbench/missing_file_form.jst.html' %}
+                        </form>
+                    </div>
+                </div>
+            <% } %>
+            <% if (! version.song.source_file) { %>
+                <div id="missing-project-<%=i%>" class="missing-thing">
                     <h2><a href="#">Missing Project File</a></h2>
                     <div class="missing-project-form">
                         <form id="missing-project-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_provide_project %}">
-                            <fieldset>
-                                <input type="hidden" name="version" value="<%=version.id%>" />
-                                <table>
-                                    <tr>
-                                        <td>
-                                            Project file:
-                                        </td>
-                                        <td>
-                                            <input type="file" name="file" multiple="multiple" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <input type="submit" value="Upload" />
-                                        </td>
-                                    </tr>
-                                </table>
-                            </fieldset>
+                            <% var upload_caption = "Project file"; %>
+                            {% include 'workbench/missing_file_form.jst.html' %}
                         </form>
                     </div>
                 </div>

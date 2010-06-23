@@ -13,7 +13,7 @@ from workshop import design
 from main.models import *
 from main.common import *
 from main.upload import *
-from main.uploadsong import upload_song, studio_extensions, handle_sample_file
+from main.uploadsong import upload_song, studio_extensions, handle_sample_file, handle_mp3_upload, handle_project_upload
 
 import zipfile
 import tempfile
@@ -355,16 +355,58 @@ def ajax_upload_samples(request):
     for item in files:
         handle_sample_upload(item, request.user, band)
     band.save()
-
-    data = {
-        'success': True,
-    }
     
-    return json_response(data)
+    return json_success()
 
 def ajax_provide_project(request):
-    "todo"
-    pass
+    version_id_str = request.POST.get('version', 0)
+    try:
+        version_id = int(version_id_str)
+    except ValueError:
+        version_id = 0
+
+    try:
+        version = ProjectVersion.objects.get(pk=version_id)
+    except ProjectVersion.DoesNotExist:
+        return json_failure(design.bad_version_id)
+
+    band = version.project.band
+
+    if not band.permission_to_work(request.user):
+        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    project_handle = request.FILES.get('file')
+    handle_project_upload(project_handle, request.user, version.song)
+
+    return json_success()
+
+@json_login_required
+@json_post_required
+def ajax_provide_mp3(request):
+    version_id_str = request.POST.get('version', 0)
+    try:
+        version_id = int(version_id_str)
+    except ValueError:
+        version_id = 0
+
+    try:
+        version = ProjectVersion.objects.get(pk=version_id)
+    except ProjectVersion.DoesNotExist:
+        return json_failure(design.bad_version_id)
+
+    band = version.project.band
+
+    if not band.permission_to_work(request.user):
+        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    mp3_handle = request.FILES.get('file')
+
+    result = handle_mp3_upload(mp3_handle, version.song)
+    if result['success']:
+        version.song.save()
+        return json_success()
+    else:
+        return json_failure(result['reason'])
 
 @login_required
 def band_settings(request, band_id_str):

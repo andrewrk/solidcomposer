@@ -120,6 +120,7 @@
  * arena home GUI Redesign
 
 = workbench =
+ * automatically upload competition entries to the project manager
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
@@ -192,7 +193,6 @@
    > log out - should hide everything on the page and say you need to log in
    > log in - everything should appear
    > should never have to leave the page
- * automatically upload competition entries to the project manager
  * tests
 
  * ability to create albums and organize like that
