@@ -116,7 +116,7 @@ var SCBand = function() {
             band_id = _band_id;
 
             addStaticClicks();
-            Player.initialize();
+            Player.initialize(null, updateProjectList);
 
             ajaxRequestLoop();
         },

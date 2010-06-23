@@ -84,6 +84,8 @@ var Player = function() {
     // keep track of all the songs
     var songs = {};
 
+    var updateCallback = null;
+
     var offsetTop = null;
     var volumeMouseMove = function(e) {
         e.preventDefault();
@@ -250,55 +252,78 @@ var Player = function() {
             var dialog = $("#dependencies-dialog-" + song_id);
             dialog.dialog('open');
 
-            var donothaves = dialog.find('.donothave');
-            donothaves.unbind('click');
-            donothaves.click(function(){
-                var dependency_id = parseInt($(this).parent().attr('data-dependencyid'));
-                var plugin_type = parseInt($(this).parent().attr('data-plugintype'));
-                $.post(urls.dependency_ownership, {
-                    dependency_id: dependency_id,
-                    dependency_type: plugin_type
-                }, function(data) {
-                    if (data === null) {
-                        return;
-                    }
-                    if (! data.success) {
-                        return;
-                    }
-                    // replace the do not have link with the have link
-                    // TODO
-                }, 'json');
-                return false;
-            });
-
-            var haves = dialog.find('.have');
-            haves.unbind('click');
-            haves.click(function(){
-                var dependency_id = parseInt($(this).parent().attr('data-dependencyid'));
-                var plugin_type = parseInt($(this).parent().attr('data-plugintype'));
-
-                $.post(urls.dependency_ownership, {
-                    dependency_id: dependency_id,
-                    dependency_type: plugin_type,
-                    have: true
-                }, function(data) {
-                    if (data === null) {
-                        return;
-                    }
-                    if (! data.success) {
-                        return;
-                    }
-                    // replace the have link with the do not have link
-                    // TODO
-                }, 'json');
-
-                return false;
-            });
+            addUiToDependencyDialog(dialog, songs[song_id]);
 
             return false;
         });
 
         updateCurrentPlayer();
+    }
+
+    function addUiToDependencyDialog(dialog, song) {
+        var donothaves = dialog.find('.donothave');
+        donothaves.unbind('click');
+        donothaves.click(function(){
+            var dependency_id = parseInt($(this).parent().attr('data-dependencyid'));
+            var plugin_type = parseInt($(this).parent().attr('data-plugintype'));
+            $.post(urls.dependency_ownership, {
+                dependency_id: dependency_id,
+                dependency_type: plugin_type
+            }, function(data) {
+                if (data === null) {
+                    return;
+                }
+                if (! data.success) {
+                    return;
+                }
+
+                if (plugin_type === pluginTypeEnum.STUDIO) {
+                    song.studio.missing = true;
+                } else {
+                    song.pluginLink[dependency_id].missing = true;
+                }
+
+                // re-render the dialog
+                dialog.html(Jst.evaluate(templateDepsDialogCompiled, {song: song}));
+                addUiToDependencyDialog(dialog, song);
+
+                updateCallback();
+            }, 'json');
+            return false;
+        });
+
+        var haves = dialog.find('.have');
+        haves.unbind('click');
+        haves.click(function(){
+            var dependency_id = parseInt($(this).parent().attr('data-dependencyid'));
+            var plugin_type = parseInt($(this).parent().attr('data-plugintype'));
+
+            $.post(urls.dependency_ownership, {
+                dependency_id: dependency_id,
+                dependency_type: plugin_type,
+                have: true
+            }, function(data) {
+                if (data === null) {
+                    return;
+                }
+                if (! data.success) {
+                    return;
+                }
+                // replace the have link with the do not have link
+                if (plugin_type === pluginTypeEnum.STUDIO) {
+                    song.studio.missing = false;
+                } else {
+                    song.pluginLink[dependency_id].missing = false;
+                }
+                // re-render the dialog
+                dialog.html(Jst.evaluate(templateDepsDialogCompiled, {song: song}));
+                addUiToDependencyDialog(dialog, song);
+
+                updateCallback();
+            }, 'json');
+
+            return false;
+        });
     }
 
     function downloadZip(song_id, samples) {
@@ -396,7 +421,8 @@ var Player = function() {
         pluginTypeEnum: pluginTypeEnum,
         
         // public methods
-        initialize: function(readyFunc) {
+        initialize: function(readyFunc, _updateCallback) {
+            updateCallback = _updateCallback;
             compileTemplates();
             initializeJPlayer(readyFunc);
             cacheImages();
@@ -483,8 +509,11 @@ var Player = function() {
 
             song.effects = [];
             song.generators = [];
+            // plugin id -> plugin variable
+            song.pluginLink = {};
             for (var i=0; i<song.plugins.length; ++i) {
                 var plugin = song.plugins[i];
+                song.pluginLink[plugin.id] = plugin;
                 if (plugin.plugin_type === pluginTypeEnum.GENERATOR) {
                     song.generators.push(plugin);
                 } else if (plugin.plugin_type === pluginTypeEnum.EFFECT) {
