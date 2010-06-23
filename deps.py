@@ -27,7 +27,7 @@ deps = [
     'django-1.2.1',
     'south-0.7.1',
     'mutagen-1.19',
-    'waveform',
+    'waveform-0.2',
     'PyDaw-0.3.3',
     'django_extensions-0.4.1',
     'django-storages',
@@ -81,7 +81,10 @@ except ImportError:
 # PyWaveform
 try:
     import waveform
-    deps.remove('waveform')
+    if waveform.__version__ == '0.2':
+        deps.remove('waveform-0.2')
+    else:
+        sys.stderr.write("installed waveform version %s does not equal %s\n" % (waveform.__version__, '0.2'))
 except ImportError:
     pass
 
