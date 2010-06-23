@@ -7,6 +7,9 @@
 var Player = function() {
     var that;
 
+    var templateDepsDialog = "{% filter escapejs %}{% include 'player_deps_dialog.jst.html' %}{% endfilter %}";
+    var templateDepsDialogCompiled = null;
+
     // CSS-dependent stuff
     var waveformWidth = 800;
     var waveformHeight = 100;
@@ -77,6 +80,9 @@ var Player = function() {
         EFFECT: 1,
         STUDIO: 2
     };
+
+    // keep track of all the songs
+    var songs = {};
 
     var offsetTop = null;
     var volumeMouseMove = function(e) {
@@ -191,13 +197,16 @@ var Player = function() {
         }
 
         // downloading samples
-        jdom.find(".player-large .dl-samples-dialog").dialog({
-            modal: true,
-            title: "Download Project Files",
-            autoOpen: false,
-            maxWidth: 400,
-            maxHeight: 500
-        });
+        jdom.find(".player-large .dl-samples-dialog").remove();
+        jdom.find(".player-large .dl-samples-dialog-init")
+            .dialog({
+                modal: true,
+                title: "Download Project Files",
+                autoOpen: false,
+                maxWidth: 400,
+                maxHeight: 500
+            })
+            .attr('class', 'dl-samples-dialog');
 
         jdom.find(".player-large .dl-samples a").click(function() {
             var song_id = parseInt($(this).attr('data-songid'));
@@ -225,13 +234,16 @@ var Player = function() {
         });
 
         // dependencies
-        jdom.find(".player-large .dependencies-dialog").dialog({
-            modal: true,
-            title: "Song Dependencies",
-            autoOpen: false,
-            maxWidth: 400,
-            maxHeight: 500
-        });
+        jdom.find(".player-large .dependencies-dialog").remove();
+        jdom.find(".player-large .dependencies-dialog-init")
+            .dialog({
+                modal: true,
+                title: "Song Dependencies",
+                autoOpen: false,
+                maxWidth: 400,
+                maxHeight: 500
+            })
+            .attr('class', 'dependencies-dialog');
 
         jdom.find(".player-large .dependencies a").click(function() {
             var song_id = parseInt($(this).attr('data-songid'));
@@ -372,6 +384,10 @@ var Player = function() {
         return false;
     }
 
+    function compileTemplates() {
+        templateDepsDialogCompiled = Jst.compile(templateDepsDialog);
+    }
+
     that = {
         // public variables
         onProgressChange: null,
@@ -381,6 +397,7 @@ var Player = function() {
         
         // public methods
         initialize: function(readyFunc) {
+            compileTemplates();
             initializeJPlayer(readyFunc);
             cacheImages();
         },
@@ -461,6 +478,9 @@ var Player = function() {
             return anyTrue(song.plugins, isMissing) || song.studio.missing;
         },
         processSong: function(song) {
+            // sneaky, sneaky!
+            songs[song.id] = song;
+
             song.effects = [];
             song.generators = [];
             for (var i=0; i<song.plugins.length; ++i) {

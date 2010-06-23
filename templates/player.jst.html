@@ -20,28 +20,12 @@
             </span>
         <% } %>
         <% if (song.studio) { %>
-            <div id="dependencies-dialog-<%=song.id%>" class="dependencies-dialog" style="display: none;">
-                <% if (song.plugins.length > 0) { %>
-                    <h4>Studio</h4>
-                    <ul>
-                        <%
-                            var dependency = song.studio;
-                            dependency.full_url = Player.urls.studio(song.studio.identifier);
-                            dependency.plugin_type = Player.pluginTypeEnum.STUDIO;
-                        %>
-                        {% include 'dependency_line.jst.html' %}
-                    </ul>
-                    <% var plugin_list = {name: "Generators", list: song.generators}; %>
-                    {% include 'plugin_list.jst.html' %}
-                    <% var plugin_list = {name: "Effects", list: song.effects}; %>
-                    {% include 'plugin_list.jst.html' %}
-                <% } else { %>
-                    <p>No plugin dependencies.</p>
-                <% } %>
+            <div id="dependencies-dialog-<%=song.id%>" class="dependencies-dialog-init" style="display: none;">
+                {% include 'player_deps_dialog.jst.html' %}
             </div>
             <span class="dependencies"><span class="<% if (! Player.anyMissingDependencies(song)) { %>good<% } else { %>bad<% } %>"><a href="#" data-songid="<%=song.id%>">Dependencies</a></span></span>
             <% if (Player.anyAvailableSamples(song)) { %>
-                <div id="dl-samples-dialog-<%=song.id%>" class="dl-samples-dialog" style="display: none;">
+                <div id="dl-samples-dialog-<%=song.id%>" class="dl-samples-dialog-init" style="display: none;">
                     <div class="all">
                         <a class="dl-all" href="#" data-songid="<%=song.id%>">Download All Samples + Project File</a>
                     </div>

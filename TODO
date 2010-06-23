@@ -125,6 +125,7 @@
      - ability to check/uncheck plugins/studios that a user owns
      - download/purchase link if unowned
      - limit dialog height
+     - dialogs are duplicating <div>s with ids
    > ability to comment on sections of the song
    > volume control should move by offset, not absolute
    > UI for when mp3 is missing
