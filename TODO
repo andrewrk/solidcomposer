@@ -121,10 +121,7 @@
 
 = workbench =
  * song player
-   > resolve dependencies
-     - limit dialog height
    > ability to comment on sections of the song
-   > volume control should move by offset, not absolute
    > UI for when mp3 is missing
    > UI for when project file is missing
    > UI for when project file is not to be shared with people

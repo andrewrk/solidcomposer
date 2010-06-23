@@ -86,13 +86,16 @@ var Player = function() {
 
     var updateCallback = null;
 
-    var offsetTop = null;
+    var volumeOffsetTop = null;
+    var volumeStartY = null;
+    var volumeStartValue = null;
     var volumeMouseMove = function(e) {
         e.preventDefault();
 
-        var relativeY = e.pageY - offsetTop;
-        var maxY = waveformHeight-10;
-        var newVolume = 1 - (relativeY / maxY);
+        var relativeY = e.pageY - volumeOffsetTop;
+        var deltaY = relativeY - volumeStartY;
+        var deltaVolume = -deltaY / waveformHeight;
+        var newVolume = volumeStartValue + deltaVolume;
         that.setVolume(newVolume);
         updateVolume();
     }
@@ -182,7 +185,9 @@ var Player = function() {
         // volume control
         jdom.find(".player-large .volume").mousedown(function(e){
             e.preventDefault();
-            offsetTop = this.offsetTop;
+            volumeOffsetTop = this.offsetTop;
+            volumeStartY = e.pageY - volumeOffsetTop;
+            volumeStartValue = that.volume();
             $(document).bind('mousemove', volumeMouseMove);
             $(document).bind('mouseup', volumeMouseUp);
         });
