@@ -1,42 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
-from competitions.models import ThumbsUp
-
-from datetime import datetime, timedelta
-import string
-
-import os
 from django.conf import settings
 
-def create_url(title, is_unique=None):
-    """
-    creates a clean and safe url to use based on a name.
-    calls is_unique with a candidate to see if it is unique.
-    """
-    allowed_chars = string.letters + string.digits + r'_-.'
-    replacement = '_'
+from competitions.models import ThumbsUp
+from base.models import SerializableModel, create_url
 
-    # break title into url safe string
-    safe_title = ''
-    for c in title:
-        if c in allowed_chars:
-            safe_title += c
-        else:
-            safe_title += replacement
+from main import design
 
-    if is_unique is None:
-        return safe_title
+from datetime import datetime, timedelta
+import hashlib
 
-    # append digits until it is unique
-    suffix = 2
-    proposed = safe_title
-    while not is_unique(proposed):
-        proposed = safe_title + str(suffix)
-        suffix += 1
-
-    return proposed
-
-class BandMember(models.Model):
+class BandMember(SerializableModel):
     MANAGER, BAND_MEMBER, CRITIC, FAN, BANNED = range(5)
     ROLE_CHOICES = (
         (MANAGER, 'Manager'), # full privileges
@@ -44,6 +18,12 @@ class BandMember(models.Model):
         (CRITIC, 'Critic'), # can view and post comments in project manager
         (FAN, 'Fan'), # regular site user
         (BANNED, 'Banned'), # this person is blacklisted
+    )
+
+    PUBLIC_ATTRS = (
+        'user',
+        'band',
+        'role',
     )
 
     user = models.ForeignKey(User)
@@ -54,7 +34,7 @@ class BandMember(models.Model):
         return u'%s - %s: %s' % (str(self.band), dict(ROLE_CHOICES)[self.role], str(self.user))
 
 
-class Band(models.Model):
+class Band(SerializableModel):
     FULL_OPEN, OPEN_SOURCE, TRANSPARENT, NO_CRITIQUE, PRIVATE = range(5)
     OPENNESS_CHOICES = (
         # completely open. anyone with an account and not banned can contribute.
@@ -68,6 +48,18 @@ class Band(models.Model):
         (NO_CRITIQUE, 'Critiquing disabled'),
         # private band, the public can only see what the band releases
         (PRIVATE, 'Private'),
+    )
+
+    PUBLIC_ATTRS = (
+        'title',
+        'url',
+        'openness',
+        'bio',
+    )
+    OWNER_ATTRS = (
+        'concurrent_editing',
+        'total_space',
+        'used_space',
     )
 
     # if you want to change the title, you need to do band.rename(new_title)
@@ -136,10 +128,18 @@ class Band(models.Model):
         return self.title
 
 
-class AccountPlan(models.Model):
+class AccountPlan(SerializableModel):
     """
     The payment plan and features that a user has
     """
+
+    PUBLIC_ATTRS = (
+        'title',
+        'usd_per_month',
+        'total_space',
+        'band_count_limit',
+    )
+
     title = models.CharField(max_length=50)
     # how much the user has to pay per month
     usd_per_month = models.FloatField()
@@ -152,16 +152,24 @@ class AccountPlan(models.Model):
         return "%s - $%s/mo" % (self.title, self.usd_per_month)
 
 
-class Profile(models.Model):
-    UNSAFE_KEYS = (
-        'activate_code',
+class Profile(SerializableModel):
+    PUBLIC_ATTRS = (
+        'user',
+        'solo_band',
+        'date_activity',
+        'bio',
+    )
+    OWNER_ATTRS = (
         'activated',
         'competitions_bookmarked',
         'plan',
-        'total_space',
-        'used_space',
+        'purchased_bytes',
+        'usd_per_month',
+        'band_count_limit',
+        'plugins',
+        'studios',
+        'assume_uploaded_plugins_owned',
     )
-
     user = models.ForeignKey(User, unique=True)
     solo_band = models.ForeignKey(Band)
     activated = models.BooleanField()
@@ -219,7 +227,41 @@ class Profile(models.Model):
         "Save without any auto field population"
         super(Profile, self).save(*args, **kwargs)
 
-class Song(models.Model):
+    def gravatar_url(self, size):
+        return "http://www.gravatar.com/avatar/%s?s=%s&r=pg&d=identicon" % (hashlib.md5(self.user.email).hexdigest(), str(size))
+
+    def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
+        data = super(Profile, self).to_dict(access, chains)
+        # add user data to it
+        if access >= SerializableModel.PUBLIC:
+            data['username'] = self.user.username
+            data['id'] = self.user.id
+            data['get_points'] = self.get_points()
+            data['gravatar_icon'] = self.gravatar_url(design.gravatar_icon_size)
+            data['gravatar'] = self.gravatar_url(design.gravatar_large_size)
+        if access >= SerializableModel.OWNER:
+            data['email'] = self.user.email
+        return data
+
+class Song(SerializableModel):
+    PUBLIC_ATTRS = (
+        'mp3_file',
+        'waveform_img',
+        'is_open_source',
+        'owner',
+        'band',
+        'title',
+        'album',
+        'length',
+        'comments',
+    )
+
+    OWNER_ATTRS = (
+        'source_file',
+        'studio',
+        'plugins',
+    )
+
     # filename where mp3 can be found
     mp3_file = models.CharField(max_length=500, null=True, blank=True)
 
@@ -272,12 +314,35 @@ class Song(models.Model):
     def _save(self, *args, **kwargs):
         "Save without any auto field population"
         super(Song, self).save(*args, **kwargs)
+    
+    def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
+        data = super(Song, self).to_dict(access, chains)
+        forwards, new_chains = self.process_chains(chains)
+        new_access = self.process_access(access)
+        if self.is_open_source:
+            data['source_file'] = self.source_file
+            if self.studio is not None:
+                if 'studio' in forwards:
+                    data['studio'] = self.studio.to_dict(new_access, new_chains)
+                else:
+                    data['studio'] = self.studio.pk
+            data['studio'] = None
+            if 'plugins' in forwards:
+                data['plugins'] = [obj.to_dict(new_access, new_chains) for obj in self.plugins.all()]
+            else:
+                data['plugins'] = [obj.pk for obj in self.plugins.all()]
+        return data
 
-class SongCommentThread(models.Model):
+class SongCommentThread(SerializableModel):
     """
     A thread, which contains comments about a particular position
     in the Song.
     """
+    PUBLIC_ATTRS = (
+        'song',
+        'position',
+    )
+
     song = models.ForeignKey('Song')
 
     # how many seconds into the song the comment was made.
@@ -287,10 +352,18 @@ class SongCommentThread(models.Model):
     def __unicode__(self):
         return "%s at position %s" % (entry, position)
 
-class SongComment(models.Model):
+class SongComment(SerializableModel):
     """
     A comment in a SongCommentThread
     """
+
+    PUBLIC_ATTRS = (
+        'date_created',
+        'date_edited',
+        'owner',
+        'content',
+    )
+
     date_created = models.DateTimeField()
     date_edited = models.DateTimeField()
 
@@ -310,7 +383,11 @@ class SongComment(models.Model):
         super(SongComment, self).save(*args, **kwargs)
     
 
-class Tag(models.Model):
+class Tag(SerializableModel):
+    PUBLIC_ATTRS = (
+        'title',
+    )
+
     title = models.CharField(max_length=30)
 
     def __unicode__(self):

@@ -40,7 +40,7 @@
                 <div id="missing-mp3-<%=i%>" class="missing-thing">
                     <h2><a href="#">Missing Project File</a></h2>
                     <div class="missing-project-form">
-                        <form id="missing-project-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_upload_project %}">
+                        <form id="missing-project-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_provide_project %}">
                             <fieldset>
                                 <input type="hidden" name="version" value="<%=version.id%>" />
                                 <table>

@@ -23,7 +23,6 @@
    # fans
  * when you click something to load the next page, replace the contents with
    the loading thing
- * refactor to explicitly have to add data to json instead of UNSAFE_KEYS
  * use gravatar for avatars
  * password recovery
  * ability to change password
@@ -124,8 +123,6 @@
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc
      * http://attacklab.net/showdown/
- * integrate into arena
-   > checkbox next to project source file "Share this with the world"
  * song player
    > ability to comment on sections of the song
    > UI for when mp3 is missing

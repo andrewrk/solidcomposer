@@ -12,7 +12,3 @@ bad_band_id = "Bad band id."
 bad_band_id = "Bad version id."
 bad_song_id = "Bad song id."
 bad_dependency_id = "Bad dependency id."
-
-# ui elements
-project_gravatar_size = 128
-

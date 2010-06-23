@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from chat.models import *
-from main.common import safe_model_to_dict, json_response
+from main.common import json_response
 from django.conf import settings
 
 from datetime import datetime, timedelta
@@ -17,12 +17,6 @@ def ajax_hear(request):
         room_id = 0
     room = get_object_or_404(ChatRoom, id=room_id)
 
-    def room_data(x):
-        d = safe_model_to_dict(x)
-        d['start_date'] = x.start_date
-        d['end_date'] = x.end_date
-        return d
-
     # make sure user has permission to be in this room
     data = {
         'user': {
@@ -30,23 +24,27 @@ def ajax_hear(request):
             'permission_read': room.permission_to_hear(request.user),
             'permission_write': room.permission_to_chat(request.user),
         },
-        'room': room_data(room),
+        'room': room.to_dict(),
         'messages': [],
     }
 
     if request.user.is_authenticated():
-        data['user']['get_profile'] = safe_model_to_dict(request.user.get_profile())
-        data['user']['username'] = request.user.username
+        data['user'].update({
+            'username': request.user.username,
+        })
 
     if data['user']['permission_read']:
         def add_to_message(msg):
-            d = safe_model_to_dict(msg)
-            d['author'] = {
-                'username': msg.author.username,
-                'id': msg.author.id,
+            return {
+                'id': msg.id,
+                'type': msg.type,
+                'author': {
+                    'username': msg.author.username,
+                    'id': msg.author.id,
+                },
+                'message': msg.message,
+                'timestamp': msg.timestamp,
             }
-            d['timestamp'] = msg.timestamp
-            return d
 
         if last_message_str == 'null':
             # get entire log for this chat.
@@ -133,9 +131,5 @@ def ajax_onliners(request):
         return json_response(data)
 
     expire_date = datetime.now() - timedelta(seconds=settings.CHAT_TIMEOUT)
-    def person_data(x):
-        d = safe_model_to_dict(x)
-        d['get_profile']['get_points'] = x.get_profile().get_points()
-        return d
-    data = [person_data(x.person) for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]
+    data = [x.person.get_profile().to_dict() for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]
     return json_response(data)

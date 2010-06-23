@@ -140,36 +140,22 @@ def ajax_compo(request, id):
     }
 
     # entries. if competition is closed, sort by vote count.
-    now = datetime.now()
-    compo_closed = compo.isClosed()
-    def add_to_entry(entry):
-        d = safe_model_to_dict(entry)
-        d['submit_date'] = entry.submit_date
-        d['edit_date'] = entry.edit_date
-        d['owner'] = safe_model_to_dict(entry.owner)
-        d['owner']['solo_band'] = safe_model_to_dict(entry.owner.get_profile().solo_band)
-        d['song'] = safe_model_to_dict(entry.song)
-        d['song']['band'] = safe_model_to_dict(entry.song.band)
-        if compo_closed:
-            d['vote_count'] = ThumbsUp.objects.filter(entry=entry).count()
-        return d
-
-    data['entries'] = [add_to_entry(x) for x in compo.entry_set.all()]
+    data['entries'] = [x.to_dict(chains=['owner.solo_band', 'song.band']) for x in compo.entry_set.all()]
 
     if request.user.is_authenticated():
         max_votes = max_vote_count(compo.entry_set.count())
         used_votes = ThumbsUp.objects.filter(owner=request.user, entry__competition=compo)
 
-        data['user'].update(safe_model_to_dict(request.user))
+        data['user'].update(request.user.get_profile().to_dict());
         data['votes'] = {
             'max': max_votes,
-            'used': [safe_model_to_dict(x) for x in used_votes],
+            'used': [x.to_dict() for x in used_votes],
             'left': max_votes - used_votes.count(),
         }
         user_entries = Entry.objects.filter(competition=compo, owner=request.user)
         data['submitted'] = (user_entries.count() > 0)
         if user_entries.count() > 0:
-            data['user_entry'] = safe_model_to_dict(user_entries[0].song)
+            data['user_entry'] = user_entries[0].song.to_dict()
 
     return json_response(data)
 
@@ -193,7 +179,7 @@ def ajax_bookmark(request, id):
     return json_response(data)
 
 def compo_to_dict(compo, user):
-    data = safe_model_to_dict(compo)
+    data = compo.to_dict()
 
     data['have_theme'] = compo.theme != ''
     data['have_rules'] = compo.rules != ''

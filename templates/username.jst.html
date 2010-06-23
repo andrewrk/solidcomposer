@@ -1,4 +1,4 @@
 <img class="gravatar" src="<%=the_user.gravatar_icon%>" alt="" />
 <a class="username" href="<%=urls.userpage(the_user.username)%>"><%= the_user.username %></a>
 <span class="points"><img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" />
-x <%= the_user.get_profile.get_points %></span>
+x <%= the_user.get_points %></span>

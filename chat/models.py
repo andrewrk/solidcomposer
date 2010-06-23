@@ -3,10 +3,12 @@ from django.contrib.auth.models import User
 
 from datetime import datetime
 
+from base.models import SerializableModel
+
 SYSTEM, ACTION, MESSAGE, JOIN, LEAVE, NOTICE = range(6)
 OPEN, WHITELIST, BLACKLIST = range(3)
 
-class ChatRoom(models.Model):
+class ChatRoom(SerializableModel):
     """
     ChatRoom contains ChatMessages and manages who is allowed to be in it
     """
@@ -15,10 +17,14 @@ class ChatRoom(models.Model):
         (WHITELIST, 'whitelist'),
         (BLACKLIST, 'blacklist'),
     )
-
-    UNSAFE_KEYS = (
+    OWNER_ATTRS = (
         'whitelist',
         'blacklist',
+    )
+    PUBLIC_ATTRS = (
+        'start_date',
+        'end_date',
+        'permission_type',
     )
 
     permission_type = models.IntegerField(choices=PERMISSION_TYPES, default=OPEN)
@@ -75,7 +81,7 @@ class ChatRoom(models.Model):
     def __unicode__(self):
         return "ChatRoom %i" % self.id
 
-class ChatMessage(models.Model):
+class ChatMessage(SerializableModel):
     """
     A message that belongs to a ChatRoom
     """
@@ -87,6 +93,14 @@ class ChatMessage(models.Model):
         (JOIN, 'join'),
         (LEAVE, 'leave'),
         (NOTICE, 'notice'),
+    )
+
+    PUBLIC_ATTRS = (
+        'room',
+        'type',
+        'author',
+        'message',
+        'timestamp',
     )
 
     room = models.ForeignKey('ChatRoom')
@@ -119,10 +133,16 @@ class ChatMessage(models.Model):
             return 'ACTION: %s > %s' % (self.author, self.message[:30])
         return self.message[:30]
 
-class Appearance(models.Model):
+class Appearance(SerializableModel):
     """
     An Appearance tracks when a person was seen in a ChatRoom.
     """
+    PUBLIC_ATTRS = (
+        'person',
+        'room',
+        'timestamp',
+    )
+
     person = models.ForeignKey(User)
     room = models.ForeignKey('ChatRoom')
     timestamp = models.DateTimeField(editable=False)

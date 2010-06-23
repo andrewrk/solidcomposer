@@ -16,17 +16,17 @@ from django.conf import settings
 from datetime import datetime, timedelta
 
 def ajax_login_state(request):
+    user = request.user
+
     # build the object
     data = {
         'user': {
-            'is_authenticated': request.user.is_authenticated(),
+            'is_authenticated': user.is_authenticated(),
         },
     }
 
-    if request.user.is_authenticated():
-        data['user'].update(safe_model_to_dict(request.user))
-        data['user']['get_profile']['get_points'] = request.user.get_profile().get_points()
-        data['user']['gravatar_icon'] = gravatar_url(request.user.email, design.gravatar_icon_size)
+    if user.is_authenticated():
+        data['user'].update(user.get_profile().to_dict())
 
     return json_response(data)
 

@@ -16,9 +16,6 @@ from main.models import TempFile
 
 import os
 
-def gravatar_url(email, size):
-    return "http://www.gravatar.com/avatar/%s?s=%s&r=pg&d=identicon" % (hashlib.md5(email).hexdigest(), str(size))
-
 def file_hash(filename):
     md5 = hashlib.md5()
     f = open(filename, 'rb')
@@ -99,40 +96,6 @@ def json_failure(reason):
         "success": False,
         "reason": reason,
     })
-
-def remove_unsafe_keys(hash, model):
-    """
-    look for UNSAFE_KEYS in the model. if it exists, delete all those entries
-    from the hash.
-    """
-    if issubclass(model, User):
-        check = (
-            'password',
-            'user_permissions',
-            'is_user',
-            'is_staff'
-            'is_superuser',
-            'email',
-            'first_name',
-            'last_name',
-            'groups',
-        )
-    else:
-        try:
-            check = model.UNSAFE_KEYS
-        except AttributeError:
-            return
-
-    for key in check:
-        if hash.has_key(key):
-            del hash[key]
-        
-def safe_model_to_dict(model_instance):
-    hash = model_to_dict(model_instance)
-    remove_unsafe_keys(hash, type(model_instance))
-    if issubclass(type(model_instance), User):
-        hash['get_profile'] = safe_model_to_dict(model_instance.get_profile())
-    return hash
 
 def zip_walk(zip_filename, callback):
     """

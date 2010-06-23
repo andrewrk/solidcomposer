@@ -63,24 +63,15 @@ def ajax_home(request):
 
 
     if data['user']['is_authenticated']:
-        data['user'].update(safe_model_to_dict(request.user))
+        data['user'].update(request.user.get_profile().to_dict())
 
         # bands the user is a part of
-        def band_data(member):
-            d = safe_model_to_dict(member.band)
-            d['role'] = member.role
-            return d
         members = BandMember.objects.filter(user=request.user)
-        data['bands'] = [band_data(x) for x in members]
+        data['members'] = [x.to_dict(chains=['band']) for x in members]
 
         # invitations
-        def invite_data(invite):
-            d = safe_model_to_dict(invite)
-            d['band'] = safe_model_to_dict(invite.band)
-            return d
         invites = BandInvitation.objects.filter(invitee=request.user)
-        data['invites'] = [invite_data(x) for x in invites]
-
+        data['invites'] = [x.to_dict(chains=['band']) for x in invites]
 
     return json_response(data)
 
@@ -246,12 +237,11 @@ def ajax_project_list(request):
     paginator = Paginator(projects, settings.ITEMS_PER_PAGE)
 
     # build the json object
-
     data = {
         'projects': [project_to_dict(x, request.user) for x in paginator.page(page_number).object_list],
         'page_count': paginator.num_pages,
         'page_number': page_number,
-        'band': safe_model_to_dict(band),
+        'band': band.to_dict(access=SerializableModel.OWNER),
     }
 
     return json_success(data)
@@ -297,7 +287,7 @@ def ajax_project(request):
             last_version_id = 0
         data['versions'] = [version_to_dict(x, request.user) for x in ProjectVersion.objects.filter(project=project, id__gt=last_version_id)]
 
-    data['user'].update(user_to_dict(request.user))
+    data['user'].update(request.user.get_profile().to_dict())
 
     data['success'] = True
     return json_response(data)
@@ -371,6 +361,10 @@ def ajax_upload_samples(request):
     }
     
     return json_response(data)
+
+def ajax_provide_project(request):
+    "todo"
+    pass
 
 @login_required
 def band_settings(request, band_id_str):
@@ -519,30 +513,20 @@ def studio(request, identifier):
     return render_to_response('workbench/studio.html', locals(), context_instance=RequestContext(request))
 
 
-
-
-
-
-def user_to_dict(x):
-    d = safe_model_to_dict(x)
-    d['gravatar'] = gravatar_url(x.email, design.project_gravatar_size)
-    d['get_profile']['get_points'] = x.get_profile().get_points()
-    return d
-
 def song_to_dict(song, user):
     profile = user.get_profile()
 
-    d = safe_model_to_dict(song)
-    d['owner'] = user_to_dict(song.owner)
+    d = song.to_dict()
+    d['owner'] = song.owner.get_profile().to_dict()
     if song.studio:
-        d['studio'] = safe_model_to_dict(song.studio)
+        d['studio'] = song.studio.to_dict()
         d['studio']['logo_16x16'] = song.studio.logo_16x16.url
         d['studio']['missing'] = song.studio not in profile.studios.all()
     else:
         d['studio'] = None
 
     def sample_to_dict(x):
-        d = safe_model_to_dict(x)
+        d = x.to_dict()
         d['missing'] = x.uploaded_sample is None
         return d
 
@@ -550,7 +534,7 @@ def song_to_dict(song, user):
 
     owned_plugins = profile.plugins.all()
     def plugin_to_dict(x):
-        d = safe_model_to_dict(x)
+        d = x.to_dict()
         d['missing'] = x not in owned_plugins
         return d
 
@@ -572,13 +556,13 @@ def project_to_dict(x, user):
         'date_activity': x.date_activity,
         'checked_out_to': None,
         'visible': x.visible,
-        'tags': [safe_model_to_dict(tag) for tag in x.tags.all()],
+        'tags': [tag.to_dict() for tag in x.tags.all()],
         'scrap_voters': x.scrap_voters.count(),
         'promote_voters': x.promote_voters.count(),
         'id': x.id,
-        'band': safe_model_to_dict(x.band),
+        'band': x.band.to_dict(SerializableModel.OWNER),
     }
     if x.checked_out_to is not None:
-        d['checked_out_to'] = safe_model_to_dict(x.checked_out_to)
+        d['checked_out_to'] = x.checked_out_to.to_dict()
 
     return d

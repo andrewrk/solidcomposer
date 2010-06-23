@@ -2,9 +2,9 @@
     <div id="bands">
         <a class="create-band" href="#">Create a New Band</a>
         <ul>
-            <% $.each(json.bands, function(i, item){ %>
+            <% $.each(json.members, function(i, member){ var band = member.band; %>
                 <li class="band">
-                    <a href="<%=urls.band(item.id)%>"><%=item.title%></a>
+                    <a href="<%=urls.band(band.id)%>"><%=band.title%></a>
                 </li>
             <% }); %>
             <% $.each(json.invites, function(i, item){ %>

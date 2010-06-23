@@ -69,7 +69,7 @@ var Chat = function() {
         var new_message = {
             'room': chatroom_id,
             'type': that.message_type.MESSAGE,
-            'author': state.user.get_profile,
+            'author': state.user,
             'message': msg_to_post,
             'timestamp': Time.serverTime(new Date())
         };
@@ -374,11 +374,11 @@ var Chat = function() {
             return true;
         },
 
-        beforeChatRoomActive: function (room) {
-            if (room.start_date === null) {
+        beforeChatRoomActive: function () {
+            if (state.room.start_date === null) {
                 return false;
             }
-            return (new Date()) < Time.localTime(room.start_date);
+            return (new Date()) < Time.localTime(state.room.start_date);
         },
 
         afterChatRoomActive: function (room) {

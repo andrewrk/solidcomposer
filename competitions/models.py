@@ -1,12 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User
+from base.models import SerializableModel
 
 from datetime import datetime
 
-class Competition(models.Model):
-    UNSAFE_KEYS = (
-        'theme', # can only see theme if preview_theme
-        'rules', # can only see rules if preview_rules
+class Competition(SerializableModel):
+    PUBLIC_ATTRS = (
+        'title',
+        'preview_theme',
+        'preview_rules',
+        'start_date',
+        'submit_deadline',
+        'have_listening_party',
+        'listening_party_start_date',
+        'listening_party_end_date',
+        'vote_deadline',
+        'vote_period_length',
+        'chat_room',
+    )
+    OWNER_ATTRS = (
+        'theme',
+        'rules',
     )
 
     title = models.CharField(max_length=256)
@@ -79,10 +93,22 @@ class Competition(models.Model):
         "Save without any auto field population"
         super(Competition, self).save(*args, **kwargs)
 
-class ThumbsUp(models.Model):
+    def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
+        data = super(Competition, self).to_dict(access, chains)
+        if self.themeVisible():
+            data['theme'] = self.theme
+        if self.rulesVisible():
+            data['rules'] = self.rules
+        return data
+
+class ThumbsUp(SerializableModel):
     """
     A ThumbsUp is something a user gives to a competition entry.
     """
+    PUBLIC_ATTRS = (
+        'owner',
+        'entry',
+    )
 
     owner = models.ForeignKey(User)
     entry = models.ForeignKey('Entry')
@@ -100,10 +126,18 @@ class ThumbsUp(models.Model):
         "Save without any auto field population"
         super(ThumbsUp, self).save(*args, **kwargs)
 
-class Entry(models.Model):
+class Entry(SerializableModel):
     """
     An entrant submits an Entry to a Competition.
     """
+    PUBLIC_ATTRS = (
+        'competition',
+        'owner',
+        'song',
+        'submit_date',
+        'edit_date',
+    )
+
     competition = models.ForeignKey(Competition)
     owner = models.ForeignKey(User)
     song = models.ForeignKey('main.Song')
@@ -122,3 +156,8 @@ class Entry(models.Model):
     def _save(self, *args, **kwargs):
         super(Entry, self).save(*args, **kwargs)
 
+    def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
+        data = super(Entry, self).to_dict(access, chains)
+        if self.competition.isClosed():
+            data['vote_count'] = ThumbsUp.objects.filter(entry=self).count()
+        return data

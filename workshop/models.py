@@ -1,12 +1,27 @@
 from django.db import models
 from django.contrib.auth.models import User
 from main.models import *
+from base.models import SerializableModel
 
-class BandInvitation(models.Model):
+class BandInvitation(SerializableModel):
     """
     An invitation from a user to join their band. It can be a code, which is
     redeemed by hyperlink, or a direct invitation.
     """
+
+    PUBLIC_ATTRS = (
+        'inviter',
+        'band',
+        'timestamp',
+        'role',
+        'expire_date',
+    )
+
+    OWNER_ATTRS = (
+        'count',
+        'invitee',
+    )
+
     # who sent the invite
     inviter = models.ForeignKey(User, related_name="inviter")
     band = models.ForeignKey(Band)
@@ -58,10 +73,17 @@ class SampleFile(models.Model):
     def __unicode__(self):
         return self.path
 
-class UploadedSample(models.Model):
+class UploadedSample(SerializableModel):
     """
     A sample that a user has uploaded for a band. Links to a SampleFile.
     """
+
+    PUBLIC_ATTRS = (
+        'title',
+        'user',
+        'band',
+    )
+
     # the file title of the dependency. it may contain path 
     # separators in the form of forward slashes.
     title = models.CharField(max_length=512)
@@ -78,11 +100,18 @@ class UploadedSample(models.Model):
     def __unicode__(self):
         return "%s (%s): %s" % (self.user.username, self.band.title, self.title)
 
-class SampleDependency(models.Model):
+class SampleDependency(SerializableModel):
     """
     Represents the title of a sample, used in a song.
     Links to an UploadedSample if it is resolved.
     """
+
+    PUBLIC_ATTRS = (
+        'title',
+        'uploaded_sample',
+        'song',
+    )
+
     # the file title of the dependency. it may contain path 
     # separators in the form of forward slashes.
     title = models.CharField(max_length=512)
@@ -100,7 +129,7 @@ class SampleDependency(models.Model):
             resolution = "resolved"
         return "%s (%s)" % (self.title, resolution)
 
-class PluginDepenency(models.Model):
+class PluginDepenency(SerializableModel):
     # studio is only used when talking about users having or not having
     # dependencies.
     GENERATOR, EFFECT, STUDIO = range(3)
@@ -108,6 +137,15 @@ class PluginDepenency(models.Model):
     PLUGIN_TYPE_CHOICES = (
         (GENERATOR, 'Generator'),
         (EFFECT, 'Effect'),
+    )
+
+    PUBLIC_ATTRS = (
+        'plugin_type',
+        'title',
+        'url',
+        'external_url',
+        'price',
+        'comes_with_studio',
     )
 
     plugin_type = models.IntegerField(choices=PLUGIN_TYPE_CHOICES)
@@ -148,7 +186,13 @@ class PluginDepenency(models.Model):
     def __unicode__(self):
         return self.title
 
-class ProjectVersion(models.Model):
+class ProjectVersion(SerializableModel):
+    PUBLIC_ATTRS = (
+        'project',
+        'song',
+        'version',
+    )
+
     project = models.ForeignKey('Project')
     # comments, title, owner, and timestamp are in the song
     song = models.ForeignKey(Song)
@@ -169,7 +213,22 @@ class ProjectVersion(models.Model):
     def __unicode__(self):
         return "%s version %i" % (self.song.title, self.version)
 
-class Project(models.Model):
+class Project(SerializableModel):
+    PUBLIC_ATTRS = (
+        'title',
+        'latest_version',
+        'band',
+        'date_activity',
+        'checked_out_to',
+        'visible',
+        'forked_from',
+        'merged_from',
+        'tags',
+        'scrap_voters',
+        'promote_voters',
+        'subscribers',
+    )
+
     # title is simply a cache of the latest version's song's title
     title = models.CharField(max_length=100, null=True, blank=True)
     # latest_version is a cache of the latest version
@@ -207,7 +266,21 @@ class Project(models.Model):
     def _save(self, *args, **kwargs):
         super(Project, self).save(*args, **kwargs)
 
-class Studio(models.Model):
+class Studio(SerializableModel):
+    PUBLIC_ATTRS = (
+        'title',
+        'identifier',
+        'external_url',
+        'price',
+        'canReadFile',
+        'canMerge',
+        'canRender',
+        'info',
+        'logo_large',
+        'logo_16x16',
+    )
+
+
     # e.g. FL Studio
     title = models.CharField(max_length=100)
 
