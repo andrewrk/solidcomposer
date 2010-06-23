@@ -253,7 +253,7 @@ def handle_project_file(filename, user, song):
         # move to storage
         move_to_storage(filename, song.source_file)
 
-def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album=None):
+def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album=""):
     """
     inputs: 
         user:               the person uploading stuff

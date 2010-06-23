@@ -124,7 +124,6 @@
    > ability to comment on sections of the song
    > UI for when mp3 is missing
      - "provide an mp3"
-     - allow uploads without mp3 preview in workshop
    > UI for when project file is missing
    > UI for when project file is not to be shared with people
    > dependencies dialog: have a samples link which closes the dialog and opens the samples dialog.
