@@ -25,12 +25,13 @@ def obfuscated_url(band):
     return os.path.join('band', band.url, create_hash(16))   
 
 def generate_waveform(song, mp3_file):
-    png_tmp_handle = tempfile.NamedTemporaryFile(mode='r+b', suffix='.png')
+    suffix = '.png'
+    png_tmp_handle = tempfile.NamedTemporaryFile(mode='r+b', suffix=suffix)
     waveform.draw(mp3_file, png_tmp_handle.name, design.waveform_size,
         fgGradientCenter=design.waveform_center_color,
         fgGradientOuter=design.waveform_outer_color)
     # move to storage
-    song.waveform_img = os.path.join(obfuscated_url(song.band), clean_filename(song.displayString()))
+    song.waveform_img = os.path.join(obfuscated_url(song.band), clean_filename(song.displayString())+suffix)
     import storage
     storage.engine.store(png_tmp_handle.name, song.waveform_img, reducedRedundancy=True)
     # clean up
