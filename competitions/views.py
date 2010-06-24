@@ -168,7 +168,6 @@ def song_to_dict(song, user):
     profile = user.get_profile()
 
     d = song.to_dict(chains=['owner', 'studio', 'band'])
-    d['source_file'] = song.source_file
     if d.has_key('studio'):
         d['studio']['logo_16x16'] = song.studio.logo_16x16.url
         d['studio']['missing'] = song.studio not in profile.studios.all()
