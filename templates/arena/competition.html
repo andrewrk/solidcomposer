@@ -7,6 +7,7 @@
 {% block extra_header %}
     {{ block.super }}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/webtoolkit.aim.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/showdown-0.9.min.js"></script>
     <script type="text/javascript">
         var competition_id = {{ competition.id }};
         var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{% else %}null{% endif %};

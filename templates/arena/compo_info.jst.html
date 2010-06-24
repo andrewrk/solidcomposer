@@ -4,34 +4,38 @@
         <div id="theme">
             <h3>Theme
             <span class="showhide">(<a href="#"><% if (theme_shown) { %>hide<% } else { %>show<% } %></a>)</span></h3>
-            <p<% if (! theme_shown) { %> style="display: none;"<% } %>>
+            <div class="container"
+                <% if (! theme_shown) { %> style="display: none;"<% } %>
+            >
             <% if (json.compo.preview_theme) { %>
-                <%= json.compo.theme %>
+                <%+ Showdown.instance.makeHtml(json.compo.theme) %>
             <% } else { %>
                 <% if (Time.secondsUntil(json.compo.start_date) > 0) { %>
                     The theme will be announced as soon as the competition starts.
                 <% } else { %>
-                    <%= json.compo.theme %>
+                    <%+ Showdown.instance.makeHtml(json.compo.theme) %>
                 <% } %>
             <% } %>
-            </p>
+            </div>
         </div>
     <% } %>
     <% if (json.compo.have_rules) { %>
         <div id="rules">
             <h3>Rules
             <span class="showhide">(<a href="#"><% if (rules_shown) { %>hide<% } else { %>show<% } %></a>)</span></h3>
-            <p<% if (! rules_shown) { %> style="display: none;"<% } %>>
+            <div class="container"
+                <% if (! rules_shown) { %> style="display: none;"<% } %>
+            >
             <% if (json.compo.preview_rules) { %>
-                <%= json.compo.rules %>
+                <%+ Showdown.instance.makeHtml(json.compo.rules) %>
             <% } else { %>
                 <% if (Time.secondsUntil(json.compo.start_date) > 0) { %>
                     The rules will be announced as soon as the competition starts.
                 <% } else { %>
-                    <%= json.compo.rules %>
+                    <%+ Showdown.instance.makeHtml(json.compo.rules) %>
                 <% } %>
             <% } %>
-            </p>
+            </div>
         </div>
     <% } %>
     <div class="clear"></div>

@@ -7,7 +7,7 @@
         <h4>Author Comments</h4>
         <div class="inside">
             <p>
-                <%= entry.song.comments %>
+                <%+ Showdown.instance.makeHtml(entry.song.comments) %>
             </p>
         </div>
     </div>

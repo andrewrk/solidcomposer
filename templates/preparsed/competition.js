@@ -270,14 +270,14 @@ var SCCompo = function () {
         $("#info").html(Jst.evaluate(template_info_s, state));
 
         // show/hide theme/rules
-        displayCorrectly($("#theme p"), state.theme_shown);
+        displayCorrectly($("#theme div.container"), state.theme_shown);
         $("#theme .showhide a").click(function() {
             state.theme_shown = !state.theme_shown;
             updateCompoInfo();
             return false;
         });
 
-        displayCorrectly($("#rules p"), state.rules_shown);
+        displayCorrectly($("#rules div.container"), state.rules_shown);
         $("#rules .showhide a").click(function() {
             state.rules_shown = !state.rules_shown;
             updateCompoInfo();
