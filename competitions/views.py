@@ -14,11 +14,12 @@ from competitions.models import *
 from competitions.forms import *
 from competitions import design
 from chat.models import *
+from workshop.models import *
 from django.conf import settings
 
 from datetime import datetime, timedelta
 
-from main.uploadsong import upload_song
+from main.uploadsong import upload_song, handle_project_upload
 
 @json_login_required
 @json_post_required
@@ -48,67 +49,108 @@ def ajax_submit_entry(request):
     source_file = request.FILES.get('entry-file-source')
     is_open_source = request.POST.get('entry-open-source', False)
 
+    entries = Entry.objects.filter(owner=request.user, competition=compo)
+    resubmitting = entries.count() > 0
+
     # make sure files are small enough
-    if mp3_file is None:
+    if not resubmitting and mp3_file is None:
         return json_failure(design.mp3_required)
 
-    if mp3_file.size > settings.FILE_UPLOAD_SIZE_CAP:
+    if mp3_file is not None and mp3_file.size > settings.FILE_UPLOAD_SIZE_CAP:
         return json_failure(design.mp3_too_big)
 
-    if not source_file is None:
+    if source_file is not None:
         if source_file.size > settings.FILE_UPLOAD_SIZE_CAP:
             return json_failure(design.source_file_too_big)
 
     if title == '':
         return json_failure(design.entry_title_required)
 
-    result = upload_song(request.user,
-        file_mp3_handle=mp3_file,
-        file_source_handle=source_file, 
-        max_song_len=settings.COMPO_ENTRY_MAX_LEN,
-        band=request.user.get_profile().solo_band,
-        song_title=title,
-        song_album=compo.title)
+    if mp3_file is not None:
+        band = request.user.get_profile().solo_band
+        result = upload_song(request.user,
+            file_mp3_handle=mp3_file,
+            file_source_handle=source_file, 
+            max_song_len=settings.COMPO_ENTRY_MAX_LEN,
+            band=band,
+            song_title=title,
+            song_album=compo.title)
 
-    if not result['success']:
-        return json_failure(result['reason'])
+        if not result['success']:
+            return json_failure(result['reason'])
 
-    song = result['song']
-    song.is_open_source = is_open_source
+        song = result['song']
+        song.is_open_source = is_open_source
+        song.comments = comments
+        song.save()
 
-    entries = Entry.objects.filter(owner=request.user, competition=compo)
-    if entries.count() > 0:
-        # resubmitting. edit old entry and song
+        # make a new version and attach that to the entry
+        if resubmitting:
+            entry = entries[0]
+
+            project = Project.objects.get(latest_version__song=entry.song)
+
+            # create new version
+            version = ProjectVersion()
+            version.project = project
+            version.song = song
+            version.version = project.latest_version.version + 1
+            version.saveNewVersion()
+
+            old_length = entry.song.length
+            buffer_time = 0
+        else:
+            # create the project
+            project = Project()
+            project.band = band
+            project.save()
+
+            # create the first version
+            version = ProjectVersion()
+            version.project = project
+            version.song = song
+            version.version = 1
+            version.saveNewVersion()
+
+            # subscribe the creator
+            project.subscribers.add(request.user)
+            project.save()
+
+            # create new entry
+            entry = Entry()
+            entry.competition = compo
+            entry.owner = request.user
+
+            old_length = 0
+            buffer_time = settings.LISTENING_PARTY_BUFFER_TIME
+
+        entry.song = song
+        entry.save()
+
+        # update competition dates based on this newfound length 
+        vote_period_delta = timedelta(seconds=compo.vote_period_length)
+        if compo.have_listening_party:
+            compo.listening_party_end_date += timedelta(seconds=(song.length-old_length+buffer_time))
+            compo.vote_deadline = compo.listening_party_end_date + vote_period_delta
+        else:
+            compo.vote_deadline = compo.submit_deadline + vote_period_delta
+        compo.save()
+
+        chatroom = compo.chat_room
+        chatroom.end_date = compo.listening_party_end_date + timedelta(hours=1)
+        chatroom.save()
+    else:
+        # only providing source and possibly renaming.
         entry = entries[0]
-        old_length = entry.song.length
-        buffer_time = 0
-        entry.song.delete()
-    else:
-        # create new entry
-        entry = Entry()
-        old_length = 0
-        buffer_time = settings.LISTENING_PARTY_BUFFER_TIME
+        song = entry.song
 
-    song.comments = comments
-    song.save()
+        if source_file is not None:
+            handle_project_upload(source_file, request.user, song)
 
-    entry.competition = compo
-    entry.owner = request.user
-    entry.song = song
-    entry.save()
-
-    # update competition dates based on this newfound length 
-    vote_period_delta = timedelta(seconds=compo.vote_period_length)
-    if compo.have_listening_party:
-        compo.listening_party_end_date += timedelta(seconds=(song.length-old_length+buffer_time))
-        compo.vote_deadline = compo.listening_party_end_date + vote_period_delta
-    else:
-        compo.vote_deadline = compo.submit_deadline + vote_period_delta
-    compo.save()
-
-    chatroom = compo.chat_room
-    chatroom.end_date = compo.listening_party_end_date + timedelta(hours=1)
-    chatroom.save()
+        song.title = title
+        song.is_open_source = is_open_source
+        song.comments = comments
+        song.save()
 
     return json_response({'success': True})
 
@@ -122,6 +164,32 @@ def max_vote_count(entry_count):
 
     return x
 
+def song_to_dict(song, user):
+    profile = user.get_profile()
+
+    d = song.to_dict(chains=['owner', 'studio', 'band'])
+    d['source_file'] = song.source_file
+    if d.has_key('studio'):
+        d['studio']['logo_16x16'] = song.studio.logo_16x16.url
+        d['studio']['missing'] = song.studio not in profile.studios.all()
+
+        def sample_to_dict(x):
+            d = x.to_dict()
+            d['missing'] = x.uploaded_sample is None
+            return d
+
+        d['samples'] = [sample_to_dict(x) for x in SampleDependency.objects.filter(song=song)]
+
+        owned_plugins = profile.plugins.all()
+        def plugin_to_dict(x):
+            d = x.to_dict()
+            d['missing'] = x not in owned_plugins
+            return d
+
+        d['plugins'] = [plugin_to_dict(x) for x in song.plugins.all()]
+
+    return d
+    
 def ajax_compo(request, id):
     id = int(id)
     try:
@@ -139,8 +207,13 @@ def ajax_compo(request, id):
         }
     }
 
+    def entry_to_dict(entry):
+        d = entry.to_dict(chains=['owner.solo_band'])
+        d['song'] = song_to_dict(entry.song, request.user)
+        return d
+
     # entries. if competition is closed, sort by vote count.
-    data['entries'] = [x.to_dict(chains=['owner.solo_band', 'song.band']) for x in compo.entry_set.all()]
+    data['entries'] = [entry_to_dict(x) for x in compo.entry_set.all()]
 
     if request.user.is_authenticated():
         max_votes = max_vote_count(compo.entry_set.count())
@@ -155,7 +228,12 @@ def ajax_compo(request, id):
         user_entries = Entry.objects.filter(competition=compo, owner=request.user)
         data['submitted'] = (user_entries.count() > 0)
         if user_entries.count() > 0:
-            data['user_entry'] = user_entries[0].song.to_dict()
+            user_entry_song = user_entries[0].song
+            data['user_entry'] = user_entry_song.to_dict()
+
+            version = ProjectVersion.objects.get(song=user_entry_song)
+            data['user_entry']['project_id'] = version.project.pk
+            data['user_entry']['version_number'] = version.version
 
     return json_response(data)
 

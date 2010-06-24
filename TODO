@@ -120,9 +120,6 @@
  * arena home GUI Redesign
 
 = workbench =
- * automatically upload competition entries to the project manager
-   > in the competition, when listening to your own entry, have a link to the
-     project in the project manager.
  * support some kind of formatting for author comments and such. minimum:
    honor line breaks. maximum: a bb-like system or markdown.
      * provide some way to format themes, rules, comments, etc

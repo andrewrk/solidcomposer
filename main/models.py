@@ -327,7 +327,8 @@ class Song(SerializableModel):
                     data['studio'] = self.studio.to_dict(new_access, new_chains)
                 else:
                     data['studio'] = self.studio.pk
-            data['studio'] = None
+            else:
+                data['studio'] = None
             if 'plugins' in forwards:
                 data['plugins'] = [obj.to_dict(new_access, new_chains) for obj in self.plugins.all()]
             else:

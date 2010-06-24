@@ -21,5 +21,12 @@
     create: "{% filter escapejs %}{% url arena.create %}{% endfilter %}",
     compete: function (id) {
         return "{% filter escapejs %}{% url arena.compete 0 %}{% endfilter %}".replace(0, id);
+    },
+    project: function(band_id, project_id) {
+        return "{% filter escapejs %}{% url workbench.project 0 1 %}{% endfilter %}".replace("0",
+            "[~~band_id~~]").replace("1", project_id).replace("[~~band_id~~]", band_id);
+    },
+    project_version: function(band_id, project_id, version_number) {
+        return this.project(band_id, project_id) + "#version" + version_number;
     }
 }

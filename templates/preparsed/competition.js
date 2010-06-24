@@ -208,7 +208,7 @@ var SCCompo = function () {
             var index;
             var entry;
 
-            index = $(this).attr('entry_index');
+            index = $(this).attr('data-entry-index');
             entry = state.json.entries[index];
             $.getJSON(state.urls.ajax_vote(entry.id), function(data){
                 that.ajaxRequest();
@@ -220,7 +220,7 @@ var SCCompo = function () {
             var index;
             var entry;
 
-            index = $(this).attr('entry_index');
+            index = $(this).attr('data-entry-index');
             entry = state.json.entries[index];
             $.getJSON(state.urls.ajax_unvote(entry.id),function(data){
                 that.ajaxRequest();
@@ -234,7 +234,7 @@ var SCCompo = function () {
 
             // only play if it's the right time
             if (that.votingActive() || that.compoClosed()) {
-                index = $(this).attr('entry_index');
+                index = $(this).attr('data-entry-index');
                 state.player.current_track.index = parseInt(index);
                 state.player.current_track.entry = state.json.entries[index];
                 state.player.current_track.track_position = 0;
@@ -249,18 +249,18 @@ var SCCompo = function () {
         for (i=0; i<state.json.entries.length; ++i) {
             play_link = $("#entry-"+i);
             if (play_link) {
-                play_link.attr('entry_index', i);
+                play_link.attr('data-entry-index', i);
                 play_link.click(entry_play);
             }
 
             vote_link = $("#vote-"+i);
             if (vote_link) {
-                vote_link.attr('entry_index', i);
+                vote_link.attr('data-entry-index', i);
                 vote_link.click(entry_vote);
             }
             unvote_link = $("#unvote-"+i);
             if (unvote_link) {
-                unvote_link.attr('entry_index', i);
+                unvote_link.attr('data-entry-index', i);
                 unvote_link.click(entry_unvote);
             }
         }
@@ -301,6 +301,20 @@ var SCCompo = function () {
         updateCompoInfo();
         updateEntryArea();
 
+        updateSubmissionVisibility();
+
+        if (state.resubmitting) {
+            $("#cancel-submission").show();
+            $("#cancel-submission").click(function(){
+                state.resubmitting = false;
+                updateSubmissionVisibility();
+            });
+        } else {
+            $("#cancel-submission").hide();
+        }
+    }
+
+    function updateSubmissionVisibility() {
         // show/hide submission form
         show_submission_form = state.json.user.is_authenticated &&
             that.submissionActive() && (! state.json.submitted || state.resubmitting);
@@ -309,7 +323,6 @@ var SCCompo = function () {
         } else {
             $("#submission").hide('fast');
         }
-
     }
 
     function ajaxRequestLoop() {
@@ -349,11 +362,7 @@ var SCCompo = function () {
     }
 
     function clearForm(form_selector) {
-        $(':input',form_selector)
-            .not(':button, :submit, :reset, :hidden')
-            .val('')
-            .removeAttr('checked')
-            .removeAttr('selected');
+        $(form_selector).get(0).reset();
     }
 
     function goNextTrack() {
@@ -432,9 +441,13 @@ var SCCompo = function () {
         }
     }
 
+    function forceUpdateCurrentEntry() {
+        updateCurrentEntry(true);
+    }
+
     that = {
         initialize: function () {
-            Player.initialize(onPlayerReady);
+            Player.initialize(onPlayerReady, forceUpdateCurrentEntry);
             Player.onSoundComplete = onSoundComplete;
             Player.onProgressChange = onProgressChange;
             compileTemplates();
@@ -487,12 +500,14 @@ var SCCompo = function () {
             
             result = eval('(' + response + ')');
             if (result.success === true) {
-                state.resubmitting = false;
-                // clear form
                 clearForm("#submission-form");
             } else {
                 alert("Unable to submit:\n\n" + result.reason);
+                state.resubmitting = true;
+                updateSubmissionVisibility();
             }
+            state.resubmitting = false;
+            updateSubmissionVisibility();
             that.ajaxRequest();
         },
 
@@ -508,6 +523,10 @@ var SCCompo = function () {
                 state.json = data;
 
                 sortEntries();
+
+                for (var i=0; i<state.json.entries.length; ++i) {
+                    Player.processSong(state.json.entries[i].song);
+                }
 
                 state.activity = getCurrentActivity();
                 if (that.ongoingListeningParty()) {

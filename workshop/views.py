@@ -558,14 +558,12 @@ def studio(request, identifier):
 def song_to_dict(song, user):
     profile = user.get_profile()
 
-    d = song.to_dict()
-    d['owner'] = song.owner.get_profile().to_dict()
+    d = song.to_dict(access=SerializableModel.OWNER, chains=['owner', 'studio'])
     if song.studio:
-        d['studio'] = song.studio.to_dict()
         d['studio']['logo_16x16'] = song.studio.logo_16x16.url
         d['studio']['missing'] = song.studio not in profile.studios.all()
-    else:
-        d['studio'] = None
+
+    d['source_file'] = song.source_file
 
     def sample_to_dict(x):
         d = x.to_dict()

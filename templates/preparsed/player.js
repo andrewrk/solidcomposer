@@ -503,27 +503,29 @@ var Player = function() {
             // sneaky, sneaky!
             songs[song.id] = song;
 
-            song.anyAvailableSamples = anyTrue(song.samples, function(sample){
-                return ! sample.missing;
-            });
-            song.anyMissingSamples = anyTrue(song.samples, function(sample){
-                return sample.missing;
-            });
-            song.anyMissingDependencies = song.studio.missing || anyTrue(song.plugins, function(plugin){
-                return plugin.missing;
-            });
+            if (song.studio) {
+                song.anyAvailableSamples = anyTrue(song.samples, function(sample){
+                    return ! sample.missing;
+                });
+                song.anyMissingSamples = anyTrue(song.samples, function(sample){
+                    return sample.missing;
+                });
+                song.anyMissingDependencies = song.studio.missing || anyTrue(song.plugins, function(plugin){
+                    return plugin.missing;
+                });
 
-            song.effects = [];
-            song.generators = [];
-            // plugin id -> plugin variable
-            song.pluginLink = {};
-            for (var i=0; i<song.plugins.length; ++i) {
-                var plugin = song.plugins[i];
-                song.pluginLink[plugin.id] = plugin;
-                if (plugin.plugin_type === pluginTypeEnum.GENERATOR) {
-                    song.generators.push(plugin);
-                } else if (plugin.plugin_type === pluginTypeEnum.EFFECT) {
-                    song.effects.push(plugin);
+                song.effects = [];
+                song.generators = [];
+                // plugin id -> plugin variable
+                song.pluginLink = {};
+                for (var i=0; i<song.plugins.length; ++i) {
+                    var plugin = song.plugins[i];
+                    song.pluginLink[plugin.id] = plugin;
+                    if (plugin.plugin_type === pluginTypeEnum.GENERATOR) {
+                        song.generators.push(plugin);
+                    } else if (plugin.plugin_type === pluginTypeEnum.EFFECT) {
+                        song.effects.push(plugin);
+                    }
                 }
             }
         },

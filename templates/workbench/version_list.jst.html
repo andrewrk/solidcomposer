@@ -31,7 +31,7 @@
             <% var version_user = version.song.owner; %>
             {% include 'workbench/version_owner.jst.html' %}
             <div class="version-data">
-                <a name="version<%=i%>"></a>
+                <a name="version<%=version.version%>"></a>
                 Version <%=version.version%> on <%=Time.formatDateTime(Time.localTime(version.song.date_added))%>
             </div>
             <% var song = version.song; song.band = project.band; %>
