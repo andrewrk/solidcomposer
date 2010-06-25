@@ -103,31 +103,6 @@ TEMPLATE_DIRS = (
     absolute('templates'),
 )
 
-# a tuple of tuples.
-# (folder to watch, folder to output to, output extension, command to run),
-# output files's file extension will be replaced with output extension. (include the leading '.')
-# command to run is optional. Use None if you just want to copy the output.
-# if you want another command to run, use %(in)s and %(out)s for the input and output files. 
-if not DEBUG:
-    PREPARSE_JS = "jsmin <%(in)s >%(out)s"
-    PREPARSE_CSS = "sass --style compressed %(in)s %(out)s"
-else:
-    PREPARSE_JS = None
-    PREPARSE_CSS = "sass %(in)s %(out)s"
-
-PREPARSE_CHAIN = (
-    (absolute(os.path.join('templates', 'pre', 'js')), absolute(os.path.join('media', 'js')), '.pre.js', PREPARSE_JS),
-    (absolute(os.path.join('templates', 'pre', 'css')), absolute(os.path.join('media', 'css')), '.pre.css', PREPARSE_CSS),
-)
-
-from main import design
-PREPARSE_CONTEXT = {
-    'MEDIA_URL': MEDIA_URL,
-    'TIMED_COMMENT_SIZE': design.timed_comment_size,
-    'WAVEFORM_WIDTH': design.waveform_size[0],
-    'WAVEFORM_HEIGHT': design.waveform_size[1],
-}
-
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',
     'django.core.context_processors.debug',
@@ -186,6 +161,34 @@ BAND_INIT_SPACE = 1024 * 1024 * 1024 * 0.5 # 0.5 GB
 FREE_BAND_LIMIT = 10
 
 URL_DISALLOWED_CHARS = r'\./?'
+
+
+# a tuple of tuples.
+# (folder to watch, folder to output to, output extension, command to run),
+# output files's file extension will be replaced with output extension. (include the leading '.')
+# command to run is optional. Use None if you just want to copy the output.
+# if you want another command to run, use %(in)s and %(out)s for the input and output files. 
+if not DEBUG:
+    PREPARSE_JS = "jsmin <%(in)s >%(out)s"
+    PREPARSE_CSS = "sass --style compressed %(in)s %(out)s"
+else:
+    PREPARSE_JS = None
+    PREPARSE_CSS = "sass %(in)s %(out)s"
+
+PREPARSE_CHAIN = (
+    (absolute(os.path.join('templates', 'pre', 'js')), absolute(os.path.join('media', 'js')), '.pre.js', PREPARSE_JS),
+    (absolute(os.path.join('templates', 'pre', 'css')), absolute(os.path.join('media', 'css')), '.pre.css', PREPARSE_CSS),
+)
+
+from main import design
+PREPARSE_CONTEXT = {
+    'MEDIA_URL': MEDIA_URL,
+    'TIMED_COMMENT_SIZE': design.timed_comment_size,
+    'VOLUME_ICON_SIZE': design.volume_icon_size,
+    'WAVEFORM_WIDTH': design.waveform_size[0],
+    'WAVEFORM_HEIGHT': design.waveform_size[1],
+}
+
 
 # leave this at the very end
 if os.path.exists("settings_user.py"):

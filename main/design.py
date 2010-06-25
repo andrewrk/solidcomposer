@@ -11,11 +11,12 @@ waveform_outer_color = (36, 128, 215, 255)
 
 # the height of the comment bar in song player, as well as the 
 # width and height of comment icons
-timed_comment_size = 24;
+timed_comment_size = 24
+volume_icon_size = 24
 
 # gravatar size
-gravatar_icon_size = 24;
-gravatar_large_size = 128;
+gravatar_icon_size = 24
+gravatar_large_size = 128
 
 # strings that are displayed to the user.
 must_submit_via_post = 'Must submit via POST.'

@@ -74,7 +74,7 @@
                     <ol>
                         <% for (var tcIndex = 0; tcIndex < song.timed_comments.length; ++tcIndex) { %>
                             <% var comment = song.timed_comments[tcIndex]; %>
-                            <li style="left: <%= comment.position / song.length * Player.waveformWidth - Player.timedCommentSize/2 %>px;">
+                            <li style="left: <%= comment.position / song.length * {{ WAVEFORM_WIDTH }} - {{ TIMED_COMMENT_SIZE }}/2 %>px;">
                                 <a href="<%= Player.urls.userpage(comment.owner.username) %>" style="background-image: url(<%=comment.owner.gravatar_icon%>);"></a>
                             </li>
                         <% } %>

@@ -79,6 +79,12 @@ var Player = function() {
         STUDIO: 2
     };
 
+    // CSS-dependent stuff
+    var waveformWidth = {{ WAVEFORM_WIDTH }};
+    var waveformHeight = {{ WAVEFORM_HEIGHT }};
+    var volumeIconHeight = {{ VOLUME_ICON_SIZE }};
+    var timedCommentSize = {{ TIMED_COMMENT_SIZE }};
+
     // keep track of all the songs
     var songs = {};
 
@@ -92,7 +98,7 @@ var Player = function() {
 
         var relativeY = e.pageY - volumeOffsetTop;
         var deltaY = relativeY - volumeStartY;
-        var deltaVolume = -deltaY / that.waveformHeight;
+        var deltaVolume = -deltaY / waveformHeight;
         var newVolume = volumeStartValue + deltaVolume;
         that.setVolume(newVolume);
         updateVolume();
@@ -172,7 +178,7 @@ var Player = function() {
                 that.setCurrentPlayer(parentPlayer);
 
                 var relativeX = e.pageX - this.offsetLeft;
-                pendingSeekPercent = (relativeX/that.waveformWidth);
+                pendingSeekPercent = (relativeX/waveformWidth);
                 that.play();
                 updateCurrentPlayer();
             }
@@ -355,7 +361,7 @@ var Player = function() {
         $(".player-large .volume .icon-id")
             .attr('class', 'icon-id')
             .addClass(volumeClass);
-        var maxY = that.waveformHeight - that.volumeIconHeight;
+        var maxY = waveformHeight - volumeIconHeight;
         var yPos = (1-volume) * maxY;
         $(".player-large .volume .icon").css("top", yPos);
 
@@ -393,8 +399,8 @@ var Player = function() {
         }
 
         // seek head
-        var seekWidth = percent * that.waveformWidth;
-        var waveWidth = loadPercent * that.waveformWidth;
+        var seekWidth = percent * waveformWidth;
+        var waveWidth = loadPercent * waveformWidth;
         currentPlayer.find(".overlay-border").css('width', seekWidth+"px");
         currentPlayer.find(".wave").css('width', waveWidth+"px");
     }
@@ -437,12 +443,6 @@ var Player = function() {
         onSoundComplete: null,
         urls: urls,
         pluginTypeEnum: pluginTypeEnum,
-
-        // CSS-dependent stuff
-        waveformWidth: 800,
-        waveformHeight: 100,
-        volumeIconHeight: 24,
-        timedCommentSize: 24,
         
         // public methods
         initialize: function(readyFunc, _updateCallback) {
