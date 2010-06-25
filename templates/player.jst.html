@@ -20,29 +20,8 @@
             </span>
         <% } %>
         <% if (song.studio) { %>
-            <div id="dependencies-dialog-<%=song.id%>" class="dependencies-dialog-init" style="display: none;">
-                {% include 'player_deps_dialog.jst.html' %}
-            </div>
             <span class="dependencies"><span class="<% if (! song.anyMissingDependencies) { %>good<% } else { %>bad<% } %>"><a href="#" data-songid="<%=song.id%>">Dependencies</a></span></span>
             <% if (song.anyAvailableSamples) { %>
-                <div id="dl-samples-dialog-<%=song.id%>" class="dl-samples-dialog-init" style="display: none;">
-                    <div class="all">
-                        <a class="dl-all" href="#" data-songid="<%=song.id%>">Download All Samples + Project File</a>
-                    </div>
-                    <p>- OR -</p>
-                    <div class="select">
-                        <select name="s" multiple="multiple">
-                            <option value="project" selected="selected"><%=Player.fileTitle(song.source_file)%></option>
-                            <% for (var sample_index=0; sample_index<song.samples.length; ++sample_index) { var sample = song.samples[sample_index]; %>
-                                <% if (! sample.missing) { %>
-                                    <option value="<%=sample.id%>"><%=sample.title%></option>
-                                <% } %>
-                            <% } %>
-                        </select>
-                        <p class="help">Hold down "Control", or "Command" on a Mac, to select more than one.</p>
-                        <a class="dl-selected" href="#" data-songid="<%=song.id%>">Selected Files</a>
-                    </div>
-                </div>
                 <span class="dl-samples"><a data-songid="<%=song.id%>" href="#">Download Samples</a></span>
             <% } %>
         <% } %>

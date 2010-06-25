@@ -39,5 +39,8 @@ sketchy_mp3_file = 'Sketchy MP3 file.'
 unable_to_save_id3_tags = 'Unable to save ID3 tags.'
 not_authenticated = 'You are not logged in.'
 
+samples_dialog_title = "Download Project Files"
+dependencies_dialog_title = "Song Dependencies"
+
 # form labels
 label_artist_name = 'Solo band name'

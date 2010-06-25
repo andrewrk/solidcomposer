@@ -9,6 +9,8 @@ var Player = function() {
 
     var templateDepsDialog = "{% filter escapejs %}{% include 'player_deps_dialog.jst.html' %}{% endfilter %}";
     var templateDepsDialogCompiled = null;
+    var templateSamplesDialog = "{% filter escapejs %}{% include 'player_dl_samples_dialog.jst.html' %}{% endfilter %}";
+    var templateSamplesDialogCompiled = null;
 
     // jPlayer jQuery object
     var media_url = "{{ MEDIA_URL }}";
@@ -90,6 +92,9 @@ var Player = function() {
 
     var updateCallback = null;
 
+    var dialogDownloadSamples = null;
+    var dialogDependencies = null;
+
     var volumeOffsetTop = null;
     var volumeStartY = null;
     var volumeStartValue = null;
@@ -140,6 +145,7 @@ var Player = function() {
         var current_url;
         var actually_playing;
         
+        $('body').prepend("<div id=\"jplayer\"></div>");
         jp = $("#jplayer");
         jp.jPlayer({
             ready: function(){
@@ -208,23 +214,15 @@ var Player = function() {
         }
 
         // downloading samples
-        jdom.find(".player-large .dl-samples-dialog").remove();
-        jdom.find(".player-large .dl-samples-dialog-init")
-            .dialog({
-                modal: true,
-                title: "Download Project Files",
-                autoOpen: false,
-                maxWidth: 400,
-                maxHeight: 500
-            })
-            .attr('class', 'dl-samples-dialog');
-
         jdom.find(".player-large .dl-samples a").click(function() {
             var song_id = parseInt($(this).attr('data-songid'));
-            var dialog = $("#dl-samples-dialog-"+song_id);
-            dialog.dialog('open');
+            var song = songs[song_id];
 
-            var dlAll = dialog.find('.dl-all');
+            // add content to the dialog
+            dialogDownloadSamples.html(Jst.evaluate(templateSamplesDialogCompiled, {song: song}));
+            dialogDownloadSamples.dialog('open');
+
+            var dlAll = dialogDownloadSamples.find('.dl-all');
             dlAll.unbind('click');
             dlAll.click(function(){
                 var song_id = parseInt($(this).attr('data-songid'));
@@ -232,7 +230,7 @@ var Player = function() {
                 return false;
             });
 
-            var dlSelected = dialog.find('.dl-selected');
+            var dlSelected = dialogDownloadSamples.find('.dl-selected');
             dlSelected.unbind('click');
             dlSelected.click(function(){
                 var song_id = parseInt($(this).attr('data-songid'));
@@ -245,23 +243,15 @@ var Player = function() {
         });
 
         // dependencies
-        jdom.find(".player-large .dependencies-dialog").remove();
-        jdom.find(".player-large .dependencies-dialog-init")
-            .dialog({
-                modal: true,
-                title: "Song Dependencies",
-                autoOpen: false,
-                maxWidth: 400,
-                maxHeight: 500
-            })
-            .attr('class', 'dependencies-dialog');
-
         jdom.find(".player-large .dependencies a").click(function() {
             var song_id = parseInt($(this).attr('data-songid'));
-            var dialog = $("#dependencies-dialog-" + song_id);
-            dialog.dialog('open');
+            var song = songs[song_id];
 
-            addUiToDependencyDialog(dialog, songs[song_id]);
+            // add content to the dialog
+            dialogDependencies.html(Jst.evaluate(templateDepsDialogCompiled, {song: song}));
+            dialogDependencies.dialog('open');
+
+            addUiToDependencyDialog(dialogDependencies, song);
 
             return false;
         });
@@ -425,6 +415,7 @@ var Player = function() {
 
     function compileTemplates() {
         templateDepsDialogCompiled = Jst.compile(templateDepsDialog);
+        templateSamplesDialogCompiled = Jst.compile(templateSamplesDialog);
     }
 
     function processCommentNode(song, comment_node) {
@@ -435,6 +426,30 @@ var Player = function() {
             }
             processCommentNode(song, node);
         }
+    }
+
+    function createDialogs() {
+        // download samples
+        $('body').prepend('<div id="dl-samples-dialog" style="display: none;"></div>');
+        dialogDownloadSamples = $('#dl-samples-dialog');
+        dialogDownloadSamples.dialog({
+            modal: true,
+            title: "{{ STR_SAMPLES_DIALOG_TITLE }}",
+            autoOpen: false,
+            maxWidth: 400,
+            maxHeight: 500
+        });
+
+        // dependencies
+        $('body').prepend('<div id="dependencies-dialog" style="display: none;"></div>');
+        dialogDependencies = $('#dependencies-dialog');
+        dialogDependencies.dialog({
+            modal: true,
+            title: "{{ STR_DEPS_DIALOG_TITLE}}",
+            autoOpen: false,
+            maxWidth: 400,
+            maxHeight: 500
+        });
     }
 
     that = {
@@ -450,6 +465,7 @@ var Player = function() {
             compileTemplates();
             initializeJPlayer(readyFunc);
             cacheImages();
+            createDialogs();
         },
         play: function() {
             jp.jPlayer("play");
