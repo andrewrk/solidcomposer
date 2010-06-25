@@ -1,4 +1,4 @@
-/* time.js
+/* Time
  *
  * contains useful functions for displaying things and messing with
  * time.

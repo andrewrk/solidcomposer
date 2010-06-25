@@ -1,10 +1,10 @@
 .git/
+.sass-cache/
 *.pyc
 *.swp
-media/js/pre
-media/compo/mp3/*
+*.pre.js
+*.pre.css
 media/band
 media/img/studio
 media/sample
 settings_user.py
-dump.json

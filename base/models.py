@@ -81,8 +81,8 @@ class SerializableModel(models.Model):
                     data[field.name] = [obj.pk for obj in field.value_from_object(self)]
             elif isinstance(field, ForeignKey):
                 id = field.value_from_object(self)
-                model = field.related.parent_model
-                if follow:
+                if id is not None and follow:
+                    model = field.related.parent_model
                     instance = model.objects.get(pk=id)
                     if issubclass(model, User):
                         data[field.name] = instance.get_profile().to_dict(new_access, new_chains)

@@ -186,3 +186,25 @@
     background-image: url("../img/volume24-mute.png");
 }
 
+.player-large .timed-comments {
+    clear: both;
+}
+
+.player-large .timed-comments ol {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.player-large .timed-comments li {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.player-large .timed-comments a {
+    display: block;
+    width: 16px;
+    height: 16px;
+}

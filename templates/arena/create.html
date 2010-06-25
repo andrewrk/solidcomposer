@@ -2,13 +2,13 @@
 
 {% block title %}Create a Competition - {{ block.super }}{% endblock %}
 
-{% block css %}arena.css{% endblock %}
+{% block css %}arena.pre.css{% endblock %}
 
 {% block extra_header %}
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/anytimec.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/anytimec.pre.css" />
     {{ block.super }}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/anytimec.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.pre.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/create_competition.js"></script>
 {% endblock %}
 

@@ -3,7 +3,7 @@
  *
  * Dependencies:
  *  jst-parser 0.4.0 - http://github.com/superjoe30/jst-parser
- *  time.js - needs to already be initialized
+ *  Time - needs to already be initialized
  *  jQuery 1.4.2
  *
  * This class needs to be initialized on document ready:

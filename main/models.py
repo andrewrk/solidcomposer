@@ -254,7 +254,8 @@ class Song(SerializableModel):
         'album',
         'length',
         'comments',
-        'date_added'
+        'date_added',
+        'comment_node',
     )
 
     OWNER_ATTRS = (
@@ -283,7 +284,8 @@ class Song(SerializableModel):
     length = models.FloatField()
 
     # author comments
-    comments = models.TextField(blank=True)
+    # really should be not null, but we need to save this guy before we can assign it to a comment node's song field.
+    comment_node = models.ForeignKey('SongCommentNode', null=True, related_name='song_comment_node')
 
     date_added = models.DateTimeField()
 
@@ -307,13 +309,11 @@ class Song(SerializableModel):
             return "%s - %s (%s)" % (self.band.title, self.title, self.album)
 
     def save(self, *args, **kwargs):
-        "Update auto-populated fields before saving"
         if not self.id:
             self.date_added = datetime.now()
         self._save(*args, **kwargs)
 
     def _save(self, *args, **kwargs):
-        "Save without any auto field population"
         super(Song, self).save(*args, **kwargs)
     
     def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
@@ -335,45 +335,53 @@ class Song(SerializableModel):
                 data['plugins'] = [obj.pk for obj in self.plugins.all()]
         return data
 
-class SongCommentThread(SerializableModel):
+class SongCommentNode(SerializableModel):
     """
-    A thread, which contains comments about a particular position
-    in the Song.
+    Contains one comment and a link to its parent.
+    If position is not null, then it is a timed comment.
     """
     PUBLIC_ATTRS = (
         'song',
-        'position',
-    )
-
-    song = models.ForeignKey('Song')
-
-    # how many seconds into the song the comment was made.
-    # null indicates no particular position
-    position = models.IntegerField(blank=True, null=True)
-
-    def __unicode__(self):
-        return "%s at position %s" % (entry, position)
-
-class SongComment(SerializableModel):
-    """
-    A comment in a SongCommentThread
-    """
-
-    PUBLIC_ATTRS = (
+        'parent',
         'date_created',
         'date_edited',
         'owner',
         'content',
+        'position',
+        'reply_disabled',
     )
+
+    song = models.ForeignKey('Song')
+
+    # if null then this is the parent.
+    parent = models.ForeignKey('SongCommentNode', null=True)
 
     date_created = models.DateTimeField()
     date_edited = models.DateTimeField()
 
     owner = models.ForeignKey(User)
-    content = models.TextField()
+    content = models.TextField(blank=True)
+
+    # how many seconds into the song the comment was made.
+    # null indicates no particular position
+    position = models.FloatField(blank=True, null=True)
+
+    # if True, nobody is allowed to reply to this comment.
+    reply_disabled = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return "%s - %" % (owner, content[:30])
+        if self.position is None:
+            return u"%s: %s" % (self.owner, self.content[:30])
+        else:
+            return u"%s (%s): %s" % (self.owner, self.position, self.content[:30])
+
+    def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
+        data = super(SongCommentNode, self).to_dict(access, chains)
+        # always follow owner link
+        data['owner'] = self.owner.get_profile().to_dict()
+        # add the children replies
+        data['children'] = [x.to_dict() for x in self.songcommentnode_set.all()]
+        return data
         
     def save(self, *args, **kwargs):
         self.date_edited = datetime.now()
@@ -382,8 +390,7 @@ class SongComment(SerializableModel):
         self._save(*args, **kwargs)
 
     def _save(self, *args, **kwargs):
-        super(SongComment, self).save(*args, **kwargs)
-    
+        super(SongCommentNode, self).save(*args, **kwargs)
 
 class Tag(SerializableModel):
     PUBLIC_ATTRS = (

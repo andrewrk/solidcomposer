@@ -1,16 +1,16 @@
 {% extends 'workbench/base.html' %}
 
-{% block css %}band.css{% endblock %}
+{% block css %}band.pre.css{% endblock %}
 
 {% block extra_header %}
     {{ block.super }}
     <script type="text/javascript">
         var band_id = {{ band.id }};
     </script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.pre.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/login.pre.js"></script>
     {% include 'script_player.html' %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/workbench_band.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/workbench_band.pre.js"></script>
 {% endblock %}
 
 {% block content %}

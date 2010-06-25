@@ -70,6 +70,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="timed-comments">
+                    <ol>
+                        <% for (var tcIndex = 0; tcIndex < song.timed_comments.length; ++tcIndex) { %>
+                            <% var comment = song.timed_comments[tcIndex]; %>
+                            <li style="left: <%= comment.position / song.length * Player.waveformWidth - Player.timedCommentSize/2 %>px;">
+                                <a href="<%= Player.urls.userpage(comment.owner.username) %>" style="background-image: url(<%=comment.owner.gravatar_icon%>);"></a>
+                            </li>
+                        <% } %>
+                    </ol>
+                </div>
             </div>
             <div class="right-layer">
                 <div class="volume">

@@ -9,6 +9,10 @@ waveform_size = (800, 100)
 waveform_center_color = (157, 203, 229, 255)
 waveform_outer_color = (36, 128, 215, 255)
 
+# the height of the comment bar in song player, as well as the 
+# width and height of comment icons
+timed_comment_size = 24;
+
 # gravatar size
 gravatar_icon_size = 24;
 gravatar_large_size = 128;

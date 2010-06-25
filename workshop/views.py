@@ -275,7 +275,7 @@ def ajax_project(request):
         data['reason'] = design.you_dont_have_permission_to_work_on_this_band
         return json_response(data)
 
-    data['project'] = project_to_dict(project, request.user)
+    data['project'] = project.to_dict(SerializableModel.OWNER, chains=['checked_out_to', 'band'])
 
     if last_version_str == 'null':
         # get entire version list
@@ -446,13 +446,13 @@ def create_project(request, band_str):
                 file_mp3_handle=mp3_file,
                 file_source_handle=source_file, 
                 band=band,
-                song_title=form.cleaned_data.get('title'))
+                song_title=form.cleaned_data.get('title'),
+                song_comments=form.cleaned_data.get('comments', ''))
             if not result['success']:
                 err_msg = result['reason']
             else:
                 # fill in the rest of the fields
                 song = result['song']
-                song.comments = form.cleaned_data.get('comments', '')
                 song.save()
 
                 # create the project
@@ -554,11 +554,10 @@ def studio(request, identifier):
     studio = get_object_or_404(Studio, identifier=identifier)
     return render_to_response('workbench/studio.html', locals(), context_instance=RequestContext(request))
 
-
 def song_to_dict(song, user):
     profile = user.get_profile()
 
-    d = song.to_dict(access=SerializableModel.OWNER, chains=['owner', 'studio'])
+    d = song.to_dict(access=SerializableModel.OWNER, chains=['owner', 'studio', 'comment_node'])
     if song.studio:
         d['studio']['logo_16x16'] = song.studio.logo_16x16.url
         d['studio']['missing'] = song.studio not in profile.studios.all()

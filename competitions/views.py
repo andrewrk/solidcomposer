@@ -74,14 +74,14 @@ def ajax_submit_entry(request):
             max_song_len=settings.COMPO_ENTRY_MAX_LEN,
             band=band,
             song_title=title,
-            song_album=compo.title)
+            song_album=compo.title,
+            song_comments=comments)
 
         if not result['success']:
             return json_failure(result['reason'])
 
         song = result['song']
         song.is_open_source = is_open_source
-        song.comments = comments
         song.save()
 
         # make a new version and attach that to the entry
@@ -165,7 +165,7 @@ def max_vote_count(entry_count):
     return x
 
 def song_to_dict(song, user):
-    d = song.to_dict(chains=['owner', 'studio', 'band'])
+    d = song.to_dict(chains=['owner', 'studio', 'band', 'comment_node'])
     if song.studio is not None and d.has_key('studio'):
         d['studio']['logo_16x16'] = song.studio.logo_16x16.url
 

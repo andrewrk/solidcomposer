@@ -10,11 +10,6 @@ var Player = function() {
     var templateDepsDialog = "{% filter escapejs %}{% include 'player_deps_dialog.jst.html' %}{% endfilter %}";
     var templateDepsDialogCompiled = null;
 
-    // CSS-dependent stuff
-    var waveformWidth = 800;
-    var waveformHeight = 100;
-    var volumeIconHeight = 24;
-
     // jPlayer jQuery object
     var media_url = "{{ MEDIA_URL }}";
     var jPlayerSwfPath = media_url + "swf";
@@ -29,6 +24,9 @@ var Player = function() {
             return "{% filter escapejs %}{% url workbench.studio '[~~~~]' %}{% endfilter %}".replace("[~~~~]", studio_identifier);
         },
         dependency_ownership: "{% filter escapejs %}{% url workbench.ajax_dependency_ownership %}{% endfilter %}",
+        userpage: function (username) {
+            return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
+        }
     };
 
     // if true, the user cannot alter playback, other than volume.
@@ -94,7 +92,7 @@ var Player = function() {
 
         var relativeY = e.pageY - volumeOffsetTop;
         var deltaY = relativeY - volumeStartY;
-        var deltaVolume = -deltaY / waveformHeight;
+        var deltaVolume = -deltaY / that.waveformHeight;
         var newVolume = volumeStartValue + deltaVolume;
         that.setVolume(newVolume);
         updateVolume();
@@ -174,7 +172,7 @@ var Player = function() {
                 that.setCurrentPlayer(parentPlayer);
 
                 var relativeX = e.pageX - this.offsetLeft;
-                pendingSeekPercent = (relativeX/waveformWidth);
+                pendingSeekPercent = (relativeX/that.waveformWidth);
                 that.play();
                 updateCurrentPlayer();
             }
@@ -357,7 +355,7 @@ var Player = function() {
         $(".player-large .volume .icon-id")
             .attr('class', 'icon-id')
             .addClass(volumeClass);
-        var maxY = waveformHeight - volumeIconHeight;
+        var maxY = that.waveformHeight - that.volumeIconHeight;
         var yPos = (1-volume) * maxY;
         $(".player-large .volume .icon").css("top", yPos);
 
@@ -395,8 +393,8 @@ var Player = function() {
         }
 
         // seek head
-        var seekWidth = percent * waveformWidth;
-        var waveWidth = loadPercent * waveformWidth;
+        var seekWidth = percent * that.waveformWidth;
+        var waveWidth = loadPercent * that.waveformWidth;
         currentPlayer.find(".overlay-border").css('width', seekWidth+"px");
         currentPlayer.find(".wave").css('width', waveWidth+"px");
     }
@@ -423,12 +421,28 @@ var Player = function() {
         templateDepsDialogCompiled = Jst.compile(templateDepsDialog);
     }
 
+    function processCommentNode(song, comment_node) {
+        for (var i=0; i<comment_node.children.length; ++i) {
+            var node = comment_node.children[i];
+            if (node.position !== null) {
+                song.timed_comments.push(node);
+            }
+            processCommentNode(song, node);
+        }
+    }
+
     that = {
         // public variables
         onProgressChange: null,
         onSoundComplete: null,
         urls: urls,
         pluginTypeEnum: pluginTypeEnum,
+
+        // CSS-dependent stuff
+        waveformWidth: 800,
+        waveformHeight: 100,
+        volumeIconHeight: 24,
+        timedCommentSize: 24,
         
         // public methods
         initialize: function(readyFunc, _updateCallback) {
@@ -528,6 +542,13 @@ var Player = function() {
                     }
                 }
             }
+
+            // create a list of timed comments
+            song.timed_comments = []
+            processCommentNode(song, song.comment_node);
+            song.timed_comments.sort(function(a,b){
+                return a.position - b.position;
+            });
         },
         // used for formatting source file to display to the user.
         fileTitle: function(path) {

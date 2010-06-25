@@ -103,13 +103,30 @@ TEMPLATE_DIRS = (
     absolute('templates'),
 )
 
-# where processed java script files will be output to.
-# relative to MEDIA_ROOT. respects storage engine.
-PREPARSE_OUTPUT = os.path.join('js', 'pre')
+# a tuple of tuples.
+# (folder to watch, folder to output to, output extension, command to run),
+# output files's file extension will be replaced with output extension. (include the leading '.')
+# command to run is optional. Use None if you just want to copy the output.
+# if you want another command to run, use %(in)s and %(out)s for the input and output files. 
+if not DEBUG:
+    PREPARSE_JS = "jsmin <%(in)s >%(out)s"
+    PREPARSE_CSS = "sass --style compressed %(in)s %(out)s"
+else:
+    PREPARSE_JS = None
+    PREPARSE_CSS = "sass %(in)s %(out)s"
 
-# these will be processed with django's templating system and moved
-# to the PREPARSE_OUTPUT folder, mirroring folder structure.
-PREPARSE_DIR = os.path.join('templates', 'preparsed')
+PREPARSE_CHAIN = (
+    (absolute(os.path.join('templates', 'pre', 'js')), absolute(os.path.join('media', 'js')), '.pre.js', PREPARSE_JS),
+    (absolute(os.path.join('templates', 'pre', 'css')), absolute(os.path.join('media', 'css')), '.pre.css', PREPARSE_CSS),
+)
+
+from main import design
+PREPARSE_CONTEXT = {
+    'MEDIA_URL': MEDIA_URL,
+    'TIMED_COMMENT_SIZE': design.timed_comment_size,
+    'WAVEFORM_WIDTH': design.waveform_size[0],
+    'WAVEFORM_HEIGHT': design.waveform_size[1],
+}
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',

@@ -2,7 +2,7 @@
 
 {% block title %}{{ project.title }} - {{ block.super }}{% endblock %}
 
-{% block css %}project.css{% endblock %}
+{% block css %}project.pre.css{% endblock %}
 
 {% block extra_header %}
     {{ block.super }}
@@ -11,10 +11,10 @@
         var band_id = {{ band.id }};
         var project_id = {{ project.id }};
     </script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/login.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.pre.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/login.pre.js"></script>
     {% include 'script_player.html' %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/pre/project.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/project.pre.js"></script>
 {% endblock %}
 
 

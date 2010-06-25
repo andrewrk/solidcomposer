@@ -1,3 +1,8 @@
+Dependencies:
+    * python deps.py
+      > this will give you an idea of the python module dependencies that are missing.
+    * sass - http://sass-lang.com/
+    * jsmin - http://www.crockford.com/javascript/jsmin.c
 The first time you install this project, you need to:
     * copy the code to the server
     * put the project in the path so that statements like these will work:

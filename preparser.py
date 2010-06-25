@@ -20,20 +20,19 @@ import tempfile
 """
 Requires some things in your settings.py file:
 
-
-# where processed java script files will be output to. folder structure
-# will be mirrored.
-PREPARSE_OUTPUT = os.path.join(MEDIA_ROOT, 'js', 'pre')
-
-# these will be processed with django's templating system and moved
-# to the PREPARSE_OUTPUT folder, mirroring folder structure.
-PREPARSE_DIR = os.path.join('templates', 'preparsed')
+# a tuple of tuples.
+# (folder to watch, folder to output to, command to run),
+# command to run is optional. Use None if you just want to copy the output.
+# if you want another command to run, use %(in)s and %(out)s for the input and output files. 
+PREPARSE_CHAIN = (
+    (absolute(os.path.join('templates', 'preparsed')), absolute(os.path.join('media', 'js', 'pre')), None),
+    (absolute(os.path.join('templates', 'pre', 'css')), absolute(os.path.join('media', 'css', 'pre')), "lessc %(in)s %(out)s"),
+)
 
 # the dictionary that will be available to your preparsed code.
 PREPARSE_CONTEXT = {
-    'server_time': datetime.datetime.today().strftime("%B %d, %Y %H:%M:%S"),
+    'MEDIA_URL': MEDIA_URL,
 }
-
 """
 
 def print_usage():
@@ -86,73 +85,90 @@ def walk(compile_func):
         source file absolute path
         dest file absolute path
     """
-    if examine_watchlist():
-        for root, dirs, files in os.walk(settings.PREPARSE_DIR, followlinks=True):
-            relative = root.replace(settings.PREPARSE_DIR, "")
-            if len(relative) > 0 and relative[0] == os.sep:
-                relative = relative[1:]
+    for i in range(len(settings.PREPARSE_CHAIN)):
+        in_folder, out_folder, out_ext, cmd = settings.PREPARSE_CHAIN[i]
+        if examine_watchlist(i):
+            for root, dirs, files in os.walk(in_folder, followlinks=True):
+                relative = root.replace(in_folder, "")
+                if len(relative) > 0 and relative[0] == os.sep:
+                    relative = relative[1:]
 
-            for file in files:
-                in_file = os.path.join(root, file)
-                if not is_hidden(in_file):
-                    out_file = os.path.join(settings.PREPARSE_OUTPUT, relative, file)
-                    compile_func(in_file, out_file)
+                for file in files:
+                    in_file = os.path.join(root, file)
+                    if not is_hidden(in_file):
+                        out_file_prefix, out_file_old_ext = os.path.splitext(file)
+                        new_filename = out_file_prefix + out_ext
+                        out_file = os.path.join(out_folder, relative, new_filename)
+                        compile_func(settings.PREPARSE_CHAIN[i], in_file, out_file)
 
-watchlist = {}
+watchlist = [{} for x in settings.PREPARSE_CHAIN]
 ignored_extensions = (
-    'swp',
+    '.swp',
 )
-def examine_watchlist():
+def examine_watchlist(chain_index):
     """
     if any template files have changed since this function was last called,
     return True and update the list
     """
     new_item = False
-    for template_dir in settings.TEMPLATE_DIRS:
+    in_folder, out_folder, out_ext, cmd = settings.PREPARSE_CHAIN[chain_index]
+    watch_folders = settings.TEMPLATE_DIRS + (in_folder,)
+    watch_folders = set([os.path.abspath(folder) for folder in watch_folders])
+    for template_dir in watch_folders:
         for root, dirs, files in os.walk(template_dir):
             for file in files:
-                parts = file.split('.')
-                if len(parts) > 1:
-                    if parts[-1] in ignored_extensions:
-                        continue
+                prefix, ext = os.path.splitext(file)
+                if ext in ignored_extensions:
+                    continue
                 
                 full_path = os.path.join(root, file)
                 file_modified = os.path.getmtime(full_path)
-                if watchlist.has_key(full_path):
-                    if file_modified > watchlist[full_path]:
+                if watchlist[chain_index].has_key(full_path):
+                    if file_modified > watchlist[chain_index][full_path]:
                         new_item = True
                 else:
                     new_item = True
-                watchlist[full_path] = file_modified
+                watchlist[chain_index][full_path] = file_modified
 
     return new_item
 
-def compile_file(source, dest):
+def compile_file(preparse_tuple, source, dest):
     """
     parse source and write to dest
     """
+    in_folder, out_folder, out_ext, cmd = preparse_tuple
     source_path, source_title = os.path.split(source)
+    prefix, ext = os.path.splitext(source_title)
     print("Parsing %s." % source_title)
+
     in_text = open(source, 'r').read().decode()
     template = Template(in_text)
+    context = Context(settings.PREPARSE_CONTEXT)
 
-    # manually add settings from settings.py :(
-    context_hash = {
-        'MEDIA_URL': settings.MEDIA_URL,
-    }
-    
-    context = Context(context_hash)
-
-    f = tempfile.NamedTemporaryFile(delete=False)
+    f = tempfile.NamedTemporaryFile(suffix=ext, delete=False)
     f.write(template.render(context))
     f.close()
-    storage.engine.store(f.name, dest, reducedRedundancy=True)
-    os.remove(f.name)
 
-def clean_file(source, dest, force):
+    if cmd is not None:
+        f2 = tempfile.NamedTemporaryFile(suffix=out_ext, mode='r+b', delete=False)
+        f2.close()
+
+        cmd_str = cmd % {'in': f.name, 'out': f2.name}
+        print(cmd_str)
+        os.system(cmd_str)
+
+        os.remove(f.name)
+        store_name = f2.name
+    else:
+        store_name = f.name
+
+    storage.engine.store(store_name, dest, reducedRedundancy=True)
+    os.remove(store_name)
+
+def clean_file(preparse_tuple, source, dest, force):
     if os.path.exists(dest):
-        os.remove(dest)
         print("removing %s" % dest)
+        os.remove(dest)
 
 def parse():
     """

@@ -322,7 +322,7 @@ def handle_project_upload(file_source_handle, user, song):
 
     handle_project_file(handle.name, user, song)
 
-def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album=""):
+def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album="", song_comments=""):
     """
     inputs: 
         user:               the person uploading stuff
@@ -332,6 +332,7 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
         band:               band model - who to attribute the song to.
         song_title:         id3 title to enforce upon the mp3
         song_album:         id3 album to enforce upon the mp3
+        song_comments:      the author's own comments for the song.
 
     * uploads the mp3 and source file if applicable
     * creates the proper files and id3 tags
@@ -371,15 +372,26 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
     song.length = 0
     song.album = song_album
 
+    # save so we can use relational fields
+    song.save()
+    
+    # create the root node for song comments
+    node = SongCommentNode()
+    node.song = song
+    node.owner = user
+    node.content = song_comments
+    node.save()
+
+    song.comment_node = node
+
     if file_mp3_handle != None:
         result = handle_mp3_upload(file_mp3_handle, song, max_song_len)
         if not result['success']:
+            song.delete()
             return result
 
     # upload the source file
     if file_source_handle != None:
-        # save so we can use the ManyToManyFields 
-        song.save()
         handle_project_upload(file_source_handle, user, song)
 
     # we incremented bytes_used in band, so save it now
