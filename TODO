@@ -121,7 +121,18 @@
 
 = workbench =
  * song player
-   > ability to comment on sections of the song
+   > comments
+     - show timed comments in the song player
+       # when playing the song, display a comment as it gets passed by (like sound cloud)
+       # if you click a timed comment, it displays and doesn't go away until you click the x button
+       # if you click somewhere else in the document, it makes the comment box go away.
+       # mouseover a timed comment to view it. if the mouse goes too far away from the box for too long, it disappears.
+       # add a time marker like sound cloud has
+     - ability to click to add timed comment
+       # handle the case when they're not logged in. it should guide them through the process smoothly
+     - show/hide comments with the button in the bottom right
+     - show non-timed comments under the song player
+     - ability to add replies
    > dependencies dialog: have a Samples heading.
      - if any missing samples: in red say e.g. "17 Missing Samples"
        # there should be a tip next to this explaining how it works.
