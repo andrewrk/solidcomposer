@@ -12,7 +12,6 @@ from main.common import *
 from main.models import *
 from competitions.models import *
 from competitions.forms import *
-from competitions import design
 from chat.models import *
 from workshop.models import *
 from django.conf import settings
@@ -20,6 +19,7 @@ from django.conf import settings
 from datetime import datetime, timedelta
 
 from main.uploadsong import upload_song, handle_project_upload
+from competitions import design
 
 @json_login_required
 @json_post_required
@@ -165,27 +165,29 @@ def max_vote_count(entry_count):
     return x
 
 def song_to_dict(song, user):
-    profile = user.get_profile()
-
     d = song.to_dict(chains=['owner', 'studio', 'band'])
-    if d.has_key('studio'):
+    if song.studio is not None and d.has_key('studio'):
         d['studio']['logo_16x16'] = song.studio.logo_16x16.url
-        d['studio']['missing'] = song.studio not in profile.studios.all()
 
-        def sample_to_dict(x):
-            d = x.to_dict()
-            d['missing'] = x.uploaded_sample is None
-            return d
+        if user.is_authenticated():
+            profile = user.get_profile()
 
-        d['samples'] = [sample_to_dict(x) for x in SampleDependency.objects.filter(song=song)]
+            d['studio']['missing'] = song.studio not in profile.studios.all()
 
-        owned_plugins = profile.plugins.all()
-        def plugin_to_dict(x):
-            d = x.to_dict()
-            d['missing'] = x not in owned_plugins
-            return d
+            def sample_to_dict(x):
+                d = x.to_dict()
+                d['missing'] = x.uploaded_sample is None
+                return d
 
-        d['plugins'] = [plugin_to_dict(x) for x in song.plugins.all()]
+            d['samples'] = [sample_to_dict(x) for x in SampleDependency.objects.filter(song=song)]
+
+            owned_plugins = profile.plugins.all()
+            def plugin_to_dict(x):
+                d = x.to_dict()
+                d['missing'] = x not in owned_plugins
+                return d
+
+            d['plugins'] = [plugin_to_dict(x) for x in song.plugins.all()]
 
     return d
     

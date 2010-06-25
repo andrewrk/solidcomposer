@@ -9,10 +9,10 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from workshop.models import *
 from workshop.forms import *
-from workshop import design
 from main.models import *
 from main.common import *
 from main.upload import *
+from workshop import design
 from main.uploadsong import upload_song, studio_extensions, handle_sample_file, handle_mp3_upload, handle_project_upload
 
 import zipfile

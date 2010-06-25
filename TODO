@@ -122,7 +122,10 @@
 = workbench =
  * song player
    > ability to comment on sections of the song
-   > dependencies dialog: have a samples link which closes the dialog and opens the samples dialog.
+   > dependencies dialog: have a Samples heading.
+     - if any missing samples: in red say e.g. "17 Missing Samples"
+       # there should be a tip next to this explaining how it works.
+     - if any downloadable samples: have a samples link which closes the dialog and opens the samples dialog.
    > upload a song with a lot of missing samples. upload the samples.
      click the download samples button. they're missing from the box.
  * project page

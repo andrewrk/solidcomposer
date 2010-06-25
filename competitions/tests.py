@@ -712,7 +712,7 @@ class SimpleTest(TestCase):
         data = json.loads(response.content)
         self.assertEqual(data['success'], True)
         self.assertEqual(Entry.objects.count(), 3)
-        self.assertEqual(Song.objects.count(), 3)
+        self.assertEqual(Song.objects.count(), 4) # new version
         entry = Entry.objects.filter(owner=self.skiessi)[0]
         self.assertEqual(os.path.exists(os.path.join(settings.MEDIA_ROOT, entry.song.mp3_file)), True)
         self.assertEqual(os.path.exists(os.path.join(settings.MEDIA_ROOT, entry.song.waveform_img)), True)
