@@ -16,9 +16,6 @@ var Player = function() {
     var templateCommentDialog = "{% filter escapejs %}{% include 'player/comment_dialog.jst.html' %}{% endfilter %}";
     var templateCommentDialogCompiled = null;
 
-    var templateCommentArea = "{% filter escapejs %}{% include 'player/comment_area.jst.html' %}{% endfilter %}";
-    var templateCommentAreaCompiled = null;
-
     // jPlayer jQuery object
     var media_url = "{{ MEDIA_URL }}";
     var jPlayerSwfPath = media_url + "swf";
@@ -424,7 +421,6 @@ var Player = function() {
         templateDepsDialogCompiled = Jst.compile(templateDepsDialog);
         templateSamplesDialogCompiled = Jst.compile(templateSamplesDialog);
         templateCommentDialogCompiled = Jst.compile(templateCommentDialog);
-        templateCommentAreaCompiled = Jst.compile(templateCommentArea);
     }
 
     function processCommentNode(song, comment_node) {

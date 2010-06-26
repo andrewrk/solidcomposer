@@ -98,6 +98,8 @@
                     </div>
                 </div>
             <% } %>
+            <% var comment_node = version.song.comment_node; %>
+            {% include 'player/normal_comments.jst.html' %}
         </div>
     <% } %>
 <% } %>

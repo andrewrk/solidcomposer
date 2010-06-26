@@ -7,7 +7,7 @@
                    var dependency = plugin_list.list[i];
                    dependency.full_url = Player.urls.plugin(dependency.url);
                 %>
-                {% include 'dependency_line.jst.html' %}
+                {% include 'player/dependency_line.jst.html' %}
             <% } %>
         </ul>
     <% } %>

@@ -1,12 +1,13 @@
-<% (function (comment_node, user) { %>
+<% (function (comment_node, user, show_timed_comments) { %>
     <% function comment_block(node) { %>
         <div class="comment">
             <div class="author">
                 <span class="username">
+                    <% var urls = Player.urls; %>
                     {% include 'username.jst.html' %}
                 </span>
                 <span class="timestamp">
-                    <%= Time.printableTimeDiff(node.date_created) %>
+                    <%= Time.printableTimeSince(node.date_created) %> ago
                 </span>
             </div>
             <div class="content">
@@ -21,9 +22,12 @@
                 <% } %>
             </div>
             <% for (var i=0; i<node.children.length; ++i) { %>
-                <% comment_node(node.children[i]); %>
+                <% var child = node.children[i]; %>
+                <% if (child.position === null || show_timed_comments) { %>
+                    <% comment_block(child); %>
+                <% } %>
             <% } %>
         </div>
-    <% }(comment_node); %>
-<% }(comment_node, user)); %>
+    <% }; comment_block(comment_node); %>
+<% }(comment_node, user, show_timed_comments)); %>
 

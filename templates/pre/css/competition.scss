@@ -12,6 +12,15 @@ h1 {
     text-align: center;
 }
 
+h3 {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
 h4 {
     background: #134d77 url("../img/bluetitle.png") repeat-x left center;
     font-family: Verdana, Arial, sans-serif;
@@ -20,17 +29,16 @@ h4 {
     color: #ffffff;
     margin: 0;
     padding: 5px 0 6px 4px;
-}
 
-h4 .sub {
-    font-family: Verdana, Arial, sans-serif;
-    font-size: 12px;
-    float: right;
-    font-weight: normal;
-    margin: 0;
-    padding: 0 8px 0 0;
+    .sub {
+        font-family: Verdana, Arial, sans-serif;
+        font-size: 12px;
+        float: right;
+        font-weight: normal;
+        margin: 0;
+        padding: 0 8px 0 0;
+    }
 }
-
 
 #css-status {
     background: #e3e3e3;
@@ -58,15 +66,15 @@ h4 .sub {
     text-align: center;
     margin: 0;
     padding: 0 0 8px 0;
-}
 
-#vote-status img {
-    vertical-align: bottom;
-}
+    img {
+        vertical-align: bottom;
+    }
 
-#vote-status .xamt {
-    font-weight: bold;
-    font-size: 16px;
+    .xamt {
+        font-weight: bold;
+        font-size: 16px;
+    }
 }
 
 #infowrapper {
@@ -96,15 +104,6 @@ h4 .sub {
     font-family: Verdana, Arial, sans-serif;
 }
 
-h3 {
-    font-family: Verdana, Arial, sans-serif;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
-
 #entry-area {
     float: left;
     margin: 0 8px 14px 8px;
@@ -122,43 +121,19 @@ h3 {
     height: 300px;
 }
 
-#entries table {
-    border-collapse: collapse;
-    width: 100%;
-}
+#entries {
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
 
-#entries .voting {
-    background: #343434;
-}
+    .voting {
+        background: #343434;
+    }
 
-#entries .entrytd {
-    width: 100%;
-}
-
-.entry-vote-box a {
-    background-repeat: no-repeat;
-    background-position: center center;
-    width: 24px;
-    height: 24px;
-    display: block;
-    margin: 0 8px 0 0;
-    padding: 0;
-}
-
-.entry-vote-box .voted a {
-    background-image: url("../img/thumbsup.png");
-}
-
-.entry-vote-box .voted a:hover {
-    background-image: url("../img/nothumbsup.png");
-}
-
-.entry-vote-box .unvoted a {
-    background-image: url("../img/thumbsup-gray.png");
-}
-
-.entry-vote-box .unvoted a:hover {
-    background-image: url("../img/thumbsup.png");
+    .entrytd {
+        width: 100%;
+    }
 }
 
 .entry-vote-box {
@@ -166,6 +141,32 @@ h3 {
     margin: 0;
     padding: 10px 0 0 8px;
     height: 32px;
+
+    a {
+        background-repeat: no-repeat;
+        background-position: center center;
+        width: 24px;
+        height: 24px;
+        display: block;
+        margin: 0 8px 0 0;
+        padding: 0;
+    }
+
+    .voted a {
+        background-image: url("../img/thumbsup.png");
+
+        &:hover {
+            background-image: url("../img/nothumbsup.png");
+        }
+    }
+
+    .unvoted a {
+        background-image: url("../img/thumbsup-gray.png");
+
+        &:hover {
+            background-image: url("../img/thumbsup.png");
+        }
+    }
 }
 
 .entry .track {
@@ -239,16 +240,5 @@ h3 {
     padding: 0;
     margin: 0 auto 14px auto;
     max-width: 950px;
-}
-
-#track-info {
-    width: 600px;
-    padding: 0;
-    margin: 0 auto 14px auto;
-}
-
-#track-info .inside {
-    border: 1px solid #adc2d1;
-    padding: 4px;
 }
 

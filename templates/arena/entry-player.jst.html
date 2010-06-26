@@ -3,14 +3,11 @@
         <% var song = entry.song; %>
         {% include 'player/player.jst.html' %}
     </div>
-    <% if (entry.song.comments) { %>
-        <div id="track-info">
-            <h4>Author Comments</h4>
-            <div class="inside">
-                <p>
-                    <%+ Showdown.instance.makeHtml(entry.song.comments) %>
-                </p>
-            </div>
-        </div>
+    <% if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
+        <%
+            var comment_node = entry.song.comment_node;
+            var user = json.user;
+        %>
+        {% include 'player/normal_comments.jst.html' %}
     <% } %>
 <% }(entry)); %>

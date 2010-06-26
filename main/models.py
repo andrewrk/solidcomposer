@@ -354,7 +354,7 @@ class SongCommentNode(SerializableModel):
     song = models.ForeignKey('Song')
 
     # if null then this is the parent.
-    parent = models.ForeignKey('SongCommentNode', null=True)
+    parent = models.ForeignKey('SongCommentNode', null=True, blank=True)
 
     date_created = models.DateTimeField()
     date_edited = models.DateTimeField()

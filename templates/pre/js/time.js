@@ -12,7 +12,7 @@
  *
  *      <script type="text/javascript">
  *          // as soon as possible in loading the html
- *          var server_time = new Date('{{ server_time }}');
+ *          var server_time = new Date('{% now "F d, Y H:i:s" %}');
  *          var local_time = new Date();
  *
  *          // then later, when the document is ready
