@@ -3,7 +3,7 @@
         <h4><a href="<%=urls.project(project.id)%>"><%=project.latest_version.song.title%></a></h4>
         <div class="preview-player">
             <% var song = project.latest_version.song; song.band= projects.band; %>
-            {% include 'player.jst.html' %}
+            {% include 'player/player.jst.html' %}
         </div>
     </div>
 <% } %>

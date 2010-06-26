@@ -7,9 +7,9 @@
 var Player = function() {
     var that;
 
-    var templateDepsDialog = "{% filter escapejs %}{% include 'player_deps_dialog.jst.html' %}{% endfilter %}";
+    var templateDepsDialog = "{% filter escapejs %}{% include 'player/deps_dialog.jst.html' %}{% endfilter %}";
     var templateDepsDialogCompiled = null;
-    var templateSamplesDialog = "{% filter escapejs %}{% include 'player_dl_samples_dialog.jst.html' %}{% endfilter %}";
+    var templateSamplesDialog = "{% filter escapejs %}{% include 'player/dl_samples_dialog.jst.html' %}{% endfilter %}";
     var templateSamplesDialogCompiled = null;
 
     // jPlayer jQuery object

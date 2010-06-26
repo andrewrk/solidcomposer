@@ -35,7 +35,7 @@
                 Version <%=version.version%> on <%=Time.formatDateTime(Time.localTime(version.song.date_added))%>
             </div>
             <% var song = version.song; song.band = project.band; %>
-            {% include 'player.jst.html' %}
+            {% include 'player/player.jst.html' %}
             <% if (! version.song.mp3_file) { %>
                 <div id="missing-mp3-<%=i%>" class="missing-thing">
                     <h2><a href="#">Missing MP3 File</a></h2>
