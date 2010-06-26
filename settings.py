@@ -158,6 +158,7 @@ PREPARSE_CONTEXT = {
     'WAVEFORM_HEIGHT': design.waveform_size[1],
     'STR_SAMPLES_DIALOG_TITLE': design.samples_dialog_title,
     'STR_DEPS_DIALOG_TITLE': design.dependencies_dialog_title,
+    'DEBUG': DEBUG,
 }
 
 
