@@ -236,9 +236,14 @@ def ajax_project_list(request):
 
     paginator = Paginator(projects, settings.ITEMS_PER_PAGE)
 
+    def project_to_dict(project):
+        data = project.to_dict(access=SerializableModel.OWNER, chains=['checked_out_to'])
+        data['latest_version'] = version_to_dict(project.latest_version, request.user)
+        return data
+
     # build the json object
     data = {
-        'projects': [project_to_dict(x, request.user) for x in paginator.page(page_number).object_list],
+        'projects': [project_to_dict(x) for x in paginator.page(page_number).object_list],
         'page_count': paginator.num_pages,
         'page_number': page_number,
         'band': band.to_dict(access=SerializableModel.OWNER),
@@ -589,19 +594,3 @@ def version_to_dict(x, user):
     }
     return d
 
-def project_to_dict(x, user):
-    d = {
-        'latest_version': version_to_dict(x.latest_version, user),
-        'date_activity': x.date_activity,
-        'checked_out_to': None,
-        'visible': x.visible,
-        'tags': [tag.to_dict() for tag in x.tags.all()],
-        'scrap_voters': x.scrap_voters.count(),
-        'promote_voters': x.promote_voters.count(),
-        'id': x.id,
-        'band': x.band.to_dict(SerializableModel.OWNER),
-    }
-    if x.checked_out_to is not None:
-        d['checked_out_to'] = x.checked_out_to.to_dict()
-
-    return d
