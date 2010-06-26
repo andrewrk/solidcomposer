@@ -13,8 +13,8 @@
                     <a href="<%=urls.bandFanPage(item.band.id)%>"><%=item.band.title%></a>
                     <span class="role"><%=roleNames[item.role]%></span>
                     <span class="action">
-                    <a href="#" class="accept" index="<%=i%>">accept</a>
-                    <a href="#" class="ignore" index="<%=i%>">ignore</a>
+                    <a href="#" class="accept" data-index="<%=i%>">accept</a>
+                    <a href="#" class="ignore" data-index="<%=i%>">ignore</a>
                     </span>
                 </li>
             <% }); %>

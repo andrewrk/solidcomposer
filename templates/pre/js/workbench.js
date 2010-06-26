@@ -43,7 +43,7 @@ var SCWorkbench = function () {
 
         // accept/ignore invitation buttons
         var inviteAction = function() {
-            var index = $(this).attr('index');
+            var index = $(this).attr('data-index');
             var accept = $(this).attr('class') === "accept"; 
             var url;
             var err_msg;
