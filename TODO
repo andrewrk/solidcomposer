@@ -58,6 +58,7 @@
    - by IP address?
 
 = arena =
+ * longer entry names look bad in the entry list
  * tests need to use storage instead of file system
  * do we cap file size on source file? count it against their quota?
  * it's possible to double-vote for someone
@@ -122,6 +123,8 @@
 = workbench =
  * song player
    > comments
+     - solve the width/height problem of comment dialogs
+     - display at the correct x location and just above the comment bar
      - show timed comments in the song player
        # when playing the song, display a comment as it gets passed by (like sound cloud)
        # if you click somewhere else in the document, it makes the comment box go away.
