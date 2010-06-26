@@ -1,0 +1,29 @@
+<% (function (comment_node, user) { %>
+    <% function comment_block(node) { %>
+        <div class="comment">
+            <div class="author">
+                <span class="username">
+                    {% include 'username.jst.html' %}
+                </span>
+                <span class="timestamp">
+                    <%= Time.printableTimeDiff(node.date_created) %>
+                </span>
+            </div>
+            <div class="content">
+                <%+ Showdown.instance.makeHtml(node.content) %>
+            </div>
+            <div class="action">
+                <% if (! node.reply_disabled) { %>
+                    <a class="reply" href="#">Reply</a>
+                <% } %>
+                <% if (node.owner.id === user.id) { %>
+                    <a class="edit" href="#">Edit</a>
+                <% } %>
+            </div>
+            <% for (var i=0; i<node.children.length; ++i) { %>
+                <% comment_node(node.children[i]); %>
+            <% } %>
+        </div>
+    <% }(comment_node); %>
+<% }(comment_node, user)); %>
+

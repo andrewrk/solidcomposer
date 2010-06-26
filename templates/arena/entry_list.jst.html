@@ -17,25 +17,5 @@
                 </tr>
             <% } %>
         </table>
-
-
-
-        {% comment %}
-        <div id="entry-list">
-            <% for (var i=0; i<json.entries.length; ++i) { var entry = json.entries[i]; %>
-                {% include 'arena/entry.jst.html' %}
-            <% } %>
-        </div>
-        <% if (SCCompo.votingActive()) { %>
-            <% if (json.user.is_authenticated) { %>
-                <div id="entry-voting">
-                    <% for (var i=0; i<json.entries.length; ++i) { var entry = json.entries[i]; %>
-                        {% include 'arena/entry-voting.jst.html' %}
-                    <% } %>
-                </div>
-            <% } %>
-        <% } %>
-        <div class="clear"></div>
-        {% endcomment %}
     </div>
 </div>

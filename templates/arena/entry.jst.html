@@ -1,38 +1,35 @@
-{% comment %}
-    input:
-        entry - the entry object
-        i - index of entry in the list
-{% endcomment %}
-<%
-    var current = ((SCCompo.ongoingListeningParty() && i == json.party.index)) || (player.current_track.index == i);
-    var mine = (entry.owner.id == json.user.id); 
-    var cclass = current ? " entry-playing" : "";
-    var uclass = mine ? " entry-user" : "";
-%>
-<div class="entry<%=cclass%><%=uclass%>">
-    <% if (SCCompo.submissionActive() || SCCompo.ongoingListeningParty()) { %>
-        <span class="track">
-    <% } else { %>
-        <a href="#" class="track" id="entry-<%= i %>">
-    <% }%>
-    <% if (current) { %><img src="{{ MEDIA_URL }}img/play24.png" alt="" /><% } %>
-    <span class="len"><%= Time.timeDisplay(entry.song.length) %></span>
-    <span class="text"><%= entry.song.band.title %> - <%= entry.song.title %></span>
-    <% if (SCCompo.compoClosed() && entry.vote_count > 0) { %>
-        <span class="votes">
-            <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="thumbs up" />
-            <span class="xamt">x <%= entry.vote_count %></span>
-        </span>
-    <% } %>
-    <% if (mine && SCCompo.submissionActive()) { %>
-        (<a href="#" id="resubmit">edit</a>)
-    <% } %>
-    <% if (SCCompo.submissionActive() || SCCompo.ongoingListeningParty()) { %>
-        </span>
-    <% } else { %>
-        </a>
-    <% }%>
-    <% if (mine && ! SCCompo.submissionActive()) { %>
-        <a href="<%=urls.project_version(json.user.solo_band, json.user_entry.project_id, json.user_entry.version_number)%>">&raquo;see this project in the workbench</a>
-    <% } %>
-</div>
+<% (function (entry, i) { %>
+    <%
+        var current = ((SCCompo.ongoingListeningParty() && i == json.party.index)) || (player.current_track.index == i);
+        var mine = (entry.owner.id == json.user.id); 
+        var cclass = current ? " entry-playing" : "";
+        var uclass = mine ? " entry-user" : "";
+    %>
+    <div class="entry<%=cclass%><%=uclass%>">
+        <% if (SCCompo.submissionActive() || SCCompo.ongoingListeningParty()) { %>
+            <span class="track">
+        <% } else { %>
+            <a href="#" class="track" id="entry-<%= i %>">
+        <% }%>
+        <% if (current) { %><img src="{{ MEDIA_URL }}img/play24.png" alt="" /><% } %>
+        <span class="len"><%= Time.timeDisplay(entry.song.length) %></span>
+        <span class="text"><%= entry.song.band.title %> - <%= entry.song.title %></span>
+        <% if (SCCompo.compoClosed() && entry.vote_count > 0) { %>
+            <span class="votes">
+                <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="thumbs up" />
+                <span class="xamt">x <%= entry.vote_count %></span>
+            </span>
+        <% } %>
+        <% if (mine && SCCompo.submissionActive()) { %>
+            (<a href="#" id="resubmit">edit</a>)
+        <% } %>
+        <% if (SCCompo.submissionActive() || SCCompo.ongoingListeningParty()) { %>
+            </span>
+        <% } else { %>
+            </a>
+        <% }%>
+        <% if (mine && ! SCCompo.submissionActive()) { %>
+            <a href="<%=urls.project_version(json.user.solo_band, json.user_entry.project_id, json.user_entry.version_number)%>">&raquo;see this project in the workbench</a>
+        <% } %>
+    </div>
+<% }(entry, i)); %>

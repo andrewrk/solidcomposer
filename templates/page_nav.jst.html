@@ -1,24 +1,25 @@
-<% if (jst_pagination.count > 1) { %>
-    <% if (jst_pagination.number > 1) { %>
-        <a href="#" page="<%= jst_pagination.number-1 %>">&laquo; prev</a>
-    <% } %>
-    <% if (jst_pagination.number > 1+3) { %>
-        <a href="#" page="1">1</a>
-        ...
-    <% } %>
-    <% for (var page_i=jst_pagination.number-3; page_i<=jst_pagination.number+3 && page_i<=jst_pagination.count; ++page_i) { %>
-        <% if (page_i === jst_pagination.number) { %>
-            <span class="nav-selected"><%=page_i%></span>
-        <% } else if (page_i > 1) { %>
-            <a href="#" page="<%=page_i%>"><%=page_i%></a>
+<% (function (pagination) { %>
+    <% if (pagination.count > 1) { %>
+        <% if (pagination.number > 1) { %>
+            <a href="#" data-page="<%= pagination.number-1 %>">&laquo; prev</a>
+        <% } %>
+        <% if (pagination.number > 1+3) { %>
+            <a href="#" data-page="1">1</a>
+            ...
+        <% } %>
+        <% for (var page_i=pagination.number-3; page_i<=pagination.number+3 && page_i<=pagination.count; ++page_i) { %>
+            <% if (page_i === pagination.number) { %>
+                <span class="nav-selected"><%=page_i%></span>
+            <% } else if (page_i > 1) { %>
+                <a href="#" data-page="<%=page_i%>"><%=page_i%></a>
+            <% } %>
+        <% } %>
+        <% if (pagination.number + 3 < pagination.count) { %>
+            ...
+            <a href="#" data-page="<%=pagination.count%>"><%=pagination.count%></a>
+        <% } %>
+        <% if (pagination.number < pagination.count) { %>
+            <a href="#" data-page="<%=pagination.number+1%>">next &raquo;</a>
         <% } %>
     <% } %>
-    <% if (jst_pagination.number + 3 < jst_pagination.count) { %>
-        ...
-        <a href="#" page="<%=jst_pagination.count%>"><%=jst_pagination.count%></a>
-    <% } %>
-    <% if (jst_pagination.number < jst_pagination.count) { %>
-        <a href="#" page="<%=jst_pagination.number+1%>">next &raquo;</a>
-    <% } %>
-<% } %>
-
+<% }(pagination)); %>

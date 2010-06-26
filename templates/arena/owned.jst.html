@@ -1,12 +1,14 @@
-<% if (user.is_authenticated) { %>
-    <div id="my-competitions">
-        <h2>My Competitions</h2>
-        <% var jst_compo_list = owned; %>
-        <% var jst_list_name = 'owned'; %>
-        <% if (jst_compo_list.compos.length > 0) { %>
-            {% include 'arena/compo_list.jst.html' %}
-        <% } else { %>
-            <p>You have not entered or bookmarked any competitions.</p>
-        <% } %>
-    </div>
-<% } %>
+<% (function (owned, user) { %>
+    <% if (user.is_authenticated) { %>
+        <div id="my-competitions">
+            <h2>My Competitions</h2>
+            <% var compo_list = owned; %>
+            <% var list_name = 'owned'; %>
+            <% if (compo_list.compos.length > 0) { %>
+                {% include 'arena/compo_list.jst.html' %}
+            <% } else { %>
+                <p>You have not entered or bookmarked any competitions.</p>
+            <% } %>
+        </div>
+    <% } %>
+<% }(owned, user)); %>

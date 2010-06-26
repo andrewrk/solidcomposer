@@ -9,8 +9,15 @@ var Player = function() {
 
     var templateDepsDialog = "{% filter escapejs %}{% include 'player/deps_dialog.jst.html' %}{% endfilter %}";
     var templateDepsDialogCompiled = null;
+
     var templateSamplesDialog = "{% filter escapejs %}{% include 'player/dl_samples_dialog.jst.html' %}{% endfilter %}";
     var templateSamplesDialogCompiled = null;
+
+    var templateCommentDialog = "{% filter escapejs %}{% include 'player/comment_dialog.jst.html' %}{% endfilter %}";
+    var templateCommentDialogCompiled = null;
+
+    var templateCommentArea = "{% filter escapejs %}{% include 'player/comment_area.jst.html' %}{% endfilter %}";
+    var templateCommentAreaCompiled = null;
 
     // jPlayer jQuery object
     var media_url = "{{ MEDIA_URL }}";
@@ -416,9 +423,17 @@ var Player = function() {
     function compileTemplates() {
         templateDepsDialogCompiled = Jst.compile(templateDepsDialog);
         templateSamplesDialogCompiled = Jst.compile(templateSamplesDialog);
+        templateCommentDialogCompiled = Jst.compile(templateCommentDialog);
+        templateCommentAreaCompiled = Jst.compile(templateCommentArea);
     }
 
     function processCommentNode(song, comment_node) {
+        // sort the children
+        comment_node.children.sort(function(a,b){
+            return a.id - b.id;
+        });
+
+        // process the children
         for (var i=0; i<comment_node.children.length; ++i) {
             var node = comment_node.children[i];
             if (node.position !== null) {

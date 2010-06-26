@@ -1,17 +1,19 @@
-<% if (song.plugins.length > 0) { %>
-    <h4>Studio</h4>
-    <ul>
-        <%
-            var dependency = song.studio;
-            dependency.full_url = Player.urls.studio(song.studio.identifier);
-            dependency.plugin_type = Player.pluginTypeEnum.STUDIO;
-        %>
-        {% include 'dependency_line.jst.html' %}
-    </ul>
-    <% var plugin_list = {name: "Generators", list: song.generators}; %>
-    {% include 'plugin_list.jst.html' %}
-    <% var plugin_list = {name: "Effects", list: song.effects}; %>
-    {% include 'plugin_list.jst.html' %}
-<% } else { %>
-    <p>No plugin dependencies.</p>
-<% } %>
+<% (function (song) { %>
+    <% if (song.plugins.length > 0) { %>
+        <h4>Studio</h4>
+        <ul>
+            <%
+                var dependency = song.studio;
+                dependency.full_url = Player.urls.studio(song.studio.identifier);
+                dependency.plugin_type = Player.pluginTypeEnum.STUDIO;
+            %>
+            {% include 'player/dependency_line.jst.html' %}
+        </ul>
+        <% var plugin_list = {name: "Generators", list: song.generators}; %>
+        {% include 'player/plugin_list.jst.html' %}
+        <% var plugin_list = {name: "Effects", list: song.effects}; %>
+        {% include 'player/plugin_list.jst.html' %}
+    <% } else { %>
+        <p>No plugin dependencies.</p>
+    <% } %>
+<% }(song)); %>

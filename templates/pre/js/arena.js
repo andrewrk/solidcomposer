@@ -76,7 +76,7 @@ var SCArena = function () {
 
         // page navigation
         $(".nav .available a").click(function(){
-            available_page = $(this).attr('page');
+            available_page = $(this).attr('data-page');
             ajaxRequestAvailable();
             return false;
         });
@@ -94,7 +94,7 @@ var SCArena = function () {
 
             // page navigation
             $(".nav .owned a").click(function(){
-                owned_page = $(this).attr('page');
+                owned_page = $(this).attr('data-page');
                 ajaxRequestOwned();
                 return false;
             });

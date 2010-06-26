@@ -1,74 +1,72 @@
-{% comment %}
-    inputs:
-        song - the song structure to play
-{% endcomment %}
-<div class="player-large">
-    <div class="top-layer">
-        <% if (song.source_file) { %>
-            <span class="dl-project">
-                <% if (song.studio && song.studio.logo_16x16 !== null) { %>
-                    <span class="icon">
-                <% } else { %>
-                    <span>
-                <% } %>
-                    <a href="{{ MEDIA_URL }}<%=song.source_file%>"
-                        <% if (song.studio && song.studio.logo_16x16 !== null) { %>
-                            style="background-image: url(<%=song.studio.logo_16x16%>);"
-                        <% } %>
-                        >Download Project</a>
+<% (function (song) { %>
+    <div class="player-large">
+        <div class="top-layer">
+            <% if (song.source_file) { %>
+                <span class="dl-project">
+                    <% if (song.studio && song.studio.logo_16x16 !== null) { %>
+                        <span class="icon">
+                    <% } else { %>
+                        <span>
+                    <% } %>
+                        <a href="{{ MEDIA_URL }}<%=song.source_file%>"
+                            <% if (song.studio && song.studio.logo_16x16 !== null) { %>
+                                style="background-image: url(<%=song.studio.logo_16x16%>);"
+                            <% } %>
+                            >Download Project</a>
+                    </span>
                 </span>
-            </span>
-        <% } %>
-        <% if (song.studio) { %>
-            <span class="dependencies"><span class="<% if (! song.anyMissingDependencies) { %>good<% } else { %>bad<% } %>"><a href="#" data-songid="<%=song.id%>">Dependencies</a></span></span>
-            <% if (song.anyAvailableSamples) { %>
-                <span class="dl-samples"><a data-songid="<%=song.id%>" href="#">Download Samples</a></span>
             <% } %>
-        <% } %>
+            <% if (song.studio) { %>
+                <span class="dependencies"><span class="<% if (! song.anyMissingDependencies) { %>good<% } else { %>bad<% } %>"><a href="#" data-songid="<%=song.id%>">Dependencies</a></span></span>
+                <% if (song.anyAvailableSamples) { %>
+                    <span class="dl-samples"><a data-songid="<%=song.id%>" href="#">Download Samples</a></span>
+                <% } %>
+            <% } %>
+            <% if (song.mp3_file) { %>
+                <span class="dl-mp3"><a href="{{ MEDIA_URL }}<%=song.mp3_file%>">Download MP3</a></span>
+            <% } %>
+            <span class="title"><%=song.band.title%> - <%=song.title%></span>
+        </div>
         <% if (song.mp3_file) { %>
-            <span class="dl-mp3"><a href="{{ MEDIA_URL }}<%=song.mp3_file%>">Download MP3</a></span>
-        <% } %>
-        <span class="title"><%=song.band.title%> - <%=song.title%></span>
-    </div>
-    <% if (song.mp3_file) { %>
-        <div class="bottom-layer">
-            <div class="button-layer">
-                <div class="button">
-                    <span class="play"><a href="#"></a></span>
+            <div class="bottom-layer">
+                <div class="button-layer">
+                    <div class="button">
+                        <span class="play"><a href="#"></a></span>
+                    </div>
+                    <div class="time">
+                        0:00 / <%=Time.timeDisplay(song.length)%>
+                    </div>
                 </div>
-                <div class="time">
-                    0:00 / <%=Time.timeDisplay(song.length)%>
-                </div>
-            </div>
-            <div class="wave-layer">
-                <div class="wave-outer">
-                    <div class="wave" style="background-image: url({{ MEDIA_URL}}<% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
-                        <div class="overlay-border" style="width: 0;">
-                            <div class="overlay">
+                <div class="wave-layer">
+                    <div class="wave-outer">
+                        <div class="wave" style="background-image: url({{ MEDIA_URL}}<% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
+                            <div class="overlay-border" style="width: 0;">
+                                <div class="overlay">
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="timed-comments">
+                        <ol>
+                            <% for (var i = 0; i < song.timed_comments.length; ++i) { %>
+                                <% var comment = song.timed_comments[i]; %>
+                                <li style="left: <%= comment.position / song.length * {{ WAVEFORM_WIDTH }} - {{ TIMED_COMMENT_SIZE }}/2 %>px;">
+                                    <a href="<%= Player.urls.userpage(comment.owner.username) %>" style="background-image: url(<%=comment.owner.gravatar_icon%>);"></a>
+                                </li>
+                            <% } %>
+                        </ol>
+                    </div>
                 </div>
-                <div class="timed-comments">
-                    <ol>
-                        <% for (var tcIndex = 0; tcIndex < song.timed_comments.length; ++tcIndex) { %>
-                            <% var comment = song.timed_comments[tcIndex]; %>
-                            <li style="left: <%= comment.position / song.length * {{ WAVEFORM_WIDTH }} - {{ TIMED_COMMENT_SIZE }}/2 %>px;">
-                                <a href="<%= Player.urls.userpage(comment.owner.username) %>" style="background-image: url(<%=comment.owner.gravatar_icon%>);"></a>
-                            </li>
-                        <% } %>
-                    </ol>
-                </div>
-            </div>
-            <div class="right-layer">
-                <div class="volume">
-                    <span class="icon-id"><span class="icon"></span><span>
-                </div>
-                <div class="comment-btn">
+                <div class="right-layer">
+                    <div class="volume">
+                        <span class="icon-id"><span class="icon"></span><span>
+                    </div>
+                    <div class="comment-btn">
 
+                    </div>
                 </div>
+                <div class="clear"></div>
             </div>
-            <div class="clear"></div>
-        </div>
-    <% } %>
-</div>
+        <% } %>
+    </div>
+<% }(song)); %>

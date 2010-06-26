@@ -1,14 +1,16 @@
-<% for (var i=0; i<projects.projects.length; ++i) { var project = projects.projects[i]; %>
-    <div class="project" id="project-<%=project.id%>">
-        <h4><a href="<%=urls.project(project.id)%>"><%=project.latest_version.song.title%></a></h4>
-        <div class="preview-player">
-            <% var song = project.latest_version.song; song.band= projects.band; %>
-            {% include 'player/player.jst.html' %}
+<% (function (projects) { %>
+    <% for (var i=0; i<projects.projects.length; ++i) { var project = projects.projects[i]; %>
+        <div class="project" id="project-<%=project.id%>">
+            <h4><a href="<%=urls.project(project.id)%>"><%=project.latest_version.song.title%></a></h4>
+            <div class="preview-player">
+                <% var song = project.latest_version.song; song.band= projects.band; %>
+                {% include 'player/player.jst.html' %}
+            </div>
         </div>
-    </div>
-<% } %>
+    <% } %>
 
-<div class="nav">
-    <% var jst_pagination = {count: projects.page_count, number: projects.page_number}; %>
-    {% include 'page_nav.jst.html' %}
-</div>
+    <div class="nav">
+        <% var pagination = {count: projects.page_count, number: projects.page_number}; %>
+        {% include 'page_nav.jst.html' %}
+    </div>
+<% }(projects)); %>
