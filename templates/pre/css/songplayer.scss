@@ -4,7 +4,16 @@ $timed_comment_size: {{ TIMED_COMMENT_SIZE }}px;
 $volume_icon_size: {{ VOLUME_ICON_SIZE }}px;
 
 $top_layer_icon_size: 16px;
+$button_area_width: 90px;
 
+/* colors */
+$border_color: #c7c7c7;
+
+/* fonts */
+$verdana: Verdana, Arial, sans-serif;
+$arial: Arial, Verdana, sans-serif;
+
+/* calculated stuff */
 $top_layer_height: $top_layer_icon_size + 3px;
 $comments_layer_height: $timed_comment_size + 1px;
 
@@ -14,11 +23,11 @@ $comments_layer_height: $timed_comment_size + 1px;
 }
 
 .player-large {
-    border: 1px solid #c7c7c7;
+    border: 1px solid $border_color;
     background: #ebebeb;
     width: 914px;
     height: $top_layer_height + $waveform_height $comments_layer_height + 2px;
-    font-family: Verdana, Arial, sans-serif;
+    font-family: $verdana;
     font-size: 12px;
 
     a {
@@ -29,12 +38,12 @@ $comments_layer_height: $timed_comment_size + 1px;
     .top-layer {
         width: 100%;
         height: $top_layer_height;
-        border-bottom: 1px solid #c7c7c7;
+        border-bottom: 1px solid $border_color;
 
         a {
             float: right;
             display: block;
-            border-left: 1px solid #c7c7c7;
+            border-left: 1px solid $border_color;
             padding: 2px;
             background-repeat: no-repeat;
             background-position: right center;
@@ -80,12 +89,15 @@ $comments_layer_height: $timed_comment_size + 1px;
         height: $waveform_height + $comments_layer_height;
     }
 
+    .button-wrapper {
+        float: left;
+    }
+
     .button-layer {
         float: left;
-        width: 89px;
-        height: 100%;
-        background: #dbd5db;
-        border-right: 1px solid #c7c7c7;
+        width: $button_area_width - 1px;
+        height: $waveform_height;
+        border-right: 1px solid $border_color;
 
         a {
             display: block;
@@ -93,7 +105,7 @@ $comments_layer_height: $timed_comment_size + 1px;
             height: 64px;
             background-repeat: no-repeat;
             background-position: center center;
-            margin: 16px auto 0;
+            margin: 8px auto 0;
 
             @include opacity(0.90);
 
@@ -123,6 +135,57 @@ $comments_layer_height: $timed_comment_size + 1px;
 
     }
 
+    .below-button {
+        border-top: 1px solid $border_color;
+        border-right: 1px solid $border_color;
+        background: url("../img/comments-gradient-light.png") repeat-x;
+
+        .wrap {
+            margin: 0 0 0 24px;
+            height: $timed_comment_size;
+
+            a {
+                margin: 2px 0 0 0;
+                float: left;
+                background-repeat: no-repeat;
+                background-position: center center;
+                display: block;
+                width: 16px;
+                height: 16px;
+
+            }
+
+            .on a {
+                background-image: url("../img/chat-bubble16.png");
+
+                &:hover {
+                    background-image: url("../img/chat-bubble-x16.png");
+                }
+            }
+
+            .off a {
+                background-image: url("../img/chat-bubble-x16.png");
+
+                &:hover {
+                    background-image: url("../img/chat-bubble16.png");
+                }
+            }
+
+            .xamt {
+                float: left;
+                padding: 0 0 0 4px;
+                margin: 4px 0 0 0;
+                font-weight: bold;
+                font-family: $arial;
+                font-size: 10px;
+            }
+        }
+    }
+
+    .not-button-layer {
+        float: left;
+    }
+
     .wave-layer {
         float: left;
     }
@@ -137,7 +200,7 @@ $comments_layer_height: $timed_comment_size + 1px;
         display: block;
         width: $waveform_width;
         height: $waveform_height;
-        border-bottom: 1px solid #c7c7c7;
+        border-bottom: 1px solid $border_color;
     }
 
     .overlay {
@@ -154,13 +217,13 @@ $comments_layer_height: $timed_comment_size + 1px;
 
     .right-layer {
         float: left;
-        border-left: 1px solid #c7c7c7;
-        height: 100%;
+        height: $waveform_height;
 
         .volume {
             height: $waveform_height;
-            width: $volume_icon_size - 1px;
-            border-bottom: 1px solid #c7c7c7;
+            width: $volume_icon_size - 1px; /* subtract the border width */
+            border-bottom: 1px solid $border_color;
+            border-left: 1px solid $border_color;
             background-image: url("../img/volume-bar.png");
             background-repeat: no-repeat;
             background-position: center center;
@@ -200,22 +263,40 @@ $comments_layer_height: $timed_comment_size + 1px;
 
     .timed-comments {
         clear: both;
+        width: 100%;
 
         ol {
             display: block;
             margin: 0;
             padding: 0;
+            cursor: pointer;
+            background: url("../img/comments-gradient-light.png") repeat-x;
+            width: 100%;
+            height: $comments_layer_height;
+            position: relative;
 
             li {
                 list-style-type: none;
                 margin: 0;
                 padding: 0;
-                position: relative;
+                position: absolute;
+                width: $timed_comment_size;
+                height: $timed_comment_size;
 
                 a {
+                    float: left;
                     display: block;
                     width: $timed_comment_size;
                     height: $timed_comment_size;
+                }
+
+                div.marker {
+                    $marker_height: $waveform_height + 1px;
+                    position: absolute;
+                    top: -$marker_height;
+                    width: 1px;
+                    height: $marker_height;
+                    background: #053867;
                 }
             }
         }

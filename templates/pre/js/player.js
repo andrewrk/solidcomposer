@@ -16,10 +16,12 @@ var Player = function() {
     var templateCommentDialog = "{% filter escapejs %}{% include 'player/comment_dialog.jst.html' %}{% endfilter %}";
     var templateCommentDialogCompiled = null;
 
-    // jPlayer jQuery object
+    var templateCommentTip = "{% filter escapejs %}{% include 'player/comment_tip_dialog.jst.html' %}{% endfilter %}";
+    var templateCommentTipCompiled = null;
+
     var media_url = "{{ MEDIA_URL }}";
     var jPlayerSwfPath = media_url + "swf";
-    var jp = null;
+    var jp = null; // jPlayer jQuery object
 
     var urls = {
         download_zip: "{% filter escapejs %}{% url workbench.download_zip %}{% endfilter %}",
@@ -94,29 +96,26 @@ var Player = function() {
     // keep track of all the songs
     var songs = {};
 
+    // keep track of all the comments
+    var comments = {};
+
+    // the user object
+    var user = {
+        is_authenticated: false,
+        id: 0
+    };
+
     var updateCallback = null;
 
     var dialogDownloadSamples = null;
     var dialogDependencies = null;
+    var dialogInsertComment = null;
+    var dialogComment = null;
 
-    var volumeOffsetTop = null;
-    var volumeStartY = null;
-    var volumeStartValue = null;
-    var volumeMouseMove = function(e) {
-        e.preventDefault();
+    var dialogInsertCommentWidth = 220;
+    var dialogInsertCommentHeight = 34;
 
-        var relativeY = e.pageY - volumeOffsetTop;
-        var deltaY = relativeY - volumeStartY;
-        var deltaVolume = -deltaY / waveformHeight;
-        var newVolume = volumeStartValue + deltaVolume;
-        that.setVolume(newVolume);
-        updateVolume();
-    }
-    var volumeMouseUp = function(e) {
-        e.preventDefault();
-        $(this).unbind('mousemove', volumeMouseMove);
-        $(this).unbind('mouseup', volumeMouseUp);
-    }
+    var highestZIndex = 2;
 
     function onSoundComplete() {
         currentMp3File = null;
@@ -182,28 +181,73 @@ var Player = function() {
         });
 
         // scrubbing
-        jdom.find(".player-large .wave-outer").mousedown(function(e){
-            if (! disabledUi) {
-                var parentPlayer = $(this).closest('.player-large');
-                that.setCurrentPlayer(parentPlayer);
+        var waveOffsetLeft = null;
+        var scrubMouseMove = function(e) {
+            var relativeX = e.pageX - waveOffsetLeft;
+            pendingSeekPercent = relativeX/waveformWidth;
+            updateCurrentPlayer();
+            e.preventDefault();
+            return false;
+        }
 
-                var relativeX = e.pageX - this.offsetLeft;
-                pendingSeekPercent = (relativeX/waveformWidth);
-                that.play();
-                updateCurrentPlayer();
+        var scrubMouseUp = function(e) {
+            $(this).unbind('mousemove', scrubMouseMove);
+            $(this).unbind('mouseup', scrubMouseUp);
+            e.preventDefault();
+            return false;
+        }
+
+        jdom.find(".player-large .wave-outer").mousedown(function(e){
+            if (e.button === 0) {
+                if (! disabledUi) {
+                    var parentPlayer = $(this).closest('.player-large');
+                    that.setCurrentPlayer(parentPlayer);
+
+                    waveOffsetLeft = this.offsetLeft;
+
+                    $(document).bind('mousemove', scrubMouseMove);
+                    $(document).bind('mouseup', scrubMouseUp);
+
+                    scrubMouseMove(e);
+                }
             }
             e.preventDefault();
             return false;
         });
 
         // volume control
-        jdom.find(".player-large .volume").mousedown(function(e){
+        var volumeOffsetTop = null;
+        var volumeStartY = null;
+        var volumeStartValue = null;
+        var volumeMouseMove = function(e) {
+            var relativeY = e.pageY - volumeOffsetTop;
+            var deltaY = relativeY - volumeStartY;
+            var deltaVolume = -deltaY / waveformHeight;
+            var newVolume = volumeStartValue + deltaVolume;
+            that.setVolume(newVolume);
+            updateVolume();
+
             e.preventDefault();
-            volumeOffsetTop = this.offsetTop;
-            volumeStartY = e.pageY - volumeOffsetTop;
-            volumeStartValue = that.volume();
-            $(document).bind('mousemove', volumeMouseMove);
-            $(document).bind('mouseup', volumeMouseUp);
+            return false;
+        }
+
+        var volumeMouseUp = function(e) {
+            $(this).unbind('mousemove', volumeMouseMove);
+            $(this).unbind('mouseup', volumeMouseUp);
+            e.preventDefault();
+            return false;
+        }
+        jdom.find(".player-large .volume").mousedown(function(e){
+            if (e.button === 0) {
+                volumeOffsetTop = this.offsetTop;
+                volumeStartY = e.pageY - volumeOffsetTop;
+                volumeStartValue = that.volume();
+                $(document).bind('mousemove', volumeMouseMove);
+                $(document).bind('mouseup', volumeMouseUp);
+            }
+
+            e.preventDefault();
+            return false;
         });
 
         if (currentMp3File !== null) {
@@ -257,6 +301,90 @@ var Player = function() {
 
             addUiToDependencyDialog(dialogDependencies, song);
 
+            return false;
+        });
+
+        // clicking on comments
+        jdom.find('.player-large .timed-comments li').mouseover(function(e){
+            ++highestZIndex;
+            $(this).css('z-index', highestZIndex);
+            e.preventDefault();
+            return false;
+        });
+
+        jdom.find('.player-large .timed-comments li a').click(function(e){
+            var comment_id = $(this).attr('data-commentid');
+            var node = comments[comment_id];
+            dialogComment.html(Jst.evaluate(templateCommentDialogCompiled, {
+                comment_node: node,
+                user: user
+            }));
+            dialogComment.dialog('open');
+            e.preventDefault();
+            return false;
+        });
+
+        // clicking to add comments
+        var commentSong = null;
+        function newTipPos(offsetLeft, dialogTop, pageX) {
+            var relativeX = pageX - offsetLeft;
+            var percent = relativeX / waveformWidth;
+            var position = percent * commentSong.length;
+
+            if (position < commentSong.length) {
+                dialogInsertComment.dialog('open');
+                // edit the dialog
+                dialogInsertComment.html(Jst.evaluate(templateCommentTipCompiled, {position: position}));
+                dialogInsertComment.dialog('option', 'position', [pageX - dialogInsertCommentWidth/2, dialogTop-40]);
+            } else {
+                dialogInsertComment.dialog('close');
+            }
+        }
+
+        var commentBarMouseMove = function(e) {
+            var y = $(this).position().top - $(document).scrollTop();
+            newTipPos(this.offsetLeft, y, e.pageX);
+            e.preventDefault();
+            return false;
+        };
+        var commentBarClick = function() {
+            return false;
+        };
+        var commentBarMouseOut = function(e) {
+            $(this).unbind('mousemove', commentBarMouseMove);
+            $(this).unbind('mouseout', commentBarMouseOut);
+            $(this).unbind('click', commentBarClick);
+
+            dialogInsertComment.dialog('close');
+
+            commentSong = null;
+
+            e.preventDefault();
+            return false;
+        };
+        jdom.find(".player-large .timed-comments ol").mouseover(function(e) {
+            var song_id = $(this).attr('data-songid');
+            commentSong = songs[song_id];
+
+            $(this).bind('mousemove', commentBarMouseMove);
+            $(this).bind('mouseout', commentBarMouseOut);
+            $(this).bind('click', commentBarClick);
+
+            // show the click to add comment dialog
+            dialogInsertComment.dialog('open');
+
+            var y = $(this).position().top - $(document).scrollTop();
+            newTipPos(this.offsetLeft, y, e.pageX);
+            e.preventDefault();
+            return false;
+        });
+
+        // turning comments on and off
+        jdom.find(".player-large a.toggle-comments").click(function() {
+            var song_id = $(this).attr('data-songid');
+            var song = songs[song_id];
+            song.comments_visible = ! song.comments_visible;
+            updateCallback();
             return false;
         });
 
@@ -421,9 +549,12 @@ var Player = function() {
         templateDepsDialogCompiled = Jst.compile(templateDepsDialog);
         templateSamplesDialogCompiled = Jst.compile(templateSamplesDialog);
         templateCommentDialogCompiled = Jst.compile(templateCommentDialog);
+        templateCommentTipCompiled = Jst.compile(templateCommentTip);
     }
 
     function processCommentNode(song, comment_node) {
+        comments[comment_node.id] = comment_node;
+
         // sort the children
         comment_node.children.sort(function(a,b){
             return a.id - b.id;
@@ -440,11 +571,27 @@ var Player = function() {
     }
 
     function createDialogs() {
+        // insert comment tip
+        $('body').prepend('<div id="comment-tip-dialog" style="display: none;"></div>');
+        dialogInsertComment = $('#comment-tip-dialog');
+        dialogInsertComment.dialog({
+            modal: false,
+            closeOnEscape: false,
+            title: "Insert Comment",
+            autoOpen: false,
+            width: dialogInsertCommentWidth,
+            height: dialogInsertCommentHeight
+        });
+        
+        // every dialog above this has no title bar.
+        $(".ui-dialog-titlebar").hide();
+
         // download samples
         $('body').prepend('<div id="dl-samples-dialog" style="display: none;"></div>');
         dialogDownloadSamples = $('#dl-samples-dialog');
         dialogDownloadSamples.dialog({
             modal: true,
+            closeOnEscape: true,
             title: "{{ STR_SAMPLES_DIALOG_TITLE }}",
             autoOpen: false,
             maxWidth: 400,
@@ -461,6 +608,19 @@ var Player = function() {
             maxWidth: 400,
             maxHeight: 500
         });
+
+        // comment dialog
+        $('body').prepend('<div id="comment-dialog" style="display: none;"></div>');
+        dialogComment = $('#comment-dialog');
+        dialogComment.dialog({
+            modal: false,
+            closeOnEscape: true,
+            title: "{{ STR_COMMENT_DIALOG_TITLE }}",
+            autoOpen: false,
+            width: 400,
+            height: 400
+        });
+
     }
 
     that = {
@@ -576,6 +736,8 @@ var Player = function() {
             song.timed_comments.sort(function(a,b){
                 return a.position - b.position;
             });
+
+            song.comments_visible = true;
         },
         // used for formatting source file to display to the user.
         fileTitle: function(path) {
@@ -588,6 +750,10 @@ var Player = function() {
         },
         formatCurrency: function(amt) {
             return amt.toFixed(2);
+        },
+
+        setUser: function(_user) {
+            user = user;
         }
     };
     return that;

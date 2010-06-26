@@ -3,8 +3,13 @@
         <div class="comment">
             <div class="author">
                 <span class="username">
-                    <% var urls = Player.urls; %>
+                    <%
+                        (function () {
+                            var urls = Player.urls;
+                            var user = comment_node.owner;
+                    %>
                     {% include 'username.jst.html' %}
+                    <% })(); %>
                 </span>
                 <span class="timestamp">
                     <%= Time.printableTimeSince(node.date_created) %> ago
@@ -14,11 +19,12 @@
                 <%+ Showdown.instance.makeHtml(node.content) %>
             </div>
             <div class="action">
-                <% if (! node.reply_disabled) { %>
+                <% if (user.id && ! node.reply_disabled) { %>
                     <a class="reply" href="#">Reply</a>
                 <% } %>
-                <% if (node.owner.id === user.id) { %>
+                <% if (user.id && node.owner.id === user.id) { %>
                     <a class="edit" href="#">Edit</a>
+                    <a class="delete" href="#">Delete</a>
                 <% } %>
             </div>
             <% for (var i=0; i<node.children.length; ++i) { %>

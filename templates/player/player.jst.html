@@ -29,43 +29,60 @@
         </div>
         <% if (song.mp3_file) { %>
             <div class="bottom-layer">
-                <div class="button-layer">
-                    <div class="button">
-                        <span class="play"><a href="#"></a></span>
+                <div class="button-wrapper">
+                    <div class="button-layer">
+                        <div class="button">
+                            <span class="play"><a href="#"></a></span>
+                        </div>
+                        <div class="time">
+                            0:00 / <%=Time.timeDisplay(song.length)%>
+                        </div>
                     </div>
-                    <div class="time">
-                        0:00 / <%=Time.timeDisplay(song.length)%>
+                    <div class="clear"></div>
+                    <div class="below-button">
+                        <div class="wrap">
+                            <span class="<% if (song.comments_visible) { %>on<% } else { %>off<% } %>">
+                                <a class="toggle-comments" href="#" data-songid="<%=song.id%>" title="<% if (song.comments_visible) { %>Turn comments off<% } else { %>Turn comments on<% } %>"></a>
+                            </span>
+                            <span class="xamt"> x <%= song.timed_comments.length %></span>
+                            <div class="clear"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="wave-layer">
-                    <div class="wave-outer">
-                        <div class="wave" style="background-image: url({{ MEDIA_URL}}<% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
-                            <div class="overlay-border" style="width: 0;">
-                                <div class="overlay">
+                <div class="not-button-layer">
+                    <div class="wave-layer">
+                        <div class="wave-outer">
+                            <div class="wave" style="background-image: url({{ MEDIA_URL}}<% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
+                                <div class="overlay-border" style="width: 0;">
+                                    <div class="overlay">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="right-layer">
+                        <div class="volume">
+                            <span class="icon-id"><span class="icon"></span><span>
+                        </div>
+                        <div class="comment-btn">
+
+                        </div>
+                    </div>
                     <div class="timed-comments">
-                        <ol>
-                            <% for (var i = 0; i < song.timed_comments.length; ++i) { %>
-                                <% var comment = song.timed_comments[i]; %>
-                                <li style="left: <%= comment.position / song.length * {{ WAVEFORM_WIDTH }} %>px;">
-                                    <a href="<%= Player.urls.userpage(comment.owner.username) %>" style="background-image: url(<%=comment.owner.gravatar_icon%>);"></a>
-                                </li>
+                        <ol data-songid="<%=song.id%>">
+                            <% if (song.comments_visible) { %>
+                                <% for (var i = 0; i < song.timed_comments.length; ++i) { %>
+                                    <% var comment = song.timed_comments[i]; %>
+                                    <li style="left: <%= comment.position / song.length * 100 %>%;">
+                                        <div class="marker" unselectable="on"></div>
+                                        <a data-commentid="<%=comment.id%>" href="<%= Player.urls.userpage(comment.owner.username) %>" style="background-image: url(<%=comment.owner.gravatar_icon%>);"></a>
+                                    </li>
+                                <% } %>
                             <% } %>
                         </ol>
                     </div>
+                    <div class="clear"></div>
                 </div>
-                <div class="right-layer">
-                    <div class="volume">
-                        <span class="icon-id"><span class="icon"></span><span>
-                    </div>
-                    <div class="comment-btn">
-
-                    </div>
-                </div>
-                <div class="clear"></div>
             </div>
         <% } %>
     </div>
