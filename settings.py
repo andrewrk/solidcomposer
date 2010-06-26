@@ -20,7 +20,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-# this is something you may want to override in settings_user.py
 DATABASES = {
     'default': {
         'NAME': 'solidcomposer',
@@ -36,24 +35,9 @@ SOUTH_LOGGING_FILE = absolute("south.log")
 SOUTH_TESTS_MIGRATE = False
 SKIP_SOUTH_TESTS = True
 
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# If running in a Windows environment this must be set to the same as your
-# system time zone.
+TIME_ZONE = None # system time zone
 
-# set this to None as soon as django supports it.
-# this is something you may want to override in settings_user.py
-TIME_ZONE = 'America/Phoenix'
-
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
-
-SITE_ID = 1
-
-# If you set this to False, Django will make some optimizations so as not
-# to load the internationalization machinery.
 USE_I18N = False
 
 # amazon s3 details
@@ -63,26 +47,13 @@ AWS_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 # copy and uncomment in settings_user.py to use s3 storage
 #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = absolute('media')
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
-# this is something you may want to override in settings_user.py
 MEDIA_URL = 'http://localhost:8080/django/solidcomposer/'
-
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-# this is something you may want to override in settings_user.py
 ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '2_l-92-j(^)a=vsynmsw1d(efi!w@w#j#v@ucv^2i7cfsk=!8='
 
-# List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
@@ -97,9 +68,6 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
     absolute('templates'),
 )
 
@@ -162,11 +130,8 @@ FREE_BAND_LIMIT = 10
 URL_DISALLOWED_CHARS = r'\./?'
 
 
-# a tuple of tuples.
-# (folder to watch, folder to output to, output extension, command to run),
-# output files's file extension will be replaced with output extension. (include the leading '.')
-# command to run is optional. Use None if you just want to copy the output.
-# if you want another command to run, use %(in)s and %(out)s for the input and output files. 
+# Preparser
+
 if not DEBUG:
     PREPARSE_JS = "jsmin <%(in)s >%(out)s"
     PREPARSE_CSS = "sass --style compressed %(in)s %(out)s"
@@ -174,12 +139,17 @@ else:
     PREPARSE_JS = None
     PREPARSE_CSS = "sass %(in)s %(out)s"
 
+# (folder to watch, folder to output to, output extension, command to run),
+# output files's file extension will be replaced with output extension. (include the leading '.')
+# command to run is optional. Use None if you just want to copy the output.
+# if you want another command to run, use %(in)s and %(out)s for the input and output files. 
 PREPARSE_CHAIN = (
     (absolute(os.path.join('templates', 'pre', 'js')), absolute(os.path.join('media', 'js')), '.pre.js', PREPARSE_JS),
     (absolute(os.path.join('templates', 'pre', 'css')), absolute(os.path.join('media', 'css')), '.pre.css', PREPARSE_CSS),
 )
 
 from main import design
+# the dictionary that will be available to preparsed files
 PREPARSE_CONTEXT = {
     'MEDIA_URL': MEDIA_URL,
     'TIMED_COMMENT_SIZE': design.timed_comment_size,
