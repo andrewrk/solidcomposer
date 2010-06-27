@@ -17,7 +17,6 @@ var Login = function () {
     var stateRequestTimeout = 10000;
 
     var template_login = "{% filter escapejs %}{% include 'login_area.jst.html' %}{% endfilter %}";
-
     var template_login_s = null;
 
     // true if we display the input text boxes
@@ -38,13 +37,14 @@ var Login = function () {
     };
     
     var callbacks = [];
+    var getUserRequests = [];
 
     // private functions
     function signalStateChanged() {
         var i;
         
         for (i=0; i<callbacks.length; ++i) {
-            callbacks[i]();
+            callbacks[i](state.json.user);
         }
     }
     
@@ -104,6 +104,14 @@ var Login = function () {
             }
 
             state.json = data;
+
+            if (state.json.user && getUserRequests.length > 0) {
+                for (var i=0; i<getUserRequests.length; ++i) {
+                    getUserRequests[i](state.json.user);
+                }
+                getUserRequests = [];
+            }
+
             updateLogin();
         });
     }
@@ -201,6 +209,15 @@ var Login = function () {
                 $("#loginName").focus();
             }
             return false;
+        },
+
+        // calls callback(user) as soon as a user object is ready
+        getUser: function(callback) {
+            if (state.json !== null) {
+                callback(state.json.user);
+            } else {
+                getUserRequests.push(callback);
+            }
         }
     };
     return that;

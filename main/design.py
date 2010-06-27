@@ -41,7 +41,7 @@ not_authenticated = 'You are not logged in.'
 
 samples_dialog_title = "Download Project Files"
 dependencies_dialog_title = "Song Dependencies"
-comment_dialog_title = "Timed Comment"
+comment_dialog_title = "Comments at "
 
 # form labels
 label_artist_name = 'Solo band name'

@@ -1,5 +1,6 @@
 /*  Requires that you call Player.processSong(song) for each song data
- *  structure that you want the player to use.
+ *      structure that you want the player to use.
+ *  Call Player.setUser() as soon as you have user data.
  *  After you generate the dom for the player, run Player.addUiToDom(dom) on it.
  *  At this point, Player takes care of the rest!
  */
@@ -109,11 +110,14 @@ var Player = function() {
 
     var dialogDownloadSamples = null;
     var dialogDependencies = null;
-    var dialogInsertComment = null;
-    var dialogComment = null;
 
+    var dialogInsertComment = null;
     var dialogInsertCommentWidth = 220;
     var dialogInsertCommentHeight = 34;
+
+    var dialogComment = null;
+    var dialogCommentWidth = 400;
+    var dialogCommentHeight = 300;
 
     var highestZIndex = 2;
 
@@ -312,15 +316,25 @@ var Player = function() {
             return false;
         });
 
-        jdom.find('.player-large .timed-comments li a').click(function(e){
-            var comment_id = $(this).attr('data-commentid');
-            var node = comments[comment_id];
+        function showCommentDialog(node, x, y, sticky) {
             dialogComment.html(Jst.evaluate(templateCommentDialogCompiled, {
                 comment_node: node,
                 user: user
             }));
             dialogComment.dialog('open');
+            dialogComment.dialog('option', 'title', "{{ STR_COMMENT_DIALOG_TITLE }}" + Time.timeDisplay(node.position));
+            dialogComment.dialog('option', 'position', [x, y - dialogCommentHeight - 10]);
+        }
+        jdom.find('.player-large .timed-comments li a').click(function(e){
             e.preventDefault();
+            var comment_id = $(this).attr('data-commentid');
+            var node = comments[comment_id];
+            var song = songs[node.song];
+            var ol = $(this).closest('ol');
+            var x = ol.get(0).offsetLeft + (node.position / song.length) * waveformWidth;
+            var y = ol.position().top - $(document).scrollTop();
+            console.log("x="+x+", y="+y);
+            showCommentDialog(node, x, y, true);
             return false;
         });
 
@@ -335,7 +349,7 @@ var Player = function() {
                 dialogInsertComment.dialog('open');
                 // edit the dialog
                 dialogInsertComment.html(Jst.evaluate(templateCommentTipCompiled, {position: position}));
-                dialogInsertComment.dialog('option', 'position', [pageX - dialogInsertCommentWidth/2, dialogTop-40]);
+                dialogInsertComment.dialog('option', 'position', [pageX - dialogInsertCommentWidth/2, dialogTop-dialogInsertCommentHeight-10]);
             } else {
                 dialogInsertComment.dialog('close');
             }
@@ -577,7 +591,7 @@ var Player = function() {
         dialogInsertComment.dialog({
             modal: false,
             closeOnEscape: false,
-            title: "Insert Comment",
+            title: "",
             autoOpen: false,
             width: dialogInsertCommentWidth,
             height: dialogInsertCommentHeight
@@ -603,7 +617,7 @@ var Player = function() {
         dialogDependencies = $('#dependencies-dialog');
         dialogDependencies.dialog({
             modal: true,
-            title: "{{ STR_DEPS_DIALOG_TITLE}}",
+            title: "{{ STR_DEPS_DIALOG_TITLE }}",
             autoOpen: false,
             maxWidth: 400,
             maxHeight: 500
@@ -615,12 +629,16 @@ var Player = function() {
         dialogComment.dialog({
             modal: false,
             closeOnEscape: true,
-            title: "{{ STR_COMMENT_DIALOG_TITLE }}",
+            title: "",
             autoOpen: false,
-            width: 400,
-            height: 400
+            width: dialogCommentWidth,
+            height: dialogCommentHeight
         });
+    }
 
+    function loginStateChanged(_user) {
+        user = _user;
+        dialogComment.dialog('close');
     }
 
     that = {
@@ -637,6 +655,11 @@ var Player = function() {
             initializeJPlayer(readyFunc);
             cacheImages();
             createDialogs();
+
+            if (Login) {
+                Login.getUser(loginStateChanged);
+                Login.addStateChangeCallback(loginStateChanged);
+            }
         },
         play: function() {
             jp.jPlayer("play");
@@ -750,10 +773,6 @@ var Player = function() {
         },
         formatCurrency: function(amt) {
             return amt.toFixed(2);
-        },
-
-        setUser: function(_user) {
-            user = user;
         }
     };
     return that;
