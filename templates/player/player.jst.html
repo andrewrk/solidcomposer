@@ -1,5 +1,5 @@
 <% (function (song) { %>
-    <div class="player-large">
+    <div class="player-large" data-songid="<%=song.id%>">
         <div class="top-layer">
             <% if (song.source_file) { %>
                 <span class="dl-project">
@@ -86,4 +86,4 @@
             </div>
         <% } %>
     </div>
-<% }(song)); %>
+<% })(song); %>

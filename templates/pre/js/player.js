@@ -46,6 +46,7 @@ var Player = function() {
 
     // the div that is the currently playing track.
     var currentPlayer = null;
+    var currentSong = null;
     var currentMp3File = null;
 
     var playedTime = null;
@@ -118,6 +119,7 @@ var Player = function() {
     var dialogComment = null;
     var dialogCommentWidth = 400;
     var dialogCommentHeight = 300;
+    var lastDialogComment = null;
 
     var highestZIndex = 2;
 
@@ -141,6 +143,22 @@ var Player = function() {
         }
 
         updateCurrentPlayer();
+
+        // show the latest comment in time range commentLingerTime
+        var commentLingerTime = 8; // seconds
+        var selectedComment = null;
+        var i;
+        for (i=0; i<current_song.timed_comments.length; ++i) {
+            comment = current_song.timed_comments[i];
+            if (playedTime >= comment.position && playedTime < comment.position + commentLingerTime) {
+                selectedComment = comment;
+            }
+        }
+        if (selectedComment === null) {
+            hideCommentDialog();
+        } else {
+            showCommentDialog(selectedComment, currentPlayer, false);
+        }
 
         if (that.onProgressChange) {
             that.onProgressChange(loadPercent, playedPercentRelative,
@@ -168,6 +186,33 @@ var Player = function() {
         });
     }
 
+    function hideCommentDialog() {
+        lastDialogComment = null;
+        dialogComment.dialog('close');
+    }
+
+    function showCommentDialog(node, playerDom, sticky) {
+        if (node === lastDialogComment) {
+            return;
+        }
+        if (node === null) {
+            hideCommentDialog();
+            return;
+        }
+        lastDialogComment = node;
+        var song = songs[node.song];
+        var ol = $(playerDom).find('.timed-comments ol');
+        var x = ol.get(0).offsetLeft + (node.position / song.length) * waveformWidth;
+        var y = ol.position().top - $(document).scrollTop();
+        dialogComment.html(Jst.evaluate(templateCommentDialogCompiled, {
+            comment_node: node,
+            user: user
+        }));
+        dialogComment.dialog('open');
+        dialogComment.dialog('option', 'title', "{{ STR_COMMENT_DIALOG_TITLE }}" + Time.timeDisplay(node.position));
+        dialogComment.dialog('option', 'position', [x, y - dialogCommentHeight - 10]);
+    }
+
     function addUiToDom(jdom) {
         jdom.find(".player-large .button a").click(function(){
             if (! disabledUi) {
@@ -189,6 +234,7 @@ var Player = function() {
         var scrubMouseMove = function(e) {
             var relativeX = e.pageX - waveOffsetLeft;
             pendingSeekPercent = relativeX/waveformWidth;
+            that.play();
             updateCurrentPlayer();
             e.preventDefault();
             return false;
@@ -316,25 +362,10 @@ var Player = function() {
             return false;
         });
 
-        function showCommentDialog(node, x, y, sticky) {
-            dialogComment.html(Jst.evaluate(templateCommentDialogCompiled, {
-                comment_node: node,
-                user: user
-            }));
-            dialogComment.dialog('open');
-            dialogComment.dialog('option', 'title', "{{ STR_COMMENT_DIALOG_TITLE }}" + Time.timeDisplay(node.position));
-            dialogComment.dialog('option', 'position', [x, y - dialogCommentHeight - 10]);
-        }
         jdom.find('.player-large .timed-comments li a').click(function(e){
             e.preventDefault();
             var comment_id = $(this).attr('data-commentid');
-            var node = comments[comment_id];
-            var song = songs[node.song];
-            var ol = $(this).closest('ol');
-            var x = ol.get(0).offsetLeft + (node.position / song.length) * waveformWidth;
-            var y = ol.position().top - $(document).scrollTop();
-            console.log("x="+x+", y="+y);
-            showCommentDialog(node, x, y, true);
+            showCommentDialog(comments[comment_id], $(this).closest('.player-large'), true);
             return false;
         });
 
@@ -634,11 +665,14 @@ var Player = function() {
             width: dialogCommentWidth,
             height: dialogCommentHeight
         });
+        dialogComment.bind('dialogclose', function(event, ui) {
+            lastDialogComment = null;
+        });
     }
 
     function loginStateChanged(_user) {
         user = _user;
-        dialogComment.dialog('close');
+        hideCommentDialog();
     }
 
     that = {
@@ -700,6 +734,9 @@ var Player = function() {
         // this will pre-load.
         setCurrentPlayer: function(dom) {
             // get the mp3 out of the dom
+            var song_id = $(dom).attr('data-songid');
+            current_song = songs[song_id];
+
             var mp3file = $(dom).find('.dl-mp3 a').attr('href')
             if (currentMp3File === mp3file) {
                 return;
