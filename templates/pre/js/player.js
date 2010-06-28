@@ -135,8 +135,14 @@ var Player = function() {
         _playedPercentAbsolute, _playedTime, _totalTime)
     {
         playedTime = _playedTime/1000;
-        totalTime = _totalTime/1000;
         loadPercent = _loadPercent/100;
+        // if the song is not completely loaded, we override the length with what
+        // we know it to be.
+        if (loadPercent >= 1.0) {
+            totalTime = _totalTime/1000;
+        } else {
+            totalTime = currentSong.length;
+        }
 
         if (pendingSeekPercent) {
             that.seek(pendingSeekPercent * totalTime);
@@ -149,8 +155,8 @@ var Player = function() {
         var commentLingerTime = 8; // seconds
         var selectedComment = null;
         var i;
-        for (i=0; i<current_song.timed_comments.length; ++i) {
-            comment = current_song.timed_comments[i];
+        for (i=0; i<currentSong.timed_comments.length; ++i) {
+            comment = currentSong.timed_comments[i];
             if (playedTime >= comment.position && playedTime < comment.position + commentLingerTime) {
                 selectedComment = comment;
             }
@@ -772,20 +778,20 @@ var Player = function() {
         setCurrentPlayer: function(dom) {
             // get the mp3 out of the dom
             var song_id = $(dom).attr('data-songid');
-            current_song = songs[song_id];
-
-            var mp3file = $(dom).find('.dl-mp3 a').attr('href')
-            if (currentMp3File === mp3file) {
+            if (currentSong !== null && currentSong.id === parseInt(song_id)) {
                 return;
             }
+            currentSong = songs[song_id];
+
             if (currentPlayer !== null) {
                 that.seek(0);
                 that.stop();
                 updateCurrentPlayer();
             }
+
             currentPlayer = $(dom);
-            currentMp3File = mp3file;
-            jp.jPlayer('setFile', mp3file);
+            currentMp3File = media_url + currentSong.mp3_file;
+            jp.jPlayer('setFile', currentMp3File);
             updateCurrentPlayer();
         },
 
