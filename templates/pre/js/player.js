@@ -391,17 +391,12 @@ var Player = function() {
         });
 
         // clicking on comments
-        jdom.find('.player-large .timed-comments li').mouseover(function(e){
-            ++highestZIndex;
-            $(this).css('z-index', highestZIndex);
-            e.preventDefault();
-            return false;
-        });
-
         jdom.find('.player-large .timed-comments li a').mouseover(function(e){
             e.preventDefault();
             var comment_id = $(this).attr('data-commentid');
             showCommentDialog(comments[comment_id], $(this).closest('.player-large'), false);
+            ++highestZIndex;
+            $(this).closest('li').css('z-index', highestZIndex);
             return false;
         });
 
@@ -424,8 +419,10 @@ var Player = function() {
                 // edit the dialog
                 dialogInsertComment.html(Jst.evaluate(templateCommentTipCompiled, {position: position}));
                 dialogInsertComment.dialog('option', 'position', [pageX - dialogInsertCommentWidth/2, dialogTop-dialogInsertCommentHeight-10]);
+                return true;
             } else {
                 dialogInsertComment.dialog('close');
+                return false;
             }
         }
 
@@ -454,17 +451,21 @@ var Player = function() {
             var song_id = $(this).attr('data-songid');
             commentSong = songs[song_id];
 
-            $(this).bind('mousemove', commentBarMouseMove);
-            $(this).bind('mouseout', commentBarMouseOut);
-            $(this).bind('click', commentBarClick);
-
             // show the click to add comment dialog
             dialogInsertComment.dialog('open');
 
             var y = $(this).position().top - $(document).scrollTop();
-            newTipPos(this.offsetLeft, y, e.pageX);
-            e.preventDefault();
-            return false;
+            var preventDefault = newTipPos(this.offsetLeft, y, e.pageX);
+            if (preventDefault) {
+                $(this).bind('mousemove', commentBarMouseMove);
+                $(this).bind('mouseout', commentBarMouseOut);
+                $(this).bind('click', commentBarClick);
+
+                e.preventDefault();
+                return false;
+            } else {
+                return true;
+            }
         });
 
         // turning comments on and off
@@ -776,7 +777,6 @@ var Player = function() {
         // the div with class="player-large"
         // this will pre-load.
         setCurrentPlayer: function(dom) {
-            // get the mp3 out of the dom
             var song_id = $(dom).attr('data-songid');
             if (currentSong !== null && currentSong.id === parseInt(song_id)) {
                 return;
