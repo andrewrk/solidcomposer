@@ -120,6 +120,7 @@ var Player = function() {
     var dialogCommentWidth = 400;
     var dialogCommentHeight = 300;
     var lastDialogComment = null;
+    var dialogCommentRect = null;
 
     var highestZIndex = 2;
 
@@ -157,7 +158,7 @@ var Player = function() {
         if (selectedComment === null) {
             hideCommentDialog();
         } else {
-            showCommentDialog(selectedComment, currentPlayer, false);
+            showCommentDialog(selectedComment, currentPlayer, true);
         }
 
         if (that.onProgressChange) {
@@ -191,6 +192,20 @@ var Player = function() {
         dialogComment.dialog('close');
     }
 
+    function checkHideComment(e){
+        // how far away does it have to be to hide?
+        var closeDistance = 100;
+        var close = e.pageX > dialogCommentRect.right + closeDistance ||
+            e.pageX < dialogCommentRect.left - closeDistance ||
+            e.pageY > dialogCommentRect.bottom + closeDistance ||
+            e.pageY < dialogComment.top - closeDistance;
+
+        if (close) {
+            hideCommentDialog();
+            $(document).unbind('mousemove', checkHideComment);
+        }
+    }
+
     function showCommentDialog(node, playerDom, sticky) {
         if (node === lastDialogComment) {
             return;
@@ -199,6 +214,9 @@ var Player = function() {
             hideCommentDialog();
             return;
         }
+        // in case we have a leftover hook
+        $(document).unbind('mousemove', checkHideComment);
+
         lastDialogComment = node;
         var song = songs[node.song];
         var ol = $(playerDom).find('.timed-comments ol');
@@ -211,6 +229,18 @@ var Player = function() {
         dialogComment.dialog('open');
         dialogComment.dialog('option', 'title', "{{ STR_COMMENT_DIALOG_TITLE }}" + Time.timeDisplay(node.position));
         dialogComment.dialog('option', 'position', [x, y - dialogCommentHeight - 10]);
+        dialogCommentRect = {
+            left: x,
+            top: y,
+            right: x+dialogCommentWidth,
+            bottom: y+dialogCommentHeight
+        };
+
+        if (! sticky) {
+            // install a hook to hide the comment box when the mouse goes too far away
+            $(document).bind('mousemove', checkHideComment);
+        }
+
     }
 
     function addUiToDom(jdom) {
@@ -359,6 +389,13 @@ var Player = function() {
             ++highestZIndex;
             $(this).css('z-index', highestZIndex);
             e.preventDefault();
+            return false;
+        });
+
+        jdom.find('.player-large .timed-comments li a').mouseover(function(e){
+            e.preventDefault();
+            var comment_id = $(this).attr('data-commentid');
+            showCommentDialog(comments[comment_id], $(this).closest('.player-large'), false);
             return false;
         });
 

@@ -124,8 +124,6 @@
  * song player
    > comments
      - show timed comments in the song player
-       # if you click somewhere else in the document, it makes the comment box go away.
-       # mouseover a timed comment to view it. if the mouse goes too far away from the box for too long, it disappears.
      - ability to click to add timed comment
        # handle the case when they're not logged in. it should guide them through the process smoothly
        # can't add a comment during listening party
