@@ -20,6 +20,9 @@ var Player = function() {
     var templateCommentTip = "{% filter escapejs %}{% include 'player/comment_tip_dialog.jst.html' %}{% endfilter %}";
     var templateCommentTipCompiled = null;
 
+    var templateInsertComment = "{% filter escapejs %}{% include 'player/insert_timed_comment.jst.html' %}{% endfilter %}";
+    var templateInsertCommentCompiled = null;
+
     var media_url = "{{ MEDIA_URL }}";
     var jPlayerSwfPath = media_url + "swf";
     var jp = null; // jPlayer jQuery object
@@ -35,7 +38,8 @@ var Player = function() {
         dependency_ownership: "{% filter escapejs %}{% url workbench.ajax_dependency_ownership %}{% endfilter %}",
         userpage: function (username) {
             return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
-        }
+        },
+        ajax_comment: "{% filter escapejs %}{% url ajax_comment %}{% endfilter %}"
     };
 
     // if true, the user cannot alter playback, other than volume.
@@ -63,7 +67,6 @@ var Player = function() {
         "img/dl-zip16.png",
         "img/check16.png",
         "img/warning16.png",
-        "img/flp16.png",
         "img/play-circle64.png",
         "img/pause-circle64.png",
         "img/volume-bar.png",
@@ -112,15 +115,19 @@ var Player = function() {
     var dialogDownloadSamples = null;
     var dialogDependencies = null;
 
-    var dialogInsertComment = null;
-    var dialogInsertCommentWidth = 220;
-    var dialogInsertCommentHeight = 34;
+    var dialogInsertCommentTip = null;
+    var dialogInsertCommentTipWidth = 220;
+    var dialogInsertCommentTipHeight = 34;
 
     var dialogComment = null;
     var dialogCommentWidth = 400;
     var dialogCommentHeight = 300;
     var lastDialogComment = null;
     var dialogCommentRect = null;
+
+    var dialogInsertComment = null;
+    var dialogInsertCommentWidth = 300;
+    var dialogInsertCommentHeight = 200;
 
     var highestZIndex = 2;
 
@@ -247,6 +254,24 @@ var Player = function() {
             $(document).bind('mousemove', checkHideComment);
         }
 
+    }
+
+    function insertTimedComment(node) {
+        comments[node.id] = node;
+
+        // insert into correct position
+        var i;
+        var song = songs[node.song];
+        for (i=0; i<song.timed_comments.length; ++i) {
+            var timedComment = song.timed_comments[i];
+            if (node.position < timedComment.position) {
+                song.timed_comments.splice(i, 0, node);
+                updateCallback();
+                return;
+            }
+        }
+        song.timed_comments.push(node);
+        updateCallback();
     }
 
     function addUiToDom(jdom) {
@@ -393,7 +418,7 @@ var Player = function() {
         // clicking on comments
         jdom.find('.player-large .timed-comments li a').mouseover(function(e){
             e.preventDefault();
-            var comment_id = $(this).attr('data-commentid');
+            var comment_id = parseInt($(this).attr('data-commentid'));
             showCommentDialog(comments[comment_id], $(this).closest('.player-large'), false);
             ++highestZIndex;
             $(this).closest('li').css('z-index', highestZIndex);
@@ -402,7 +427,7 @@ var Player = function() {
 
         jdom.find('.player-large .timed-comments li a').click(function(e){
             e.preventDefault();
-            var comment_id = $(this).attr('data-commentid');
+            var comment_id = parseInt($(this).attr('data-commentid'));
             showCommentDialog(comments[comment_id], $(this).closest('.player-large'), true);
             return false;
         });
@@ -415,13 +440,13 @@ var Player = function() {
             var position = percent * commentSong.length;
 
             if (position < commentSong.length) {
-                dialogInsertComment.dialog('open');
+                dialogInsertCommentTip.dialog('open');
                 // edit the dialog
-                dialogInsertComment.html(Jst.evaluate(templateCommentTipCompiled, {position: position}));
-                dialogInsertComment.dialog('option', 'position', [pageX - dialogInsertCommentWidth/2, dialogTop-dialogInsertCommentHeight-10]);
+                dialogInsertCommentTip.html(Jst.evaluate(templateCommentTipCompiled, {position: position}));
+                dialogInsertCommentTip.dialog('option', 'position', [pageX - dialogInsertCommentTipWidth/2, dialogTop-dialogInsertCommentTipHeight-10]);
                 return true;
             } else {
-                dialogInsertComment.dialog('close');
+                dialogInsertCommentTip.dialog('close');
                 return false;
             }
         }
@@ -432,15 +457,59 @@ var Player = function() {
             e.preventDefault();
             return false;
         };
-        var commentBarClick = function() {
+        var commentBarMouseDown = function(e) {
+            var commentSong = songs[parseInt($(this).closest('.player-large').attr('data-songid'))];
+            var relativeX = e.pageX - this.offsetLeft;
+            var percent = relativeX / waveformWidth;
+            var position = percent * commentSong.length;
+
+            // fill with correct content
+            dialogInsertComment.html(Jst.evaluate(templateInsertCommentCompiled, {position: position}));
+            dialogInsertComment.find('.submit input').click(function() {
+                // create the comment
+                var content = $('#insert-comment-dialog textarea').val();
+                $.post(
+                    urls.ajax_comment,
+                    {
+                        parent: commentSong.comment_node.id,
+                        position: position,
+                        content: content,
+                    },
+                    function(data) {
+                        if (data === null ) {
+                            alert("Error posting comment.");
+                            return;
+                        }
+                        if (! data.success) {
+                            alert("Error posting comment: " + data.reason);
+                            return;
+                        }
+                        // locally insert the new comment
+                        insertTimedComment(data.data);
+                    },
+                    'json');
+                // hide the dialog
+                dialogInsertComment.dialog('close');
+            });
+
+            dialogInsertComment.dialog('option', 'title', "Insert Comment at " + Time.timeDisplay(position));
+            dialogInsertComment.dialog('open');
+            // set focus to the text area
+            $("#insert-comment-dialog textarea").focus();
+
+            // move to correct location
+            var x = e.pageX;
+            var y = $(this).position().top - $(document).scrollTop();
+            dialogInsertComment.dialog('option', 'position', [x, y]);
+
             return false;
         };
         var commentBarMouseOut = function(e) {
             $(this).unbind('mousemove', commentBarMouseMove);
             $(this).unbind('mouseout', commentBarMouseOut);
-            $(this).unbind('click', commentBarClick);
+            $(this).unbind('mousedown', commentBarMouseDown);
 
-            dialogInsertComment.dialog('close');
+            dialogInsertCommentTip.dialog('close');
 
             commentSong = null;
 
@@ -448,18 +517,18 @@ var Player = function() {
             return false;
         };
         jdom.find(".player-large .timed-comments ol").mouseover(function(e) {
-            var song_id = $(this).attr('data-songid');
+            var song_id = parseInt($(this).attr('data-songid'));
             commentSong = songs[song_id];
 
             // show the click to add comment dialog
-            dialogInsertComment.dialog('open');
+            dialogInsertCommentTip.dialog('open');
 
             var y = $(this).position().top - $(document).scrollTop();
             var preventDefault = newTipPos(this.offsetLeft, y, e.pageX);
             if (preventDefault) {
                 $(this).bind('mousemove', commentBarMouseMove);
                 $(this).bind('mouseout', commentBarMouseOut);
-                $(this).bind('click', commentBarClick);
+                $(this).bind('mousedown', commentBarMouseDown);
 
                 e.preventDefault();
                 return false;
@@ -470,7 +539,7 @@ var Player = function() {
 
         // turning comments on and off
         jdom.find(".player-large a.toggle-comments").click(function() {
-            var song_id = $(this).attr('data-songid');
+            var song_id = parseInt($(this).attr('data-songid'));
             var song = songs[song_id];
             song.comments_visible = ! song.comments_visible;
             updateCallback();
@@ -639,6 +708,7 @@ var Player = function() {
         templateSamplesDialogCompiled = Jst.compile(templateSamplesDialog);
         templateCommentDialogCompiled = Jst.compile(templateCommentDialog);
         templateCommentTipCompiled = Jst.compile(templateCommentTip);
+        templateInsertCommentCompiled = Jst.compile(templateInsertComment);
     }
 
     function processCommentNode(song, comment_node) {
@@ -662,14 +732,14 @@ var Player = function() {
     function createDialogs() {
         // insert comment tip
         $('body').prepend('<div id="comment-tip-dialog" style="display: none;"></div>');
-        dialogInsertComment = $('#comment-tip-dialog');
-        dialogInsertComment.dialog({
+        dialogInsertCommentTip = $('#comment-tip-dialog');
+        dialogInsertCommentTip.dialog({
             modal: false,
             closeOnEscape: false,
             title: "",
             autoOpen: false,
-            width: dialogInsertCommentWidth,
-            height: dialogInsertCommentHeight
+            width: dialogInsertCommentTipWidth,
+            height: dialogInsertCommentTipHeight
         });
         
         // every dialog above this has no title bar.
@@ -712,6 +782,19 @@ var Player = function() {
         dialogComment.bind('dialogclose', function(event, ui) {
             lastDialogComment = null;
         });
+
+        // insert comment dialog
+        $('body').prepend('<div id="insert-comment-dialog" style="display: none;"></div>');
+        dialogInsertComment = $('#insert-comment-dialog');
+        dialogInsertComment.dialog({
+            modal: false,
+            closeOnEscape: true,
+            title: "",
+            autoOpen: false,
+            width: dialogInsertCommentWidth,
+            height: dialogInsertCommentHeight
+        });
+        
     }
 
     function loginStateChanged(_user) {
@@ -777,7 +860,7 @@ var Player = function() {
         // the div with class="player-large"
         // this will pre-load.
         setCurrentPlayer: function(dom) {
-            var song_id = $(dom).attr('data-songid');
+            var song_id = parseInt($(dom).attr('data-songid'));
             if (currentSong !== null && currentSong.id === parseInt(song_id)) {
                 return;
             }

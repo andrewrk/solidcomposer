@@ -87,6 +87,52 @@ def ajax_logout(request):
 
     return json_response(data)
 
+@json_login_required
+@json_post_required
+def ajax_comment(request):
+    parent_id_str = request.POST.get('parent', 0)
+    try:
+        parent_id = int(parent_id_str)
+    except ValueError:
+        parent_id = 0
+    try:
+        parent = SongCommentNode.objects.get(pk=parent_id)
+    except SongCommentNode.DoesNotExist:
+        return json_failure(design.bad_song_comment_node_id)
+
+    # make sure the user has permission to critique
+    if not parent.song.permission_to_critique(request.user):
+        return json_failure(design.you_dont_have_permission_to_comment)
+
+    # make sure the parent has enabled replies
+    if parent.reply_disabled:
+        return json_failure(design.comments_disabled_for_this_version)
+
+    position = request.POST.get('position')
+    try:
+        position = float(position)
+    except ValueError:
+        position = None
+
+    if position < 0 or position > parent.song.length:
+        return json_failure(design.invalid_position)
+
+    content = request.POST.get('content')
+
+    if not content:
+        return json_failure(design.content_required)
+
+    node = SongCommentNode()
+    node.song = parent.song
+    node.parent = parent
+    node.owner = request.user
+    node.content = content
+    node.position = position
+    node.reply_disabled = False
+    node.save()
+
+    return json_success(node.to_dict())
+
 def user_register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)

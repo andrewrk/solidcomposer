@@ -115,14 +115,31 @@ class Band(SerializableModel):
         if not user.is_authenticated():
             return False
 
-        # get the BandMember for this user
-        members = BandMember.objects.filter(user=user, band=self)
-        if members.count() != 1:
-            # not in this band. if the band is FULL_OPEN they can edit.
-            return self.openness == FULL_OPEN
+        if self.openness == Band.FULL_OPEN:
+            return True
 
-        member = members[0]
+        # get the BandMember for this user
+        try:
+            member = BandMember.objects.get(user=user, band=self)
+        except BandMember.DoesNotExist:
+            return False
+
         return member.role in (BandMember.MANAGER, BandMember.BAND_MEMBER)
+
+    def permission_to_critique(self, user):
+        if not user.is_authenticated():
+            return False
+
+        if self.openness in (Band.FULL_OPEN, Band.OPEN_SOURCE, Band.TRANSPARENT):
+            return True
+
+        # get the BandMember for this user
+        try:
+            member = BandMember.objects.get(user=user, band=self)
+        except BandMember.DoesNotExist:
+            return False
+
+        return member.role in (BandMember.MANAGER, BandMember.BAND_MEMBER, BandMember.CRITIC)
 
     def __unicode__(self):
         return self.title
@@ -298,6 +315,9 @@ class Song(SerializableModel):
     def permission_to_view_source(self, user):
         "Returns whether a user can download the project file and samples of the song."
         return self.is_open_source or self.band.permission_to_work(user)
+
+    def permission_to_critique(self, user):
+        return self.is_open_source or self.band.permission_to_critique(user)
 
     def displayString(self):
         """

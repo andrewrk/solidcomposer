@@ -38,6 +38,11 @@ invalid_mp3_file = 'Invalid MP3 file.'
 sketchy_mp3_file = 'Sketchy MP3 file.'
 unable_to_save_id3_tags = 'Unable to save ID3 tags.'
 not_authenticated = 'You are not logged in.'
+bad_song_comment_node_id = 'Bad song comment node id.'
+invalid_position = 'Invalid song position.'
+cannot_leave_blank_post = 'You may not leave a blank song comment.'
+comments_disabled_for_this_version = 'Comments are disabled for this version.'
+you_dont_have_permission_to_comment = 'You do not have permission to comment on this song.'
 
 samples_dialog_title = "Download Project Files"
 dependencies_dialog_title = "Song Dependencies"
