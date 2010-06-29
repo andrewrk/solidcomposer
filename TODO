@@ -123,7 +123,6 @@
  * comments
    - ability to add replies
    - glitchy behavior when trying to click the x on a comment box during song playback
-   - don't show comments when comments are off!
  * dependencies dialog: have a Samples heading.
    - if any missing samples: in red say e.g. "17 Missing Samples"
      > there should be a tip next to this explaining how it works.

@@ -158,20 +158,22 @@ var Player = function() {
 
         updateCurrentPlayer();
 
-        // show the latest comment in time range commentLingerTime
-        var commentLingerTime = 8; // seconds
-        var selectedComment = null;
-        var i;
-        for (i=0; i<currentSong.timed_comments.length; ++i) {
-            comment = currentSong.timed_comments[i];
-            if (playedTime >= comment.position && playedTime < comment.position + commentLingerTime) {
-                selectedComment = comment;
+        if (currentSong.comments_visible) {
+            // show the latest comment in time range commentLingerTime
+            var commentLingerTime = 8; // seconds
+            var selectedComment = null;
+            var i;
+            for (i=0; i<currentSong.timed_comments.length; ++i) {
+                comment = currentSong.timed_comments[i];
+                if (playedTime >= comment.position && playedTime < comment.position + commentLingerTime) {
+                    selectedComment = comment;
+                }
             }
-        }
-        if (selectedComment === null) {
-            hideCommentDialog();
-        } else {
-            showCommentDialog(selectedComment, currentPlayer, true);
+            if (selectedComment === null) {
+                hideCommentDialog();
+            } else {
+                showCommentDialog(selectedComment, currentPlayer, true);
+            }
         }
 
         if (that.onProgressChange) {
@@ -542,6 +544,9 @@ var Player = function() {
             var song_id = parseInt($(this).attr('data-songid'));
             var song = songs[song_id];
             song.comments_visible = ! song.comments_visible;
+            if (song === currentSong) {
+                hideCommentDialog();
+            }
             updateCallback();
             return false;
         });
