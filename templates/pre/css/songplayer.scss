@@ -304,12 +304,16 @@ $comments_layer_height: $timed_comment_size + 1px;
 
 }
 
+.comment-ui {
+    textarea {
+        width: 300px;
+        height: 150px;
+    }
+}
+
 #insert-comment-dialog {
     textarea {
         width: 200px;
         height: 100px;
-    }
-    .submit input {
-        float: right;
     }
 }

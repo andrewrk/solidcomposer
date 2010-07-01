@@ -20,8 +20,8 @@ var Player = function() {
     var templateCommentTip = "{% filter escapejs %}{% include 'player/comment_tip_dialog.jst.html' %}{% endfilter %}";
     var templateCommentTipCompiled = null;
 
-    var templateInsertComment = "{% filter escapejs %}{% include 'player/insert_timed_comment.jst.html' %}{% endfilter %}";
-    var templateInsertCommentCompiled = null;
+    var templateCommentUi = "{% filter escapejs %}{% include 'player/comment_ui.jst.html' %}{% endfilter %}";
+    var templateCommentUiCompiled = null;
 
     var media_url = "{{ MEDIA_URL }}";
     var jPlayerSwfPath = media_url + "swf";
@@ -241,6 +241,8 @@ var Player = function() {
             comment_node: node,
             user: user
         }));
+        addCommentsUiToDom(dialogComment);
+
         dialogComment.dialog('open');
         dialogComment.dialog('option', 'title', "{{ STR_COMMENT_DIALOG_TITLE }}" + Time.timeDisplay(node.position));
         dialogComment.dialog('option', 'position', [x, y - dialogCommentHeight - 10]);
@@ -273,6 +275,15 @@ var Player = function() {
             }
         }
         song.timed_comments.push(node);
+        updateCallback();
+    }
+
+    function insertComment(node) {
+        comments[node.id] = node;
+
+        parent_node = comments[node.parent];
+        parent_node.children.unshift(node);
+
         updateCallback();
     }
 
@@ -466,8 +477,12 @@ var Player = function() {
             var position = percent * commentSong.length;
 
             // fill with correct content
-            dialogInsertComment.html(Jst.evaluate(templateInsertCommentCompiled, {position: position}));
-            dialogInsertComment.find('.submit input').click(function() {
+            var data = {
+                position: position,
+                parent_node: commentSong.comment_node
+            };
+            dialogInsertComment.html(Jst.evaluate(templateCommentUiCompiled, data));
+            dialogInsertComment.find('.post').click(function() {
                 // create the comment
                 var content = $('#insert-comment-dialog textarea').val();
                 $.post(
@@ -475,7 +490,7 @@ var Player = function() {
                     {
                         parent: commentSong.comment_node.id,
                         position: position,
-                        content: content,
+                        content: content
                     },
                     function(data) {
                         if (data === null ) {
@@ -490,6 +505,10 @@ var Player = function() {
                         insertTimedComment(data.data);
                     },
                     'json');
+                // hide the dialog
+                dialogInsertComment.dialog('close');
+            });
+            dialogInsertComment.find('.cancel').click(function(){
                 // hide the dialog
                 dialogInsertComment.dialog('close');
             });
@@ -552,6 +571,58 @@ var Player = function() {
         });
 
         updateCurrentPlayer();
+    }
+
+    function addCommentsUiToDom(jdom) {
+        jdom.find('.comment-area .reply').click(function(){
+            var comment_dom = $(this).closest('.comment');
+            var comment_id = parseInt($(this).closest('.comment').attr('data-commentid'));
+            var comment = comments[comment_id];
+            // insert comment ui below
+            var comment_ui = comment_dom.find('.comment-ui').first();
+            if (comment_ui.size() > 0) {
+                // just show the one that already exists
+                comment_ui.show();
+            } else {
+                var data = {
+                    position: null,
+                    parent_node: comment
+                };
+                comment_dom.find('.action').first().after(Jst.evaluate(templateCommentUiCompiled, data));
+                comment_ui = comment_dom.find('.comment-ui').first();
+
+                // add ui to the new dom
+                comment_ui.find('.post').first().click(function(){
+                    var parent_id = parseInt($(this).attr('data-parentid'));
+                    var content = $(this).closest('.comment-ui').find('textarea').first().val();
+                    $.post(
+                        urls.ajax_comment,
+                        {
+                            parent: parent_id,
+                            content: content
+                        },
+                        function (data) {
+                            if (data === null) {
+                                alert("Error posting comment.");
+                                return;
+                            }
+                            if (! data.success) {
+                                alert("Error posting comment: " + data.reason);
+                                return;
+                            }
+                            // locally insert the new comment
+                            insertComment(data.data);
+                        },
+                        'json');
+                });
+                comment_ui.find('.cancel').first().click(function(){
+                    comment_ui.hide();
+                });
+            }
+
+            comment_ui.find('textarea').first().focus();
+            return false;
+        });
     }
 
     function addUiToDependencyDialog(dialog, song) {
@@ -713,7 +784,7 @@ var Player = function() {
         templateSamplesDialogCompiled = Jst.compile(templateSamplesDialog);
         templateCommentDialogCompiled = Jst.compile(templateCommentDialog);
         templateCommentTipCompiled = Jst.compile(templateCommentTip);
-        templateInsertCommentCompiled = Jst.compile(templateInsertComment);
+        templateCommentUiCompiled = Jst.compile(templateCommentUi);
     }
 
     function processCommentNode(song, comment_node) {
@@ -859,6 +930,11 @@ var Player = function() {
         // to apply to the entire page.
         addUi: function(dom) {
             addUiToDom(dom ? $(dom) : $);
+        },
+
+        // do this one time to the comment-area
+        addCommentsUi: function(dom) {
+            addCommentsUiToDom(dom ? $(dom) : $);
         },
 
         // use this to start playing. you send it

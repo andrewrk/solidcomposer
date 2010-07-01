@@ -109,13 +109,14 @@ def ajax_comment(request):
         return json_failure(design.comments_disabled_for_this_version)
 
     position = request.POST.get('position')
-    try:
-        position = float(position)
-    except ValueError:
-        position = None
+    if position is not None:
+        try:
+            position = float(position)
+        except ValueError:
+            position = None
 
-    if position < 0 or position > parent.song.length:
-        return json_failure(design.invalid_position)
+        if position < 0 or position > parent.song.length:
+            return json_failure(design.invalid_position)
 
     content = request.POST.get('content')
 

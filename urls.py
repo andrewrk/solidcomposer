@@ -8,12 +8,13 @@ admin.autodiscover()
 from django.conf import settings
 
 urlpatterns = patterns('',
-    url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),
     (r'^arena/', include('competitions.urls')),
     (r'^chat/', include('chat.urls')),
     (r'^workbench/', include('workshop.urls')),
     (r'^music/', include('music.urls')),
     (r'^admin/', include(admin.site.urls)),
+
+    url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),
 
     url(r'^ajax/login_state/$', 'main.views.ajax_login_state', name="ajax_login_state"),
     url(r'^ajax/login/$', 'main.views.ajax_login', name="ajax_login"),

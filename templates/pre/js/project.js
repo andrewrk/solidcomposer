@@ -95,6 +95,7 @@ var SCProject = function () {
 
         $("#projects").html(Jst.evaluate(template_version_list_s, state));
         Player.addUi("#projects");
+        Player.addCommentsUi("#projects");
         addClicksToProjects();
 
         $("#footer-data").html(Jst.evaluate(template_footer_s, state));

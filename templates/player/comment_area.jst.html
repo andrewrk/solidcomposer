@@ -1,39 +1,41 @@
 <% (function (comment_node, user, show_timed_comments) { %>
-    <% function comment_block(node) { %>
-        <div class="comment">
-            <div class="author">
-                <span class="username">
-                    <%
-                        (function () {
-                            var urls = Player.urls;
-                            var user = node.owner;
-                    %>
-                        {% include 'username.jst.html' %}
-                    <% })(); %>
-                </span>
-                <span class="timestamp">
-                    <%= Time.printableTimeSince(node.date_created) %> ago
-                </span>
-            </div>
-            <div class="content">
-                <%+ Showdown.instance.makeHtml(node.content) %>
-            </div>
-            <div class="action">
-                <% if (user.id && ! node.reply_disabled) { %>
-                    <a class="reply" href="#">Reply</a>
+    <div class="comment-area">
+        <% function comment_block(node) { %>
+            <div class="comment" id="comment-<%=node.id%>" data-commentid="<%=node.id%>">
+                <div class="author">
+                    <span class="username">
+                        <%
+                            (function () {
+                                var urls = Player.urls;
+                                var user = node.owner;
+                        %>
+                            {% include 'username.jst.html' %}
+                        <% })(); %>
+                    </span>
+                    <span class="timestamp">
+                        <%= Time.printableTimeSince(node.date_created) %> ago
+                    </span>
+                </div>
+                <div class="content">
+                    <%+ Showdown.instance.makeHtml(node.content) %>
+                </div>
+                <div class="action">
+                    <% if (user.id && ! node.reply_disabled) { %>
+                        <a class="reply" href="#">Reply</a>
+                    <% } %>
+                    <% if (user.id && node.owner.id === user.id && comment_node !== node) { %>
+                        <a class="edit" href="#">Edit</a>
+                        <a class="delete" href="#">Delete</a>
+                    <% } %>
+                </div>
+                <% for (var i=0; i<node.children.length; ++i) { %>
+                    <% var child = node.children[i]; %>
+                    <% if (child.position === null || show_timed_comments) { %>
+                        <% comment_block(child); %>
+                    <% } %>
                 <% } %>
-                <% if (user.id && node.owner.id === user.id) { %>
-                    <a class="edit" href="#">Edit</a>
-                    <a class="delete" href="#">Delete</a>
-                <% } %>
             </div>
-            <% for (var i=0; i<node.children.length; ++i) { %>
-                <% var child = node.children[i]; %>
-                <% if (child.position === null || show_timed_comments) { %>
-                    <% comment_block(child); %>
-                <% } %>
-            <% } %>
-        </div>
-    <% }; comment_block(comment_node); %>
-<% }(comment_node, user, show_timed_comments)); %>
+        <% }; comment_block(comment_node); %>
+    </div>
+<% })(comment_node, user, show_timed_comments); %>
 
