@@ -122,8 +122,11 @@ var Player = function() {
     var dialogComment = null;
     var dialogCommentWidth = 400;
     var dialogCommentHeight = 300;
-    var lastDialogComment = null;
     var dialogCommentRect = null;
+
+    var lastDialogComment = null;
+    var lastDialogCommentSticky = null;
+    var lastDialogCommentPlayerDom = null;
 
     var dialogInsertComment = null;
     var dialogInsertCommentWidth = 300;
@@ -221,6 +224,27 @@ var Player = function() {
         }
     }
 
+    function refreshCommentDialog() {
+        if (lastDialogComment === null) {
+            return;
+        }
+
+        dialogComment.html(Jst.evaluate(templateCommentDialogCompiled, {
+            comment_node: lastDialogComment,
+            user: user
+        }));
+        addCommentsUiToDom(dialogComment);
+    }
+
+    function makeCommentDialogSticky(sticky) {
+        lastDialogCommentSticky = sticky;
+        $(document).unbind('mousemove', checkHideComment);
+        if (! sticky) {
+            // install a hook to hide the comment box when the mouse goes too far away
+            $(document).bind('mousemove', checkHideComment);
+        }
+    }
+
     function showCommentDialog(node, playerDom, sticky) {
         if (node === lastDialogComment) {
             return;
@@ -233,6 +257,7 @@ var Player = function() {
         $(document).unbind('mousemove', checkHideComment);
 
         lastDialogComment = node;
+        lastDialogCommentPlayerDom = playerDom;
         var song = songs[node.song];
         var ol = $(playerDom).find('.timed-comments ol');
         var x = ol.get(0).offsetLeft + (node.position / song.length) * waveformWidth;
@@ -253,11 +278,7 @@ var Player = function() {
             bottom: y+dialogCommentHeight
         };
 
-        if (! sticky) {
-            // install a hook to hide the comment box when the mouse goes too far away
-            $(document).bind('mousemove', checkHideComment);
-        }
-
+        makeCommentDialogSticky(sticky);
     }
 
     function insertTimedComment(node) {
@@ -442,6 +463,7 @@ var Player = function() {
             e.preventDefault();
             var comment_id = parseInt($(this).attr('data-commentid'));
             showCommentDialog(comments[comment_id], $(this).closest('.player-large'), true);
+            makeCommentDialogSticky(true);
             return false;
         });
 
@@ -575,6 +597,11 @@ var Player = function() {
 
     function addCommentsUiToDom(jdom) {
         jdom.find('.comment-area .reply').click(function(){
+            // if this click is in a comment dialog, make it sticky.
+            if ($(this).closest('#comment-dialog').size() > 0) {
+                makeCommentDialogSticky(true);
+            }
+
             var comment_dom = $(this).closest('.comment');
             var comment_id = parseInt($(this).closest('.comment').attr('data-commentid'));
             var comment = comments[comment_id];
@@ -612,6 +639,9 @@ var Player = function() {
                             }
                             // locally insert the new comment
                             insertComment(data.data);
+
+                            // if the comment is in a dialog, the dialog needs to be re-shown.
+                            refreshCommentDialog();
                         },
                         'json');
                 });

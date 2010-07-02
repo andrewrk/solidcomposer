@@ -127,8 +127,6 @@
      > if they delete a node with no children, actually delete the comment.
    - glitchy behavior when trying to click the x on a comment box during song playback
      > if they click the x during playback, take it as clicking the hide comments button.
-   - when you click a timed comment that is not sticky it should become sticky.
-   - when you click to add a reply in a timed comment, make it sticky.
  * dependencies dialog: have a Samples heading.
    - if any missing samples: in red say e.g. "17 Missing Samples"
      > there should be a tip next to this explaining how it works.
