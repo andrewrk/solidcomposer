@@ -369,6 +369,7 @@ class SongCommentNode(SerializableModel):
         'content',
         'position',
         'reply_disabled',
+        'deleted',
     )
 
     song = models.ForeignKey('Song')
@@ -389,6 +390,9 @@ class SongCommentNode(SerializableModel):
     # if True, nobody is allowed to reply to this comment.
     reply_disabled = models.BooleanField(default=False)
 
+    # true if the comment is deleted
+    deleted = models.BooleanField(default=False)
+
     def __unicode__(self):
         if self.position is None:
             return u"%s: %s" % (self.owner, self.content[:30])
@@ -397,6 +401,8 @@ class SongCommentNode(SerializableModel):
 
     def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
         data = super(SongCommentNode, self).to_dict(access, chains)
+        if self.deleted:
+            del data['content']
         # always follow owner link
         data['owner'] = self.owner.get_profile().to_dict()
         # add the children replies
@@ -407,10 +413,19 @@ class SongCommentNode(SerializableModel):
         self.date_edited = datetime.now()
         if not self.id:
             self.date_created = self.date_edited
-        self._save(*args, **kwargs)
+        return self._save(*args, **kwargs)
 
     def _save(self, *args, **kwargs):
-        super(SongCommentNode, self).save(*args, **kwargs)
+        return super(SongCommentNode, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # if it's a leaf node, actually delete it
+        if self.songcommentnode_set.count() == 0:
+            return super(SongCommentNode, self).delete(*args, **kwargs)
+
+        # if not, just set delete to true.
+        self.deleted = True
+        self.save()
 
 class Tag(SerializableModel):
     PUBLIC_ATTRS = (

@@ -129,6 +129,10 @@ FREE_BAND_LIMIT = 10
 
 URL_DISALLOWED_CHARS = r'\./?'
 
+# how many hours does a person have until they can no longer
+# edit or delete comments
+COMMENT_EDIT_TIME_HOURS = 24
+
 
 # Preparser
 
@@ -152,6 +156,7 @@ from main import design
 # the dictionary that will be available to preparsed files
 PREPARSE_CONTEXT = {
     'MEDIA_URL': MEDIA_URL,
+    'COMMENT_EDIT_TIME_HOURS': COMMENT_EDIT_TIME_HOURS,
     'TIMED_COMMENT_SIZE': design.timed_comment_size,
     'VOLUME_ICON_SIZE': design.volume_icon_size,
     'WAVEFORM_WIDTH': design.waveform_size[0],

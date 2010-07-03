@@ -43,6 +43,10 @@ invalid_position = 'Invalid song position.'
 cannot_leave_blank_post = 'You may not leave a blank song comment.'
 comments_disabled_for_this_version = 'Comments are disabled for this version.'
 you_dont_have_permission_to_comment = 'You do not have permission to comment on this song.'
+too_late_to_delete_comment = 'It is too late to delete your comment.'
+can_only_delete_your_own_comment = 'You can only delete your own comments.'
+too_late_to_edit_comment = 'It is too late to edit your comment.'
+can_only_edit_your_own_comment = 'You can only edit your own comments.'
 
 samples_dialog_title = "Download Project Files"
 dependencies_dialog_title = "Song Dependencies"

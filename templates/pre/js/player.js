@@ -39,7 +39,8 @@ var Player = function() {
         userpage: function (username) {
             return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
         },
-        ajax_comment: "{% filter escapejs %}{% url ajax_comment %}{% endfilter %}"
+        ajax_comment: "{% filter escapejs %}{% url ajax_comment %}{% endfilter %}",
+        ajax_delete_comment: "{% filter escapejs %}{% url ajax_delete_comment %}{% endfilter %}"
     };
 
     // if true, the user cannot alter playback, other than volume.
@@ -229,10 +230,17 @@ var Player = function() {
             return;
         }
 
+        // if the comment doesn't exist, hide the dialog
+        if (! comments[lastDialogComment.id]) {
+            hideCommentDialog();
+            return;
+        }
+
         dialogComment.html(Jst.evaluate(templateCommentDialogCompiled, {
             comment_node: lastDialogComment,
             user: user
         }));
+
         addCommentsUiToDom(dialogComment);
     }
 
@@ -306,6 +314,39 @@ var Player = function() {
         parent_node.children.unshift(node);
 
         updateCallback();
+    }
+
+    function deleteCommentRef(node, target_id) {
+        var i;
+        var child;
+        for (i=0; i<node.children.length; ++i) {
+            child = node.children[i];
+            deleteCommentRef(child, target_id);
+            if (child.id === target_id) {
+                node.children.splice(i, 1);
+                --i;
+            }
+        }
+    }
+
+    function deleteComment(node_id) {
+        if (comments[node_id].children.length === 0) {
+            // actually delete it
+            $.each(songs, function(id, song) {
+                var i;
+                for (i=0; i<song.timed_comments.length; ++i) {
+                    if (song.timed_comments[i].id === node_id) {
+                        song.timed_comments.splice(i, 1);
+                        return;
+                    }
+                }
+                deleteCommentRef(song.comment_node, node_id);
+            });
+            delete comments[node_id];
+        } else {
+            // just set deleted to true
+            comments[node_id].deleted = true;
+        }
     }
 
     function addUiToDom(jdom) {
@@ -651,6 +692,31 @@ var Player = function() {
             }
 
             comment_ui.find('textarea').first().focus();
+            return false;
+        });
+
+        jdom.find('.comment-area .delete').click(function(){
+            var comment_dom = $(this).closest('.comment');
+            var comment_id = parseInt(comment_dom.attr('data-commentid'));
+            var yeah = confirm("Your comment is about to be deleted.");
+            if (yeah) {
+                $.post(
+                    urls.ajax_delete_comment,
+                    {
+                        comment: comment_id
+                    },
+                    function(data) {
+                        if (data === null || ! data.success) {
+                            alert("Error deleting your comment.");
+                            return;
+                        }
+                        deleteComment(comment_id);
+
+                        refreshCommentDialog();
+                        updateCallback();
+                    },
+                    'json');
+            }
             return false;
         });
     }

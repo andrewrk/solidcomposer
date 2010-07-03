@@ -16,18 +16,24 @@
                         <%= Time.printableTimeSince(node.date_created) %> ago
                     </span>
                 </div>
-                <div class="content">
-                    <%+ Showdown.instance.makeHtml(node.content) %>
-                </div>
-                <div class="action">
-                    <% if (user.id && ! node.reply_disabled) { %>
-                        <a class="reply" href="#">Reply</a>
-                    <% } %>
-                    <% if (user.id && node.owner.id === user.id && comment_node !== node) { %>
-                        <a class="edit" href="#">Edit</a>
-                        <a class="delete" href="#">Delete</a>
+                <div class="content<% if (node.deleted) { %> deleted<% } %>">
+                    <% if (node.deleted) { %>
+                        [deleted]
+                    <% } else { %>
+                        <%+ Showdown.instance.makeHtml(node.content) %>
                     <% } %>
                 </div>
+                <% if (! node.deleted) { %>
+                    <div class="action">
+                        <% if (user.id && ! node.reply_disabled) { %>
+                            <a class="reply" href="#">Reply</a>
+                        <% } %>
+                        <% if (user.id && node.owner.id === user.id && Time.secondsSince(node.date_created) < {{COMMENT_EDIT_TIME_HOURS}} * 60 * 60 ) { %>
+                            <a class="edit" href="#">Edit</a>
+                            <a class="delete" href="#">Delete</a>
+                        <% } %>
+                    </div>
+                <% } %>
                 <% for (var i=0; i<node.children.length; ++i) { %>
                     <% var child = node.children[i]; %>
                     <% if (child.position === null || show_timed_comments) { %>

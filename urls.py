@@ -20,6 +20,8 @@ urlpatterns = patterns('',
     url(r'^ajax/login/$', 'main.views.ajax_login', name="ajax_login"),
     url(r'^ajax/logout/$', 'main.views.ajax_logout', name="ajax_logout"),
     url(r'^ajax/comment/$', 'main.views.ajax_comment', name="ajax_comment"),
+    url(r'^ajax/delete_comment/$', 'main.views.ajax_delete_comment', name="ajax_delete_comment"),
+    url(r'^ajax/edit_comment/$', 'main.views.ajax_edit_comment', name="ajax_edit_comment"),
 
     url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
 

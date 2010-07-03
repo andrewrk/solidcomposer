@@ -122,11 +122,9 @@
 = song player
  * comments
    - ability to edit - only if the post is less than a day old
-   - ability to delete - only if the post is less than a day old
-     > when they delete something, just set delete to true and display [comment deleted] instead of the text.
-     > if they delete a node with no children, actually delete the comment.
    - glitchy behavior when trying to click the x on a comment box during song playback
      > if they click the x during playback, take it as clicking the hide comments button.
+   - if deleting a comment ends up meaning that you can delete a tree, do it. maybe do this on a cron job.
  * dependencies dialog: have a Samples heading.
    - if any missing samples: in red say e.g. "17 Missing Samples"
      > there should be a tip next to this explaining how it works.

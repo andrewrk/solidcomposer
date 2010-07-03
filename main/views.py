@@ -134,6 +134,63 @@ def ajax_comment(request):
 
     return json_success(node.to_dict())
 
+@json_login_required
+@json_post_required
+def ajax_delete_comment(request):
+    node_id_str = request.POST.get('comment', 0)
+    try:
+        node_id = int(node_id_str)
+    except ValueError:
+        node_id = 0
+    try:
+        node = SongCommentNode.objects.get(pk=node_id)
+    except SongCommentNode.DoesNotExist:
+        return json_failure(design.bad_song_comment_node_id)
+
+    # can only delete own comments
+    if node.owner != request.user:
+        return json_failure(design.can_only_delete_your_own_comment)
+
+    # can only delete within a certain amount of time
+    now = datetime.now()
+    if now > node.date_created + timedelta(hours=settings.COMMENT_EDIT_TIME_HOURS):
+        return json_failure(design.too_late_to_delete_comment)
+
+    node.delete()
+    return json_success()
+
+@json_login_required
+@json_post_required
+def ajax_edit_comment(request):
+    node_id_str = request.POST.get('comment', 0)
+    try:
+        node_id = int(node_id_str)
+    except ValueError:
+        node_id = 0
+    try:
+        node = SongCommentNode.objects.get(pk=node_id)
+    except SongCommentNode.DoesNotExist:
+        return json_failure(design.bad_song_comment_node_id)
+
+    # can only edit own comments
+    if node.owner != request.user:
+        return json_failure(design.can_only_edit_your_own_comment)
+
+    # can only delete within a certain amount of time
+    now = datetime.now()
+    if now > node.date_created + timedelta(hours=settings.COMMENT_EDIT_TIME_HOURS):
+        return json_failure(design.too_late_to_edit_comment)
+
+    content = request.POST.get('content', '')
+    
+    if not content:
+        return json_failure(design.cannot_leave_blank_post)
+
+    node.content = content
+    node.save()
+
+    return json_success(node.to_dict())
+
 def user_register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
