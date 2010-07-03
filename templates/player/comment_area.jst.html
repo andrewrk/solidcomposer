@@ -16,13 +16,23 @@
                         <%= Time.printableTimeSince(node.date_created) %> ago
                     </span>
                 </div>
-                <div class="content<% if (node.deleted) { %> deleted<% } %>">
-                    <% if (node.deleted) { %>
-                        [deleted]
-                    <% } else { %>
-                        <%+ Showdown.instance.makeHtml(node.content) %>
-                    <% } %>
-                </div>
+                <% if (node.editing) { %>
+                    <div class="edit-content">
+                        <textarea rows="15" cols="48"><%=node.content%></textarea>
+                        <div class="buttons">
+                            <input class="post" type="button" value="Save" />
+                            <input class="cancel" type="button" value="Cancel" />
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="content<% if (node.deleted) { %> deleted<% } %>">
+                        <% if (node.deleted) { %>
+                            [deleted]
+                        <% } else { %>
+                            <%+ Showdown.instance.makeHtml(node.content) %>
+                        <% } %>
+                    </div>
+                <% } %>
                 <% if (! node.deleted) { %>
                     <div class="action">
                         <% if (user.id && ! node.reply_disabled) { %>

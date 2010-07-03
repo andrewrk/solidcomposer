@@ -40,7 +40,8 @@ var Player = function() {
             return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
         },
         ajax_comment: "{% filter escapejs %}{% url ajax_comment %}{% endfilter %}",
-        ajax_delete_comment: "{% filter escapejs %}{% url ajax_delete_comment %}{% endfilter %}"
+        ajax_delete_comment: "{% filter escapejs %}{% url ajax_delete_comment %}{% endfilter %}",
+        ajax_edit_comment: "{% filter escapejs %}{% url ajax_edit_comment %}{% endfilter %}"
     };
 
     // if true, the user cannot alter playback, other than volume.
@@ -637,7 +638,7 @@ var Player = function() {
     }
 
     function addCommentsUiToDom(jdom) {
-        jdom.find('.comment-area .reply').click(function(){
+        jdom.find('.comment-area .action .reply').click(function(){
             // if this click is in a comment dialog, make it sticky.
             if ($(this).closest('#comment-dialog').size() > 0) {
                 makeCommentDialogSticky(true);
@@ -695,7 +696,7 @@ var Player = function() {
             return false;
         });
 
-        jdom.find('.comment-area .delete').click(function(){
+        jdom.find('.comment-area .action .delete').click(function(){
             var comment_dom = $(this).closest('.comment');
             var comment_id = parseInt(comment_dom.attr('data-commentid'));
             var yeah = confirm("Your comment is about to be deleted.");
@@ -717,6 +718,64 @@ var Player = function() {
                     },
                     'json');
             }
+            return false;
+        });
+
+        jdom.find('.comment-area .action .edit').click(function(){
+            var comment_dom = $(this).closest('.comment');
+            var comment_id = parseInt(comment_dom.attr('data-commentid'));
+            
+            // replace the content with the edit box
+            var comment = comments[comment_id];
+            comment.editing = true;
+            refreshCommentDialog();
+            updateCallback();
+
+            return false;
+        });
+
+        jdom.find('.comment-area .edit-content .post').click(function(){
+            var comment_dom = $(this).closest('.comment');
+            var comment_id = parseInt(comment_dom.attr('data-commentid'));
+            var content = $(this).closest('.edit-content').find('textarea').val();
+            
+            $.post(
+                urls.ajax_edit_comment,
+                {
+                    comment: comment_id,
+                    content: content
+                },
+                function(data) {
+                    if (data === null) {
+                        alert("Unable to save edit.");
+                        return;
+                    }
+                    if (! data.success) {
+                        alert("Unable to save edit: " + data.reason);
+                        return;
+                    }
+                    
+                    // TODO: replace with update function, like this:
+                    // comments[comment_id].update(data.data);
+                    comments[comment_id].content = data.data.content;
+                    comments[comment_id].editing = false;
+
+                    refreshCommentDialog();
+                    updateCallback();
+                },
+                'json');
+
+            return false;
+        });
+        jdom.find('.comment-area .edit-content .cancel').click(function(){
+            var comment_dom = $(this).closest('.comment');
+            var comment_id = parseInt(comment_dom.attr('data-commentid'));
+            var comment = comments[comment_id];
+
+            comment.editing = false;
+            refreshCommentDialog();
+            updateCallback();
+
             return false;
         });
     }

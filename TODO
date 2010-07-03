@@ -121,10 +121,10 @@
 
 = song player
  * comments
-   - ability to edit - only if the post is less than a day old
    - glitchy behavior when trying to click the x on a comment box during song playback
      > if they click the x during playback, take it as clicking the hide comments button.
    - if deleting a comment ends up meaning that you can delete a tree, do it. maybe do this on a cron job.
+   - fix the TODO about update(). it's really easy with internet.
  * dependencies dialog: have a Samples heading.
    - if any missing samples: in red say e.g. "17 Missing Samples"
      > there should be a tip next to this explaining how it works.
