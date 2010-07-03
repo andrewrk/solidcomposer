@@ -413,6 +413,27 @@ def ajax_provide_mp3(request):
     else:
         return json_failure(result['reason'])
 
+@json_login_required
+@json_post_required
+def ajax_checkout(request):
+    project = get_obj_from_request(request.POST, 'project', Project)
+
+    if project is None:
+        return json_failure(design.bad_project_id)
+
+    # make sure user can work on this band
+    if not project.band.permission_to_work(request.user):
+        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    # make sure project is available
+    if project.checked_out_to is not None:
+        return json_failure(design.this_project_already_checked_out)
+
+    project.checked_out_to = request.user
+    project.save();
+
+    return json_success()
+
 @login_required
 def band_settings(request, band_id_str):
     "todo"

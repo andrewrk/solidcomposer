@@ -141,3 +141,23 @@ def make_timed_temp_file():
     tmp_file.save()
 
     return handle
+
+def get_type(post_data, name, default, type_obj):
+    str_obj = post_data.get(name, default)
+    try:
+        typed_obj = type_obj(str_obj)
+    except ValueError:
+        typed_obj = default
+
+    return typed_obj
+
+def get_val(post_data, name, default):
+    return get_type(post_data, name, default, type(default))
+
+def get_obj_from_request(post_data, name, ObjectType):
+    obj_id = get_val(post_data, name, 0)
+    try:
+        obj = ObjectType.objects.get(pk=obj_id)
+    except ObjectType.DoesNotExist:
+        obj = None
+    return obj

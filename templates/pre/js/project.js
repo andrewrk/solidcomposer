@@ -86,6 +86,29 @@ var SCProject = function () {
             $("#missing-project-upload-"+i).submit(missing_project_upload_f);
             $("#missing-mp3-upload-"+i).submit(missing_mp3_upload_f);
         }
+
+        $("#next-version .checkout").click(function(){
+            $.post(
+                state.urls.ajax_checkout,
+                {
+                    project: project_id
+                },
+                function(data) {
+                    if (data === null) {
+                        alert("Unable to check out project.");
+                        return;
+                    }
+                    if (! data.success) {
+                        alert("Unable to check out project: " + data.reason);
+                        return;
+                    }
+                    state.project.checked_out_to = state.user;
+                    updateProjects();
+                },
+                'json');
+
+            return false;
+        });
     }
 
     function updateProjects() {

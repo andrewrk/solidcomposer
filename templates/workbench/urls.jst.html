@@ -8,5 +8,6 @@
     },
     project_version: function(project_id, version_number) {
         return this.project(project_id) + "#version" + version_number;
-    }
+    },
+    ajax_checkout: "{% filter escapejs %}{% url workbench.ajax_checkout %}{% endfilter %}"
 }

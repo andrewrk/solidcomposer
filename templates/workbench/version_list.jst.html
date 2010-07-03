@@ -1,5 +1,5 @@
 <% if (versions.length) { %>
-    <div id="next-version" class="version">
+    <div id="next-version" class="version" data-projectid="<%=project.id%>">
         <% if (project.checked_out_to !== null) { %>
             <% var version_user = project.checked_out_to; %>
             {% include 'workbench/version_owner.jst.html' %}
@@ -8,21 +8,25 @@
             {% include 'workbench/version_owner.jst.html' %}
         <% } %>
         <div id="status">
-            <% if (project.checked_out_to === user.id) { %>
-                Checked out to <strong>you</strong>.
-            <% } else if (project.checked_out_to !== null) { %>
-                Checked out.
+            <% if (project.checked_out_to !== null) { %>
+                <% if (project.checked_out_to.id === user.id) { %>
+                    Checked out to <strong>you</strong>.
+                <% } else { %>
+                    Checked out.
+                <% } %>
             <% } else { %>
                 Available.
             <% } %>
         </div>
         <div id="action">
-            <% if (project.checked_out_to === user.id) { %>
-                Check in.
-            <% } else if (project.checked_out_to !== null) { %>
-                Poke them.
+            <% if (project.checked_out_to !== null) { %>
+                <% if (project.checked_out_to.id === user.id) { %>
+                    Check in.
+                <% } else { %>
+                    Poke them.
+                <% } %>
             <% } else { %>
-                Check out.
+                <a class="checkout" href="#">Check out</a>
             <% } %>
         </div>
     </div>

@@ -121,6 +121,7 @@
 
 = song player
  * comments
+   - handle the case when they're not logged in. it should guide them through the process smoothly
    - glitchy behavior when trying to click the x on a comment box during song playback
      > if they click the x during playback, take it as clicking the hide comments button.
    - if deleting a comment ends up meaning that you can delete a tree, do it. maybe do this on a cron job.
@@ -131,16 +132,13 @@
    - if any downloadable samples: have a samples link which closes the dialog and opens the samples dialog.
  * upload a song with a lot of missing samples. upload the samples.
    click the download samples button. they're missing from the box.
- * handle the case when they're not logged in. it should guide them through the process smoothly
  * don't cover up the waveform with the comment box
  * make sure it behaves properly during listening party
 
 = workbench =
  * project page
-   > check out
    > check in 
    > poke
-   > upload samples
  * project manager (band page)
    > make filters work
    > quick ui for actions
