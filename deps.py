@@ -11,6 +11,7 @@ import sys
 this file checks to make sure python dependencies are installed.
 it outpus a space separated list of missing dependencies.
 
+ * python (the minimum version)
  * django - http://www.djangoproject.com/
  * south - http://south.aeracode.org/
    - A good database system like postgresql or mysql so that the migration
@@ -24,6 +25,7 @@ it outpus a space separated list of missing dependencies.
 """
 
 deps = [
+    'python-2.6',
     'django-1.2.1',
     'south-0.7.1',
     'mutagen-1.19',
@@ -33,6 +35,11 @@ deps = [
     'django-storages',
     'boto',
 ]
+
+# python
+import sys
+if sys.version_info[:2] >= (2, 6):
+    deps.remove('python-2.6')
 
 # boto
 try:
