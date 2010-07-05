@@ -697,6 +697,11 @@ var Player = function() {
         });
 
         jdom.find('.comment-area .action .delete').click(function(){
+            // if this click is in a comment dialog, make it sticky.
+            if ($(this).closest('#comment-dialog').size() > 0) {
+                makeCommentDialogSticky(true);
+            }
+
             var comment_dom = $(this).closest('.comment');
             var comment_id = parseInt(comment_dom.attr('data-commentid'));
             var yeah = confirm("Your comment is about to be deleted.");
@@ -722,6 +727,11 @@ var Player = function() {
         });
 
         jdom.find('.comment-area .action .edit').click(function(){
+            // if this click is in a comment dialog, make it sticky.
+            if ($(this).closest('#comment-dialog').size() > 0) {
+                makeCommentDialogSticky(true);
+            }
+
             var comment_dom = $(this).closest('.comment');
             var comment_id = parseInt(comment_dom.attr('data-commentid'));
             
@@ -755,9 +765,7 @@ var Player = function() {
                         return;
                     }
                     
-                    // TODO: replace with update function, like this:
-                    // comments[comment_id].update(data.data);
-                    comments[comment_id].content = data.data.content;
+                    $.extend(comments[comment_id], data.data)
                     comments[comment_id].editing = false;
 
                     refreshCommentDialog();
