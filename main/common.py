@@ -59,7 +59,7 @@ def json_post_required(function):
         if request.method == 'POST':
             return function(*args, **kwargs)
         else:
-            return json_failure(main.design.must_submit_via_get)
+            return json_failure(main.design.must_submit_via_post)
 
     return decorated
 

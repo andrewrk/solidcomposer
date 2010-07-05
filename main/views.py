@@ -90,14 +90,9 @@ def ajax_logout(request):
 @json_login_required
 @json_post_required
 def ajax_comment(request):
-    parent_id_str = request.POST.get('parent', 0)
-    try:
-        parent_id = int(parent_id_str)
-    except ValueError:
-        parent_id = 0
-    try:
-        parent = SongCommentNode.objects.get(pk=parent_id)
-    except SongCommentNode.DoesNotExist:
+    parent = get_obj_from_request(request.POST, 'parent', SongCommentNode)
+
+    if parent is None:
         return json_failure(design.bad_song_comment_node_id)
 
     # make sure the user has permission to critique
@@ -137,14 +132,9 @@ def ajax_comment(request):
 @json_login_required
 @json_post_required
 def ajax_delete_comment(request):
-    node_id_str = request.POST.get('comment', 0)
-    try:
-        node_id = int(node_id_str)
-    except ValueError:
-        node_id = 0
-    try:
-        node = SongCommentNode.objects.get(pk=node_id)
-    except SongCommentNode.DoesNotExist:
+    node = get_obj_from_request(request.POST, 'comment', SongCommentNode)
+
+    if node is None:
         return json_failure(design.bad_song_comment_node_id)
 
     # can only delete own comments
@@ -162,14 +152,9 @@ def ajax_delete_comment(request):
 @json_login_required
 @json_post_required
 def ajax_edit_comment(request):
-    node_id_str = request.POST.get('comment', 0)
-    try:
-        node_id = int(node_id_str)
-    except ValueError:
-        node_id = 0
-    try:
-        node = SongCommentNode.objects.get(pk=node_id)
-    except SongCommentNode.DoesNotExist:
+    node = get_obj_from_request(request.POST, 'comment', SongCommentNode)
+
+    if node is None:
         return json_failure(design.bad_song_comment_node_id)
 
     # can only edit own comments

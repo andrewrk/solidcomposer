@@ -1096,7 +1096,11 @@ var Player = function() {
         // the div with class="player-large"
         // this will pre-load.
         setCurrentPlayer: function(dom) {
-            var song_id = parseInt($(dom).attr('data-songid'));
+            var jdom = $(dom);
+            if (jdom.size() === 0) {
+                return;
+            }
+            var song_id = parseInt(jdom.attr('data-songid'));
             if (currentSong !== null && currentSong.id === parseInt(song_id)) {
                 return;
             }
@@ -1108,7 +1112,7 @@ var Player = function() {
                 updateCurrentPlayer();
             }
 
-            currentPlayer = $(dom);
+            currentPlayer = jdom;
             currentMp3File = media_url + currentSong.mp3_file;
             jp.jPlayer('setFile', currentMp3File);
             updateCurrentPlayer();

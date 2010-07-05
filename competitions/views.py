@@ -24,15 +24,8 @@ from competitions import design
 @json_login_required
 @json_post_required
 def ajax_submit_entry(request):
-    compo_id = request.POST.get('compo', 0)
-    try:
-        compo_id = int(compo_id)
-    except ValueError:
-        compo_id = 0
-    
-    try:
-        compo = Competition.objects.get(pk=compo_id)
-    except Competition.DoesNotExist:
+    compo = get_obj_from_request(request.POST, 'compo', Competition)
+    if compo is None:
         return json_failure(design.competition_not_found)
 
     # make sure it's still submission time
@@ -278,12 +271,7 @@ def compo_to_dict(compo, user):
     return data
 
 def compoRequest(request, compos):
-    page_str = request.GET.get('page', 1) 
-    try:
-        page_number = int(page_str)
-    except ValueError:
-        page_number = 1
-
+    page_number = get_val(request.GET, 'page', 1)
     paginator = Paginator(compos, settings.ITEMS_PER_PAGE)
 
     # build the json object

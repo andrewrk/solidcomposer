@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.core.servers.basehttp import FileWrapper
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response, get_object_or_404
@@ -78,13 +78,9 @@ def ajax_home(request):
 def handle_invite(request, accept):
     data = {'success': False}
 
-    invitation_id_str = request.GET.get("invitation", 0)
-    try:
-        invitation_id = int(invitation_id_str)
-    except ValueError:
-        invitation_id = 0
-
-    invite = get_object_or_404(BandInvitation, id=invitation_id)
+    invite = get_obj_from_request(request.GET, 'invitation', BandInvitation)
+    if invite is None:
+        return HttpResponseNotFound()
 
     # make sure the user has permission to reject this invitation
     if invite.invitee != request.user:
@@ -122,15 +118,9 @@ def band(request, band_id_str):
 @json_login_required
 @json_get_required
 def ajax_project_filters(request):
-    band_id_str = request.GET.get("band", 0)
-    try:
-        band_id = int(band_id_str)
-    except ValueError:
-        band_id = 0
+    band = get_obj_from_request(request.GET, 'band', Band)
 
-    try:
-        band = Band.objects.get(pk=band_id)
-    except:
+    if band is None:
         return json_failure(design.bad_band_id)
 
     if not band.permission_to_work(request.user):
@@ -149,11 +139,7 @@ def ajax_project_filters(request):
 def ajax_dependency_ownership(request):
     profile = request.user.get_profile()
 
-    dependency_type_str = request.POST.get('dependency_type', -1)
-    try:
-        dep_type_int = int(dependency_type_str)
-    except ValueError:
-        dep_type_int = -1
+    dep_type_int = get_val(request.POST, 'dependency_type', -1)
 
     if dep_type_int == PluginDepenency.STUDIO:
         dep_type = Studio
@@ -162,15 +148,9 @@ def ajax_dependency_ownership(request):
         dep_type = PluginDepenency
         collection = profile.plugins
 
-    dep_id_str = request.POST.get('dependency_id', 0)
-    try:
-        dep_id = int(dep_id_str)
-    except ValueError:
-        dep_id = 0
+    dep = get_obj_from_request(request.POST, 'dependency_id', dep_type)
 
-    try:
-        dep = dep_type.objects.get(pk=dep_id)
-    except dep_type.DoesNotExist:
+    if dep is None:
         return json_failure(design.bad_dependency_id)
 
     have = request.POST.get('have', False)
@@ -198,11 +178,7 @@ def performFilter(filterId, projects, user=None):
 @json_get_required
 def ajax_project_list(request):
     # validate input
-    page_str = request.GET.get('page', 1) 
-    try:
-        page_number = int(page_str)
-    except ValueError:
-        page_number = 1
+    page_number = get_val(request.GET, 'page', 1)
 
     filterName = request.GET.get('filter', 'all')
     if not FILTERS.has_key(filterName):
@@ -210,15 +186,9 @@ def ajax_project_list(request):
 
     searchText = request.GET.get('search', '')
 
-    band_str = request.GET.get('band', 0)
-    try:
-        band_id = int(band_str)
-    except ValueError:
-        band_id = 0
+    band = get_obj_from_request(request.GET, 'band', Band)
 
-    try:
-        band = Band.objects.get(pk=band_id)
-    except:
+    if band is None:
         return json_failure(design.bad_band_id)
 
     if not band.permission_to_work(request.user):
@@ -260,12 +230,10 @@ def ajax_project(request):
     checked out, etc.
     """
     last_version_str = request.GET.get('last_version', 'null')
-    project_id = request.GET.get('project', 0)
-    try:
-        project_id = int(project_id)
-    except ValueError:
-        project_id = 0
-    project = get_object_or_404(Project, id=project_id)
+    project = get_obj_from_request(request.GET, 'project', Project)
+
+    if project is None:
+        return json_failure(design.bad_project_id)
 
     # make sure the user has permission
     data = {
@@ -339,15 +307,9 @@ def handle_sample_upload(fileHandle, user, band):
 @json_login_required
 @json_post_required
 def ajax_upload_samples(request):
-    version_id_str = request.POST.get("version", 0)
-    try:
-        version_id = int(version_id_str)
-    except ValueError:
-        version_id = 0
+    version = get_obj_from_request(request.POST, 'version', ProjectVersion)
 
-    try:
-        version = ProjectVersion.objects.get(pk=version_id)
-    except:
+    if version is None:
         return json_failure(design.bad_version_id)
 
     band = version.project.band
@@ -364,15 +326,9 @@ def ajax_upload_samples(request):
     return json_success()
 
 def ajax_provide_project(request):
-    version_id_str = request.POST.get('version', 0)
-    try:
-        version_id = int(version_id_str)
-    except ValueError:
-        version_id = 0
+    version = get_obj_from_request(request.POST, 'version', ProjectVersion)
 
-    try:
-        version = ProjectVersion.objects.get(pk=version_id)
-    except ProjectVersion.DoesNotExist:
+    if version is None:
         return json_failure(design.bad_version_id)
 
     band = version.project.band
@@ -388,15 +344,9 @@ def ajax_provide_project(request):
 @json_login_required
 @json_post_required
 def ajax_provide_mp3(request):
-    version_id_str = request.POST.get('version', 0)
-    try:
-        version_id = int(version_id_str)
-    except ValueError:
-        version_id = 0
+    version = get_obj_from_request(request.POST, 'version', ProjectVersion)
 
-    try:
-        version = ProjectVersion.objects.get(pk=version_id)
-    except ProjectVersion.DoesNotExist:
+    if version is None:
         return json_failure(design.bad_version_id)
 
     band = version.project.band
@@ -508,15 +458,9 @@ def create_project(request, band_str):
 @json_login_required
 @json_get_required
 def download_zip(request):
-    song_id_str = request.GET.get('song', 0)
-    try:
-        song_id = int(song_id_str)
-    except ValueError:
-        song_id = 0
+    song = get_obj_from_request(request.GET, 'song', Song)
 
-    try:
-        song = Song.objects.get(pk=song_id)
-    except Song.DoesNotExist:
+    if song is None:
         return json_failure(design.bad_song_id)
 
     if not song.permission_to_view_source(request.user):

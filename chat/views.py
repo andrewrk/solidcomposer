@@ -1,21 +1,22 @@
 from django.shortcuts import get_object_or_404
 from chat.models import *
-from main.common import json_response
+from main.common import *
 from django.conf import settings
 
 from datetime import datetime, timedelta
 
+from chat import design
+
+@json_get_required
 def ajax_hear(request):
     """
     get new or all messages
     """
     last_message_str = request.GET.get('last_message', 'null')
-    room_id = request.GET.get('room', 0)
-    try:
-        room_id = int(room_id)
-    except ValueError:
-        room_id = 0
-    room = get_object_or_404(ChatRoom, id=room_id)
+
+    room = get_obj_from_request(request.GET, 'room', ChatRoom)
+    if room is None:
+        return json_failure(design.bad_room_id)
 
     # make sure user has permission to be in this room
     data = {
@@ -26,6 +27,7 @@ def ajax_hear(request):
         },
         'room': room.to_dict(),
         'messages': [],
+        'success': True
     }
 
     if request.user.is_authenticated():
@@ -78,13 +80,12 @@ def ajax_hear(request):
 
     return json_response(data)
 
+@json_login_required
+@json_post_required
 def ajax_say(request):
-    room_id = request.POST.get('room', 0)
-    try:
-        room_id = int(room_id)
-    except ValueError:
-        room_id = 0
-    room = get_object_or_404(ChatRoom, id=room_id)
+    room = get_obj_from_request(request.POST, 'room', ChatRoom)
+    if room is None:
+        return json_failure(design.bad_room_id)
 
     data = {
         'user': {
@@ -96,15 +97,15 @@ def ajax_say(request):
     }
 
     if not room.is_active():
-        return json_response(data)
+        return json_failure(design.room_is_not_active)
 
     message = request.POST.get('message', '')
 
-    if message == "" or not request.user.is_authenticated():
-        return json_response(data)
+    if message == "":
+        return json_failure(design.cannot_say_blank_message)
 
     if not data['user']['permission_write']:
-        return json_response(data)
+        return json_failure(design.you_lack_write_permission)
 
     # we're clear. add the message
     m = ChatMessage()
@@ -117,19 +118,15 @@ def ajax_say(request):
     data['success'] = True
     return json_response(data)
 
+@json_get_required
 def ajax_onliners(request):
-    room_id = request.GET.get('room', 0)
-    try:
-        room_id = int(room_id)
-    except ValueError:
-        room_id = 0
-    room = get_object_or_404(ChatRoom, id=room_id)
-
-    data = {}
+    room = get_obj_from_request(request.GET, 'room', ChatRoom)
+    if room is None:
+        return json_failure(design.bad_room_id)
 
     if not room.is_active():
-        return json_response(data)
+        return json_failure(design.room_is_not_active)
 
     expire_date = datetime.now() - timedelta(seconds=settings.CHAT_TIMEOUT)
     data = [x.person.get_profile().to_dict() for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]
-    return json_response(data)
+    return json_success(data)

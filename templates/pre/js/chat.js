@@ -173,12 +173,12 @@ var Chat = function() {
                     return;
                 }
 
-                if (data.length) {
-                    onlinerCount = data.length;
+                if (data.data.length) {
+                    onlinerCount = data.data.length;
                 }
                 
                 if (onlinerCount > 0) {
-                    data.sort(function(a,b){
+                    data.data.sort(function(a,b){
                         var alc = a.username.toLowerCase();
                         var blc = b.username.toLowerCase();
                         if (alc > blc) {
@@ -190,7 +190,7 @@ var Chat = function() {
                         }
                     });
                 }
-                state.onliners = data;
+                state.onliners = data.data;
                 $("#chatroom .onliner-count").html(onlinerCount);
                 
                 updateChatOnliners();

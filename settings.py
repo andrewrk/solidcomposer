@@ -93,6 +93,8 @@ INSTALLED_APPS = (
     'music',
 )
 
+SITE_ID = 1
+
 LOGIN_URL = "/login/"
 AUTH_PROFILE_MODULE = 'main.Profile'
 
