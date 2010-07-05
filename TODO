@@ -1,4 +1,11 @@
 = sitewide =
+ * gotta follow copyright on the icons from icon finder. have a database of icons used
+   with authors and a link so that I can have an attribution page at the bottom.
+ * tip framework. tips should explain everything complicated and be a little (tip) link 
+   next to the item. mousing over should bring up the tip and moving away from the link
+   should hide the tip. you should be able to turn off tips in account settings. there
+   should be an X next to each tip link, and clicking it will hide that particular tip
+   permanently.
  * make sure the tempfile cron job is working
  * have a backup plan for the database
  * pricing & signup page
@@ -137,7 +144,12 @@
 = workbench =
  * project page
    > check in 
+     - just check in
+     - check in new version
    > poke
+     - can poke max. once every day
+   > upload samples
+   > test checking in a new version from a different window and make sure it works well
  * project manager (band page)
    > make filters work
    > quick ui for actions
@@ -167,8 +179,6 @@
    credits, which can be spent on any band.
  * make it so that a band is read-only when its bytes_used < bytes_total
  * project filenames should be <artist> - <title>_<version>.<ext>
- * allow uploading only mp3 or only project file
-   > provide UI for providing the file for it
  * add a thumbs up button (rating system) for plugins.
    > add a description and photo field for plugins
    > come up with a plan for how they get updated. (possibly a simple link to
