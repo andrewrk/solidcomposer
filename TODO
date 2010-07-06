@@ -1,4 +1,14 @@
-= sitewide =
+Release "Boten Anna"
+= sitewide
+ * pricing & signup page
+ * code to bill customers monthly
+   > set it up so that it sends me an email of what it's about to do, then
+     I manually approve it and bill everybody.
+ * home page
+   > if not logged in, it's an attractive pricing & signup page
+   > if logged in, it's a dashboard with good stuff on it
+ * javascript tests
+ * terms of service
  * gotta follow copyright on the icons from icon finder. have a database of icons used
    with authors and a link so that I can have an attribution page at the bottom.
  * tip framework. tips should explain everything complicated and be a little (tip) link 
@@ -6,142 +16,57 @@
    should hide the tip. you should be able to turn off tips in account settings. there
    should be an X next to each tip link, and clicking it will hide that particular tip
    permanently.
- * make sure the tempfile cron job is working
  * have a backup plan for the database
- * pricing & signup page
- * code to bill customers monthly
-   > set it up so that it sends me an email of what it's about to do, then
-     I manually approve it and bill everybody.
- * terms of service
- * home page
-   > if not logged in, it's an attractive pricing & signup page
-   > if logged in, it's a dashboard with good stuff on it
+ * make sure the tempfile cron job is working
  * user voice
- * refactor: django already has a storage engine type thing. use it instead
-   of my own hacked class
- * stats
-   # on songs
-     > how many plays
-       - partial
-       - complete
-     > how many downloads
-   # band page views
-   # fans
- * when you click something to load the next page, replace the contents with
-   the loading thing
- * use gravatar for avatars
+ * blog post announcing release
  * password recovery
- * ability to change password
- * make the login ALWAYS ajax. the consistency will help user confidence.
- * IE8 support
- * refactor
-   > change competitions to arena
-   > change workshop to workbench
- * user settings:
-   > connect a user's account with last.fm to scrobble tracks that they listen to
-   > ability to check/uncheck plugins that a user owns
-   > whether to bleepy boop when people chat
- * javascript tests
- * serializablemodel: should only follow chains if the names match
+ * editor controls on fields that will be parsed by showdown.
+   > http://wmd-editor.com/
+ * design iteration
 
-= chat =
+= chat
  * don't render ALL the chat messages every time.
- * clicking onliners should open a new window
  * download mp3: box instead of link
  * hyperlinks
- * sometimes the design gets put into multiple lines
- * increase onliners timeout
- * urls and things that don't wrap screw up chat
- * make the chat more friendly to use for people who are used to IRC
-   > make the page flash (or change the title text to indicate) when 
-     someone's name is mentioned in IRC
-   > tab completion for names
-   > ability to private message?
-   > page up / down to scroll up and down
-   > /me action
-   > display error when chat message doesn't go through
- * display how many invisible observers there are
-   - by IP address?
+ * sometimes the design gets put into multiple lines (caused by long unwrapped messages)
+   > urls and things that don't wrap screw up chat
+ * tab completion for names
+ * page up / down to scroll up and down
+ * /me action
 
-= arena =
+= arena
  * longer entry names look bad in the entry list
  * tests need to use storage instead of file system
  * do we cap file size on source file? count it against their quota?
  * it's possible to double-vote for someone
- * user-highlighted song text is mis-aligned
- * entry list: "so far" is misleading. use a better word.
  * the listening party starts over after it ends. whoops.
- * userpage open in a new window
+ * entry list: "so far" is misleading. use a better word.
  * send emails when voting results are in
  * there's a security hole - javascript knows where the song mp3s are way
    before it should.
- * show listening party buffer time
- * ability to just set a delay for a listening party as opposed to a date
  * make sure Player works seamlessly
  * new competition form: if you uncheck "have listening party," it should hide
    "listening party date"
- * if you're listening to an entry during voting, and then voting ends
-   and the entries re-order, it will show you as listening to the wrong entry.
- * show competition length as metadata
- * auto theme generator
  * beginning of song gets cut off during listening party. set it up
    so that it sets up a setTimeout() to play it right on time instead
    of cutting into the time.
- * arena - the competitions aren't updating on a second based timer
-   > make it a second-based timer but not suck to click the link
- * if creating a competition fails, have a message at the top saying
-   "please correct these errors."
- * edit competition
- * show upcoming/new competitions before old ones in bookmarked
-   competitions. there should be a clear divide.
-   > better competition ordering in arena
- * better moderator features
-   > ability to pause, skip, previous in listening party
-   > ability to open submission up even during listening party
-   > ability to kick people out (blacklist) if they're misbehaving
-   > compo owner can make other people moderators too
  * listening party - make song comments during chat during listening party
- * when they click resubmit, scroll down the page to see the form.
  * user profile page
    - show their competition entries
  * show and allow posting comments on songs on user pages
- * put whitelist/blacklist/open in the create competition page. default open.
-   - invitation system based on passwords
-   - ability to have private compo by invitation
- * ability to replay the listening party
-   - put an indicator on the page so you know whether it's live or replay
- * protect against h4xz0rz by adding a @method to views which do things like
-   login, logout, etc. The method would make sure the referrer was us and not
-   some other website.
- * color the time differently when there isn't much time left so that 
-   people know they're running out of time
- * make the gui experience of clicking edit on a submission and then
-   deciding not to better.
- * play a noise that indicates listening party is starting
-
- * allow uploading ogg
- * Integrate chat from an IRC channel.
- * google calendar integration
- * rss feed for competitions
- * ability to customize the design
  * arena home GUI Redesign
 
 = song player
- * comments
-   - handle the case when they're not logged in. it should guide them through the process smoothly
-   - glitchy behavior when trying to click the x on a comment box during song playback
-     > if they click the x during playback, take it as clicking the hide comments button.
-   - if deleting a comment ends up meaning that you can delete a tree, do it. maybe do this on a cron job.
  * dependencies dialog: have a Samples heading.
    - if any missing samples: in red say e.g. "17 Missing Samples"
      > there should be a tip next to this explaining how it works.
    - if any downloadable samples: have a samples link which closes the dialog and opens the samples dialog.
  * upload a song with a lot of missing samples. upload the samples.
-   click the download samples button. they're missing from the box.
  * don't cover up the waveform with the comment box
  * make sure it behaves properly during listening party
 
-= workbench =
+= workbench
  * project page
    > check in 
      - just check in
@@ -170,51 +95,135 @@
      - songs checked in
      - songs checked out
      - pokes
-   > fan page activity
-     - download count in the past 24 hours
-     - play count in the past 24 hours
-     - new fan count in the past 24 hours
    > show widget indicating how much space is used / left and how to upgrade
  * make it so that a user's plan gives him a certain amount of 
    credits, which can be spent on any band.
  * make it so that a band is read-only when its bytes_used < bytes_total
  * project filenames should be <artist> - <title>_<version>.<ext>
- * add a thumbs up button (rating system) for plugins.
-   > add a description and photo field for plugins
-   > come up with a plan for how they get updated. (possibly a simple link to
-     notify that information is outdated?)
- * refactor: PluginDepenency mispelled
  * maxWidth and maxHeight don't work in jquery dialog
- * warning when you upload a song to a band, if any of the band members are
-   missing dependencies
  * have a tip thing that tells people to use the .zip export function of fl studio
- * editor controls on fields that will be parsed by showdown.
-   > http://wmd-editor.com/
-
- * handle ambiguous samples with a choice when the song is uploaded.
-   > one of the choices should be: use sample X, and delete the other one
- * allow clearing samples or deleting individual ones
  * have a progress bar during uploads
-   > also use a multiple file upload box for samples
- * ability to rename band
  * support uploading .zip files for checkins
    > find the extension of a project file
    > treat any other file as a sample dependency
+ * ability to rename band
  * make logging out and logging in nice.
    > log out - should hide everything on the page and say you need to log in
    > log in - everything should appear
    > should never have to leave the page
  * tests
+ 
+
+= sitewide =
+ * refactor: django already has a storage engine type thing. use it instead
+   of my own hacked class
+ * stats
+   # on songs
+     > how many plays
+       - partial
+       - complete
+     > how many downloads
+   # band page views
+   # fans
+ * when you click something to load the next page, replace the contents with
+   the loading thing
+ * ability to change password
+ * make the login ALWAYS ajax. the consistency will help user confidence.
+ * IE8 support
+ * refactor
+   > change competitions to arena
+   > change workshop to workbench
+ * user settings:
+   > connect a user's account with last.fm to scrobble tracks that they listen to
+   > ability to check/uncheck plugins that a user owns
+   > whether to bleepy boop when people chat
+ * serializablemodel: should only follow chains if the names match
+
+= chat =
+ * clicking onliners should open a new window
+ * increase onliners timeout
+ * make the chat more friendly to use for people who are used to IRC
+   > make the page flash (or change the title text to indicate) when 
+     someone's name is mentioned in IRC
+   > ability to private message?
+   > display error when chat message doesn't go through
+ * display how many invisible observers there are
+   - by IP address?
+
+= arena =
+ * user-highlighted song text is mis-aligned
+ * userpage open in a new window
+ * show listening party buffer time
+ * ability to just set a delay for a listening party as opposed to a date
+ * if you're listening to an entry during voting, and then voting ends
+   and the entries re-order, it will show you as listening to the wrong entry.
+ * show competition length as metadata
+ * auto theme generator
+ * arena - the competitions aren't updating on a second based timer
+   > make it a second-based timer but not suck to click the link
+ * if creating a competition fails, have a message at the top saying
+   "please correct these errors."
+ * show upcoming/new competitions before old ones in bookmarked
+   competitions. there should be a clear divide.
+   > better competition ordering in arena
+ * edit competition
+ * better moderator features
+   > ability to pause, skip, previous in listening party
+   > ability to open submission up even during listening party
+   > ability to kick people out (blacklist) if they're misbehaving
+   > compo owner can make other people moderators too
+ * when they click resubmit, scroll down the page to see the form.
+ * put whitelist/blacklist/open in the create competition page. default open.
+   - invitation system based on passwords
+   - ability to have private compo by invitation
+ * ability to replay the listening party
+   - put an indicator on the page so you know whether it's live or replay
+ * protect against h4xz0rz by adding a @method to views which do things like
+   login, logout, etc. The method would make sure the referrer was us and not
+   some other website.
+ * color the time differently when there isn't much time left so that 
+   people know they're running out of time
+ * play a noise that indicates listening party is starting
+
+ * allow uploading ogg
+ * Integrate chat from an IRC channel.
+ * google calendar integration
+ * rss feed for competitions
+ * ability to customize the design
+
+= song player
+ * comments
+   - handle the case when they're not logged in. it should guide them through the process smoothly
+   - glitchy behavior when trying to click the x on a comment box during song playback
+     > if they click the x during playback, take it as clicking the hide comments button.
+   - if deleting a comment ends up meaning that you can delete a tree, do it. maybe do this on a cron job.
+   click the download samples button. they're missing from the box.
+
+= workbench =
+ * workbench page
+   > fan page activity
+     - download count in the past 24 hours
+     - play count in the past 24 hours
+     - new fan count in the past 24 hours
+ * add a thumbs up button (rating system) for plugins.
+   > add a description and photo field for plugins
+   > come up with a plan for how they get updated. (possibly a simple link to
+     notify that information is outdated?)
+ * refactor: PluginDepenency mispelled
+ * warning when you upload a song to a band, if any of the band members are
+   missing dependencies
+
+ * handle ambiguous samples with a choice when the song is uploaded.
+   > one of the choices should be: use sample X, and delete the other one
+ * allow clearing samples or deleting individual ones
 
  * ability to create albums and organize like that
  * ability to set up your band so that anyone who donates credits gets critic access, etc
- * make it look pretty
  * ability to customize css
    > on fan page
    > on project manager
  * users can request to join a band
    > ability to turn off requests or specify a reputation threshold
- * easier to check in a file without uploading anything
  * support merging and forking
    > if you have access to the source of another band's song, you can fork it
      into your own project manager
