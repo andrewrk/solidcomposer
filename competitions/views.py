@@ -61,6 +61,15 @@ def ajax_submit_entry(request):
 
     if mp3_file is not None:
         band = request.user.get_profile().solo_band
+
+        if resubmitting:
+            entry = entries[0]
+            project = Project.objects.get(latest_version__song=entry.song)
+            new_version_number = project.latest_version.version + 1
+            filename_appendix = "_" + str(new_version_number)
+        else:
+            filename_appendix = ""
+
         result = upload_song(request.user,
             file_mp3_handle=mp3_file,
             file_source_handle=source_file, 
@@ -68,7 +77,8 @@ def ajax_submit_entry(request):
             band=band,
             song_title=title,
             song_album=compo.title,
-            song_comments=comments)
+            song_comments=comments,
+            filename_appendix=filename_appendix)
 
         if not result['success']:
             return json_failure(result['reason'])
@@ -79,15 +89,12 @@ def ajax_submit_entry(request):
 
         # make a new version and attach that to the entry
         if resubmitting:
-            entry = entries[0]
-
-            project = Project.objects.get(latest_version__song=entry.song)
 
             # create new version
             version = ProjectVersion()
             version.project = project
             version.song = song
-            version.version = project.latest_version.version + 1
+            version.version = new_version_number
             version.saveNewVersion()
 
             old_length = entry.song.length

@@ -384,6 +384,69 @@ def ajax_checkout(request):
 
     return json_success()
 
+@json_login_required
+@json_post_required
+def ajax_checkin(request):
+    project = get_obj_from_request(request.POST, 'project', Project)
+    
+    if project is None:
+        return json_failure(design.bad_project_id)
+
+    # make sure project is checked out to request user
+    if project.checked_out_to.id != request.user.id:
+        return json_failure(design.not_checked_out_to_you)
+
+    project_file = request.FILES.get('project_file')
+    mp3_preview = request.FILES.get('mp3_preview')
+    comments = request.POST.get('comments', '')
+    song_title = request.POST.get('song_title', '')
+
+    if song_title == '':
+        song_title = project.title
+
+    if project_file is None and mp3_preview is None:
+        # just check in
+        project.checked_out_to = None
+        project.save()
+        return json_success()
+    
+    # must supply a project file
+    if project_file is None:
+        return json_failure(design.must_submit_project_file)
+
+    new_version_number = project.latest_version.version + 1
+    filename_appendix = "_" + str(new_version_number)
+
+    # upload the song and make a new project version
+    result = upload_song(request.user,
+        file_mp3_handle=mp3_preview,
+        file_source_handle=project_file,
+        band=project.band,
+        song_title=song_title,
+        song_comments=comments,
+        filename_appendix=filename_appendix)
+
+    if not result['success']:
+        return json_failure(result['reason'])
+
+    song = result['song']
+    song.save()
+
+    # make a new version
+    version = ProjectVersion()
+    version.project = project
+    version.song = song
+    version.version = new_version_number
+    version.saveNewVersion()
+
+    # update project info
+    project.checked_out_to = None
+    project.latest_version = version
+    project.title = song.title
+    project.save()
+
+    return json_success()
+
 @login_required
 def band_settings(request, band_id_str):
     "todo"
@@ -423,7 +486,8 @@ def create_project(request, band_str):
                 file_source_handle=source_file, 
                 band=band,
                 song_title=form.cleaned_data.get('title'),
-                song_comments=form.cleaned_data.get('comments', ''))
+                song_comments=form.cleaned_data.get('comments', ''),
+                filename_appendix="_1")
             if not result['success']:
                 err_msg = result['reason']
             else:

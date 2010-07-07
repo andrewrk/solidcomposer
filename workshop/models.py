@@ -205,6 +205,7 @@ class ProjectVersion(SerializableModel):
         if not self.id:
             self._save(*args, **kwargs)
         self.project.latest_version = self
+        self.project.save()
         self._save(*args, **kwargs)
 
     def _save(self, *args, **kwargs):

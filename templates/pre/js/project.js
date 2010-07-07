@@ -33,46 +33,46 @@ var SCProject = function () {
         that.ajaxRequest();
     }
 
-    function uploadSamplesStartCallback() {
-
-    }
-
-    function uploadSamplesCompleteCallback(response) {
-        // sometimes the response is wrapped in <pre></pre>
-        // for some strange reason
-        if (response.indexOf('<pre>') === 0) {
-            response = response.substr(5, response.length-'<pre>'.length-'</pre>'.length);
-        }
-
-        var result = eval('(' + response + ')');
-        if (result.success === true) {
-            reloadEverything();
-        } else {
-            alert("Unable to process upload:\n\n" + result.reason);
-        }
-    }
-
     function addClicksToProjects() {
-        var missing_samples_upload_f = function() {
+        function uploadSamplesStartCallback() {
+
+        }
+
+        function uploadSamplesCompleteCallback(response) {
+            // sometimes the response is wrapped in <pre></pre>
+            // for some strange reason
+            if (response.indexOf('<pre>') === 0) {
+                response = response.substr(5, response.length-'<pre>'.length-'</pre>'.length);
+            }
+
+            var result = eval('(' + response + ')');
+            if (result.success === true) {
+                reloadEverything();
+            } else {
+                alert("Unable to process upload:\n\n" + result.reason);
+            }
+        }
+
+        function missing_samples_upload_f() {
             return AIM.submit(this, {
                 'onStart': uploadSamplesStartCallback,
                 'onComplete': uploadSamplesCompleteCallback
             });
         };
 
-        var add_file_f = function() {
+        function add_file_f() {
             $(this).closest('tr').before(Jst.evaluate(template_sample_upload_row_s, {}));
             return false;
         };
 
-        var missing_project_upload_f = function() {
+        function missing_project_upload_f() {
             return AIM.submit(this, {
                 'onStart': uploadSamplesStartCallback,
                 'onComplete': uploadSamplesCompleteCallback
             });
         };
 
-        var missing_mp3_upload_f = function() {
+        function missing_mp3_upload_f() {
             return AIM.submit(this, {
                 'onStart': uploadSamplesStartCallback,
                 'onComplete': uploadSamplesCompleteCallback
@@ -87,7 +87,7 @@ var SCProject = function () {
             $("#missing-mp3-upload-"+i).submit(missing_mp3_upload_f);
         }
 
-        $("#next-version .checkout").click(function(){
+        $("#checkout").click(function(){
             $.post(
                 state.urls.ajax_checkout,
                 {
@@ -108,6 +108,52 @@ var SCProject = function () {
                 'json');
 
             return false;
+        });
+
+        $("#just-check-in").click(function(){
+            $.post(
+                state.urls.ajax_checkin,
+                {
+                    project: project_id
+                },
+                function (data) {
+                    if (data === null) {
+                        alert("Unable to check in project.");
+                        return;
+                    }
+                    if (! data.success) {
+                        alert("Unable to check in project: " + data.reason);
+                        return;
+                    }
+
+                    state.project.checked_out_to = null;
+                    updateProjects();
+                },
+                'json');
+            return false;
+        });
+
+        $("#checkin-form").submit(function(){
+            return AIM.submit(this, {
+                onStart: function(){},
+                onComplete: function(response) {
+                    // sometimes the response is wrapped in <pre></pre>
+                    // for some strange reason
+                    if (response.indexOf('<pre>') === 0) {
+                        response = response.substr(5, response.length-'<pre>'.length-'</pre>'.length);
+                    }
+
+                    var data = eval('(' + response + ')');
+
+                    if (data.success) {
+                        ajaxRequestProject();
+                        state.project.checked_out_to = null;
+                        updateProjects();
+                    } else {
+                        alert("Error checking in: " + data.reason);
+                    }
+                }
+            });
         });
     }
 

@@ -1,4 +1,15 @@
 <% if (versions.length) { %>
+    <div id="status">
+        <% if (project.checked_out_to !== null) { %>
+            <% if (project.checked_out_to.id === user.id) { %>
+                <span class="mine">Checked out to <strong>you</strong>.</span>
+            <% } else { %>
+                <span class="out">Checked out.</span>
+            <% } %>
+        <% } else { %>
+            <span class="available">Available.</span>
+        <% } %>
+    </div>
     <div id="next-version" class="version" data-projectid="<%=project.id%>">
         <% if (project.checked_out_to !== null) { %>
             <% var version_user = project.checked_out_to; %>
@@ -7,26 +18,54 @@
             <% var version_user = user; %>
             {% include 'workbench/version_owner.jst.html' %}
         <% } %>
-        <div id="status">
-            <% if (project.checked_out_to !== null) { %>
-                <% if (project.checked_out_to.id === user.id) { %>
-                    Checked out to <strong>you</strong>.
-                <% } else { %>
-                    Checked out.
-                <% } %>
-            <% } else { %>
-                Available.
-            <% } %>
-        </div>
         <div id="action">
             <% if (project.checked_out_to !== null) { %>
                 <% if (project.checked_out_to.id === user.id) { %>
-                    Check in.
+                    <h1>Check in new version</h1>
+                    <div>
+                        <a href="#" id="just-check-in">Just check in.</a>
+                    </div>
+                    <div>
+                        <form id="checkin-form" action="{% url workbench.ajax_checkin %}" enctype="multipart/form-data" method="post">
+                            <fieldset>
+                                <input type="hidden" name="project" value="<%=project.id%>" />
+                                <table>
+                                    <tr>
+                                        <th>Project file:</th>
+                                        <td><input type="file" name="project_file" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th>MP3 Preview:</th>
+                                        <td><input type="file" name="mp3_preview" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Song Title:</th>
+                                        <td><input type="text" name="song_title" value="<%=project.title%>" />
+                                    </tr>
+                                    <tr>
+                                        <th>Describe your changes:</th>
+                                        <td>
+                                            <textarea id="version-comments" name="comments" rows="15" cols="48"></textarea>
+                                        </td>
+                                    <tr>
+                                        <th></th>
+                                        <td><input type="submit" value="Check in" /></td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </form>
+                    </div>
                 <% } else { %>
-                    Poke them.
+                    <ul>
+                        <li><a id="poke">Poke <%=project.checked_out_to.username%></a></li>
+                        {% include 'workbench/action_upload_samples.jst.html' %}
+                    </ul>
                 <% } %>
             <% } else { %>
-                <a class="checkout" href="#">Check out</a>
+                <ul>
+                    <li><a id="checkout" href="#">Check out</a></li>
+                    {% include 'workbench/action_upload_samples.jst.html' %}
+                </ul>
             <% } %>
         </div>
     </div>

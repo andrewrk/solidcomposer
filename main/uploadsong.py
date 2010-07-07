@@ -24,14 +24,14 @@ def studio_extensions():
 def obfuscated_url(band):
     return os.path.join('band', band.url, create_hash(16))   
 
-def generate_waveform(song, mp3_file):
+def generate_waveform(song, mp3_file, filename_appendix=""):
     suffix = '.png'
     png_tmp_handle = tempfile.NamedTemporaryFile(mode='r+b', suffix=suffix)
     waveform.draw(mp3_file, png_tmp_handle.name, design.waveform_size,
         fgGradientCenter=design.waveform_center_color,
         fgGradientOuter=design.waveform_outer_color)
     # move to storage
-    song.waveform_img = os.path.join(obfuscated_url(song.band), clean_filename(song.displayString())+suffix)
+    song.waveform_img = os.path.join(obfuscated_url(song.band), clean_filename(song.displayString()) + filename_appendix + suffix)
     import storage
     storage.engine.store(png_tmp_handle.name, song.waveform_img, reducedRedundancy=True)
     # clean up
@@ -121,7 +121,7 @@ def handle_sample_file(filename, file_id, user, band):
 
     os.remove(filename)
 
-def handle_project_file(filename, user, song):
+def handle_project_file(filename, user, song, filename_appendix=""):
     """
     creates the database entries necessary for filename as the project for song.
     moves filename to storage or deletes it if there is a problem.
@@ -139,7 +139,7 @@ def handle_project_file(filename, user, song):
             prefix, ext = os.path.splitext(extracted_filename)
             if ext[1:].lower() in studioExts:
                 if song.studio is None:
-                    handle_project_file(extracted_filename, user, song)
+                    handle_project_file(extracted_filename, user, song, filename_appendix=filename_appendix)
             else:
                 handle_sample_file(extracted_filename, title, user, song.band)
 
@@ -149,6 +149,7 @@ def handle_project_file(filename, user, song):
 
     # read the project file with the daw
     source_file_title = song.displayString()
+    profile_save_required = False
     try:
         dawProject = daw.load(filename)
         dawExt = dawProject.extension() 
@@ -218,7 +219,7 @@ def handle_project_file(filename, user, song):
             dep.save()
 
         if dawExt:
-            source_file_title += "." + dawExt
+            source_file_title += filename_appendix + "." + dawExt
 
         profile.save()
 
@@ -227,7 +228,7 @@ def handle_project_file(filename, user, song):
         usingDaw = False
         # ok forget about processing it with the daw
         # add the extension from before
-        source_file_title += source_ext
+        source_file_title += filename_appendix + ext
     finally:
         if profile_save_required:
             profile.save()
@@ -253,7 +254,7 @@ def handle_project_file(filename, user, song):
         # move to storage
         move_to_storage(filename, song.source_file)
 
-def handle_mp3_upload(file_mp3_handle, song, max_song_len=None):
+def handle_mp3_upload(file_mp3_handle, song, max_song_len=None, filename_appendix=""):
     data = {'success': False}
 
     # upload mp3 file to temp folder
@@ -299,9 +300,9 @@ def handle_mp3_upload(file_mp3_handle, song, max_song_len=None):
         return data
 
     # pick a path for the mp3 file. obscure the URL so that people can't steal songs
-    song.mp3_file = os.path.join(obfuscated_url(song.band), clean_filename(song.displayString() + '.mp3'))
+    song.mp3_file = os.path.join(obfuscated_url(song.band), clean_filename(song.displayString() + filename_appendix + '.mp3'))
 
-    generate_waveform(song, mp3_tmp_handle.name)
+    generate_waveform(song, mp3_tmp_handle.name, filename_appendix)
 
     # count mp3 against the band's size quota
     song.band.used_space += os.path.getsize(mp3_tmp_handle.name)
@@ -313,16 +314,16 @@ def handle_mp3_upload(file_mp3_handle, song, max_song_len=None):
     data = {'success': True}
     return data
 
-def handle_project_upload(file_source_handle, user, song):
+def handle_project_upload(file_source_handle, user, song, filename_appendix=""):
     # upload project file to temp file
     source_prefix, source_ext = os.path.splitext(file_source_handle.name)
     handle = tempfile.NamedTemporaryFile(suffix=source_ext, delete=False)
     upload_file_h(file_source_handle, handle)
     handle.close()
 
-    handle_project_file(handle.name, user, song)
+    handle_project_file(handle.name, user, song, filename_appendix=filename_appendix)
 
-def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album="", song_comments=""):
+def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_len=None, band=None, song_title=None, song_album="", song_comments="", filename_appendix=""):
     """
     inputs: 
         user:               the person uploading stuff
@@ -333,6 +334,7 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
         song_title:         id3 title to enforce upon the mp3
         song_album:         id3 album to enforce upon the mp3
         song_comments:      the author's own comments for the song.
+        filename_appendix:  use this if you want to add something to the filename, before the extension.
 
     * uploads the mp3 and source file if applicable
     * creates the proper files and id3 tags
@@ -385,14 +387,14 @@ def upload_song(user, file_mp3_handle=None, file_source_handle=None, max_song_le
     song.comment_node = node
 
     if file_mp3_handle != None:
-        result = handle_mp3_upload(file_mp3_handle, song, max_song_len)
+        result = handle_mp3_upload(file_mp3_handle, song, max_song_len, filename_appendix=filename_appendix)
         if not result['success']:
             song.delete()
             return result
 
     # upload the source file
     if file_source_handle != None:
-        handle_project_upload(file_source_handle, user, song)
+        handle_project_upload(file_source_handle, user, song, filename_appendix=filename_appendix)
 
     # we incremented bytes_used in band, so save it now
     band.save()
