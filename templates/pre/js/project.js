@@ -189,6 +189,38 @@ var SCProject = function () {
                 }
             });
         });
+
+        $("#rename").click(function(){
+            // toggle visibility
+            var div = $("#action-rename");
+            if (div.is(':visible')) {
+                div.hide();
+            } else {
+                div.show();
+            }
+            return false;
+        });
+
+        $("#action-rename-form").submit(function(){
+            return AIM.submit(this, {
+                onStart: function() {},
+                onComplete: function(response) {
+                    // sometimes the response is wrapped in <pre></pre>
+                    // for some strange reason
+                    if (response.indexOf('<pre>') === 0) {
+                        response = response.substr(5, response.length-'<pre>'.length-'</pre>'.length);
+                    }
+                    
+                    var data = eval('(' + response + ')');
+
+                    if (data.success) {
+                        ajaxRequestProject();
+                    } else {
+                        alert("Error renaming project: " + data.reason);
+                    }
+                }
+            });
+        });
     }
 
     function updateProjects() {

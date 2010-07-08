@@ -480,10 +480,6 @@ def ajax_checkin(request):
     project_file = request.FILES.get('project_file')
     mp3_preview = request.FILES.get('mp3_preview')
     comments = request.POST.get('comments', '')
-    song_title = request.POST.get('song_title', '')
-
-    if song_title == '':
-        song_title = project.title
 
     if project_file is None and mp3_preview is None:
         # just check in
@@ -503,7 +499,7 @@ def ajax_checkin(request):
         file_mp3_handle=mp3_preview,
         file_source_handle=project_file,
         band=project.band,
-        song_title=song_title,
+        song_title=project.title,
         song_comments=comments,
         filename_appendix=filename_appendix)
 

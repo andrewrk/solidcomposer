@@ -71,8 +71,6 @@ Release "Boten Anna"
  * project page
    > upload samples as new version
      - small player to preview
-   > rename project as new version
-     - don't rename project as part of checkin
    > poke
      - can poke max. once every day
    > test checking in a new version from a different window and make sure it works well

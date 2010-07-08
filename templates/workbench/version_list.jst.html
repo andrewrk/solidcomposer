@@ -40,14 +40,11 @@
                                             <td><input type="file" name="mp3_preview" /></td>
                                         </tr>
                                         <tr>
-                                            <th>Song Title:</th>
-                                            <td><input type="text" name="song_title" value="<%=project.title%>" />
-                                        </tr>
-                                        <tr>
                                             <th>Describe your changes:</th>
                                             <td>
                                                 <textarea id="version-comments" name="comments" rows="15" cols="48"></textarea>
                                             </td>
+                                        </tr>
                                         <tr>
                                             <th></th>
                                             <td><input type="submit" value="Check in" /></td>
@@ -66,6 +63,7 @@
                     <ul>
                         <li><a id="checkout" href="#">Check out</a></li>
                         {% include 'workbench/action_upload_samples.jst.html' %}
+                        <li><a id="rename" href="#">Rename</a></li>
                     </ul>
                 <% } %>
                 <div id="action-upload-samples" style="display: none;">
@@ -95,7 +93,31 @@
                             </table>
                         </fieldset>
                     </form>
-                    
+                </div>
+                <div id="action-rename" style="display: none;">
+                    <form id="action-rename-form" method="post" action="{% url workbench.ajax_rename_project %}">
+                        <fieldset>
+                            <input type="hidden" name="project" value="<%=project.id%>">
+                            <table>
+                                <tr>
+                                    <th>New Song Title:</th>
+                                    <td><input type="text" name="title" value="<%=project.title%>" />
+                                </tr>
+                                <tr>
+                                    <th>Comments:</th>
+                                    <td>
+                                        <textarea id="rename-comments" name="comments" rows="15" cols="48"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input type="submit" value="Rename" />
+                                    </td>
+                                </tr>
+                            </table>
+                        <fieldset>
+                    </form>
                 </div>
             </div>
         </div>
