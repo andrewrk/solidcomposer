@@ -24,6 +24,7 @@ Release "Boten Anna"
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
  * design iteration
+ * migration to create projects and versions for everything on the site.
 
 = chat
  * don't render ALL the chat messages every time.
@@ -68,10 +69,14 @@ Release "Boten Anna"
 
 = workbench
  * project page
+   > upload samples as new version
+     - small player to preview
+   > rename project as new version
+     - don't rename project as part of checkin
    > poke
      - can poke max. once every day
-   > upload samples
    > test checking in a new version from a different window and make sure it works well
+   > paging on versions
  * project manager (band page)
    > make filters work
    > quick ui for actions
@@ -134,6 +139,7 @@ Release "Boten Anna"
    > ability to check/uncheck plugins that a user owns
    > whether to bleepy boop when people chat
  * serializablemodel: should only follow chains if the names match
+ * refactor: add the <pre></pre> stripping to AIM instead of doing it every time.
 
 = chat =
  * clicking onliners should open a new window

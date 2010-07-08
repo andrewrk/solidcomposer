@@ -155,6 +155,40 @@ var SCProject = function () {
                 }
             });
         });
+
+        $("#upload-samples").click(function(){
+            // toggle visibility
+            var div = $("#action-upload-samples");
+            if (div.is(':visible')) {
+                div.hide();
+            } else {
+                div.show();
+            }
+            return false;
+        });
+
+        $("#action-upload-samples .add-file").click(add_file_f);
+
+        $("#action-upload-samples-form").submit(function(){
+            return AIM.submit(this, {
+                onStart: function() {},
+                onComplete: function(response) {
+                    // sometimes the response is wrapped in <pre></pre>
+                    // for some strange reason
+                    if (response.indexOf('<pre>') === 0) {
+                        response = response.substr(5, response.length-'<pre>'.length-'</pre>'.length);
+                    }
+                    
+                    var data = eval('(' + response + ')');
+
+                    if (data.success) {
+                        reloadEverything();
+                    } else {
+                        alert("Error uploading samples: " + data.reason);
+                    }
+                }
+            });
+        });
     }
 
     function updateProjects() {
@@ -241,11 +275,15 @@ var SCProject = function () {
                 // insert the new versions into the sorted list
                 var i;
                 var insertIndex;
+                var version;
                 for (i=0; i<versionCount; ++i) {
-                    Player.processSong(data.versions[i].song);
-                    insertIndex = getVersionIndex(data.versions[i].id);
+                    version = data.versions[i];
+                    if (version.song) {
+                        Player.processSong(version.song);
+                    }
+                    insertIndex = getVersionIndex(version.id);
                     if (insertIndex !== -1) {
-                        state.versions.splice(insertIndex, 0, data.versions[i]);
+                        state.versions.splice(insertIndex, 0, version);
                     }
                 }
                 if (versionCount > 0) {

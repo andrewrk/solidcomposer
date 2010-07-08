@@ -110,6 +110,13 @@ class Band(SerializableModel):
         self.title = new_name
         self.create_url()
 
+    def permission_to_view_source(self, user):
+        "Returns whether a user can view samples and project file for the band."
+        if self.openness == Band.FULL_OPEN:
+            return True
+
+        return self.permission_to_work(user)
+
     def permission_to_work(self, user):
         "Returns whether a user can check out and check in projects."
         if not user.is_authenticated():
@@ -314,7 +321,7 @@ class Song(SerializableModel):
 
     def permission_to_view_source(self, user):
         "Returns whether a user can download the project file and samples of the song."
-        return self.is_open_source or self.band.permission_to_work(user)
+        return self.is_open_source or self.band.permission_to_view_source(user)
 
     def permission_to_critique(self, user):
         return self.is_open_source or self.band.permission_to_critique(user)
@@ -372,7 +379,7 @@ class SongCommentNode(SerializableModel):
         'deleted',
     )
 
-    song = models.ForeignKey('Song')
+    song = models.ForeignKey('Song', null=True, blank=True)
 
     # if null then this is the parent.
     parent = models.ForeignKey('SongCommentNode', null=True, blank=True)

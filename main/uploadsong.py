@@ -37,11 +37,13 @@ def generate_waveform(song, mp3_file, filename_appendix=""):
     # clean up
     png_tmp_handle.close()
 
-def handle_sample_file(filename, file_id, user, band):
+def handle_sample_file(filename, file_id, user, band, callback=None):
     """
     creates the database entries necessary for filename as a sample.
     moves filename to storage or deletes it if there was a problem.
     increments the band's used space. be sure to save after calling.
+
+    if callback is defined, it will be called with each UploadedSample created.
     """
     if band.isReadOnly():
         os.remove(filename)
@@ -60,7 +62,7 @@ def handle_sample_file(filename, file_id, user, band):
                 os.remove(extracted_file)
                 return
 
-            handle_sample_file(extracted_file, title, user, band)
+            handle_sample_file(extracted_file, title, user, band, callback)
 
         zip_walk(filename, zipCallback)
         os.remove(filename)
@@ -81,7 +83,11 @@ def handle_sample_file(filename, file_id, user, band):
         sample.sample_file = existing_sample
 
         # if it already exists, don't create a duplicate
-        if UploadedSample.objects.filter(user=user, band=band, sample_file=existing_sample).count() > 0:
+        existing_uploaded_samples = UploadedSample.objects.filter(user=user, band=band, sample_file=existing_sample)
+        if existing_uploaded_samples.count() > 0:
+            if callback is not None:
+                existing_uploaded_sample = existing_uploaded_samples[0]
+                callback(existing_uploaded_sample)
             os.remove(filename)
             return
 
@@ -107,6 +113,9 @@ def handle_sample_file(filename, file_id, user, band):
     sample.user = user
     sample.band = band
     sample.save()
+
+    if callback is not None:
+        callback(sample)
 
     # if any songs of any of the user's bands are missing this sample,
     # resolve the dependency.

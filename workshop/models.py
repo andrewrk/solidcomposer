@@ -189,18 +189,43 @@ class PluginDepenency(SerializableModel):
 class ProjectVersion(SerializableModel):
     PUBLIC_ATTRS = (
         'project',
+        'owner',
+        'comment_node',
+        'date_added',
         'song',
         'version',
+        'new_title',
+        'provided_samples',
     )
 
     project = models.ForeignKey('Project')
-    # comments, title, owner, and timestamp are in the song
-    song = models.ForeignKey(Song)
-    # version counter like subversion
+
+    # we duplicate fields from song because we might have a version without one.
+    owner = models.ForeignKey(User, null=True, blank=True)
+    comment_node = models.ForeignKey('main.SongCommentNode', null=True, blank=True)
+    date_added = models.DateTimeField()
+
+    # if it's not null then this is a legit new song version.
+    song = models.ForeignKey(Song, null=True, blank=True)
+    # version counter like subversion.
+    # only increments when it is a song version.
     version = models.IntegerField()
+
+    # if it's not blank then this is a rename.
+    new_title = models.CharField(max_length=100, blank=True, default='')
+
+    # if it's not null then this is a version to provide samples
+    provided_samples = models.ManyToManyField('UploadedSample', blank=True, related_name='provided_samples')
 
     # when we save, update the Project's cache
     def saveNewVersion(self, *args, **kwargs):
+        """
+        Use this function to save when you are using a song as the new version.
+        """
+        self.owner = self.song.owner
+        self.date_added = self.song.date_added
+        self.comment_node = self.song.comment_node
+
         self.project.title = self.song.title
         if not self.id:
             self._save(*args, **kwargs)
@@ -208,11 +233,23 @@ class ProjectVersion(SerializableModel):
         self.project.save()
         self._save(*args, **kwargs)
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.date_added = datetime.now()
+        self._save(*args, **kwargs)
+
     def _save(self, *args, **kwargs):
         super(ProjectVersion, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "%s version %i" % (self.song.title, self.version)
+        if self.song is not None:
+            return "%s version %i" % (self.song.title, self.version)
+        elif self.new_title != '':
+            return "Rename to %s" % self.new_title
+        elif self.provided_samples.count() > 0:
+            return "Version to provide samples."
+        else:
+            return "Invalid null version."
 
 class Project(SerializableModel):
     PUBLIC_ATTRS = (
@@ -252,7 +289,7 @@ class Project(SerializableModel):
 
     scrap_voters = models.ManyToManyField(User, blank=True, related_name='scrap_voters')
     promote_voters = models.ManyToManyField(User, blank=True, related_name='promote_voters')
-    subscribers = models.ManyToManyField(User, related_name='project_subscribers')
+    subscribers = models.ManyToManyField(User, blank=True, related_name='project_subscribers')
 
     def __unicode__(self):
         if self.title is not None:

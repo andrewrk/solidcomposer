@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.core.servers.basehttp import FileWrapper
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response, get_object_or_404
@@ -290,7 +290,7 @@ def ajax_create_band(request):
     data['success'] = True
     return json_response(data)
 
-def handle_sample_upload(fileHandle, user, band):
+def handle_sample_upload(fileHandle, user, band, callback=None):
     """
     uploads fileHandle, and runs handle_sample_file.
     """
@@ -302,7 +302,88 @@ def handle_sample_upload(fileHandle, user, band):
     handle.close()
 
     path, title = os.path.split(fileHandle.name)
-    handle_sample_file(handle.name, title, user, band)
+    handle_sample_file(handle.name, title, user, band, callback=callback)
+
+@json_login_required
+@json_post_required
+def ajax_rename_project(request):
+    """
+    Make a new version that renames the project.
+    """
+    new_title = request.POST.get('title', '')
+    comments  = request.POST.get('comments', '')
+    
+    if new_title == '':
+        return json_failure(design.you_must_have_a_title)
+
+    project = get_obj_from_request(request.POST, 'project', Project)
+
+    if project is None:
+        return json_failure(design.bad_project_id)
+
+    if not project.band.permission_to_work(request.user):
+        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    node = SongCommentNode()
+    node.owner = request.user
+    node.content = comments
+    node.save()
+
+    version = ProjectVersion()
+    version.project = project
+    version.owner = request.user
+    version.comment_node = node
+    version.version = project.latest_version.version # no +1 because only renaming
+    version.new_title = new_title
+    version.save()
+
+    project.title = new_title
+    project.save()
+
+    return json_success()
+
+@json_login_required
+@json_post_required
+def ajax_upload_samples_as_version(request):
+    """
+    Upload some samples and then add each uploaded sample
+    to a new project version.
+    """
+    project = get_obj_from_request(request.POST, 'project', Project)
+    comments = request.POST.get('comments', '')
+
+    if project is None:
+        return json_failure(design.bad_project_id)
+
+    band = project.band
+
+    if not band.permission_to_work(request.user):
+        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    node = SongCommentNode()
+    node.owner = request.user
+    node.content = comments
+    node.save()
+
+    version = ProjectVersion()
+    version.project = project
+    version.owner = request.user
+    version.comment_node = node
+    version.version = project.latest_version.version # no +1, only adding samples.
+    version.save() # so we can add provided_samples
+    
+    def add_sample_to_version(sample):
+        version.provided_samples.add(sample)
+        
+    files = request.FILES.getlist('file')
+
+    for item in files:
+        handle_sample_upload(item, request.user, band, callback=add_sample_to_version)
+
+    band.save()
+    version.save()
+
+    return json_success()
 
 @json_login_required
 @json_post_required
@@ -518,6 +599,73 @@ def create_project(request, band_str):
             'form': form,
             'err_msg': err_msg,
         }, context_instance=RequestContext(request))
+
+@login_required
+def download_sample_zip(request):
+    sample_id_strs = request.GET.getlist('s')
+    
+    sample_ids = []
+    for sample_id_str in sample_id_strs:
+        try:
+            sample_id = int(sample_id_str)
+        except ValueError:
+            continue
+        sample_ids.append(sample_id)
+
+    samples = UploadedSample.objects.filter(pk__in=sample_ids)
+
+    # authorize
+    for sample in samples:
+        if sample.user.id != request.user.id and not sample.band.permission_to_view_source(request.user):
+            return HttpResponseForbidden()
+
+    # package as zip
+    zip_file_h = make_timed_temp_file()
+    z = zipfile.ZipFile(zip_file_h, mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True)
+
+    import storage
+
+    def store_file_id(file_id, title):
+        tmp = tempfile.NamedTemporaryFile(mode='r+b')
+        storage.engine.retrieve(file_id, tmp.name)
+        z.write(tmp.name, title)
+        tmp.close()
+
+    for sample in samples:
+        file_id = sample.sample_file.path
+        store_file_id(file_id, sample.title)
+
+    z.close()
+            
+    response = HttpResponse(FileWrapper(zip_file_h), mimetype='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="samples.zip"'
+    response['Content-Length'] = zip_file_h.tell()
+
+    zip_file_h.seek(0)
+    return response
+
+@login_required
+def download_sample(request, sample_id_str, sample_title):
+    sample_id = int(sample_id_str)
+    sample = get_object_or_404(UploadedSample, pk=sample_id)
+
+    if sample.user.id != request.user.id and not sample.band.permission_to_view_source(request.user):
+        # not authorized
+        return HttpResponseForbidden()
+
+    # grab the sample from storage to temp file
+    import storage
+
+    sample_file_h = make_timed_temp_file()
+    storage.engine.retrieve(sample.sample_file.path, sample_file_h.name)
+
+    # return to browser
+    response = HttpResponse(FileWrapper(sample_file_h), mimetype='application/octet-stream')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % sample_title
+    response['Content-Length'] = os.path.getsize(sample_file_h.name)
+
+    sample_file_h.seek(0)
+    return response
     
 @json_login_required
 @json_get_required
@@ -574,7 +722,7 @@ def download_zip(request):
     z.close()
 
     response = HttpResponse(FileWrapper(zip_file_h), mimetype='application/zip')
-    response['Content-Disposition'] = "attachment; filename=%s" % clean_filename(song.displayString() + '.zip')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % clean_filename(song.displayString() + '.zip')
     response['Content-Length'] = zip_file_h.tell()
 
     zip_file_h.seek(0)
@@ -615,11 +763,25 @@ def song_to_dict(song, user):
 
     return d
     
-def version_to_dict(x, user):
-    d = {
-        'song': song_to_dict(x.song, user),
-        'version': x.version,
-        'id': x.id,
+def version_to_dict(version, user):
+    data = {
+        'version': version.version,
+        'new_title': version.new_title,
+        'date_added': version.date_added,
+        'id': version.id,
     }
-    return d
+
+    if version.song is not None:
+        data['song'] = song_to_dict(version.song, user)
+    else:
+        data['song'] = None
+        data['comment_node'] = version.comment_node.to_dict()
+        data['owner'] = version.owner.get_profile().to_dict()
+
+    if version.provided_samples.count() > 0:
+        data['provided_samples'] = [x.to_dict() for x in version.provided_samples.all()]
+    else:
+        data['provided_samples'] = []
+
+    return data
 

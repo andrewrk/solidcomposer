@@ -134,7 +134,7 @@ def superwalk(folder):
 
 
 def make_timed_temp_file():
-    handle = tempfile.NamedTemporaryFile(mode='r+b', delete=False)
+    handle = tempfile.NamedTemporaryFile(mode='rw+b', delete=False)
 
     tmp_file = TempFile()
     tmp_file.path = handle.name

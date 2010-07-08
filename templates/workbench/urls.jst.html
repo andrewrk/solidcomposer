@@ -10,5 +10,9 @@
         return this.project(project_id) + "#version" + version_number;
     },
     ajax_checkout: "{% filter escapejs %}{% url workbench.ajax_checkout %}{% endfilter %}",
-    ajax_checkin: "{% filter escapejs %}{% url workbench.ajax_checkin %}{% endfilter %}"
+    ajax_checkin: "{% filter escapejs %}{% url workbench.ajax_checkin %}{% endfilter %}",
+    download_sample: function(id, title) {
+        return "{% filter escapejs %}{% url workbench.download_sample 0 "[~~title~~]" %}{% endfilter %}".replace("0", id).replace("[~~title~~]", title);
+    },
+    download_sample_zip: "{% filter escapejs %}{% url workbench.download_sample_zip %}{% endfilter %}"
 }
