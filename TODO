@@ -71,6 +71,7 @@ Release "Boten Anna"
  * project page
    > upload samples as new version
      - small player to preview
+       # create a low quality mp3 preview of every sample uploaded so that we are able to play all sample types
    > poke
      - can poke max. once every day
    > test checking in a new version from a different window and make sure it works well
@@ -83,7 +84,7 @@ Release "Boten Anna"
    > vote to promote
    > show widget indicating how much space is used / left and how to upgrade
  * create band page
-   > Choose a name and then proceeed directly to band settings page
+   > Choose a name and then proceed directly to band settings page
  * band settings page
  * workbench page
    > ability to create band invitations

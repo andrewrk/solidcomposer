@@ -18,6 +18,12 @@ volume_icon_size = 24
 gravatar_icon_size = 24
 gravatar_large_size = 128
 
+# icons to use for the player
+play_icon = 'play-circle-smooth-64.png'
+pause_icon = 'pause-circle-smooth-64.png'
+play_icon_small = 'play-circle-smooth-16.png'
+pause_icon_small = 'pause-circle-smooth-16.png'
+
 # strings that are displayed to the user.
 must_submit_via_post = 'Must submit via POST.'
 must_submit_via_get = 'Must submit via GET.'

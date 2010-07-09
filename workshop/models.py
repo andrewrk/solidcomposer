@@ -60,10 +60,15 @@ class BandInvitation(SerializableModel):
         super(BandInvitation, self).save(*args, **kwargs)
 
 
-class SampleFile(models.Model):
+class SampleFile(SerializableModel):
     """
     represents the actual data for a sample file.
     """
+    PUBLIC_ATTRS = (
+        'hex_digest',
+        'path',
+    )
+
     # md5 hash of the binary data of the sample
     hex_digest = models.CharField(max_length=32, unique=True)
 
@@ -82,6 +87,10 @@ class UploadedSample(SerializableModel):
         'title',
         'user',
         'band',
+    )
+
+    OWNER_ATTRS = (
+        'sample_file',
     )
 
     # the file title of the dependency. it may contain path 

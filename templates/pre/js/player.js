@@ -69,8 +69,8 @@ var Player = function() {
         "img/dl-zip16.png",
         "img/check16.png",
         "img/warning16.png",
-        "img/play-circle64.png",
-        "img/pause-circle64.png",
+        "img/{{ PLAYER_PLAY_ICON }}",
+        "img/{{ PLAYER_PAUSE_ICON }}",
         "img/volume-bar.png",
         "img/volume24-3bar.png",
         "img/volume24-2bar.png",
@@ -354,6 +354,21 @@ var Player = function() {
         jdom.find(".player-large .button a").click(function(){
             if (! disabledUi) {
                 var parentPlayer = $(this).closest('.player-large');
+                that.setCurrentPlayer(parentPlayer);
+
+                var isPlaying = that.isPlaying();
+                if (isPlaying) {
+                    that.pause();
+                } else {
+                    that.play();
+                }
+            }
+            return false;
+        });
+
+        jdom.find(".player-small .button a").click(function(){
+            if (! disabledUi) {
+                var parentPlayer = $(this).closest('.player-small');
                 that.setCurrentPlayer(parentPlayer);
 
                 var isPlaying = that.isPlaying();
@@ -1101,18 +1116,26 @@ var Player = function() {
         },
 
         // use this to start playing. you send it
-        // the div with class="player-large"
+        // the div with class="player-large" or class="player-small"
         // this will pre-load.
         setCurrentPlayer: function(dom) {
             var jdom = $(dom);
             if (jdom.size() === 0) {
                 return;
             }
-            var song_id = parseInt(jdom.attr('data-songid'));
-            if (currentSong !== null && currentSong.id === parseInt(song_id)) {
-                return;
+            // determine large player or small player.
+            var type = jdom.attr('class');
+            if (type === 'player-large') {
+                var song_id = parseInt(jdom.attr('data-songid'));
+                if (currentSong !== null && currentSong.id === parseInt(song_id)) {
+                    return;
+                }
+                currentSong = songs[song_id];
+                currentMp3File = media_url + currentSong.mp3_file;
+            } else {
+                currentSong = null;
+                currentMp3File = media_url + jdom.attr('data-songurl');
             }
-            currentSong = songs[song_id];
 
             if (currentPlayer !== null) {
                 that.seek(0);
@@ -1121,7 +1144,6 @@ var Player = function() {
             }
 
             currentPlayer = jdom;
-            currentMp3File = media_url + currentSong.mp3_file;
             jp.jPlayer('setFile', currentMp3File);
             updateCurrentPlayer();
         },

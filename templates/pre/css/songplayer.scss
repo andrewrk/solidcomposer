@@ -6,6 +6,11 @@ $volume_icon_size: {{ VOLUME_ICON_SIZE }}px;
 $top_layer_icon_size: 16px;
 $button_area_width: 90px;
 
+$play_icon: "{{ PLAYER_PLAY_ICON }}";
+$pause_icon: "{{ PLAYER_PAUSE_ICON }}";
+$play_icon_small: "{{ PLAYER_PLAY_ICON_SMALL }}";
+$pause_icon_small: "{{ PLAYER_PAUSE_ICON_SMALL }}";
+
 /* colors */
 $border_color: #c7c7c7;
 
@@ -115,17 +120,17 @@ $comments_layer_height: $timed_comment_size + 1px;
         }
 
         .play a {
-            background-image: url("../img/play-circle64.png");
+            background-image: url("../img/" + $play_icon);
+        }
+
+        .pause a {
+            background-image: url("../img/" + $pause_icon);
         }
 
         .disabled {
             a, a:hover {
                 @include opacity(0.20);
             }
-        }
-
-        .pause a {
-            background-image: url("../img/pause-circle64.png");
         }
 
         .time {
@@ -301,7 +306,38 @@ $comments_layer_height: $timed_comment_size + 1px;
             }
         }
     }
+}
 
+.player-small {
+    .button {
+        float: left;
+
+        a {
+            display: block;
+            width: 16px;
+            height: 16px;
+            background-repeat: no-repeat;
+            background-position: center center;
+
+            @include opacity(0.90);
+
+            &:hover {
+                @include opacity(1.00);
+            }
+        }
+
+        .play a {
+            background-image: url("../img/" + $play_icon_small);
+        }
+
+        .pause a {
+            background-image: url("../img/" + $pause_icon_small);
+        }
+    }
+
+    .link {
+        float: left;
+    }
 }
 
 .comment-ui {

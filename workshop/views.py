@@ -775,7 +775,7 @@ def version_to_dict(version, user):
         data['owner'] = version.owner.get_profile().to_dict()
 
     if version.provided_samples.count() > 0:
-        data['provided_samples'] = [x.to_dict() for x in version.provided_samples.all()]
+        data['provided_samples'] = [x.to_dict(access=SerializableModel.OWNER, chains=['sample_file']) for x in version.provided_samples.all()]
     else:
         data['provided_samples'] = []
 

@@ -207,12 +207,12 @@
                     </div>
                 <% } else if (version.provided_samples.length > 0) { %>
                     <div class="provided-samples">
-                        <ul>
+                        <div class="provided-sample-list">
                             <% for (var sample_i=0; sample_i<version.provided_samples.length; ++sample_i) { %>
-                                <% var provided_sample = version.provided_samples[sample_i]; %>
-                                <li><a href="<%=urls.download_sample(provided_sample.id, provided_sample.title)%>"><%=provided_sample.title%></a></li>
+                                <% var sample = version.provided_samples[sample_i]; %>
+                                {% include 'player/sample-preview.jst.html' %}
                             <% } %>
-                        </ul>
+                        </div>
                         <a href="<%=urls.download_sample_zip%>?<% for (var sample_i=0; sample_i<version.provided_samples.length; ++sample_i) { provided_sample = version.provided_samples[sample_i]; %>s=<%=provided_sample.id%>&<% } %>">Download all as .zip</a>
                     </div>
                 <% } %>

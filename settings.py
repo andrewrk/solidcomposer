@@ -166,6 +166,10 @@ PREPARSE_CONTEXT = {
     'STR_SAMPLES_DIALOG_TITLE': design.samples_dialog_title,
     'STR_DEPS_DIALOG_TITLE': design.dependencies_dialog_title,
     'STR_COMMENT_DIALOG_TITLE': design.comment_dialog_title,
+    'PLAYER_PLAY_ICON': design.play_icon,
+    'PLAYER_PAUSE_ICON': design.pause_icon,
+    'PLAYER_PLAY_ICON_SMALL': design.play_icon_small,
+    'PLAYER_PAUSE_ICON_SMALL': design.pause_icon_small,
     'DEBUG': DEBUG,
 }
 
