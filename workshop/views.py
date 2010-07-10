@@ -211,12 +211,15 @@ def ajax_project_list(request):
         data['latest_version'] = version_to_dict(project.latest_version, request.user)
         return data
 
+    member = BandMember.objects.get(band=band, user=request.user)
+
     # build the json object
     data = {
         'projects': [project_to_dict(x) for x in paginator.page(page_number).object_list],
         'page_count': paginator.num_pages,
         'page_number': page_number,
         'band': band.to_dict(access=SerializableModel.OWNER),
+        'band_member': member.to_dict(),
     }
 
     return json_success(data)

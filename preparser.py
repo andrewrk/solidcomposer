@@ -30,10 +30,18 @@ PREPARSE_CHAIN = (
 )
 
 # the dictionary that will be available to your preparsed code.
-PREPARSE_CONTEXT = {
-    'MEDIA_URL': MEDIA_URL,
+PREPARSE_CONTEXT_MODULE = 'some_module'
+
+# in that module, have e.g.:
+from django.conf import settings
+CONTEXT = {
+    'MEDIA_URL': settings.MEDIA_URL,
 }
+
+# the reason it's in a different module is to avoid making settings.py dependent on other modules.
 """
+
+context = Context(__import__(settings.PREPARSE_CONTEXT_MODULE).CONTEXT)
 
 def print_usage():
     """
@@ -143,7 +151,6 @@ def compile_file(preparse_tuple, source, dest):
 
     in_text = open(source, 'r').read().decode()
     template = Template(in_text)
-    context = Context(settings.PREPARSE_CONTEXT)
 
     f = tempfile.NamedTemporaryFile(suffix=ext, delete=False)
     f.write(template.render(context))

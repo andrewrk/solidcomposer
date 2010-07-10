@@ -1,16 +1,6 @@
 <% (function (project, versions) { %>
     <% if (versions.length) { %>
-        <div id="status">
-            <% if (project.checked_out_to !== null) { %>
-                <% if (project.checked_out_to.id === user.id) { %>
-                    <span class="mine">Checked out to <strong>you</strong>.</span>
-                <% } else { %>
-                    <span class="out">Checked out.</span>
-                <% } %>
-            <% } else { %>
-                <span class="available">Available.</span>
-            <% } %>
-        </div>
+        {% include 'workbench/project_status.jst.html' %}
         <div id="next-version" class="version" data-projectid="<%=project.id%>">
             <% if (project.checked_out_to !== null) { %>
                 <% var version_user = project.checked_out_to; %>

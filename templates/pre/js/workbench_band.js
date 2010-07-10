@@ -16,7 +16,8 @@ var SCBand = function() {
         urls: {% include 'workbench/urls.jst.html' %},
         filters: null,
         projects: null,
-        band: null
+        band: null,
+        user: null
     };
 
     var page = 1;
@@ -46,6 +47,9 @@ var SCBand = function() {
     }
     
     function updateProjectList() {
+        if (state.user === null || state.projects === null) {
+            return;
+        }
         $("#project-list").html(Jst.evaluate(template_project_list_s, state));
         Player.addUi("#project-list");
     }
@@ -132,6 +136,10 @@ var SCBand = function() {
         ajaxRequest: function () {
             ajaxRequestFilters();
             ajaxRequestProjectList();
+            Login.getUser(function(user){
+                state.user = user;
+                updateProjectList();
+            });
         }
     };
     return that;

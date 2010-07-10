@@ -1,16 +1,50 @@
-<% (function (projects) { %>
-    <% for (var i=0; i<projects.projects.length; ++i) { var project = projects.projects[i]; %>
+<% (function (project_data) { %>
+    <% for (var i=0; i<project_data.projects.length; ++i) { var project = project_data.projects[i]; %>
         <div class="project" id="project-<%=project.id%>">
-            <h4><a href="<%=urls.project(project.id)%>"><%=project.latest_version.song.title%></a></h4>
+            <div class="header">
+                <span class="title">
+                    <a href="<%=urls.project(project.id)%>"><%=project.latest_version.song.title%></a>
+                </span>
+                {% include 'workbench/project_status.jst.html' %}
+                <span class="action">
+                    <% if (project.checked_out_to !== null) { %>
+                        <% if (project.checked_out_to.id === user.id) { %>
+                            <span class="checkin"><a href="#">Check in</a></span>
+                        <% } else { %>
+                            <span class="poke"><a href="#">Poke <%=project.checked_out_to.username%></a></span>
+                        <% } %>
+                    <% } else { %>
+                        <span class="checkout"><a href="#">Check out</a></span>
+                    <% } %>
+                </span>
+                <span class="attributes">
+                    <div class="promote-votes">
+                        thumbs ups x <%=project.promote_voters.length%>
+                    </div>
+                    <div class="scrap-votes">
+                        trash x <%=project.scrap_voters.length%>
+                    </div>
+                </span>
+            </div>
             <div class="preview-player">
-                <% var song = project.latest_version.song; song.band= projects.band; %>
+                <% var song = project.latest_version.song; song.band = project_data.band; %>
                 {% include 'player/player.jst.html' %}
+            </div>
+            <div class="action-list">
+                <ul>
+                    <li><a href="#">Promote</a></li>
+                    <li><a href="#">Vote to Scrap</a></li>
+                    <% if (project_data.band_member.role == {{ BAND_MEMBER_MANAGER }}) { %>
+                        <li><a href="#">Skip Vote and Scrap</a></li>
+                    <% } %>
+                    <li><a href="#">Subscribe to Changes</a></li>
+                </ul>
             </div>
         </div>
     <% } %>
 
     <div class="nav">
-        <% var pagination = {count: projects.page_count, number: projects.page_number}; %>
+        <% var pagination = {count: project_data.page_count, number: project_data.page_number}; %>
         {% include 'page_nav.jst.html' %}
     </div>
 <% }(projects)); %>

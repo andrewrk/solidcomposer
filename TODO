@@ -83,7 +83,6 @@ Release "Boten Anna"
      - use an ordered dictionary for the filters.
      - learn the initial filter from the anchor name
    > quick ui for actions
-   > status ui
    > vote to scrap
    > vote to promote
    > show widget indicating how much space is used / left and how to upgrade

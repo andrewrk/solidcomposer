@@ -1,0 +1,11 @@
+<div class="status">
+    <% if (project.checked_out_to !== null) { %>
+        <% if (project.checked_out_to.id === user.id) { %>
+            <span class="mine">Checked out to <strong>you</strong>.</span>
+        <% } else { %>
+            <span class="out">Checked out.</span>
+        <% } %>
+    <% } else { %>
+        <span class="available">Available.</span>
+    <% } %>
+</div>
