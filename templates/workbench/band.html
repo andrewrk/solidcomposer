@@ -14,6 +14,9 @@
 {% endblock %}
 
 {% block content %}
+    <div id="tools">
+        <a href="{% url workbench.band_settings band.id %}">Band Settings</a>
+    </div>
     <div id="bread">
         <a href="{% url home %}">Home</a>
         &gt;
