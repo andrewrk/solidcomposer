@@ -35,6 +35,14 @@ var SCBand = function() {
 
     function updateFilters() {
         $("#filters").html(Jst.evaluate(template_filters_s, state));
+
+        $(".filter").click(function(){
+            filter = $(this).attr('data-filterid');
+            ajaxRequestProjectList();
+
+            // we want the anchor to go into the url
+            return true;
+        });
     }
     
     function updateProjectList() {

@@ -1,5 +1,5 @@
 <ul>
 <% for (var filterId in filters) { %>
-    <li><a id="filter-<%=filterId%>" href="#"><%=filters[filterId].caption%> (<%=filters[filterId].count%>)</a></li>
+    <li><a class="filter" data-filterid="<%=filterId%>" href="#<%=filterId%>"><%=filters[filterId].caption%> (<%=filters[filterId].count%>)</a></li>
 <% } %>
 </ul>

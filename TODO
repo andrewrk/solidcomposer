@@ -76,8 +76,12 @@ Release "Boten Anna"
      - can poke max. once every day
    > test checking in a new version from a different window and make sure it works well
    > paging on versions
+   > make #anchor names work for versions. currently they don't work automatically because the <a name="aoeu"> is
+     created after the page loads.
  * project manager (band page)
    > make filters work
+     - use an ordered dictionary for the filters.
+     - learn the initial filter from the anchor name
    > quick ui for actions
    > status ui
    > vote to scrap
