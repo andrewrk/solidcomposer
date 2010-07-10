@@ -1125,16 +1125,22 @@ var Player = function() {
             }
             // determine large player or small player.
             var type = jdom.attr('class');
+            var song_id;
+            var newMp3File;
             if (type === 'player-large') {
-                var song_id = parseInt(jdom.attr('data-songid'));
+                song_id = parseInt(jdom.attr('data-songid'));
                 if (currentSong !== null && currentSong.id === parseInt(song_id)) {
                     return;
                 }
                 currentSong = songs[song_id];
                 currentMp3File = media_url + currentSong.mp3_file;
-            } else {
+            } else if (type === 'player-small') {
+                newMp3File = media_url + jdom.attr('data-songurl');
+                if (currentMp3File === newMp3File) {
+                    return;
+                }
                 currentSong = null;
-                currentMp3File = media_url + jdom.attr('data-songurl');
+                currentMp3File = newMp3File;
             }
 
             if (currentPlayer !== null) {
