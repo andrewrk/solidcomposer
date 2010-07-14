@@ -75,6 +75,9 @@ class SampleFile(SerializableModel):
     # where it is on disk, relative to MEDIA_ROOT
     path = models.CharField(max_length=256)
 
+    # low-kbps preview in mp3 format. null if not done yet.
+    mp3_preview = models.CharField(max_length=256, blank=True, null=True)
+
     def __unicode__(self):
         return self.path
 

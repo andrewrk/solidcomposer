@@ -71,7 +71,6 @@ Release "Boten Anna"
  * project page
    > upload samples as new version
      - small player to preview
-       # create a low quality mp3 preview of every sample uploaded so that we are able to play all sample types
    > poke
      - can poke max. once every day
    > test checking in a new version from a different window and make sure it works well
@@ -93,6 +92,7 @@ Release "Boten Anna"
  * create band page
    > Choose a name and then proceed directly to band settings page
  * band settings page
+   > ability to rename band
  * workbench page
    > ability to create band invitations
      - creating a link to hand out
@@ -113,12 +113,12 @@ Release "Boten Anna"
  * support uploading .zip files for checkins
    > find the extension of a project file
    > treat any other file as a sample dependency
- * ability to rename band
  * make logging out and logging in nice.
    > log out - should hide everything on the page and say you need to log in
    > log in - everything should appear
    > should never have to leave the page
  * tests
+ * email band members when someone uploads a new project. this should be toggleable in settings
  
 
 = sitewide =
@@ -208,6 +208,7 @@ Release "Boten Anna"
    click the download samples button. they're missing from the box.
 
 = workbench =
+ * create a low quality mp3 preview of every sample uploaded so that we are able to play all sample types
  * workbench page
    > fan page activity
      - download count in the past 24 hours
