@@ -27,6 +27,10 @@ class NewBandForm(forms.Form):
     band_name = forms.CharField(max_length=100,
         error_messages={'required': design.this_field_is_required})
 
+class RenameBandForm(forms.Form):
+    new_name = forms.CharField(max_length=100,
+        error_messages={'required': design.this_field_is_required})
+
 class BandSettingsForm(forms.Form):
     # TODO
     pass

@@ -68,8 +68,6 @@ Release "Boten Anna"
  * make sure it behaves properly during listening party
 
 = workbench
- * band settings page
-   > ability to rename band
  * workbench page
    > ability to create band invitations
      - creating a link to hand out
@@ -81,6 +79,7 @@ Release "Boten Anna"
      - songs checked out
      - pokes
    > show widget indicating how much space is used / left and how to upgrade
+   > make it look like the notes in my notebook
  * make it so that a band is read-only when its bytes_used < bytes_total
  * maxWidth and maxHeight don't work in jquery dialog
  * have a tip thing that tells people to use the .zip export function of fl studio

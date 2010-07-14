@@ -539,8 +539,21 @@ def ajax_checkin(request):
 
 @login_required
 def band_settings(request, band_id_str):
-    "todo"
-    pass
+    band = get_object_or_404(Band, pk=int(band_id_str))
+
+    if request.method == 'POST':
+        form = RenameBandForm(request.POST)
+        if form.is_valid():
+            # rename the band
+            new_name = form.cleaned_data.get('new_name')
+            band.rename(new_name)
+            band.save()
+
+            return HttpResponseRedirect(reverse("workbench.band", args=[band.id]))
+    else:
+        form = RenameBandForm()
+
+    return render_to_response('workbench/band_settings.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def band_settings_space(request, band_id_str):
