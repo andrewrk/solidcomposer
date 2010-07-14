@@ -1,11 +1,11 @@
-from django_extensions.management.jobs import BaseJob
+from django_extensions.management.jobs import HourlyJob
 
 from datetime import datetime, timedelta
 from main.models import *
 
 import os
 
-class Job(BaseJob):
+class Job(HourlyJob):
     "deletes old temp files"
     help = __doc__
 
