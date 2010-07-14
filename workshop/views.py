@@ -533,6 +533,11 @@ def band_settings(request, band_id_str):
     pass
 
 @login_required
+def band_settings_space(request, band_id_str):
+    "todo"
+    pass
+
+@login_required
 def project(request, band_id_str, project_id_str):
     try:
         band_id = int(band_id_str)

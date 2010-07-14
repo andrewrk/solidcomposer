@@ -68,13 +68,6 @@ Release "Boten Anna"
  * make sure it behaves properly during listening party
 
 = workbench
- * project page
-   > test checking in a new version from a different window and make sure it works well
- * project manager (band page)
-   > make filters work
-     - use an ordered dictionary for the filters.
-     - learn the initial filter from the anchor name
-   > show widget indicating how much space is used / left and how to upgrade
  * create band page
    > Choose a name and then proceed directly to band settings page
  * band settings page
@@ -104,10 +97,10 @@ Release "Boten Anna"
    > log in - everything should appear
    > should never have to leave the page
  * tests
- * email band members when someone uploads a new project. this should be toggleable in settings
  
 
 = sitewide =
+ * faster page loads by including the initial JSON request response in the served page
  * refactor: django already has a storage engine type thing. use it instead
    of my own hacked class
  * refactor: use one image for buttons and use css to change offset. (for example pause/play hover/not hovered)
@@ -195,6 +188,11 @@ Release "Boten Anna"
    click the download samples button. they're missing from the box.
 
 = workbench =
+ * email band members when someone uploads a new project. this should be toggleable in settings
+ * project manager
+   > project filters
+     - use an ordered dictionary for the filters.
+     - learn the initial filter from the anchor name
  * poke
    > can poke max. once every day
  * project page

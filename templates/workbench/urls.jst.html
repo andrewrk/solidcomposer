@@ -15,5 +15,8 @@
         return "{% filter escapejs %}{% url workbench.download_sample 0 "[~~title~~]" %}{% endfilter %}".replace("0", id).replace("[~~title~~]", title);
     },
     download_sample_zip: "{% filter escapejs %}{% url workbench.download_sample_zip %}{% endfilter %}",
-    ajax_rename_project: "{% filter escapejs %}{% url workbench.ajax_rename_project %}{% endfilter %}"
+    ajax_rename_project: "{% filter escapejs %}{% url workbench.ajax_rename_project %}{% endfilter %}",
+    band_settings_space: function(id) {
+        return "{% filter escapejs %}{% url workbench.band_settings_space 0 %}{% endfilter %}".replace("0", id);
+    }
 }

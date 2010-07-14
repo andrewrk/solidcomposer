@@ -11,6 +11,8 @@ var SCBand = function() {
     var template_filters_s = null;
     var template_project_list = "{% filter escapejs %}{% include 'workbench/project_list.jst.html' %}{% endfilter %}";
     var template_project_list_s = null;
+    var template_spacemeter = "{% filter escapejs %}{% include 'workbench/band_spacemeter.jst.html' %}{% endfilter %}";
+    var template_spacemeter_s = null;
 
     var state = {
         urls: {% include 'workbench/urls.jst.html' %},
@@ -27,6 +29,7 @@ var SCBand = function() {
     function compileTemplates() {
         template_filters_s = Jst.compile(template_filters);
         template_project_list_s = Jst.compile(template_project_list);
+        template_spacemeter_s = Jst.compile(template_spacemeter);
     }
 
     function ajaxRequestLoop() {
@@ -52,6 +55,13 @@ var SCBand = function() {
         }
         $("#project-list").html(Jst.evaluate(template_project_list_s, state));
         Player.addUi("#project-list");
+    }
+
+    function updateSpaceMeter() {
+        if (state.band === null) {
+            return;
+        }
+        $("#band-spacemeter").html(Jst.evaluate(template_spacemeter_s, state));
     }
 
     function ajaxRequestFilters() {
@@ -91,12 +101,14 @@ var SCBand = function() {
                 return;
             }
             state.projects = data.data;
+            state.band = data.data.band;
 
             for (var i=0; i<state.projects.projects.length; ++i) {
                 Player.processSong(state.projects.projects[i].latest_version.song);
             }
 
             updateProjectList();
+            updateSpaceMeter();
         }
         $.getJSON(state.urls.ajax_project_list, sendData, respond);
     }
