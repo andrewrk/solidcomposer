@@ -23,6 +23,8 @@ urlpatterns = patterns('',
     url(r'^ajax/checkout/$', 'workshop.views.ajax_checkout', name="workbench.ajax_checkout"),
     url(r'^ajax/checkin/$', 'workshop.views.ajax_checkin', name="workbench.ajax_checkin"),
 
+    url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),
+
     url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),
     url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
     url(r'^band/(\d+)/settings/space/$', 'workshop.views.band_settings_space', name="workbench.band_settings_space"),

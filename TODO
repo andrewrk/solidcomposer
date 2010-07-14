@@ -68,8 +68,6 @@ Release "Boten Anna"
  * make sure it behaves properly during listening party
 
 = workbench
- * create band page
-   > Choose a name and then proceed directly to band settings page
  * band settings page
    > ability to rename band
  * workbench page
@@ -83,23 +81,18 @@ Release "Boten Anna"
      - songs checked out
      - pokes
    > show widget indicating how much space is used / left and how to upgrade
- * make it so that a user's plan gives him a certain amount of 
-   credits, which can be spent on any band.
  * make it so that a band is read-only when its bytes_used < bytes_total
  * maxWidth and maxHeight don't work in jquery dialog
  * have a tip thing that tells people to use the .zip export function of fl studio
- * have a progress bar during uploads
- * support uploading .zip files for checkins
-   > find the extension of a project file
-   > treat any other file as a sample dependency
- * make logging out and logging in nice.
-   > log out - should hide everything on the page and say you need to log in
-   > log in - everything should appear
-   > should never have to leave the page
+ * enforce the business plan
+   > make it so that a user's plan gives him a certain amount of 
+     credits, which can be spent on any band.
  * tests
  
 
 = sitewide =
+ * have a progress bar during uploads
+ * add a test for chat that tries to say something too long
  * faster page loads by including the initial JSON request response in the served page
  * refactor: django already has a storage engine type thing. use it instead
    of my own hacked class
@@ -124,6 +117,10 @@ Release "Boten Anna"
    > connect a user's account with last.fm to scrobble tracks that they listen to
    > ability to check/uncheck plugins that a user owns
    > whether to bleepy boop when people chat
+ * band settings
+   > membership management
+   > visibility options
+   > ban people
  * serializablemodel: should only follow chains if the names match
  * refactor: add the <pre></pre> stripping to AIM instead of doing it every time.
 
@@ -188,6 +185,10 @@ Release "Boten Anna"
    click the download samples button. they're missing from the box.
 
 = workbench =
+ * make logging out and logging in nice.
+   > log out - should hide everything on the page and say you need to log in
+   > log in - everything should appear
+   > should never have to leave the page
  * email band members when someone uploads a new project. this should be toggleable in settings
  * project manager
    > project filters

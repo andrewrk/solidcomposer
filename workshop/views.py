@@ -268,30 +268,40 @@ def ajax_project(request):
     data['success'] = True
     return json_response(data)
 
+def actually_create_band(user, band_name):
+    band = Band()
+    band.title = band_name
+    band.total_space = settings.BAND_INIT_SPACE
+    band.save()
+
+    manager = BandMember()
+    manager.user = user
+    manager.band = band
+    manager.role = BandMember.MANAGER
+    manager.save()
+
+@login_required
+def create_band(request):
+    if request.method == 'POST':
+        form = NewBandForm(request.POST)
+        if form.is_valid():
+            actually_create_band(request.user, form.cleaned_data.get('band_name'))
+            return HttpResponseRedirect(reverse("workbench.home"))
+    else:
+        form = NewBandForm()
+
+    return render_to_response('workbench/create_band.html', {'form': form}, context_instance=RequestContext(request))
+
 @json_login_required
 @json_post_required
 def ajax_create_band(request):
-    data = {
-        'success': False,
-    }
-
     form = NewBandForm(request.POST)
-    if form.is_valid():
-        band = Band()
-        band.title = form.cleaned_data.get('band_name')
-        band.save()
 
-        manager = BandMember()
-        manager.user = user
-        manager.band = band
-        manager.role = BandMember.MANAGER
-        manager.save()
-    else:
-        data['reason'] = "\n".join(['%s: %s' % (k, v) for k, v in form.errors])
-        return json_response(data)
-    
-    data['success'] = True
-    return json_response(data)
+    if form.is_valid():
+        actually_create_band(request.user, form.cleaned_data.get('band_name'))
+        return json_success()
+
+    return json_failure("\n".join(['%s: %s' % (k, v) for k, v in form.errors]))
 
 def handle_sample_upload(fileHandle, user, band, callback=None):
     """
