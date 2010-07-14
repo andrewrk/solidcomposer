@@ -11,12 +11,13 @@
                         <% if (project.checked_out_to.id === user.id) { %>
                             <span class="checkin"><a href="#">Check in</a></span>
                         <% } else { %>
-                            <span class="poke"><a href="#">Poke <%=project.checked_out_to.username%></a></span>
+                            {% comment %} <span class="poke"><a href="#">Poke <%=project.checked_out_to.username%></a></span> {% endcomment %}
                         <% } %>
                     <% } else { %>
                         <span class="checkout"><a href="#">Check out</a></span>
                     <% } %>
                 </span>
+                {% comment %}
                 <span class="attributes">
                     <div class="promote-votes">
                         thumbs ups x <%=project.promote_voters.length%>
@@ -25,11 +26,13 @@
                         trash x <%=project.scrap_voters.length%>
                     </div>
                 </span>
+                {% endcomment %}
             </div>
             <div class="preview-player">
                 <% var song = project.latest_version.song; song.band = project_data.band; %>
                 {% include 'player/player.jst.html' %}
             </div>
+            {% comment %}
             <div class="action-list">
                 <ul>
                     <li><a href="#">Promote</a></li>
@@ -40,6 +43,7 @@
                     <li><a href="#">Subscribe to Changes</a></li>
                 </ul>
             </div>
+            {% endcomment %}
         </div>
     <% } %>
 

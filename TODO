@@ -69,25 +69,11 @@ Release "Boten Anna"
 
 = workbench
  * project page
-   > upload samples as new version
-     - small player to preview
-   > poke
-     - can poke max. once every day
    > test checking in a new version from a different window and make sure it works well
-   > paging on versions
-   > make #anchor names work for versions. currently they don't work automatically because the <a name="aoeu"> is
-     created after the page loads.
  * project manager (band page)
    > make filters work
      - use an ordered dictionary for the filters.
      - learn the initial filter from the anchor name
-   > vote to scrap / unvote to scrap
-   > vote to promote / unvote to promote
-   > subscribe / unsubscribe
-   > scrap without voting
-   > recycle
-   > delete permanently
-     - make the user feel really guilty about permanently deleting stuff
    > show widget indicating how much space is used / left and how to upgrade
  * create band page
    > Choose a name and then proceed directly to band settings page
@@ -124,6 +110,7 @@ Release "Boten Anna"
 = sitewide =
  * refactor: django already has a storage engine type thing. use it instead
    of my own hacked class
+ * refactor: use one image for buttons and use css to change offset. (for example pause/play hover/not hovered)
  * stats
    # on songs
      > how many plays
@@ -208,12 +195,25 @@ Release "Boten Anna"
    click the download samples button. they're missing from the box.
 
 = workbench =
+ * poke
+   > can poke max. once every day
+ * project page
+   > paging on versions
+   > make #anchor names work for versions. currently they don't work automatically because the <a name="aoeu"> is
+     created after the page loads.
  * create a low quality mp3 preview of every sample uploaded so that we are able to play all sample types
  * workbench page
    > fan page activity
      - download count in the past 24 hours
      - play count in the past 24 hours
      - new fan count in the past 24 hours
+   > vote to scrap / unvote to scrap
+   > vote to promote / unvote to promote
+   > subscribe / unsubscribe
+   > scrap without voting
+   > recycle
+   > delete permanently
+     - make the user feel really guilty about permanently deleting stuff
  * add a thumbs up button (rating system) for plugins.
    > add a description and photo field for plugins
    > come up with a plan for how they get updated. (possibly a simple link to
