@@ -1,6 +1,4 @@
 /*
- * create_competition.js
- *
  * Dependencies:
  *  Time
  *  jQuery
@@ -48,7 +46,7 @@ var SCCreateCompo = function () {
             displayCorrectly($("#div_immediately"), have_lp);
             // hide lp date if immediately is checked
             immediately = Boolean($("#id_party_immediately").attr('checked'));
-            displayCorrectly($("#div_lp_date"), ! immediately);
+            displayCorrectly($("#div_lp_date"), ! immediately && have_lp);
         }
     };
     return that;

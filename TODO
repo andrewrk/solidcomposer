@@ -27,13 +27,8 @@ Version 1.0 Release "Boten Anna"
    > replace "About" with a link to the introductory blog post
 
 = arena
- * make sure Player works seamlessly
-   > make comments read-only during listening party
  * the listening party starts over after it ends. whoops.
  * chrome bug: sometimes it plays the same song again during listening party
- * new competition form: if you uncheck "have listening party," it should hide
-   "listening party date"
- * listening party - make song comments during chat during listening party
 
 = song player
  * dependencies dialog: have a Samples heading.
@@ -117,6 +112,7 @@ Version 1.0 Release "Boten Anna"
    - by IP address?
 
 = arena =
+ * listening party - make song comments during chat during listening party
  * it's possible to double-vote for someone
  * entry list: "so far" is misleading. use a better word.
  * send emails when voting results are in
