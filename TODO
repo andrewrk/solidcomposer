@@ -7,7 +7,6 @@ Release "Boten Anna"
  * home page
    > if not logged in, it's an attractive pricing & signup page
    > if logged in, it's a dashboard with good stuff on it
- * javascript tests
  * terms of service
  * gotta follow copyright on the icons from icon finder. have a database of icons used
    with authors and a link so that I can have an attribution page at the bottom.
@@ -17,14 +16,14 @@ Release "Boten Anna"
    should be an X next to each tip link, and clicking it will hide that particular tip
    permanently.
  * have a backup plan for the database
- * make sure the tempfile cron job is working
  * user voice
  * blog post announcing release
- * password recovery
+ * movie showing off features
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
  * design iteration
  * migration to create projects and versions for everything on the site.
+ * manually test all the features to make sure they work.
 
 = chat
  * don't render ALL the chat messages every time.
@@ -37,25 +36,13 @@ Release "Boten Anna"
  * /me action
 
 = arena
- * longer entry names look bad in the entry list
  * tests need to use storage instead of file system
  * do we cap file size on source file? count it against their quota?
- * it's possible to double-vote for someone
  * the listening party starts over after it ends. whoops.
- * entry list: "so far" is misleading. use a better word.
- * send emails when voting results are in
- * there's a security hole - javascript knows where the song mp3s are way
-   before it should.
  * make sure Player works seamlessly
  * new competition form: if you uncheck "have listening party," it should hide
    "listening party date"
- * beginning of song gets cut off during listening party. set it up
-   so that it sets up a setTimeout() to play it right on time instead
-   of cutting into the time.
  * listening party - make song comments during chat during listening party
- * user profile page
-   - show their competition entries
- * show and allow posting comments on songs on user pages
  * arena home GUI Redesign
 
 = song player
@@ -90,6 +77,8 @@ Release "Boten Anna"
  
 
 = sitewide =
+ * password recovery
+ * javascript tests
  * have a progress bar during uploads
  * add a test for chat that tries to say something too long
  * faster page loads by including the initial JSON request response in the served page
@@ -135,6 +124,18 @@ Release "Boten Anna"
    - by IP address?
 
 = arena =
+ * it's possible to double-vote for someone
+ * entry list: "so far" is misleading. use a better word.
+ * send emails when voting results are in
+ * there's a security hole - javascript knows where the song mp3s are way
+   before it should.
+ * beginning of song gets cut off during listening party. set it up
+   so that it sets up a setTimeout() to play it right on time instead
+   of cutting into the time.
+ * user profile page
+   - show their competition entries
+ * show and allow posting comments on songs on user pages
+ * longer entry names look bad in the entry list
  * user-highlighted song text is mis-aligned
  * userpage open in a new window
  * show listening party buffer time
