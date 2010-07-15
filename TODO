@@ -1,5 +1,6 @@
 Release "Boten Anna"
 = sitewide
+ * tests need to use storage instead of file system
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
  * home page
@@ -24,13 +25,11 @@ Release "Boten Anna"
 
 = chat
  * don't render ALL the chat messages every time.
- * hyperlinks
  * tab completion for names
  * page up / down to scroll up and down
  * /me action
 
 = arena
- * tests need to use storage instead of file system
  * do we cap file size on source file? count it against their quota?
  * the listening party starts over after it ends. whoops.
  * make sure Player works seamlessly
@@ -109,6 +108,7 @@ Release "Boten Anna"
  * ability to flag tracks as abuse
 
 = chat =
+ * use break-word on messages. Trying to figure out why <table> insists on being so big.
  * clicking onliners should open a new window
  * increase onliners timeout
  * make the chat more friendly to use for people who are used to IRC

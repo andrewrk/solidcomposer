@@ -343,6 +343,15 @@ var Chat = function() {
         template_say_s = Jst.compile(template_say);
     }
 
+    function escapeHtml(text) {
+        return text
+            .toString()
+            .replaceAll('&', '&amp;') // must be first
+            .replaceAll('"', '&quot;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;');
+    }
+
     that = {
         // public variables:
         message_type: {
@@ -398,6 +407,14 @@ var Chat = function() {
             chatCompileTemplates();
             chatAjaxRequestLoop();
             chatOnlinersAjaxRequestLoop();
+        },
+
+        // parses a message and turns http:// into links and stuff.
+        // note that the input is raw user message and the output has html in it.
+        // so this function escapes html and stuff.
+        formatMessage: function (message) {
+            var safeMessage = escapeHtml(message);
+            return safeMessage.replace(/(http:\/\/\S+)/g, "<a href=\"$1\" target=\"_BLANK\">$1</a>");
         }
     };
     return that;
