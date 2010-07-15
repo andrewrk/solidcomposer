@@ -26,6 +26,8 @@ var Player = function() {
     var media_url = "{{ MEDIA_URL }}";
     var jPlayerSwfPath = media_url + "swf";
     var jp = null; // jPlayer jQuery object
+    var jPlayerReady = false;
+    var readyActions = [];
 
     var urls = {
         download_zip: "{% filter escapejs %}{% url workbench.download_zip %}{% endfilter %}",
@@ -149,6 +151,7 @@ var Player = function() {
         playedTime = _playedTime/1000;
         loadPercent = _loadPercent/100;
         var playedPercentRelative = _playedPercentRelative/100;
+        var playedPercentAbsolute = _playedPercentAbsolute/100;
         // if the song is not completely loaded, we override the length with what
         // we know it to be.
         if (loadPercent >= 1.0) {
@@ -202,6 +205,13 @@ var Player = function() {
                 if (readyFunc) {
                     readyFunc();
                 }
+
+                jPlayerReady = true;
+                for (var i=0; i<readyActions.length; ++i) {
+                    var act = readyActions[i];
+                    act.fn(act.args);
+                }
+                readyActions = null;
             },
             swfPath: jPlayerSwfPath,
             preload: 'auto'
@@ -626,11 +636,12 @@ var Player = function() {
 
             var y = $(this).position().top - $(document).scrollTop();
             var preventDefault = newTipPos(this.offsetLeft, y, e.pageX);
-            if (preventDefault) {
-                $(this).bind('mousemove', commentBarMouseMove);
-                $(this).bind('mouseout', commentBarMouseOut);
-                $(this).bind('mousedown', commentBarMouseDown);
 
+            $(this).bind('mousemove', commentBarMouseMove);
+            $(this).bind('mouseout', commentBarMouseOut);
+            $(this).bind('mousedown', commentBarMouseDown);
+
+            if (preventDefault) {
                 e.preventDefault();
                 return false;
             } else {
@@ -1078,20 +1089,36 @@ var Player = function() {
             }
         },
         play: function() {
-            jp.jPlayer("play");
-            updateCurrentPlayer();
+            if (jPlayerReady) {
+                jp.jPlayer("play");
+                updateCurrentPlayer();
+            } else {
+                readyActions.push({fn: that.play});
+            }
         },
         pause: function() {
-            jp.jPlayer("pause");
-            updateCurrentPlayer();
+            if (jPlayerReady) {
+                jp.jPlayer("pause");
+                updateCurrentPlayer();
+            } else {
+                readyActions.push({fn: that.pause});
+            }
         },
         stop: function() {
-            jp.jPlayer("stop");
-            updateCurrentPlayer();
+            if (jPlayerReady) {
+                jp.jPlayer("stop");
+                updateCurrentPlayer();
+            } else {
+                readyActions.push({fn: that.stop});
+            }
         },
         seek: function(seconds) {
-            jp.jPlayer("playHeadTime", seconds*1000);
-            updateCurrentPlayer();
+            if (jPlayerReady) {
+                jp.jPlayer("playHeadTime", seconds*1000);
+                updateCurrentPlayer();
+            } else {
+                readyActions.push({fn: that.seek, args: seconds});
+            }
         },
         isPlaying: function() {
             return jp.jPlayer("getData", "diag.isPlaying");
@@ -1120,39 +1147,43 @@ var Player = function() {
         // the div with class="player-large" or class="player-small"
         // this will pre-load.
         setCurrentPlayer: function(dom) {
-            var jdom = $(dom);
-            if (jdom.size() === 0) {
-                return;
-            }
-            // determine large player or small player.
-            var type = jdom.attr('class');
-            var song_id;
-            var newMp3File;
-            if (type === 'player-large') {
-                song_id = parseInt(jdom.attr('data-songid'));
-                if (currentSong !== null && currentSong.id === parseInt(song_id)) {
+            if (jPlayerReady) {
+                var jdom = $(dom);
+                if (jdom.size() === 0) {
                     return;
                 }
-                currentSong = songs[song_id];
-                currentMp3File = media_url + currentSong.mp3_file;
-            } else if (type === 'player-small') {
-                newMp3File = media_url + jdom.attr('data-songurl');
-                if (currentMp3File === newMp3File) {
-                    return;
+                // determine large player or small player.
+                var type = jdom.attr('class');
+                var song_id;
+                var newMp3File;
+                if (type === 'player-large') {
+                    song_id = parseInt(jdom.attr('data-songid'));
+                    if (currentSong !== null && currentSong.id === parseInt(song_id)) {
+                        return;
+                    }
+                    currentSong = songs[song_id];
+                    currentMp3File = media_url + currentSong.mp3_file;
+                } else if (type === 'player-small') {
+                    newMp3File = media_url + jdom.attr('data-songurl');
+                    if (currentMp3File === newMp3File) {
+                        return;
+                    }
+                    currentSong = null;
+                    currentMp3File = newMp3File;
                 }
-                currentSong = null;
-                currentMp3File = newMp3File;
-            }
 
-            if (currentPlayer !== null) {
-                that.seek(0);
-                that.stop();
+                if (currentPlayer !== null) {
+                    that.seek(0);
+                    that.stop();
+                    updateCurrentPlayer();
+                }
+
+                currentPlayer = jdom;
+                jp.jPlayer('setFile', currentMp3File);
                 updateCurrentPlayer();
+            } else {
+                readyActions.push({fn: that.setCurrentPlayer, args: dom});
             }
-
-            currentPlayer = jdom;
-            jp.jPlayer('setFile', currentMp3File);
-            updateCurrentPlayer();
         },
 
         volume: function() {
@@ -1215,6 +1246,10 @@ var Player = function() {
         },
         formatCurrency: function(amt) {
             return amt.toFixed(2);
+        },
+        // hax to display "Buffering" in the song player
+        setBufferTimeLeft: function(seconds) {
+            playedTime = -seconds;
         }
     };
     return that;

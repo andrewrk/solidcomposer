@@ -1,4 +1,4 @@
-Release "Boten Anna"
+Version 1.0 Release "Boten Anna"
 = sitewide
  * tests need to use storage instead of file system
  * editor controls on fields that will be parsed by showdown.
@@ -14,6 +14,9 @@ Release "Boten Anna"
    should be an X next to each tip link, and clicking it will hide that particular tip
    permanently.
  * design iteration
+   > arena home
+   > ajax login
+   > all of workbench
  * migration to create projects and versions for everything on the site.
  * code to bill customers monthly
    > set it up so that it sends me an email of what it's about to do, then
@@ -24,13 +27,13 @@ Release "Boten Anna"
    > replace "About" with a link to the introductory blog post
 
 = arena
- * do we cap file size on source file? count it against their quota?
- * the listening party starts over after it ends. whoops.
  * make sure Player works seamlessly
+   > make comments read-only during listening party
+ * the listening party starts over after it ends. whoops.
+ * chrome bug: sometimes it plays the same song again during listening party
  * new competition form: if you uncheck "have listening party," it should hide
    "listening party date"
  * listening party - make song comments during chat during listening party
- * arena home GUI Redesign
 
 = song player
  * dependencies dialog: have a Samples heading.

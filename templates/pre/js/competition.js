@@ -112,16 +112,15 @@ var SCCompo = function () {
     // if we're not playing any song but will be soon,
     // pre-load it.
     function checkIfShouldPlaySong() {
-        var current_url;
-        
         if (that.ongoingListeningParty()) {
             // figure out what currently playing song should be
             if (! Player.isPlaying()) {
-                current_url = state.media_url+state.json.party.entry.song.mp3_file;
+                var current_url = state.media_url+state.json.party.entry.song.mp3_file;
                 if (Player.url() !== current_url) {
                     updateCurrentEntry(true);
                     updateEntryArea();
                     scrollToNowPlaying();
+                    Player.setCurrentPlayer(".player-large");
                 }
                 if (state.json.party.track_position >= 0) {
                     Player.play();
@@ -145,6 +144,10 @@ var SCCompo = function () {
         state.json.party.index = i-1;
         state.json.party.entry = state.json.entries[i-1];
         state.json.party.track_position = position - last_start;
+
+        if (state.json.party.track_position < 0) {
+            Player.setBufferTimeLeft(-state.json.party.track_position);
+        }
     }
 
     // return the server time of when voting is allowed
@@ -173,7 +176,7 @@ var SCCompo = function () {
             $("#current-entry").html(Jst.evaluate(template_current_entry_s, state));
             // clicks
             Player.addUi("#current-entry");
-            Player.setCurrentPlayer($("#current-entry .player-large"));
+            Player.setCurrentPlayer(".player-large");
         }
 
         Player.setUiEnabled(! that.ongoingListeningParty());
@@ -369,18 +372,21 @@ var SCCompo = function () {
         var current_url;
         if (that.votingActive() || that.compoClosed()) {
             // go to the next item in the playlist
-            if (state.player.current_track.index + 1 <
-                state.json.entries.length)
-            {
+            if (state.player.current_track.index + 1 < state.json.entries.length) {
                 state.player.current_track.index += 1;
-                state.player.current_track.entry =
-                    state.json.entries[state.player.current_track.index];
-                current_url = state.media_url +
-                    state.player.current_track.entry.song.mp3_file;
+                state.player.current_track.entry = state.json.entries[state.player.current_track.index];
+                current_url = state.media_url + state.player.current_track.entry.song.mp3_file;
                 updateCurrentEntry(true);
                 updateEntryArea();
                 scrollToNowPlaying();
+                Player.setCurrentPlayer('.player-large');
                 Player.play();
+            } else {
+                state.player.current_track.index = -1;
+                state.player.current_track.entry = null;
+                updateCurrentEntry(true);
+                updateEntryArea();
+                Player.stop();
             }
         }
     }
