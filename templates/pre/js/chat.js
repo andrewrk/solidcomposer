@@ -25,12 +25,14 @@ var Chat = function() {
     var template_onliners = "{% filter escapejs %}{% include 'chat/onliners.jst.html' %}{% endfilter %}";
     var template_cannot_say = "{% filter escapejs %}{% include 'chat/cannot_say.jst.html' %}{% endfilter %}";
     var template_say = "{% filter escapejs %}{% include 'chat/say.jst.html' %}{% endfilter %}";
+    var template_message_row = "{% filter escapejs %}{% include 'chat/message_row.jst.html' %}{% endfilter %}";
     
     // compiled templates
     var template_chat_s = null;
     var template_onliners_s = null;
     var template_cannot_say_s = null;
     var template_say_s = null;
+    var template_message_row_s = null;
 
     var state = {
         user: null,
@@ -54,7 +56,7 @@ var Chat = function() {
     var chatroom_id;
 
     var pageScrollDelta = 200;
-
+    
     // private functions:
     function scrollToLastMessage() {
         $("#chatroom-outer-box").animate({ scrollTop: $("#chatroom-outer-box").attr('scrollHeight')}, 500);
@@ -111,7 +113,12 @@ var Chat = function() {
         new_message.author.username = state.user.username;
         state.messages.push(new_message);
         ++chat_temp_msg_count;
-        updateChat();
+
+        // instead of updating everything, which could be slow if there are a lot of messages,
+        // we simply add the row.
+        var content = Jst.evaluate(template_message_row_s, {msg: new_message});
+        $(".lastmsg").before(content);
+        processMessageStyle($(".lastmsg").prev().find('.imsg'));
 
         if (scroll) {
             scrollToLastMessage();
@@ -252,27 +259,28 @@ var Chat = function() {
         });
     }
 
-    function updateChat() {
-        var new_chat_can_say;
-        var different;
-        
+    function processMessageStyle(item) {
+        if ($(item).html().toLowerCase().indexOf(
+            state.user.username.toLowerCase()) !== -1)
+        {
+            $(item).parent().addClass('highlight');
+        }
+    }
+
+    function updateChatPeripherals() {
         if (state.room === null || state.user === null) {
             return;
         }
         
-        new_chat_can_say = that.chatRoomActive(state.room) &&
+        var new_chat_can_say = that.chatRoomActive(state.room) &&
             state.user.is_authenticated &&
             state.user.permission_write;
-        different = new_chat_can_say !== chat_can_say;
+        var different = new_chat_can_say !== chat_can_say;
         chat_can_say = new_chat_can_say;
         if (different) {
             $("#chatroom-say").html(Jst.evaluate(template_say_s, state));
             chatAddClicksToSay();
             $("#chatroom-cannot-say").html(Jst.evaluate(template_cannot_say_s, state));
-        }
-
-        if (scrolledToBottom()) {
-            $("#chatroom-outer-box").html(Jst.evaluate(template_chat_s, state));
         }
 
         if (chat_can_say) {
@@ -283,16 +291,23 @@ var Chat = function() {
             $("#chatroom-say").hide();
         }
 
+    }
+
+    function updateChat() {
+        if (state.room === null || state.user === null) {
+            return;
+        }
+
+        if (scrolledToBottom()) {
+            $("#chatroom-outer-box").html(Jst.evaluate(template_chat_s, state));
+        }
+
         // highlight messages that mention the user
         if (state.user !== null && state.user.is_authenticated) {
-            $("#chatroom .msg .imsg").each(function(index, item){
-                if ($(item).html().toLowerCase().indexOf(
-                    state.user.username.toLowerCase()) !== -1)
-                {
-                    $(item).parent().addClass('highlight');
-                }
-            });
+            $("#chatroom .msg .imsg").each(function(index, item) { processMessageStyle(item); });
         }
+
+        updateChatPeripherals()
     }
 
     function updateChatOnliners() {
@@ -476,6 +491,7 @@ var Chat = function() {
         template_onliners_s = Jst.compile(template_onliners);
         template_cannot_say_s = Jst.compile(template_cannot_say);
         template_say_s = Jst.compile(template_say);
+        template_message_row_s = Jst.compile(template_message_row);
     }
 
     function escapeHtml(text) {

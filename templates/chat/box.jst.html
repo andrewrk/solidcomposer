@@ -2,43 +2,13 @@
     <p>This chat room will become active in <%= Time.printableTimeUntil(room.start_date) %>.</p>
 <% } else { %>
     <table>
-    <% for (var i=0; i<messages.length; ++i) { var msg = messages[i]; %>
-        <% if (msg.type == Chat.message_type.MESSAGE) { %>
-            <tr class="msg">
-                <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
-                <td class="name"><%= msg.author.username %></td>
-                <td class="imsg"><%+ Chat.formatMessage(msg.message) %></td>
-            </tr>
-        <% } else if (msg.type == Chat.message_type.JOIN) { %>
-            <tr class="join">
-                <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
-                <td class="name">*</td>
-                <td class="imsg"><%= msg.author.username %> has joined.</td>
-            </tr>
-        <% } else if (msg.type == Chat.message_type.LEAVE) { %>
-            <tr class="leave">
-                <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
-                <td class="name">*</td>
-                <td class="imsg"><%= msg.author.username %> has left.</td>
-            </tr>
-        <% } else if (msg.type == Chat.message_type.ACTION) { %>
-            <tr class="action">
-                <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
-                <td class="name">*</td>
-                <td class="imsg"><%= msg.author.username %> <%+ Chat.formatMessage(msg.message) %></td>
-            </tr>
-        <% } else if (msg.type == Chat.message_type.HEADER) { %>
-            <tr class="header">
-                <td class="ts"></td>
-                <td class="name"></td>
-                <td class="imsg"><%= Time.formatDate(msg.timestamp) %></td>
-            </tr>
+        <% for (var i=0; i<messages.length; ++i) { var msg = messages[i]; %>
+            {% include 'chat/message_row.jst.html' %}
         <% } %>
-    <% } %>
-    <tr class="lastmsg">
-        <td class="ts"></td>
-        <td class="name"></td>
-        <td class="imsg"></td>
-    </tr>
+        <tr class="lastmsg">
+            <td class="ts"></td>
+            <td class="name"></td>
+            <td class="imsg"></td>
+        </tr>
     </table>
 <% } %>
