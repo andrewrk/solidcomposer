@@ -107,7 +107,6 @@ Release "Boten Anna"
  * ability to flag tracks as abuse
 
 = chat =
- * use break-word on messages. Trying to figure out why <table> insists on being so big.
  * clicking onliners should open a new window
  * increase onliners timeout
  * make the chat more friendly to use for people who are used to IRC

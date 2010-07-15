@@ -7,8 +7,8 @@
             <tr class="msg">
                 <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
                 <td class="name"><%= msg.author.username %></td>
-                <td class="imsg"><%+ Chat.formatMessage(msg.message) %><td>
-            </div>
+                <td class="imsg"><%+ Chat.formatMessage(msg.message) %></td>
+            </tr>
         <% } else if (msg.type == Chat.message_type.JOIN) { %>
             <tr class="join">
                 <td class="ts"><%= Time.prettyTime(msg.timestamp) %></td>
@@ -29,7 +29,9 @@
             </tr>
         <% } else if (msg.type == Chat.message_type.HEADER) { %>
             <tr class="header">
-                <td colspan="3"><%= Time.formatDate(msg.timestamp) %></td>
+                <td class="ts"></td>
+                <td class="name"></td>
+                <td class="imsg"><%= Time.formatDate(msg.timestamp) %></td>
             </tr>
         <% } %>
     <% } %>

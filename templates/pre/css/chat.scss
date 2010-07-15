@@ -3,73 +3,83 @@
     color: #000000;
     font-family: Verdana, Arial, sans-serif;
     font-size: 12px;
-}
 
-#chatroom table {
-    border-collapse: collapse;
-    height: 100%;
-    width: 100%;
-}
+    table {
+        border-collapse: collapse;
+        height: 100%;
+        width: 100%;
+        table-layout: fixed;
 
-#chatroom .ts {
-    color: #5b5b5b;
-    margin: 0;
-    padding: 0 0 0 2px;
-    text-align: left;
-    vertical-align: top;
-    width: 86px;
-    white-space: nowrap;
-}
+        .ts {
+            color: #5b5b5b;
+            margin: 0;
+            padding: 0 0 0 2px;
+            text-align: left;
+            vertical-align: top;
+            width: 86px;
+            white-space: nowrap;
+        }
 
-#chatroom .name {
-    text-align: right;
-    vertical-align: top;
-    border-right: 1px solid #98a1be;
-    margin: 0;
-    padding: 0 2px 0 0;
-    width: 120px;
-    white-space: nowrap;
-}
+        .name {
+            text-align: right;
+            vertical-align: top;
+            border-right: 1px solid #98a1be;
+            margin: 0;
+            padding: 0 2px 0 0;
+            width: 120px;
+            white-space: nowrap;
+        }
 
-#chatroom .imsg {
-    vertical-align: top;
-    margin: 0;
-    padding: 0 0 0 2px;
-    word-wrap: break-word;
-}
+        .imsg {
+            vertical-align: top;
+            margin: 0;
+            padding: 0 0 0 2px;
+            word-wrap: break-word;
+        }
 
-#chatroom .header {
-    background: #d6d6d6;
-    text-align: center;
-}
-#chatroom .header td {
-    padding: 4px;
-    font-weight: bold;
-    color: #5a5a5a;
-}
+        .header {
+            background: #d6d6d6;
+            text-align: center;
 
-#chatroom .lastmsg {
-    height: 100%;
-}
+            td.imsg {
+                padding: 4px;
+                font-weight: bold;
+                color: #5a5a5a;
+            }
+        }
 
-#chatroom .join .name, #chatroom .join .imsg {
-    color: #08701A;
-    font-weight: bold;
-}
+        .lastmsg {
+            height: 100%;
+        }
 
-#chatroom .leave .name, #chatroom .leave .imsg {
-    color: #70573F;
-    font-weight: bold;
-}
+        .join {
+            .name, .imsg {
+                color: #08701A;
+                font-weight: bold;
+            }
+        }
 
-#chatroom .highlight .name, #chatroom .highlight .imsg {
-    color: #8c2223;
-    font-weight: bold;
-}
+        .leave {
+            .name, .imsg {
+                color: #70573F;
+                font-weight: bold;
+            }
+        }
 
-#chatroom .action .name, #chatroom .action .imsg {
-    color: #ca8dd9;
-    font-weight: bold;
+        .highlight {
+            .name, .imsg {
+                color: #8c2223;
+                font-weight: bold;
+            }
+        }
+
+        .action {
+            .name, .imsg {
+                color: #ca8dd9;
+                font-weight: bold;
+            }
+        }
+    }
 }
 
 #chatroom-outer-box {
@@ -95,15 +105,8 @@
     border-top: 1px solid #b3b3b3;
 }
 
-#chat-say-outer td {
-    height: 100%;
-    width: 290px;
-}
-
-#chat-say-outer p {
-    margin: 0;
-    padding: 4px;
-    text-align: center;
+#chatroom-say {
+    width: 500px;
 }
 
 #chat-say-text {
@@ -127,14 +130,14 @@
 
 .onliner {
     padding: 4px;
-}
 
-.onliner img {
-    vertical-align: middle;
-    height: 20px;
-}
+    img {
+        vertical-align: middle;
+        height: 20px;
+    }
 
-.onliner .xamt {
-    font-weight: bold;
-    font-family: Arial, Verdana, sans-serif;
+    .xamt {
+        font-weight: bold;
+        font-family: Arial, Verdana, sans-serif;
+    }
 }
