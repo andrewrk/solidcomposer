@@ -18,6 +18,7 @@
     text-align: left;
     vertical-align: top;
     width: 86px;
+    white-space: nowrap;
 }
 
 #chatroom .name {
@@ -27,12 +28,14 @@
     margin: 0;
     padding: 0 2px 0 0;
     width: 120px;
+    white-space: nowrap;
 }
 
 #chatroom .imsg {
     vertical-align: top;
     margin: 0;
     padding: 0 0 0 2px;
+    word-wrap: break-word;
 }
 
 #chatroom .header {
