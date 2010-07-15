@@ -69,3 +69,7 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError(design.email_already_exists)
 
         return email
+
+class ContactForm(forms.Form):
+    from_email = forms.EmailField(label="Your email:", error_messages={'required': design.this_field_is_required})
+    message = forms.CharField(max_length=5000, widget=forms.Textarea)

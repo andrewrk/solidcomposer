@@ -1,0 +1,5 @@
+SolidComposer Contact Message
+
+from: {{ email }}
+content:
+{{ content }}

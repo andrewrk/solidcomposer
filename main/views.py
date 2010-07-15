@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.template import RequestContext, Context, Template
 from django.template.loader import get_template
 from django.http import HttpResponseRedirect, HttpResponse
@@ -247,3 +247,24 @@ def userpage(request, username):
     TODO
     """
     return render_to_response('userpage.html', locals(), context_instance=RequestContext(request))
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # email myself
+            customer_email = form.cleaned_data.get('from_email')
+            content = form.cleaned_data.get('message')
+            to_email = 'admin@solidcomposer.com'
+            from_email = 'admin@solidcomposer.com'
+            subject = "SolidComposer Contact Message from {0}".format(customer_email)
+            message = get_template('contact_message.txt').render(Context({'email': customer_email, 'content': content}))
+            msg = EmailMessage(subject, message, from_email, [to_email], headers={'Reply-To': customer_email})
+            msg.send(fail_silently=True)
+
+            return HttpResponseRedirect(reverse("contact_thanks"))
+    else:
+        form = ContactForm()
+
+    return render_to_response('contact.html', locals(), context_instance=RequestContext(request))
+

@@ -17,6 +17,7 @@ Release "Boten Anna"
    permanently.
  * have a backup plan for the database
  * user voice
+   > contact page
  * blog post announcing release
  * movie showing off features
  * editor controls on fields that will be parsed by showdown.
@@ -77,6 +78,8 @@ Release "Boten Anna"
  
 
 = sitewide =
+ * html emails as well as text.
+ * spam protection on contact page
  * password recovery
  * javascript tests
  * have a progress bar during uploads

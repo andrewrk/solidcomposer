@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="textblock">
+    <h1>Contact</h1>
+    <p>
+        Feel free! 
+        <a href="mailto:admin@solidcomposer.com">admin@solidcomposer.com</a>
+    </p>
+    <h2>Web Form</h2>
+    <p>If that's too much of a pain, you can use this form.</p>
+    <form action="." method="post">
+        <table>
+            {{ form.as_table }}
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Send" />
+            </tr>
+        </table>
+    </form>
+</div>
+{% endblock %}
