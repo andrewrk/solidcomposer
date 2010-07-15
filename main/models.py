@@ -254,6 +254,12 @@ class Profile(SerializableModel):
     def gravatar_url(self, size):
         return "http://www.gravatar.com/avatar/%s?s=%s&r=pg&d=identicon" % (hashlib.md5(self.user.email).hexdigest(), str(size))
 
+    def gravatar_icon(self):
+        return self.gravatar_url(design.gravatar_icon_size)
+
+    def gravatar(self):
+        return self.gravatar_url(design.gravatar_large_size)
+
     def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
         data = super(Profile, self).to_dict(access, chains)
         # add user data to it
@@ -261,8 +267,8 @@ class Profile(SerializableModel):
             data['username'] = self.user.username
             data['id'] = self.user.id
             data['get_points'] = self.get_points()
-            data['gravatar_icon'] = self.gravatar_url(design.gravatar_icon_size)
-            data['gravatar'] = self.gravatar_url(design.gravatar_large_size)
+            data['gravatar_icon'] = self.gravatar_icon()
+            data['gravatar'] = self.gravatar()
         if access >= SerializableModel.OWNER:
             data['email'] = self.user.email
         return data
