@@ -286,7 +286,8 @@ class SimpleTest(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['success'], False)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['data']), 0)
 
     def test_leave_messages(self):
         hear_url = reverse('chat.hear')

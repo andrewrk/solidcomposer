@@ -128,7 +128,7 @@ def ajax_onliners(request):
         return json_failure(design.bad_room_id)
 
     if not room.is_active():
-        return json_failure(design.room_is_not_active)
+        return json_success([])
 
     expire_date = datetime.now() - timedelta(seconds=settings.CHAT_TIMEOUT)
     data = [x.person.get_profile().to_dict() for x in Appearance.objects.filter(room=room, timestamp__gt=expire_date)]

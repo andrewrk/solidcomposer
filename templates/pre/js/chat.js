@@ -173,6 +173,10 @@ var Chat = function() {
                     return;
                 }
 
+                if (data.success === false) {
+                    return;
+                }
+
                 if (data.data.length) {
                     onlinerCount = data.data.length;
                 }

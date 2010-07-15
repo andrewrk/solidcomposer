@@ -78,7 +78,6 @@ Release "Boten Anna"
  * password recovery
  * javascript tests
  * have a progress bar during uploads
- * add a test for chat that tries to say something too long
  * faster page loads by including the initial JSON request response in the served page
  * refactor: django already has a storage engine type thing. use it instead
    of my own hacked class
