@@ -7,7 +7,6 @@ Release "Boten Anna"
  * home page
    > if not logged in, it's an attractive pricing & signup page
    > if logged in, it's a dashboard with good stuff on it
- * terms of service
  * gotta follow copyright on the icons from icon finder. have a database of icons used
    with authors and a link so that I can have an attribution page at the bottom.
  * tip framework. tips should explain everything complicated and be a little (tip) link 
@@ -18,6 +17,7 @@ Release "Boten Anna"
  * have a backup plan for the database
  * blog post announcing release
    > movie showing off features
+   > replace "About" with a link to the introductory blog post
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
  * design iteration
@@ -112,6 +112,7 @@ Release "Boten Anna"
    > ban people
  * serializablemodel: should only follow chains if the names match
  * refactor: add the <pre></pre> stripping to AIM instead of doing it every time.
+ * ability to flag tracks as abuse
 
 = chat =
  * clicking onliners should open a new window

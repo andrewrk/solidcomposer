@@ -10,10 +10,60 @@
         {% endif %}
         <form action="." method="post">
             <table class="form-table">
-                {{ form.as_table }}
                 <tr>
-                <td></td>
-                <td><input type="submit" value="Register" /></td>
+                    <th>
+                        {{ form.username.label }}:
+                    </th>
+                    <td>
+                        {{ form.username.errors }}{{ form.username }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        {{ form.artist_name.label }}:
+                    </th>
+                    <td>
+                        {{ form.artist_name.errors }}{{ form.artist_name }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        {{ form.email.label }}:
+                    </th>
+                    <td>
+                        {{ form.email.errors }}{{ form.email }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        {{ form.password.label }}:
+                    </th>
+                    <td>
+                        {{ form.password.errors }}{{ form.password }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        {{ form.confirm_password.label }}:
+                    </th>
+                    <td>
+                        {{ form.confirm_password.errors }}{{ form.confirm_password }}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        {{ form.agree_to_terms.errors }}{{ form.agree_to_terms }}
+                        <label for="id_agree_to_terms">I agree to the </label><a href="{% url terms %}" target="_BLANK">Terms &amp; Conditions</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Register" /></td>
                 </tr>
             </table>
         </form>

@@ -31,7 +31,8 @@ class RegisterForm(forms.Form):
     confirm_password = forms.CharField(max_length=50,
         widget=forms.widgets.PasswordInput(),
         error_messages={'required': design.this_field_is_required})
-    
+    agree_to_terms = forms.BooleanField(error_messages={'required': design.must_agree_to_terms})
+
     def clean_confirm_password(self):
         password1 = self.cleaned_data['password']
         password2 = self.cleaned_data['confirm_password']

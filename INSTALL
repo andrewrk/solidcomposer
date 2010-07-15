@@ -4,6 +4,11 @@ Dependencies:
     * sass - http://sass-lang.com/
     * jsmin - http://www.crockford.com/javascript/jsmin.c
 The first time you install this project, you need to:
+    * create the email accounts
+        > support@solidcomposer.com
+        > admin@solidcomposer.com
+        > privacy@solidcomposer.com
+        > copyrights@solidcompos.com
     * copy the code to the server
     * put the project in the path so that statements like these will work:
       import settings

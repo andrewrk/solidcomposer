@@ -255,8 +255,8 @@ def contact(request):
             # email myself
             customer_email = form.cleaned_data.get('from_email')
             content = form.cleaned_data.get('message')
-            to_email = 'admin@solidcomposer.com'
-            from_email = 'admin@solidcomposer.com'
+            to_email = 'support@solidcomposer.com'
+            from_email = 'support@solidcomposer.com'
             subject = "SolidComposer Contact Message from {0}".format(customer_email)
             message = get_template('contact_message.txt').render(Context({'email': customer_email, 'content': content}))
             msg = EmailMessage(subject, message, from_email, [to_email], headers={'Reply-To': customer_email})

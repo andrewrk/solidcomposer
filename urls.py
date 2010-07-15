@@ -35,6 +35,7 @@ urlpatterns = patterns('',
     url(r'^contact/thanks/$', direct_to_template, {'template': 'contact_thanks.html'}, name="contact_thanks"),
     
     url(r'^about/$', direct_to_template, {'template': 'about.html'}, name="about"),
-    url(r'^policy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),
+    url(r'^privacy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),
+    url(r'^terms/$', direct_to_template, {'template': 'terms.html'}, name="terms"),
     url(r'^account/$', direct_to_template, {'template': 'account.html'}, name="account"),
 )
