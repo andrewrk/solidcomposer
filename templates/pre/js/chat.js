@@ -185,6 +185,7 @@ var Chat = function() {
         $("#chat-say-text").keydown(function(event){
             if (event.keyCode === 13) {
                 // enter key
+                event.preventDefault();
                 // say something in chat
                 var msg_to_post = $(this).val();
                 if (msg_to_post === '') {
@@ -195,6 +196,7 @@ var Chat = function() {
                 return false;
             } else if (event.keyCode === 9) {
                 // tab key
+                event.preventDefault();
                 if (state.onliners !== null) {
                     // try to finish the current word as a username
                     var currentText = $(this).val();
@@ -237,23 +239,15 @@ var Chat = function() {
                 return false;
             } else if (event.keyCode === 33) {
                 // page up
+                event.preventDefault();
                 var box = $("#chatroom-outer-box");
                 box.scrollTop(box.scrollTop() - pageScrollDelta);
                 return false;
             } else if (event.keyCode === 34) {
                 // page down
+                event.preventDefault();
                 var box = $("#chatroom-outer-box");
                 box.scrollTop(box.scrollTop() + pageScrollDelta);
-                return false;
-            } else if (event.keyCode === 35) {
-                // end
-                var box = $("#chatroom-outer-box");
-                box.scrollTop(box.attr('scrollHeight'));
-                return false;
-            } else if (event.keyCode === 36) {
-                // home
-                var box = $("#chatroom-outer-box");
-                box.scrollTop(0);
                 return false;
             }
         });
