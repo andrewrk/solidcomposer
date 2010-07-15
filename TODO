@@ -16,8 +16,6 @@ Release "Boten Anna"
    should be an X next to each tip link, and clicking it will hide that particular tip
    permanently.
  * have a backup plan for the database
- * user voice
-   > contact page
  * blog post announcing release
  * movie showing off features
  * editor controls on fields that will be parsed by showdown.

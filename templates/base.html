@@ -7,7 +7,6 @@
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/{% block css %}base.pre.css{% endblock %}" />
 <link rel="shortcut icon" href="{{ MEDIA_URL }}img/favicon.ico" type="image/x-icon" />
 {% block extra_header %}{% endblock %}
-<script type="text/javascript" src="{{ MEDIA_URL }}js/google-analytics.pre.js"></script>
 </head>
 <body>
 {% block extra_body %}{% endblock %}
@@ -46,6 +45,44 @@
         <a href="{% url about %}">About</a> | <a href="{% url policy %}">Policy</a> | <a href="{% url contact %}">Contact</a>
     </div>
 </div>
+<script type="text/javascript">
+var uservoiceOptions = {
+  /* required */
+  key: 'solidcomposer',
+  host: 'solidcomposer.uservoice.com', 
+  forum: '66773',
+  showTab: true,  
+  /* optional */
+  alignment: 'left',
+  background_color:'#266493',
+  text_color: 'white',
+  hover_color: '#06C',
+  lang: 'en'
+};
+
+function _loadUserVoice() {
+  var s = document.createElement('script');
+  s.setAttribute('type', 'text/javascript');
+  s.setAttribute('src', ("https:" == document.location.protocol ? "https://" : "http://") + "cdn.uservoice.com/javascripts/widgets/tab.js");
+  document.getElementsByTagName('head')[0].appendChild(s);
+}
+_loadSuper = window.onload;
+window.onload = (typeof window.onload != 'function') ? _loadUserVoice : function() { _loadSuper(); _loadUserVoice(); };
+
+{% if not DEBUG %}
+
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-17160931-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+
+{% endif %}
+</script>
 </body>
 </html>
 {% endspaceless %}
