@@ -25,7 +25,6 @@ Release "Boten Anna"
 
 = chat
  * don't render ALL the chat messages every time.
- * /me action
  * make setCursor and getCursor work for IE
 
 = arena

@@ -104,16 +104,20 @@ def ajax_say(request):
     if message == "":
         return json_failure(design.cannot_say_blank_message)
 
+    if len(message) > ChatMessage._meta.get_field('message').max_length:
+        return json_failure(design.message_too_long)
+
     if not data['user']['permission_write']:
         return json_failure(design.you_lack_write_permission)
 
-    if len(message) > ChatMessage._meta.get_field('message').max_length:
-        return json_failure(design.message_too_long)
+    msgType = get_val(request.POST, 'type', MESSAGE)
+    if msgType not in [MESSAGE, ACTION]:
+        msgType = MESSAGE
 
     # we're clear. add the message
     m = ChatMessage()
     m.room = room
-    m.type = MESSAGE
+    m.type = msgType
     m.author = request.user
     m.message = message
     m.save()

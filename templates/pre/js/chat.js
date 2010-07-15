@@ -67,10 +67,41 @@ var Chat = function() {
     }
 
     function say(msg_to_post) {
+        var type = that.message_type.MESSAGE;
+        var words;
+        var command;
+        if (msg_to_post.length >= 2) {
+            if (msg_to_post[0] === '/' && msg_to_post[1] !== '/') {
+                // command
+                words = msg_to_post.split(/\s+/);
+                command = words[0].substring(1, words[0].length).toLowerCase();
+                if (command === 'me') {
+                    type = that.message_type.ACTION;
+                    msg_to_post = msg_to_post.substring(words[0].length+1, msg_to_post.length)
+                }
+            }
+        }
+
+        $.ajax({
+            url: state.urls.say,
+            type: 'POST',
+            dataType: 'text',
+            data: {
+                'room': chatroom_id,
+                'message': msg_to_post,
+                'type': type
+            },
+            success: function(){
+            },
+            error: function(){
+                // TODO: show some kind of error message
+            }
+        });
+
         // add the message and clear the box
         var new_message = {
             'room': chatroom_id,
-            'type': that.message_type.MESSAGE,
+            'type': type,
             'author': state.user,
             'message': msg_to_post,
             'timestamp': Time.serverTime(new Date())
@@ -136,20 +167,6 @@ var Chat = function() {
                     return false;
                 }
                 $(this).val('');
-                $.ajax({
-                    url: state.urls.say,
-                    type: 'POST',
-                    dataType: 'text',
-                    data: {
-                        'room': chatroom_id,
-                        'message': msg_to_post
-                    },
-                    success: function(){
-                    },
-                    error: function(){
-                        // TODO: show some kind of error message
-                    }
-                });
                 say(msg_to_post);
                 return false;
             } else if (event.keyCode === 9) {
