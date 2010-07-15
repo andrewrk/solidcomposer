@@ -17,7 +17,7 @@ Release "Boten Anna"
    permanently.
  * have a backup plan for the database
  * blog post announcing release
- * movie showing off features
+   > movie showing off features
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
  * design iteration
