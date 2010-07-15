@@ -107,6 +107,9 @@ def ajax_say(request):
     if not data['user']['permission_write']:
         return json_failure(design.you_lack_write_permission)
 
+    if len(message) > ChatMessage._meta.get_field('message').max_length:
+        return json_failure(design.message_too_long)
+
     # we're clear. add the message
     m = ChatMessage()
     m.room = room

@@ -1,9 +1,7 @@
 Release "Boten Anna"
 = sitewide
- * pricing & signup page
- * code to bill customers monthly
-   > set it up so that it sends me an email of what it's about to do, then
-     I manually approve it and bill everybody.
+ * editor controls on fields that will be parsed by showdown.
+   > http://wmd-editor.com/
  * home page
    > if not logged in, it's an attractive pricing & signup page
    > if logged in, it's a dashboard with good stuff on it
@@ -14,19 +12,18 @@ Release "Boten Anna"
    should hide the tip. you should be able to turn off tips in account settings. there
    should be an X next to each tip link, and clicking it will hide that particular tip
    permanently.
- * have a backup plan for the database
+ * design iteration
+ * migration to create projects and versions for everything on the site.
+ * code to bill customers monthly
+   > set it up so that it sends me an email of what it's about to do, then
+     I manually approve it and bill everybody.
+ * manually test all the features to make sure they work.
  * blog post announcing release
    > movie showing off features
    > replace "About" with a link to the introductory blog post
- * editor controls on fields that will be parsed by showdown.
-   > http://wmd-editor.com/
- * design iteration
- * migration to create projects and versions for everything on the site.
- * manually test all the features to make sure they work.
 
 = chat
  * don't render ALL the chat messages every time.
- * download mp3: box instead of link
  * hyperlinks
  * sometimes the design gets put into multiple lines (caused by long unwrapped messages)
    > urls and things that don't wrap screw up chat
@@ -185,6 +182,7 @@ Release "Boten Anna"
      > if they click the x during playback, take it as clicking the hide comments button.
    - if deleting a comment ends up meaning that you can delete a tree, do it. maybe do this on a cron job.
    click the download samples button. they're missing from the box.
+ * download mp3: box instead of link
 
 = workbench =
  * make logging out and logging in nice.

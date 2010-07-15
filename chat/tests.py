@@ -40,6 +40,7 @@ class SimpleTest(TestCase):
                 'email': username + '@mailinator.com',
                 'password': 'temp1234',
                 'confirm_password': 'temp1234',
+                'agree_to_terms': True
             })
             code = User.objects.filter(username=username)[0].get_profile().activate_code
             response = self.client.get(reverse('confirm', args=(username, code)))
@@ -186,6 +187,17 @@ class SimpleTest(TestCase):
         self.assertEqual(data['user']['permission_write'], True)
         msg = ChatMessage.objects.filter(room=self.open_room, author=self.skiessi).order_by('-id')[0]
         self.assertEqual(msg.message, 'this is my message 1 2 3')
+
+        # a message that is too long
+        long_msg = 'x' * 5000
+        response = self.client.post(say_url, {
+            'room': self.open_room.id,
+            'message': long_msg,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.message_too_long)
 
         # too early
         say_url = reverse('chat.say')

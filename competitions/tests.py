@@ -24,8 +24,9 @@ class SimpleTest(TestCase):
     def setUp(self):
         self.dirtyFiles = []
 
+        register_url = reverse('register')
+
         # create some users
-        register_url = reverse("register")
         for username in ("skiessi", "superjoe", "just64helpin"):
             response = self.client.post(register_url, {
                 'username': username,
@@ -33,16 +34,14 @@ class SimpleTest(TestCase):
                 'email': username + '@mailinator.com',
                 'password': 'temp1234',
                 'confirm_password': 'temp1234',
+                'agree_to_terms': True
             })
             code = User.objects.filter(username=username)[0].get_profile().activate_code
-            confirm_url = reverse("confirm", args=(username, code))
-            response = self.client.get(confirm_url)
-            self.assertEqual(response.status_code, 200)
+            response = self.client.get(reverse('confirm', args=(username, code)))
 
         self.skiessi = User.objects.filter(username="skiessi")[0]
         self.superjoe = User.objects.filter(username="superjoe")[0]
         self.just64helpin = User.objects.filter(username="just64helpin")[0]
-
     def test_home(self):
         url = reverse('arena.home')
         response = self.client.get(url)
