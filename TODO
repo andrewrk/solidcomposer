@@ -25,7 +25,6 @@ Release "Boten Anna"
 
 = chat
  * don't render ALL the chat messages every time.
- * make setCursor and getCursor work for IE
 
 = arena
  * do we cap file size on source file? count it against their quota?

@@ -119,12 +119,29 @@ var Chat = function() {
     }
 
     function getCursorPos(textbox) {
-        return textbox.selectionStart;
+        if (textbox.selectionStart) {
+            return textbox.selectionStart;
+        } else if (document.selection) {
+            // wtf kind of API is this
+            var sel;
+            if (document.selection) {
+                textbox.focus();
+                sel = document.selection.createRange();
+                sel.moveStart('character', -textbox.value.length);
+                return sel.text.length;
+            }
+        }
     }
 
     function setCursorPos(textbox, pos) {
-        textbox.selectionStart = pos;
-        textbox.selectionEnd = pos;
+        textbox.focus();
+        if (textbox.selectionStart) {
+            textbox.setSelectionRange(pos, pos);
+        } else if (textbox.createTextRange) {
+            var range = textbox.createTextRange();
+            range.move('character', pos);
+            range.select();
+        }
     }
 
     // returns {match: the longest common beginning to all the strings, unique: true if it was unique}
@@ -267,7 +284,7 @@ var Chat = function() {
         }
 
         // highlight messages that mention the user
-        if (state.user !== null) {
+        if (state.user !== null && state.user.is_authenticated) {
             $("#chatroom .msg .imsg").each(function(index, item){
                 if ($(item).html().toLowerCase().indexOf(
                     state.user.username.toLowerCase()) !== -1)
@@ -329,9 +346,6 @@ var Chat = function() {
                 func(i);
             }
         }
-    }
-
-    function userJoin(user_id) {
     }
 
     function chatAjaxRequest() {

@@ -148,6 +148,7 @@ var Player = function() {
     {
         playedTime = _playedTime/1000;
         loadPercent = _loadPercent/100;
+        var playedPercentRelative = _playedPercentRelative/100;
         // if the song is not completely loaded, we override the length with what
         // we know it to be.
         if (loadPercent >= 1.0) {
@@ -1167,15 +1168,17 @@ var Player = function() {
             songs[song.id] = song;
 
             if (song.studio) {
-                song.anyAvailableSamples = anyTrue(song.samples, function(sample){
-                    return ! sample.missing;
-                });
-                song.anyMissingSamples = anyTrue(song.samples, function(sample){
-                    return sample.missing;
-                });
-                song.anyMissingDependencies = song.studio.missing || anyTrue(song.plugins, function(plugin){
-                    return plugin.missing;
-                });
+                if (song.samples) {
+                    song.anyAvailableSamples = anyTrue(song.samples, function(sample){
+                        return ! sample.missing;
+                    });
+                    song.anyMissingSamples = anyTrue(song.samples, function(sample){
+                        return sample.missing;
+                    });
+                    song.anyMissingDependencies = song.studio.missing || anyTrue(song.plugins, function(plugin){
+                        return plugin.missing;
+                    });
+                }
 
                 song.effects = [];
                 song.generators = [];
