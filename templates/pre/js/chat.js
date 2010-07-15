@@ -53,6 +53,8 @@ var Chat = function() {
     
     var chatroom_id;
 
+    var pageScrollDelta = 200;
+
     // private functions:
     function scrollToLastMessage() {
         $("#chatroom-outer-box").animate({ scrollTop: $("#chatroom-outer-box").attr('scrollHeight')}, 500);
@@ -127,6 +129,7 @@ var Chat = function() {
     function chatAddClicksToSay() {
         $("#chat-say-text").keydown(function(event){
             if (event.keyCode === 13) {
+                // enter key
                 // say something in chat
                 var msg_to_post = $(this).val();
                 if (msg_to_post === '') {
@@ -150,6 +153,7 @@ var Chat = function() {
                 say(msg_to_post);
                 return false;
             } else if (event.keyCode === 9) {
+                // tab key
                 if (state.onliners !== null) {
                     // try to finish the current word as a username
                     var currentText = $(this).val();
@@ -189,6 +193,26 @@ var Chat = function() {
                 }
                 
                 
+                return false;
+            } else if (event.keyCode === 33) {
+                // page up
+                var box = $("#chatroom-outer-box");
+                box.scrollTop(box.scrollTop() - pageScrollDelta);
+                return false;
+            } else if (event.keyCode === 34) {
+                // page down
+                var box = $("#chatroom-outer-box");
+                box.scrollTop(box.scrollTop() + pageScrollDelta);
+                return false;
+            } else if (event.keyCode === 35) {
+                // end
+                var box = $("#chatroom-outer-box");
+                box.scrollTop(box.attr('scrollHeight'));
+                return false;
+            } else if (event.keyCode === 36) {
+                // home
+                var box = $("#chatroom-outer-box");
+                box.scrollTop(0);
                 return false;
             }
         });
