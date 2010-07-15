@@ -25,7 +25,6 @@ Release "Boten Anna"
 
 = chat
  * don't render ALL the chat messages every time.
- * tab completion for names
  * page up / down to scroll up and down
  * /me action
 

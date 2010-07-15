@@ -85,15 +85,54 @@ var Chat = function() {
         }
     }
 
+    function getCursorPos(textbox) {
+        return textbox.selectionStart;
+    }
+
+    function setCursorPos(textbox, pos) {
+        textbox.selectionStart = pos;
+        textbox.selectionEnd = pos;
+    }
+
+    // returns {match: the longest common beginning to all the strings, unique: true if it was unique}
+    function sameBeginning(stringList) {
+        var match = "";
+        var proposedChar;
+        var i;
+        var charIndex = 0;
+        var endFlag = false;
+        var str;
+        do {
+            endFlag = charIndex >= stringList[0].length - 1;
+            proposedChar = stringList[0].substring(charIndex, charIndex+1);
+            for (i=1; i<stringList.length; ++i) {
+                str = stringList[i];
+
+                if (str.substring(charIndex, charIndex+1) !== proposedChar) {
+                    return {match: match, unique: false};
+                }
+                
+                if (charIndex < str.length - 1) {
+                    endFlag = false;
+                }
+            }
+
+            match += proposedChar;
+            ++charIndex;
+        } while (! endFlag);
+
+        return {match: match, unique: true};
+    }
+
     function chatAddClicksToSay() {
         $("#chat-say-text").keydown(function(event){
             if (event.keyCode === 13) {
                 // say something in chat
-                var msg_to_post = $("#chat-say-text").attr('value');
+                var msg_to_post = $(this).val();
                 if (msg_to_post === '') {
                     return false;
                 }
-                $("#chat-say-text").attr('value','');
+                $(this).val('');
                 $.ajax({
                     url: state.urls.say,
                     type: 'POST',
@@ -109,6 +148,47 @@ var Chat = function() {
                     }
                 });
                 say(msg_to_post);
+                return false;
+            } else if (event.keyCode === 9) {
+                if (state.onliners !== null) {
+                    // try to finish the current word as a username
+                    var currentText = $(this).val();
+                    var cursorPos = getCursorPos(this);
+                    var atEnd = cursorPos === currentText.length;
+                    var prevText = currentText.substring(0, cursorPos);
+                    if (prevText === '') {
+                        return false;
+                    }
+                    var words = prevText.split(/\s+/);
+                    var beginningMatch;
+                    if (words.length > 0) {
+                        beginningMatch = words[words.length-1];
+                    } else {
+                        beginningMatch = "";
+                    }
+                    // if beginningMatch matches any of the online people, tab complete.
+                    var i;
+                    var matches = [];
+                    for (i=0; i<state.onliners.length; ++i) {
+                        var onlinerName = state.onliners[i].username;
+                        if (onlinerName.substring(0, beginningMatch.length).toLowerCase() === beginningMatch.toLowerCase()) {
+                            matches.push(onlinerName);
+                        }
+                    }
+                    var newText;
+                    var result;
+                    var space;
+                    if (matches.length > 0) {
+                        result = sameBeginning(matches);
+                        space = result.unique ? " " : "";
+                        newText = currentText.substring(0, cursorPos - beginningMatch.length)
+                            + result.match + space + currentText.substring(cursorPos, currentText.length);
+                        $(this).val(newText);
+                        setCursorPos(this, cursorPos + result.match.length - beginningMatch.length + space.length);
+                    }
+                }
+                
+                
                 return false;
             }
         });
