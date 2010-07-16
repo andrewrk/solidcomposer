@@ -1,6 +1,5 @@
 Version 1.0 Release "Boten Anna"
 = sitewide
- * tests need to use storage instead of file system
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
  * home page
@@ -30,15 +29,10 @@ Version 1.0 Release "Boten Anna"
  * replying to comments is broken in arena, both in song player and below.
 
 = song player
- * dependencies dialog: have a Samples heading.
-   - if any missing samples: in red say e.g. "17 Missing Samples"
-     > there should be a tip next to this explaining how it works.
-   - if any downloadable samples: have a samples link which closes the dialog and opens the samples dialog.
  * upload a song with a lot of missing samples. upload the samples.
- * don't cover up the waveform with the comment box
- * make sure it behaves properly during listening party
 
 = workbench
+ * cancel the rename box
  * workbench page
    > ability to create band invitations
      - creating a link to hand out
@@ -167,6 +161,11 @@ Version 1.0 Release "Boten Anna"
  * ability to customize the design
 
 = song player
+ * dependencies dialog: have a Samples heading.
+   - if any missing samples: in red say e.g. "17 Missing Samples"
+     > there should be a tip next to this explaining how it works.
+   - if any downloadable samples: have a samples link which closes the dialog and opens the samples dialog.
+ * don't cover up the waveform with the comment box
  * comments
    - handle the case when they're not logged in. it should guide them through the process smoothly
    - glitchy behavior when trying to click the x on a comment box during song playback

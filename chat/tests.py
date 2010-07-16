@@ -19,6 +19,8 @@ from django_extensions.management.jobs import get_job
 from chat import design
 import main
 
+from main.tests import commonSetUp, commonTearDown
+
 def system(command):
     "run a command on the system"
     p = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
@@ -30,6 +32,7 @@ def absolute(relative_path):
 
 class SimpleTest(TestCase):
     def setUp(self):
+        commonSetUp(self)
         register_url = reverse('register')
 
         # create some users
@@ -61,6 +64,9 @@ class SimpleTest(TestCase):
         self.early_room = ChatRoom.objects.create(permission_type=OPEN, start_date=now+timedelta(minutes=1), end_date=now+timedelta(minutes=2))
         self.late_room = ChatRoom.objects.create(permission_type=OPEN, start_date=now-timedelta(minutes=2), end_date=now-timedelta(minutes=1))
         self.late_room = ChatRoom.objects.create(permission_type=OPEN, start_date=now-timedelta(minutes=2), end_date=now-timedelta(minutes=1))
+
+    def tearDown(self):
+        commonTearDown(self)
 
     def test_hear(self):
         # create some messages for each room

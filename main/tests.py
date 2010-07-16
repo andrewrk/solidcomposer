@@ -1,15 +1,53 @@
+from main.models import *
+from workshop.models import *
+
 from django.test import TestCase
 from django.test.client import Client
 from django.core import mail
 from django.core.urlresolvers import reverse
 
-from main.models import *
-
 from datetime import datetime, timedelta
 import simplejson as json
 
+from django.conf import settings
+
+import os
+
+def rm(filename):
+    if os.path.exists(filename):
+        os.remove(filename)
+
+def commonSetUp(obj):
+    # use test bucket
+    obj.prev_bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+    settings.AWS_STORAGE_BUCKET_NAME = settings.AWS_TEST_STORAGE_BUCKET_NAME
+
+def commonTearDown(obj):
+    # restore original bucket
+    settings.AWS_STORAGE_BUCKET_NAME = obj.prev_bucket_name
+
+    import storage
+
+    for song in Song.objects.all():
+        if song.mp3_file:
+            storage.engine.delete(song.mp3_file)
+        if song.source_file:
+            storage.engine.delete(song.source_file)
+        if song.waveform_img:
+            storage.engine.delete(song.waveform_img)
+
+    for sample in SampleFile.objects.all():
+        storage.engine.delete(sample.path)
+
+    for tmp in TempFile.objects.all():
+        rm(tmp.path)
+
 class SimpleTest(TestCase):
     def setUp(self):
+        # use test bucket
+        self.prev_bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+        settings.AWS_STORAGE_BUCKET_NAME = settings.AWS_TEST_STORAGE_BUCKET_NAME
+
         register_url = reverse('register')
 
         # create some users
@@ -29,6 +67,8 @@ class SimpleTest(TestCase):
         self.superjoe = User.objects.filter(username="superjoe")[0]
         self.just64helpin = User.objects.filter(username="just64helpin")[0]
 
+    def tearDown(self):
+        settings.AWS_STORAGE_BUCKET_NAME = self.prev_bucket_name
 
     def test_register_account(self):
         register_url = reverse('register')

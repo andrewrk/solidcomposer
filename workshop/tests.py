@@ -7,7 +7,15 @@ Replace these with more appropriate tests for your application.
 
 from django.test import TestCase
 
+from main.tests import commonSetUp, commonTearDown
+
 class SimpleTest(TestCase):
+    def setUp(self):
+        commonSetUp(self)
+
+    def tearDown(self):
+        commonTearDown(self)
+
     def test_basic_addition(self):
         """
         Tests that 1 + 1 always equals 2.

@@ -44,6 +44,7 @@ USE_I18N = False
 AWS_ACCESS_KEY_ID = 'xxxxxxxxxxxxxxxxxxxx'
 AWS_SECRET_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 AWS_STORAGE_BUCKET_NAME = 'solidcomposer-test'
+AWS_TEST_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 # copy and uncomment in settings_user.py to use s3 storage
 #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 

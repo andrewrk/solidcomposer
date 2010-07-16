@@ -16,12 +16,15 @@ import simplejson as json
 import os
 import tempfile
 
+from main.tests import commonSetUp, commonTearDown, rm
+
 def absolute(relative_path):
     "make a relative path absolute"
     return os.path.normpath(os.path.join(os.path.dirname(__file__), relative_path))
 
 class SimpleTest(TestCase):
     def setUp(self):
+        commonSetUp(self)
         self.dirtyFiles = []
 
         register_url = reverse('register')
@@ -42,6 +45,15 @@ class SimpleTest(TestCase):
         self.skiessi = User.objects.filter(username="skiessi")[0]
         self.superjoe = User.objects.filter(username="superjoe")[0]
         self.just64helpin = User.objects.filter(username="just64helpin")[0]
+
+    def tearDown(self):
+        commonTearDown(self)
+
+        # undo changes to the file system
+        for dirt in self.dirtyFiles:
+            rm(dirt)
+        self.dirtyFiles = []
+
     def test_home(self):
         url = reverse('arena.home')
         response = self.client.get(url)
@@ -822,20 +834,3 @@ class SimpleTest(TestCase):
         self.assertEqual(data['entries'][0]['owner']['id'], self.superjoe.id)
         self.assertEqual(data['entries'][0]['vote_count'], 1)
 
-    def rm(self, filename):
-        if os.path.exists(filename):
-            os.remove(filename)
-
-    def tearDown(self):
-        "undo changes to the file system"
-        for dirt in self.dirtyFiles:
-            self.rm(dirt)
-        self.dirtyFiles = []
-
-        for song in Song.objects.all():
-            if song.mp3_file:
-                self.rm(os.path.join(settings.MEDIA_ROOT, song.mp3_file))
-            if song.source_file:
-                self.rm(os.path.join(settings.MEDIA_ROOT, song.source_file))
-            if song.waveform_img:
-                self.rm(os.path.join(settings.MEDIA_ROOT, song.waveform_img))
