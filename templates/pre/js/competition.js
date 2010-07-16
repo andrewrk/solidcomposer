@@ -176,6 +176,7 @@ var SCCompo = function () {
             $("#current-entry").html(Jst.evaluate(template_current_entry_s, state));
             // clicks
             Player.addUi("#current-entry");
+            Player.addCommentsUi("#current-entry");
             Player.setCurrentPlayer(".player-large");
         }
 
@@ -384,9 +385,9 @@ var SCCompo = function () {
             } else {
                 state.player.current_track.index = -1;
                 state.player.current_track.entry = null;
+                Player.stop();
                 updateCurrentEntry(true);
                 updateEntryArea();
-                Player.stop();
             }
         }
     }

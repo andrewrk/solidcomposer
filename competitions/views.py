@@ -85,6 +85,7 @@ def ajax_submit_entry(request):
 
         song = result['song']
         song.is_open_source = is_open_source
+        song.is_open_for_comments = True
         song.save()
 
         # make a new version and attach that to the entry

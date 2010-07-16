@@ -300,6 +300,7 @@ class Song(SerializableModel):
     # in case the artist was generous enough to provide source
     source_file = models.CharField(max_length=500, blank=True)
     is_open_source = models.BooleanField(default=False)
+    is_open_for_comments = models.BooleanField(default=False)
     studio = models.ForeignKey('workshop.Studio', null=True, blank=True)
 
     # filename where generated waveform img can be found
@@ -330,7 +331,7 @@ class Song(SerializableModel):
         return self.is_open_source or self.band.permission_to_view_source(user)
 
     def permission_to_critique(self, user):
-        return self.is_open_source or self.band.permission_to_critique(user)
+        return self.is_open_source or self.is_open_for_comments or self.band.permission_to_critique(user)
 
     def displayString(self):
         """
