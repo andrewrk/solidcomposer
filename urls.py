@@ -11,7 +11,6 @@ urlpatterns = patterns('',
     (r'^arena/', include('competitions.urls')),
     (r'^chat/', include('chat.urls')),
     (r'^workbench/', include('workshop.urls')),
-    (r'^music/', include('music.urls')),
     (r'^admin/', include(admin.site.urls)),
 
     url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),

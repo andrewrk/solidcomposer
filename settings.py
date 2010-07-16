@@ -91,7 +91,6 @@ INSTALLED_APPS = (
     'competitions',
     'chat',
     'workshop',
-    'music',
 )
 
 SITE_ID = 1
