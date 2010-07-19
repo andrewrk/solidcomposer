@@ -32,7 +32,6 @@ Version 1.0 Release "Boten Anna"
  * upload a song with a lot of missing samples. upload the samples.
 
 = workbench
- * cancel the rename box
  * workbench page
    > ability to create band invitations
      - creating a link to hand out
@@ -175,6 +174,8 @@ Version 1.0 Release "Boten Anna"
  * download mp3: box instead of link
 
 = workbench =
+ * cancel button on rename form
+ * cancel button on upload samples
  * make logging out and logging in nice.
    > log out - should hide everything on the page and say you need to log in
    > log in - everything should appear

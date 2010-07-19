@@ -15,9 +15,6 @@ var SCWorkbench = function () {
             band: function(id) {
                 return "{% filter escapejs %}{% url workbench.band 0 %}{% endfilter %}".replace(0, id);
             },
-            bandFanPage: function(id) {
-                return "{% filter escapejs %}{% url music.band 0 %}{% endfilter %}".replace(0, id);
-            },
             acceptInvite: "{% filter escapejs %}{% url workbench.ajax_accept_invite %}{% endfilter %}",
             ignoreInvite: "{% filter escapejs %}{% url workbench.ajax_ignore_invite %}{% endfilter %}"
         },
