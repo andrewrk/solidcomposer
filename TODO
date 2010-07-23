@@ -2,21 +2,25 @@ Version 1.0 Release "Boten Anna"
 = sitewide
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
+   > also always show a preview when things will be parsed by showdown.
  * home page
-   > if not logged in, it's an attractive pricing & signup page
    > if logged in, it's a dashboard with good stuff on it
- * gotta follow copyright on the icons from icon finder. have a database of icons used
-   with authors and a link so that I can have an attribution page at the bottom.
  * design iteration
+   > new logo
+   > make header area take up less vertical room
+   > test on 1024 page width.
    > arena home
    > ajax login
    > all of workbench
    > tip framework
      - tips should show up where the tip element is but not on top of it.
+   > home page - if not logged in, it's an attractive pricing & signup page
  * migration to create projects and versions for everything on the site.
  * code to bill customers monthly
    > set it up so that it sends me an email of what it's about to do, then
      I manually approve it and bill everybody.
+   > able to do a one-time payment or recurring
+   > able to downgrade/upgrade account at any time.
  * manually test all the features to make sure they work.
  * blog post announcing release
    > movie showing off features
@@ -50,6 +54,8 @@ Version 1.0 Release "Boten Anna"
  
 
 = sitewide =
+ * gotta follow copyright on the icons from icon finder. have a database of icons used
+   with authors and a link so that I can have an attribution page at the bottom.
  * html emails as well as text.
  * spam protection on contact page
  * password recovery
