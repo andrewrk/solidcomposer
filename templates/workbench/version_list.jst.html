@@ -14,7 +14,7 @@
                     <% if (project.checked_out_to.id === user.id) { %>
                         <h1>Check in new version</h1>
                         <div>
-                            <a href="#" id="just-check-in">Just check in.</a>
+                            <a href="#" id="just-check-in">Just check in.</a> {% include 'tips/justCheckIn.html' %}
                         </div>
                         <div>
                             <form id="checkin-form" action="{% url workbench.ajax_checkin %}" enctype="multipart/form-data" method="post">
@@ -24,10 +24,12 @@
                                         <tr>
                                             <th>Project file:</th>
                                             <td><input type="file" name="project_file" /></td>
+                                            <td>{% include 'tips/uploadProjectFileInput.html' %}</td>
                                         </tr>
                                         <tr>
                                             <th>MP3 Preview:</th>
                                             <td><input type="file" name="mp3_preview" /></td>
+                                            <td>{% include 'tips/uploadPreviewMp3.html' %}</td>
                                         </tr>
                                         <tr>
                                             <th>Describe your changes:</th>
@@ -51,7 +53,7 @@
                     <% } %>
                 <% } else { %>
                     <ul>
-                        <li><a id="checkout" href="#">Check out</a></li>
+                        <li><a id="checkout" href="#">Check out</a>{% include 'tips/checkOut.html' %}</li>
                         {% include 'workbench/action_upload_samples.jst.html' %}
                         <li><a id="rename" href="#">Rename</a></li>
                     </ul>
@@ -131,7 +133,7 @@
                     {% include 'player/player.jst.html' %}
                     <% if (! version.song.mp3_file) { %>
                         <div id="missing-mp3-<%=i%>" class="missing-thing">
-                            <h2><a href="#">Missing MP3 File</a></h2>
+                            <h2><a href="#">Missing MP3 File</a>{% include 'tips/missingMp3Render.html' %}</h2>
                             <div class="missing-mp3-form">
                                 <form id="missing-mp3-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_provide_mp3 %}">
                                     <% var upload_caption = "MP3 file"; %>
@@ -142,7 +144,7 @@
                     <% } %>
                     <% if (! version.song.source_file) { %>
                         <div id="missing-project-<%=i%>" class="missing-thing">
-                            <h2><a href="#">Missing Project File</a></h2>
+                            <h2><a href="#">Missing Project File</a>{% include 'tips/missingProjectFile.html' %}</h2>
                             <div class="missing-project-form">
                                 <form id="missing-project-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_provide_project %}">
                                     <% var upload_caption = "Project file"; %>
@@ -153,7 +155,7 @@
                     <% } %>
                     <% if (version.song.anyMissingSamples) { %>
                         <div id="missing-samples-<%=i%>" class="missing-thing">
-                            <h2><a href="#">Missing Samples</a></h2>
+                            <h2><a href="#">Missing Samples</a>{% include 'tips/missingSamples.html' %}</h2>
                             <div class="missing-list">
                                 <ul>
                                     <% for (var sampleIndex=0; sampleIndex<version.song.samples.length; ++sampleIndex) {

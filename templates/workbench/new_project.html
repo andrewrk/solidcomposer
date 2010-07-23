@@ -23,7 +23,44 @@
         {% endif %}
         <form action="." method="post" enctype="multipart/form-data">
             <table>
-                {{ form.as_table }}
+                <tr>
+                    <th>
+                        <label for="id_title">{{ form.title.label }}:</label>
+                    </th>
+                    <td>
+                        {{ form.title.errors }}{{ form.title }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="id_file_source">{{ form.file_source.label }}:</label>
+                    </th>
+                    <td>
+                        {{ form.file_source.errors }}{{ form.file_source }}
+                    </td>
+                    <td>
+                        {% include 'tips/uploadProjectFileInput.html' %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="id_file_mp3">{{ form.file_mp3.label }}:</label>
+                    </th>
+                    <td>
+                        {{ form.file_mp3.errors }}{{ form.file_mp3 }}
+                    </td>
+                    <td>
+                        {% include 'tips/uploadPreviewMp3.html' %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="id_comments">{{ form.comments.label }}:</label>
+                    </th>
+                    <td>
+                        {{ form.comments.errors }}{{ form.comments }}
+                    </td>
+                </tr>
                 <tr>
                     <td></td>
                     <td><input type="submit" value="Create" /></td>

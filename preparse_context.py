@@ -2,6 +2,7 @@ from main import design
 from main.models import BandMember
 from django.conf import settings
 
+
 # the dictionary that will be available to preparsed files
 CONTEXT = {
     'MEDIA_URL': settings.MEDIA_URL,
@@ -20,5 +21,3 @@ CONTEXT = {
     'DEBUG': settings.DEBUG,
     'BAND_MEMBER_MANAGER': BandMember.MANAGER,
 }
-
-

@@ -62,6 +62,7 @@ var SCProject = function () {
 
         function add_file_f() {
             $(this).closest('tr').before(Jst.evaluate(template_sample_upload_row_s, {}));
+            SCTips.addUi($(this).closest('table'));
             return false;
         };
 
@@ -231,9 +232,11 @@ var SCProject = function () {
         $("#projects").html(Jst.evaluate(template_version_list_s, state));
         Player.addUi("#projects");
         Player.addCommentsUi("#projects");
+        SCTips.addUi("#projects");
         addClicksToProjects();
 
         $("#footer-data").html(Jst.evaluate(template_footer_s, state));
+        SCTips.addUi("#footer-data");
     }
 
     function ajaxRequestLoop() {

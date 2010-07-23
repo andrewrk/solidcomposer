@@ -1007,9 +1007,8 @@ var Player = function() {
             width: dialogInsertCommentTipWidth,
             height: dialogInsertCommentTipHeight
         });
-        
-        // every dialog above this has no title bar.
-        $(".ui-dialog-titlebar").hide();
+        // hide the title bar
+        $("#comment-tip-dialog").prev().hide();
 
         // download samples
         $('body').prepend('<div id="dl-samples-dialog" style="display: none;"></div>');
@@ -1254,3 +1253,4 @@ var Player = function() {
     };
     return that;
 } ();
+

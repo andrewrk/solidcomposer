@@ -39,6 +39,7 @@ var SCBand = function() {
 
     function updateFilters() {
         $("#filters").html(Jst.evaluate(template_filters_s, state));
+        SCTips.addUi("#filters");
 
         $(".filter").click(function(){
             filter = $(this).attr('data-filterid');
@@ -55,6 +56,7 @@ var SCBand = function() {
         }
         $("#project-list").html(Jst.evaluate(template_project_list_s, state));
         Player.addUi("#project-list");
+        SCTips.addUi("#project-list");
     }
 
     function updateSpaceMeter() {
@@ -62,6 +64,7 @@ var SCBand = function() {
             return;
         }
         $("#band-spacemeter").html(Jst.evaluate(template_spacemeter_s, state));
+        SCTips.addUi("#band-spacemeter");
     }
 
     function ajaxRequestFilters() {

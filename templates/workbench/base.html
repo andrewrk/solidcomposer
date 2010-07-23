@@ -5,12 +5,13 @@
 {% block css %}workbench.pre.css{% endblock %}
 
 {% block login %}
-{% include 'login_div.html' %}
+    {% include 'login_div.html' %}
 {% endblock %}
 
 {% block extra_header %}
     {% include 'sc_script_framework.html' %}
     {{ block.super }}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/tips.pre.js"></script>
 {% endblock %}
 
 {% block nav_workbench_li_class %}selected{% endblock %}

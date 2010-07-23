@@ -7,15 +7,12 @@ Version 1.0 Release "Boten Anna"
    > if logged in, it's a dashboard with good stuff on it
  * gotta follow copyright on the icons from icon finder. have a database of icons used
    with authors and a link so that I can have an attribution page at the bottom.
- * tip framework. tips should explain everything complicated and be a little (tip) link 
-   next to the item. mousing over should bring up the tip and moving away from the link
-   should hide the tip. you should be able to turn off tips in account settings. there
-   should be an X next to each tip link, and clicking it will hide that particular tip
-   permanently.
  * design iteration
    > arena home
    > ajax login
    > all of workbench
+   > tip framework
+     - tips should show up where the tip element is but not on top of it.
  * migration to create projects and versions for everything on the site.
  * code to bill customers monthly
    > set it up so that it sends me an email of what it's about to do, then
@@ -46,7 +43,6 @@ Version 1.0 Release "Boten Anna"
    > make it look like the notes in my notebook
  * make it so that a band is read-only when its bytes_used < bytes_total
  * maxWidth and maxHeight don't work in jquery dialog
- * have a tip thing that tells people to use the .zip export function of fl studio
  * enforce the business plan
    > make it so that a user's plan gives him a certain amount of 
      credits, which can be spent on any band.
@@ -104,6 +100,7 @@ Version 1.0 Release "Boten Anna"
    - by IP address?
 
 = arena =
+ * add tips to arena
  * chrome bug: sometimes it plays the same song again during listening party
  * the listening party starts over after it ends. whoops.
  * listening party - make song comments during chat during listening party
@@ -162,7 +159,6 @@ Version 1.0 Release "Boten Anna"
 = song player
  * dependencies dialog: have a Samples heading.
    - if any missing samples: in red say e.g. "17 Missing Samples"
-     > there should be a tip next to this explaining how it works.
    - if any downloadable samples: have a samples link which closes the dialog and opens the samples dialog.
  * don't cover up the waveform with the comment box
  * comments

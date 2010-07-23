@@ -35,6 +35,7 @@ var SCWorkbench = function () {
         }
 
         $("#workbench").html(Jst.evaluate(template_home_s, state));
+        SCTips.addUi("#workbench");
 
         $("#workbenchSignIn").click(Login.showSignIn);
 
