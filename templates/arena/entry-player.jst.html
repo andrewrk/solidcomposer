@@ -3,7 +3,7 @@
         <% var song = entry.song; %>
         {% include 'player/player.jst.html' %}
     </div>
-    <% if (SCCompo.votingActive() || SCCompo.compoClosed()) { %>
+    <% if (SCCompo.ongoingListeningParty() || SCCompo.votingActive() || SCCompo.compoClosed()) { %>
         <%
             var comment_node = entry.song.comment_node;
             var user = json.user;

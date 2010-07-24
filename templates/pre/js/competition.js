@@ -173,6 +173,7 @@ var SCCompo = function () {
 
         // only overwrite the div if it needs to.
         if (forcePlayerUpdate) {
+            state.player.current_track.entry = state.json.entries[state.player.current_track.index];
             $("#current-entry").html(Jst.evaluate(template_current_entry_s, state));
             // clicks
             Player.addUi("#current-entry");
