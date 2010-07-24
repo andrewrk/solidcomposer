@@ -388,7 +388,7 @@ class SongCommentNode(SerializableModel):
 
     song = models.ForeignKey('Song', null=True, blank=True)
 
-    # if null then this is the parent.
+    # if null then this is the root.
     parent = models.ForeignKey('SongCommentNode', null=True, blank=True)
 
     date_created = models.DateTimeField()
@@ -433,8 +433,14 @@ class SongCommentNode(SerializableModel):
         return super(SongCommentNode, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        # if it's the root node, just set the content to blank.
+        if self.parent is None:
+            self.content = ""
+            self.save()
+            return
+
         # if it's a leaf node, actually delete it
-        if self.songcommentnode_set.count() == 0:
+        if self.parent is not None and self.songcommentnode_set.count() == 0:
             return super(SongCommentNode, self).delete(*args, **kwargs)
 
         # if not, just set delete to true.
