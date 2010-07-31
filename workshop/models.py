@@ -380,6 +380,7 @@ class LogEntry(SerializableModel):
 
     PUBLIC_ATTRS = (
         'entry_type',
+        'timestamp',
         'band',
         'catalyst',
         'target',

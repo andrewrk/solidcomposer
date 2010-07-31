@@ -1,7 +1,9 @@
 Version 1.0 Release "Boten Anna"
 = sitewide
+ * make the gravatar image in the top right a link to gravatar.com
  * user page
    > list entries
+   > can invite them to join your band
  * settings page
    > whether or not you want to get emailed about new competitions (default true)
    > account type - free, premium
@@ -37,9 +39,9 @@ Version 1.0 Release "Boten Anna"
  * workbench page
    > ability to create band invitations
      - creating a link to hand out
-     - direct invitation on the person's user page
      - a box with auto-complete to direct invite people
    > recent activity for each band they're in
+     - new project
      - songs checked in
      - songs checked out
      - uploaded samples
@@ -47,6 +49,7 @@ Version 1.0 Release "Boten Anna"
      - pokes
      - band member joining
      - band member leaving
+     - trashed project
    > show widget indicating how much space is used / left and how to upgrade
  * enforce the business plan
    > make it so that a user's plan gives him a certain amount of 

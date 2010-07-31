@@ -68,7 +68,7 @@ def activity_list(request):
         # get only ones since last_entry_id
         entries = entries.filter(pk__gt=last_entry_id).order_by('-timestamp')[:entry_count]
 
-    return [entry.to_dict(chains=['catalyst', 'target', 'version.project']) for entry in entries]
+    return [entry.to_dict(chains=['band', 'catalyst', 'target', 'version.project']) for entry in entries]
 
 def ajax_home(request):
     data = {
