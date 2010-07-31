@@ -10,6 +10,7 @@ stuff = (
     SampleDependency,
     UploadedSample,
     SampleFile,
+    LogEntry,
 )
 
 map(lambda x: admin.site.register(x), stuff)

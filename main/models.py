@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 from competitions.models import ThumbsUp
+import workshop
 from base.models import SerializableModel, create_url
 
 from main import design
@@ -27,7 +28,7 @@ class BandMember(SerializableModel):
     )
 
     user = models.ForeignKey(User)
-    band = models.ForeignKey('Band')
+    band = models.ForeignKey('main.Band')
     role = models.IntegerField(choices=ROLE_CHOICES, default=MANAGER)
 
     def __unicode__(self):
@@ -369,6 +370,12 @@ class Song(SerializableModel):
                 data['plugins'] = [obj.pk for obj in self.plugins.all()]
         return data
 
+    def version(self):
+        """
+        gets the ProjectVersion which created this song
+        """
+        return workshop.models.ProjectVersion.objects.get(song=self)
+
 class SongCommentNode(SerializableModel):
     """
     Contains one comment and a link to its parent.
@@ -427,6 +434,16 @@ class SongCommentNode(SerializableModel):
         self.date_edited = datetime.now()
         if not self.id:
             self.date_created = self.date_edited
+
+            # create a log entry
+            entry = workshop.models.LogEntry()
+            entry.entry_type = workshop.models.LogEntry.SONG_CRITIQUE
+            entry.band = self.song.band
+            entry.catalyst = self.owner
+            entry.node = self
+            entry.version = self.song.version()
+            entry.save()
+
         return self._save(*args, **kwargs)
 
     def _save(self, *args, **kwargs):

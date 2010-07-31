@@ -1,5 +1,11 @@
 Version 1.0 Release "Boten Anna"
 = sitewide
+ * user page
+   > list entries
+ * settings page
+   > whether or not you want to get emailed about new competitions (default true)
+   > account type - free, premium
+   > change password
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
    > also always show a preview when things will be parsed by showdown.
@@ -15,6 +21,7 @@ Version 1.0 Release "Boten Anna"
    > tip framework
      - tips should show up where the tip element is but not on top of it.
    > home page - if not logged in, it's an attractive pricing & signup page
+   > maxWidth and maxHeight don't work in jquery dialog
  * migration to create projects and versions for everything on the site.
  * code to bill customers monthly
    > set it up so that it sends me an email of what it's about to do, then
@@ -33,17 +40,18 @@ Version 1.0 Release "Boten Anna"
      - direct invitation on the person's user page
      - a box with auto-complete to direct invite people
    > recent activity for each band they're in
-     - crtitiques on songs
      - songs checked in
      - songs checked out
+     - uploaded samples
+     - song renames
      - pokes
+     - band member joining
+     - band member leaving
    > show widget indicating how much space is used / left and how to upgrade
-   > make it look like the notes in my notebook
- * make it so that a band is read-only when its bytes_used < bytes_total
- * maxWidth and maxHeight don't work in jquery dialog
  * enforce the business plan
    > make it so that a user's plan gives him a certain amount of 
      credits, which can be spent on any band.
+   > make it so that a band is read-only when its bytes_used < bytes_total
  * tests
  
 

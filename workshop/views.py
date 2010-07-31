@@ -53,6 +53,23 @@ def filterVisible(projects):
 def filterScrapped(projects):
     return projects.filter(visible=False)
 
+def activity_list(request):
+    """
+    return the 10 newest log entries since the id supplied.
+    """
+    last_entry_id = get_val(request.GET, 'lastEntry', 0)
+    entry_count = get_val(request.GET, 'count', 10)
+
+    entries = LogEntry.objects.filter(band__pk__in=BandMember.objects.filter(user=request.user))
+    if last_entry_id == 0:
+        # get newest entry_count entries
+        entries = entries.order_by('-timestamp')[:entry_count]
+    else:
+        # get only ones since last_entry_id
+        entries = entries.filter(pk__gt=last_entry_id).order_by('-timestamp')[:entry_count]
+
+    return [entry.to_dict(chains=['catalyst', 'target', 'version.project']) for entry in entries]
+
 def ajax_home(request):
     data = {
         'user': {
@@ -72,6 +89,9 @@ def ajax_home(request):
         # invitations
         invites = BandInvitation.objects.filter(invitee=request.user)
         data['invites'] = [x.to_dict(chains=['band']) for x in invites]
+
+        # log entries
+        data['activity'] = activity_list(request)
 
     return json_response(data)
 
@@ -232,7 +252,7 @@ def ajax_project(request):
     return newer ones. Also return the current state - who has it
     checked out, etc.
     """
-    last_version_str = request.GET.get('last_version', 'null')
+    last_version_id = get_val(request.GET, 'last_version', 0)
     project = get_obj_from_request(request.GET, 'project', Project)
 
     if project is None:
@@ -253,14 +273,10 @@ def ajax_project(request):
 
     data['project'] = project.to_dict(SerializableModel.OWNER, chains=['checked_out_to', 'band'])
 
-    if last_version_str == 'null':
+    if last_version_id == 0:
         # get entire version list
         data['versions'] = [version_to_dict(x, request.user) for x in ProjectVersion.objects.filter(project=project)]
     else:
-        try:
-            last_version_id = int(last_version_str)
-        except ValueError:
-            last_version_id = 0
         data['versions'] = [version_to_dict(x, request.user) for x in ProjectVersion.objects.filter(project=project, id__gt=last_version_id)]
 
     data['user'].update(request.user.get_profile().to_dict())

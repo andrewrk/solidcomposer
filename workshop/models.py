@@ -24,7 +24,7 @@ class BandInvitation(SerializableModel):
 
     # who sent the invite
     inviter = models.ForeignKey(User, related_name="inviter")
-    band = models.ForeignKey(Band)
+    band = models.ForeignKey('main.Band')
     timestamp = models.DateTimeField()
     role = models.IntegerField(choices=BandMember.ROLE_CHOICES, default=BandMember.BAND_MEMBER)
 
@@ -359,4 +359,65 @@ class Studio(SerializableModel):
 
     def __unicode__(self):
         return self.title
+
+class LogEntry(SerializableModel):
+    """
+    Something that happened that is relevant to a band. We use this to have a Recent Events pane in workbench.
+    """
+
+    SONG_CRITIQUE, SONG_CHECKED_IN, SONG_CHECKED_OUT, SAMPLES_UPLOADED, SONG_RENAMED, POKE, BAND_MEMBER_JOIN, BAND_MEMBER_QUIT = range(8)
+
+    ENTRY_TYPE_CHOICES = (
+        (SONG_CRITIQUE, 'Song critique'),
+        (SONG_CHECKED_IN, 'Song checked in'),
+        (SONG_CHECKED_OUT, 'Song checked out'),
+        (SAMPLES_UPLOADED, 'Samples uploaded'),
+        (SONG_RENAMED, 'Song renamed'),
+        (POKE, 'Someone got poked'),
+        (BAND_MEMBER_JOIN, 'Band member joined'),
+        (BAND_MEMBER_QUIT, 'Band member quit'),
+    )
+
+    PUBLIC_ATTRS = (
+        'entry_type',
+        'band',
+        'catalyst',
+        'target',
+        'node',
+        'version',
+    )
+
+    entry_type = models.IntegerField(choices=ENTRY_TYPE_CHOICES)
+    timestamp = models.DateTimeField()
+
+    # the band that this is relevant to.
+    band = models.ForeignKey('main.Band')
+
+    # the person who caused the action
+    catalyst = models.ForeignKey(User, null=True, blank=True, related_name="catalyst")
+
+    # who is the action directed at? for example the person being poked.
+    target = models.ForeignKey(User, null=True, blank=True, related_name="target")
+
+    # the comment node for a song critique
+    node = models.ForeignKey('main.SongCommentNode', null=True, blank=True)
+
+    # the project version for when a project is updated
+    version = models.ForeignKey('ProjectVersion', null=True, blank=True)
+
+    def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
+        data = super(LogEntry, self).to_dict(access, chains)
+        if self.entry_type == LogEntry.SONG_RENAMED:
+            # get the previous version
+            prev_version = ProjectVersion.objects.get(project=self.version.project, pk__lt=self.version.id).order_by('-pk')[1]
+            data['old_title'] = prev_version.project.title
+        return data
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.timestamp = datetime.now()
+        self._save(*args, **kwargs)
+
+    def _save(self, *args, **kwargs):
+        super(LogEntry, self).save(*args, **kwargs)
 

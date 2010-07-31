@@ -5,10 +5,14 @@ var SCWorkbench = function () {
     // configurable stuff
     var stateRequestTimeout = 10000;
 
-    var template_home = "{% filter escapejs %}{% include 'workbench/home.jst.html' %}{% endfilter %}";
+    // templates
+    var templateHome = "{% filter escapejs %}{% include 'workbench/home.jst.html' %}{% endfilter %}";
+    var templateHomeCompiled = null;
 
-    var template_home_s = null;
+    // the id of the last LogEntry we got from the server.
+    var lastActivityId = null;
 
+    // the context we pass to the templates
     var state = {
         urls: {
             ajax_home: "{% filter escapejs %}{% url workbench.ajax_home %}{% endfilter %}",
@@ -16,16 +20,37 @@ var SCWorkbench = function () {
                 return "{% filter escapejs %}{% url workbench.band 0 %}{% endfilter %}".replace(0, id);
             },
             acceptInvite: "{% filter escapejs %}{% url workbench.ajax_accept_invite %}{% endfilter %}",
-            ignoreInvite: "{% filter escapejs %}{% url workbench.ajax_ignore_invite %}{% endfilter %}"
+            ignoreInvite: "{% filter escapejs %}{% url workbench.ajax_ignore_invite %}{% endfilter %}",
+            userpage: function (username) {
+                return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
+            },
+            project: function(id, band_id) {
+                return "{% filter escapejs %}{% url workbench.project 0 1 %}{% endfilter %}".replace("0",
+                    "[~~band_id~~]").replace("1", id).replace("[~~band_id~~]", band_id);
+            },
+            project_version: function(project_id, band_id, version_number) {
+                return this.project(project_id, band_id) + "#version" + version_number;
+            }
         },
         json: null,
+        logEntries: [],
         roleNames: [
             "Manager",
             "Band member",
             "Critic",
             "Fan",
             "Banned"
-        ]
+        ],
+        entryTypeEnum: {
+            SONG_CRITIQUE:      0,
+            SONG_CHECKED_IN:    1,
+            SONG_CHECKED_OUT:   2,
+            SAMPLES_UPLOADED:   3,
+            SONG_RENAMED:       4,
+            POKE:               5,
+            BAND_MEMBER_JOIN:   6,
+            BAND_MEMBER_QUIT:   7
+        }
     };
     
     // private functions
@@ -34,7 +59,7 @@ var SCWorkbench = function () {
             return;
         }
 
-        $("#workbench").html(Jst.evaluate(template_home_s, state));
+        $("#workbench").html(Jst.evaluate(templateHomeCompiled, state));
         SCTips.addUi("#workbench");
 
         $("#workbenchSignIn").click(Login.showSignIn);
@@ -79,14 +104,14 @@ var SCWorkbench = function () {
     }
 
     function compileTemplates() {
-        template_home_s = Jst.compile(template_home);
+        templateHomeCompiled = Jst.compile(templateHome);
     }
 
     function ajaxRequestHome() {
         $.getJSON(
             state.urls.ajax_home,
             {
-                // no data to send
+                lastEntry: lastActivityId
             },
             function(data){
                 if (data === null) {
@@ -94,6 +119,14 @@ var SCWorkbench = function () {
                 }
 
                 state.json = data;
+
+                {% include 'js/mergeLists.js' %}
+
+                mergeLists(state.logEntries, data.activity);
+
+                if (state.logEntries.length > 0) {
+                    lastActivityId = state.logEntries[state.logEntries.length-1].id;
+                }
                 updateHome();
             }
         );
