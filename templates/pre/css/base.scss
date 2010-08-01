@@ -70,15 +70,15 @@ a {
     right: 0;
     margin: 10px 12px 0 0;
     padding: 0;
+
+    img {
+        vertical-align: middle;
+    }
 }
 
 #loginStatusDiv a {
     margin: 0 0 0 6px;
     padding: 0;
-}
-
-#login img {
-    vertical-align: middle;
 }
 
 .points {
@@ -98,13 +98,6 @@ a {
 
 #logo {
     padding: 8px 0 0 12px;
-    margin: 0;
-}
-
-#tabsJ p {
-    float: left;
-    font-size: 12px;
-    padding: 14px 0 0 16px;
     margin: 0;
 }
 
@@ -133,21 +126,23 @@ td.label {
     text-align: right;
 }
 
-form th {
-    font-size: 12px;
-    font-weight: normal;
-    text-align: right;
-}
+form {
+    th {
+        font-size: 12px;
+        font-weight: normal;
+        text-align: right;
+    }
 
-form h3 {
-    font-size: 14px;
-    background: #e0e0e0;
-    border: 1px solid #d4d4d4;
-    border-left: none;
-    border-right: none;
-    margin: 0; 
-    padding: 12px 0;
-    text-align: center;
+    h3 {
+        font-size: 14px;
+        background: #e0e0e0;
+        border: 1px solid #d4d4d4;
+        border-left: none;
+        border-right: none;
+        margin: 0; 
+        padding: 12px 0;
+        text-align: center;
+    }
 }
 
 #bread {
@@ -156,15 +151,15 @@ form h3 {
     color: #777777;
     margin: 0;
     padding: 12px;
-}
 
-#bread a {
-    text-decoration: none;
-    color: #0000ff;
-}
+    a {
+        text-decoration: none;
+        color: #0000ff;
+    }
 
-#bread .dest {
-    color: #000000;
+    .dest {
+        color: #000000;
+    }
 }
 
 #tools {
@@ -181,6 +176,13 @@ form h3 {
     font-size:93%;
     line-height:normal;
     border-bottom:1px solid #24618e;
+
+    p {
+        float: left;
+        font-size: 12px;
+        padding: 14px 0 0 16px;
+        margin: 0;
+    }
 
     ul {
         margin:0;

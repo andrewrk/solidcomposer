@@ -48,6 +48,7 @@ AWS_TEST_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 # copy and uncomment in settings_user.py to use s3 storage
 #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
+ROOT_URL = 'http://localhost:8000' # http://solidcomposer.com for production
 MEDIA_ROOT = absolute('media')
 MEDIA_URL = 'http://localhost:8080/django/solidcomposer/'
 ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'

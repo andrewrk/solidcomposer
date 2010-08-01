@@ -45,11 +45,12 @@ class BandInvitation(SerializableModel):
         return not (self.code is None)
 
     def redeemHyperlink(self):
+        "returns the hyperlink you can use to redeem this invitation."
         if self.code is None:
             return None
         else:
             from django.core.urlresolvers import reverse
-            return reverse('redeem_invitation', args=[self.code])
+            return settings.ROOT_URL + reverse('workbench.redeem_invitation', args=[self.code])
             
     def save(self, *args, **kwargs):
         if not self.id:

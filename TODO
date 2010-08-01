@@ -1,5 +1,10 @@
 Version 1.0 Release "Boten Anna"
 = sitewide
+ * band settings
+   > membership management
+ * song player: mouseover comments go away if you're not scrolled to the top
+ * pagination is broken in project manager
+ * refactor: time, chat, player, etc can do their own initialization
  * user page
    > list entries
    > can invite them to join your band
@@ -40,6 +45,7 @@ Version 1.0 Release "Boten Anna"
      - creating a link to hand out
      - a box with auto-complete to direct invite people
    > recent activity for each band they're in
+     - invitations sent out
      - new project
      - songs checked in
      - songs checked out
@@ -90,7 +96,6 @@ Version 1.0 Release "Boten Anna"
    > ability to check/uncheck plugins that a user owns
    > whether to bleepy boop when people chat
  * band settings
-   > membership management
    > visibility options
    > ban people
  * serializablemodel: should only follow chains if the names match

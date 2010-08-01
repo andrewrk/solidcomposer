@@ -7,10 +7,13 @@
 {% endblock %}
 
 {% block content %}
+    {% include 'workbench/tools.html' %}
     <div id="bread">
         <a href="{% url home %}">Home</a>
         &gt;
         <a href="{% url workbench.home %}">Workbench</a>
+        &gt;
+        <a href="{% url workbench.band band.id %}">{{ band.title }}</a>
         &gt;
         <span class="dest">New Project</span>
     </div>

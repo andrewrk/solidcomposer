@@ -60,7 +60,7 @@ def activity_list(request):
     last_entry_id = get_val(request.GET, 'lastEntry', 0)
     entry_count = get_val(request.GET, 'count', 10)
 
-    entries = LogEntry.objects.filter(band__pk__in=BandMember.objects.filter(user=request.user))
+    entries = LogEntry.objects.filter(band__bandmember__user=request.user)
     if last_entry_id == 0:
         # get newest entry_count entries
         entries = entries.order_by('-timestamp')[:entry_count]
@@ -128,12 +128,85 @@ def ajax_accept_invite(request):
 def ajax_ignore_invite(request):
     return handle_invite(request, accept=False)
 
+@json_login_required
+@json_post_required
+def ajax_create_invite(request):
+    band = get_obj_from_request(request.POST, 'band', Band)
+    invitee = get_obj_from_request(request.POST, 'invitee', User)
+
+    if band is None:
+        return json_failure(design.bad_band_id)
+
+    if not band.openness == Band.OPEN_SOURCE:
+        member = BandMember.objects.get(user=request.user, band=band)
+        if member.role != BandMember.MANAGER:
+            return json_failure(design.only_managers_can_create_invitations)
+
+    invite = BandInvitation()
+    invite.inviter = request.user
+    invite.band = band
+    invite.expire_date = datetime.now() + timedelta(days=30)
+
+    if invitee == None:
+        invite.code = create_hash(32)
+        invite.save()
+        data = {'url': invite.redeemHyperlink()}
+    else:
+        invite.invitee = invitee
+        invite.save()
+        data = {}
+
+    return json_success(data)
+
+@login_required
+def redeem_invitation(request, password_hash):
+    """
+    join the band if the invitation is valid
+    """
+    try:
+        invite = BandInvitation.objects.get(code=password_hash)
+    except BandInvitation.DoesNotExist:
+        invite = None
+
+    if invite and datetime.now() <= invite.expire_date and invite.count > 0:
+            # create a band member for the invitation
+            member = BandMember()
+            member.user = request.user
+            member.band = invite.band
+            member.role = invite.role
+            member.save()
+
+            # decrement the counter
+            invite.count -= 1
+
+            if invite.count <= 0:
+                invite.delete()
+
+            band = invite.band
+    else:
+        err_msg = True
+
+    return render_to_response('workbench/redeem_invitation.html', locals(), context_instance=RequestContext(request))
+        
+
+@json_login_required
+@json_post_required
+def ajax_email_invite(request):
+    address = get_val(request.POST, 'email', '')
+    band = get_obj_from_request(request.POST, 'band', Band)
+    
+    if band is None:
+        return json_failure(design.bad_band_id)
+
+    if address == '':
+        return json_failure(design.you_must_supply_an_email_address)
+
+    TODO
+
+
 def band(request, band_id_str):
-    band_id = int(band_id_str)
-    band = get_object_or_404(Band, id=band_id)
-    return render_to_response('workbench/band.html', {
-            "band": band,
-        }, context_instance=RequestContext(request))
+    band = get_object_or_404(Band, pk=int(band_id_str))
+    return render_to_response('workbench/band.html', {"band": band}, context_instance=RequestContext(request))
 
 @json_login_required
 @json_get_required
@@ -641,6 +714,7 @@ def create_project(request, band_str):
     return render_to_response('workbench/new_project.html', {
             'form': form,
             'err_msg': err_msg,
+            'band': band,
         }, context_instance=RequestContext(request))
 
 @login_required
@@ -828,3 +902,6 @@ def version_to_dict(version, user):
 
     return data
 
+def band_invite(request, band_id_str):
+    band = get_object_or_404(Band, pk=int(band_id_str))
+    return render_to_response('workbench/band_invite.html', locals(), context_instance=RequestContext(request))

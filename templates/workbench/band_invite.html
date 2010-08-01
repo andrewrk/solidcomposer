@@ -1,0 +1,58 @@
+{% extends 'workbench/base.html' %}
+
+{% block extra_header %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var band_id = {{ band.id }};
+    </script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/workbench/band_invite.pre.js"></script>
+{% endblock %}
+
+{% block title %}Add a Band Member - {{ block.super }}{% endblock %}
+
+{% block login %}
+    {% include 'login_area.html' %}
+{% endblock %}
+
+{% block content %}
+    {% include 'workbench/tools.html' %}
+    <div id="bread">
+        <a href="{% url home %}">Home</a>
+        &gt;
+        <a href="{% url workbench.home %}">Workbench</a>
+        &gt;
+        <a href="{% url workbench.band band.id %}">{{ band.title }}</a>
+        &gt;
+        <span class="dest">Add a Band Member</span>
+    </div>
+    <div class="textblock">
+        <div id="invite-link">
+            <h1><a href="#">Create Invitation Link</a></h1>
+            <div class="dropdown" style="display: none;">
+                <div id="copy-area">
+                {% include 'loading.html' %}
+                </div>
+            </div>
+        </div>
+        <div id="invite-email">
+            <h1><a href="#">Invite by Email</a></h1>
+            <div class="dropdown" style="display: none;">
+                Band mate's email: <input type="text" id="email-box" value="" /><input type="button" value="Invite" id="email-button" />
+                <div class="success" style="display: none;">
+                    {% include 'success.html' %}
+                </div>
+            </div>
+        </div>
+        <div id="invite-local">
+            <h1><a href="#">Invite a SolidComposer User</a></h1>
+            <div class="dropdown" style="display: none;">
+                User name: <input type="text" id="local-box" value="" /><input type="button" value="Invite" id="local-button" />
+                {% include 'tips/inviteLocalUser.html' %}
+                <div class="success" style="display: none;">
+                    {% include 'success.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

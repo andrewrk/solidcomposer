@@ -32,7 +32,7 @@ class BandMember(SerializableModel):
     role = models.IntegerField(choices=ROLE_CHOICES, default=MANAGER)
 
     def __unicode__(self):
-        return u'%s - %s: %s' % (str(self.band), dict(ROLE_CHOICES)[self.role], str(self.user))
+        return u'%s - %s: %s' % (str(self.band), dict(BandMember.ROLE_CHOICES)[self.role], str(self.user))
 
 
 class Band(SerializableModel):
@@ -370,12 +370,6 @@ class Song(SerializableModel):
                 data['plugins'] = [obj.pk for obj in self.plugins.all()]
         return data
 
-    def version(self):
-        """
-        gets the ProjectVersion which created this song
-        """
-        return workshop.models.ProjectVersion.objects.get(song=self)
-
 class SongCommentNode(SerializableModel):
     """
     Contains one comment and a link to its parent.
@@ -436,13 +430,14 @@ class SongCommentNode(SerializableModel):
             self.date_created = self.date_edited
 
             # create a log entry
-            entry = workshop.models.LogEntry()
-            entry.entry_type = workshop.models.LogEntry.SONG_CRITIQUE
-            entry.band = self.song.band
-            entry.catalyst = self.owner
-            entry.node = self
-            entry.version = self.song.version()
-            entry.save()
+            if self.parent != None:
+                entry = workshop.models.LogEntry()
+                entry.entry_type = workshop.models.LogEntry.SONG_CRITIQUE
+                entry.band = self.song.band
+                entry.catalyst = self.owner
+                entry.node = self
+                entry.version = self.song.projectversion_set.all()[0]
+                entry.save()
 
         return self._save(*args, **kwargs)
 
