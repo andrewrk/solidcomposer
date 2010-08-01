@@ -166,6 +166,8 @@ var SCArena = function () {
         
         // public functions
         initialize: function () {
+            Login.addStateChangeCallback(that.ajaxRequest);
+
             compileTemplates();
             ajaxRequestLoop();
             updateCompetitionsLoop();
@@ -178,13 +180,4 @@ var SCArena = function () {
     };
     return that;
 } ();
-
-$(document).ready(function(){
-    Time.initialize(server_time, local_time);
-
-    Login.initialize();
-    Login.addStateChangeCallback(SCArena.ajaxRequest);
-
-    SCArena.initialize();
-});
-
+$(document).ready(SCArena.initialize());

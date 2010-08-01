@@ -137,6 +137,7 @@ var SCWorkbench = function () {
         
         // public functions
         initialize: function () {
+            Login.addStateChangeCallback(that.ajaxRequest);
             compileTemplates();
             ajaxRequestLoop();
         },
@@ -149,11 +150,6 @@ var SCWorkbench = function () {
 } ();
 
 $(document).ready(function(){
-    Time.initialize(server_time, local_time);
-
-    Login.initialize();
-    Login.addStateChangeCallback(SCWorkbench.ajaxRequest);
-
     SCWorkbench.initialize();
 });
 

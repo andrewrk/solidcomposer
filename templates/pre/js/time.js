@@ -4,9 +4,7 @@
  * time.
  *
  * To use any of the functions that take serverTime (the most useful ones),
- * this class needs to be initialized like this:
- *
- * Time.initialize(server_time, local_time);
+ * this class needs to have two global variables available.
  *
  * which should look like:
  *
@@ -14,9 +12,6 @@
  *          // as soon as possible in loading the html
  *          var server_time = new Date('{% now "F d, Y H:i:s" %}');
  *          var local_time = new Date();
- *
- *          // then later, when the document is ready
- *          Time.initialize(server_time, local_time);
  *      </script>
  *
  */
@@ -241,3 +236,6 @@ var Time = function () {
     };
     return that;
 } ();
+$(document).ready(function(){
+    Time.initialize(server_time, local_time);
+});

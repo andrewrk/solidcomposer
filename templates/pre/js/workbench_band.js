@@ -139,6 +139,8 @@ var SCBand = function() {
         
         // public functions
         initialize: function (_band_id) {
+            Login.addStateChangeCallback(that.ajaxRequest);
+
             compileTemplates();
             band_id = _band_id;
 
@@ -162,11 +164,6 @@ var SCBand = function() {
 
 
 $(document).ready(function(){
-    Time.initialize(server_time, local_time);
-
-    Login.initialize();
-    Login.addStateChangeCallback(SCBand.ajaxRequest);
-
     SCBand.initialize(band_id);
 });
 

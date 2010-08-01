@@ -1,8 +1,6 @@
 /*
  * login.js
  *
- * Make one call to initialize() on document ready.
- *
  * If you want a callback when someone logs in or out, use
  *
  * Login.addStateChangeCallback(function);
@@ -222,4 +220,4 @@ var Login = function () {
     };
     return that;
 } ();
-
+$(document).ready(Login.initialize);

@@ -455,6 +455,8 @@ var SCCompo = function () {
 
     that = {
         initialize: function () {
+            Chat.initialize(chatroom_id);
+            Login.addStateChangeCallback(that.ajaxRequest);
             Player.initialize(onPlayerReady, forceUpdateCurrentEntry);
             Player.onSoundComplete = onSoundComplete;
             Player.onProgressChange = onProgressChange;
@@ -559,14 +561,4 @@ var SCCompo = function () {
     };
     return that;
 } ();
-
-$(document).ready(function(){
-    Time.initialize(server_time, local_time);
-    Chat.initialize(chatroom_id);
-
-    Login.initialize();
-    Login.addStateChangeCallback(SCCompo.ajaxRequest);
-
-    SCCompo.initialize();
-});
-
+$(document).ready(SCCompo.initialize);

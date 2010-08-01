@@ -335,6 +335,7 @@ var SCProject = function () {
         
         // public functions
         initialize: function (init_band_id, init_project_id) {
+            Login.addStateChangeCallback(that.ajaxRequest);
             compileTemplates();
             band_id = init_band_id;
             project_id = init_project_id;
@@ -350,13 +351,7 @@ var SCProject = function () {
     };
     return that;
 } ();
-
 $(document).ready(function(){
-    Time.initialize(server_time, local_time);
-
-    Login.initialize();
-    Login.addStateChangeCallback(SCProject.ajaxRequest);
-
     SCProject.initialize(band_id, project_id);
 });
 
