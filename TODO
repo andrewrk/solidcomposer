@@ -4,7 +4,6 @@ Version 1.0 Release "Boten Anna"
    > membership management
  * song player: mouseover comments go away if you're not scrolled to the top
  * pagination is broken in project manager
- * refactor: time, chat, player, etc can do their own initialization
  * user page
    > list entries
    > can invite them to join your band
@@ -18,6 +17,7 @@ Version 1.0 Release "Boten Anna"
  * home page
    > if logged in, it's a dashboard with good stuff on it
  * design iteration
+   > favicon
    > new logo
    > make header area take up less vertical room
    > test on 1024 page width.
@@ -43,7 +43,6 @@ Version 1.0 Release "Boten Anna"
 = workbench
  * workbench page
    > recent activity for each band they're in
-     - invitations sent out
      - new project
      - songs checked in
      - songs checked out
@@ -51,8 +50,6 @@ Version 1.0 Release "Boten Anna"
      - song renames
      - pokes
      - band member joining
-     - band member leaving
-     - trashed project
    > show widget indicating how much space is used / left and how to upgrade
  * enforce the business plan
    > make it so that a user's plan gives him a certain amount of 
@@ -62,6 +59,10 @@ Version 1.0 Release "Boten Anna"
  
 
 = sitewide =
+ * recent activty entry log:
+   > band member leaving
+   > trashed project
+   > invitations sent out
  * when inviting a solid composer user, use a dropdown like github does to help them pick
  * gotta follow copyright on the icons from icon finder. have a database of icons used
    with authors and a link so that I can have an attribution page at the bottom.
