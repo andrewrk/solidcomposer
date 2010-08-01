@@ -6,13 +6,23 @@ var SCBandInvite = function() {
 
     var urls = {
         create_invite: "{% filter escapejs %}{% url workbench.ajax_create_invite %}{% endfilter %}",
-        email_invite: "{% filter escapejs %}{% url workbench.ajax_email_invite %}{% endfilter %}"
+        email_invite: "{% filter escapejs %}{% url workbench.ajax_email_invite %}{% endfilter %}",
+        username_invite: "{% filter escapejs %}{% url workbench.ajax_username_invite %}{% endfilter %}"
     };
 
     var band_id = null;
 
     function compileTemplates() {
         templateCopyAreaCompiled = Jst.compile(templateCopyArea);
+    }
+
+    function showSuccess(dom) {
+        // put a little graphic indicating success
+        $(dom).show();
+        function hideIt(){
+            $(dom).hide('slow');
+        }
+        setTimeout(hideIt, 2000);
     }
 
     function addClicks() {
@@ -69,20 +79,51 @@ var SCBandInvite = function() {
                         alert("Error sending invitation: " + data.reason);
                         return;
                     }
-                    // put a little graphic indicating success
-                    $("#invite-email .success").show().hide('slow');
+                    showSuccess("#invite-email .success");
+
+                    // clear the text box and set focus
+                    $("#email-box").val('');
+                    $("#email-box").focus();
+
                 },
                 'json');
             
-            // clear the text box and set focus
-            $("#email-box").val();
-            $("#email-box").focus();
             return false;
         }
         $("#email-button").click(inviteByEmail);
         $("#email-box").keydown(function(e){
             if (e.keyCode === 13) {
                 inviteByEmail();
+            }
+        });
+
+        function inviteByUsername() {
+            // post the invitation
+            $.post(
+                urls.username_invite,
+                {
+                    band: band_id,
+                    username: $("#local-box").val()
+                },
+                function (data) {
+                    if (! data.success) {
+                        alert("Error sending invitation: " + data.reason);
+                        return;
+                    }
+                    showSuccess("#invite-local .success");
+
+                    // clear the text box and set focus
+                    $("#local-box").val('');
+                    $("#local-box").focus();
+                },
+                'json');
+            
+            return false;
+        }
+        $("#local-button").click(inviteByUsername);
+        $("#local-box").keydown(function(e){
+            if (e.keyCode === 13) {
+                inviteByUsername();
             }
         });
     }

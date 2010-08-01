@@ -28,6 +28,7 @@ Version 1.0 Release "Boten Anna"
      - tips should show up where the tip element is but not on top of it.
    > home page - if not logged in, it's an attractive pricing & signup page
    > maxWidth and maxHeight don't work in jquery dialog
+   > html email instead of txt
  * migration to create projects and versions for everything on the site.
  * code to bill customers monthly
    > set it up so that it sends me an email of what it's about to do, then
@@ -41,9 +42,6 @@ Version 1.0 Release "Boten Anna"
 
 = workbench
  * workbench page
-   > ability to create band invitations
-     - creating a link to hand out
-     - a box with auto-complete to direct invite people
    > recent activity for each band they're in
      - invitations sent out
      - new project
@@ -64,6 +62,7 @@ Version 1.0 Release "Boten Anna"
  
 
 = sitewide =
+ * when inviting a solid composer user, use a dropdown like github does to help them pick
  * gotta follow copyright on the icons from icon finder. have a database of icons used
    with authors and a link so that I can have an attribution page at the bottom.
  * html emails as well as text.

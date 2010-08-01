@@ -3,7 +3,8 @@ from django.core.urlresolvers import reverse
 from django.core.servers.basehttp import FileWrapper
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, HttpResponseForbidden
-from django.template import RequestContext
+from django.template import RequestContext, Context, Template
+from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render_to_response, get_object_or_404
 
@@ -169,6 +170,10 @@ def redeem_invitation(request, password_hash):
         invite = None
 
     if invite and datetime.now() <= invite.expire_date and invite.count > 0:
+        # make sure the band member doesn't already exist
+        if BandMember.objects.filter(user=request.user, band=invite.band, role=invite.role).count() > 0:
+            err_msg = True
+        else:
             # create a band member for the invitation
             member = BandMember()
             member.user = request.user
@@ -187,22 +192,113 @@ def redeem_invitation(request, password_hash):
         err_msg = True
 
     return render_to_response('workbench/redeem_invitation.html', locals(), context_instance=RequestContext(request))
-        
+
+@json_login_required
+@json_post_required
+def ajax_username_invite(request):
+    invitee_username = get_val(request.POST, 'username', '')
+    band = get_obj_from_request(request.POST, 'band', Band)
+
+    try:
+        invitee = User.objects.get(username=invitee_username)
+    except User.DoesNotExist:
+        return json_failure(design.that_user_does_not_exist)
+
+    if band is None:
+        return json_failure(design.bad_band_id)
+
+    # make sure the user isn't already in the band
+    if BandMember.objects.filter(user=invitee, band=band).count() > 0:
+        return json_failure(design.x_already_in_band.format(invitee.username))
+
+    # make sure there isn't already an invitation for them
+    if BandInvitation.objects.filter(invitee=invitee, band=band).count() > 0:
+        return json_failure(design.already_invited_x_to_your_band.format(invitee.username))
+    
+    invite = BandInvitation()       
+    invite.inviter = request.user
+    invite.band = band
+    invite.role = BandMember.BAND_MEMBER
+    invite.invitee = invitee
+    invite.save()
+
+    # send a heads up email
+    subject = design.x_is_inviting_you_to_join_y.format(request.user.username, band.title)
+    context = Context({
+        'user': request.user,
+        'band': band,
+        'invite': invite,
+    })
+    message_txt = get_template('workbench/invitation_direct_email.txt').render(context)
+    message_html = get_template('workbench/invitation_direct_email.html').render(context)
+    send_html_mail(subject, message_txt, message_html, [invitee.email])
+
+    return json_success()
 
 @json_login_required
 @json_post_required
 def ajax_email_invite(request):
-    address = get_val(request.POST, 'email', '')
+    to_email = get_val(request.POST, 'email', '')
     band = get_obj_from_request(request.POST, 'band', Band)
     
     if band is None:
         return json_failure(design.bad_band_id)
 
-    if address == '':
+    if to_email == '':
         return json_failure(design.you_must_supply_an_email_address)
 
-    TODO
+    # if the email is a registered solid composer user, simply translate into direct invitation.
+    try:
+        local_user = User.objects.get(email=to_email)
+    except User.DoesNotExist:
+        local_user = None
 
+    invite = BandInvitation()       
+    invite.inviter = request.user
+    invite.band = band
+    invite.role = BandMember.BAND_MEMBER
+
+    subject = design.x_is_inviting_you_to_join_y.format(request.user.username, band.title)
+    if local_user is not None:
+        # make sure the user isn't already in the band
+        if BandMember.objects.filter(user=local_user, band=band).count() > 0:
+            return json_failure(design.x_already_in_band.format(local_user.username))
+
+        # make sure there isn't already an invitation for them
+        if BandInvitation.objects.filter(invitee=local_user, band=band).count() > 0:
+            return json_failure(design.already_invited_x_to_your_band.format(local_user.username))
+
+        invite.invitee = local_user
+        invite.save()
+        
+        # send a heads up email
+        context = Context({
+            'user': request.user,
+            'band': band,
+            'invite': invite,
+        })
+        message_txt = get_template('workbench/invitation_direct_email.txt').render(context)
+        message_html = get_template('workbench/invitation_direct_email.html').render(context)
+        send_html_mail(subject, message_txt, message_html, [to_email])
+
+        return json_success()
+    else:
+        # create invitation link
+        invite.expire_date = datetime.now() + timedelta(days=30)
+        invite.code = create_hash(32)
+        invite.save()
+
+        # send the invitation email
+        context = Context({
+            'user': request.user,
+            'band': band,
+            'invite': invite,
+        })
+        message_txt = get_template('workbench/invitation_link_email.txt').render(context)
+        message_html = get_template('workbench/invitation_link_email.html').render(context)
+        send_html_mail(subject, message_txt, message_html, [to_email])
+
+        return json_success()
 
 def band(request, band_id_str):
     band = get_object_or_404(Band, pk=int(band_id_str))

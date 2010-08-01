@@ -71,10 +71,10 @@ var SCWorkbench = function () {
             var url;
             var err_msg;
             if (accept) {
-                url = state.urls.ajax_accept_invite;
+                url = state.urls.acceptInvite;
                 err_msg = "Error accepting invite: ";
             } else {
-                url = state.urls.ajax_ignore_invite;
+                url = state.urls.ignoreInvite;
                 err_msg = "Error ignoring invite: ";
             }
             $.getJSON(url,

@@ -1,0 +1,15 @@
+{% extends 'email.html' %}
+
+{% block content %}
+    <h1>{{ user.username }} wants you to join their band, {{ band.title }}</h1>
+    <p>
+        If you'd like to join forces with {{ user.username }}, enter this link into your browser:
+        <br />
+        {{ invite.redeemHyperlink }}
+        <br />
+    </p>
+    <p>
+        If this doesn't interest you, simply ignore this message.
+    </p>
+{% endblock %}
+

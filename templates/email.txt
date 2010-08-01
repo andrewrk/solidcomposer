@@ -1,0 +1,8 @@
+{% block content %}{% endblock %}
+
+Thank you!
+SolidComposer Admin
+
+Manage subscription settings:
+http://solidcomposer.com{% url account %}
+

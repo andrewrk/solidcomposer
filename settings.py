@@ -49,6 +49,7 @@ AWS_TEST_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 ROOT_URL = 'http://localhost:8000' # http://solidcomposer.com for production
+DEFAULT_FROM_EMAIL = 'admin@solidcomposer.com'
 MEDIA_ROOT = absolute('media')
 MEDIA_URL = 'http://localhost:8080/django/solidcomposer/'
 ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'

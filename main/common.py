@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
+from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
 
 from datetime import datetime
 import string
@@ -15,6 +16,8 @@ import main
 from main.models import TempFile
 
 import os
+
+from django.conf import settings
 
 def file_hash(filename):
     md5 = hashlib.md5()
@@ -161,3 +164,9 @@ def get_obj_from_request(post_data, name, ObjectType):
     except ObjectType.DoesNotExist:
         obj = None
     return obj
+
+def send_html_mail(subject, message_txt, message_html, to_list):
+    msg = EmailMultiAlternatives(subject, message_txt, settings.DEFAULT_FROM_EMAIL, to_list)
+    msg.attach_alternative(message_html, 'text/html')
+    msg.send(fail_silently=True)
+

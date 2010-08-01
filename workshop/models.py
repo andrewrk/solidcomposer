@@ -59,6 +59,12 @@ class BandInvitation(SerializableModel):
 
     def _save(self, *args, **kwargs):
         super(BandInvitation, self).save(*args, **kwargs)
+    
+    def __unicode__(self):
+        if self.isLink():
+            return "URL from {0} to join {1}".format(self.inviter.username, self.band.title)
+        else:
+            return "{0} inviting {1} to join {2}".format(self.inviter.username, self.invitee.username, self.band.title)
 
 
 class SampleFile(SerializableModel):
