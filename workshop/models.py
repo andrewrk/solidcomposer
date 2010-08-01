@@ -248,17 +248,65 @@ class ProjectVersion(SerializableModel):
         self.project.title = self.song.title
         if not self.id:
             self._save(*args, **kwargs)
+
         self.project.latest_version = self
         self.project.save()
         self._save(*args, **kwargs)
+        self.makeLogEntry()
+
+    def makeLogEntry(self):
+        if self.song is not None:
+            if self.version == 1:
+                self.createNewProjectLogEntry()
+            else:
+                self.createNewVersionLogEntry()
+        elif self.new_title != '':
+            self.createRenameLogEntry()
+        elif self.provided_samples.count() > 0:
+            self.createUploadSamplesLogEntry()
 
     def save(self, *args, **kwargs):
         if not self.id:
             self.date_added = datetime.now()
+            self._save(*args, **kwargs)
+            self.makeLogEntry()
         self._save(*args, **kwargs)
 
     def _save(self, *args, **kwargs):
         super(ProjectVersion, self).save(*args, **kwargs)
+
+    def createNewProjectLogEntry(self):
+        "create log entry for new project"
+        entry = LogEntry()
+        entry.entry_type = LogEntry.NEW_PROJECT
+        entry.band = self.project.band
+        entry.catalyst = self.owner
+        entry.version = self
+        entry.save()
+
+    def createRenameLogEntry(self):
+        entry = LogEntry()
+        entry.entry_type = LogEntry.SONG_RENAMED
+        entry.band = self.project.band
+        entry.catalyst = self.owner
+        entry.version = self
+        entry.save()
+
+    def createUploadSamplesLogEntry(self):
+        entry = LogEntry()
+        entry.entry_type = LogEntry.SAMPLES_UPLOADED
+        entry.band = self.project.band
+        entry.catalyst = self.owner
+        entry.version = self
+        entry.save()
+
+    def createNewVersionLogEntry(self):
+        entry = LogEntry()
+        entry.entry_type = LogEntry.SONG_CHECKED_IN
+        entry.band = self.project.band
+        entry.catalyst = self.owner
+        entry.version = self
+        entry.save()
 
     def __unicode__(self):
         if self.song is not None:
@@ -372,7 +420,7 @@ class LogEntry(SerializableModel):
     Something that happened that is relevant to a band. We use this to have a Recent Events pane in workbench.
     """
 
-    SONG_CRITIQUE, SONG_CHECKED_IN, SONG_CHECKED_OUT, SAMPLES_UPLOADED, SONG_RENAMED, POKE, BAND_MEMBER_JOIN, BAND_MEMBER_QUIT = range(8)
+    SONG_CRITIQUE, SONG_CHECKED_IN, SONG_CHECKED_OUT, SAMPLES_UPLOADED, SONG_RENAMED, POKE, BAND_MEMBER_JOIN, BAND_MEMBER_QUIT, NEW_PROJECT, SONG_JUST_CHECK_IN = range(10)
 
     ENTRY_TYPE_CHOICES = (
         (SONG_CRITIQUE, 'Song critique'),
@@ -383,6 +431,8 @@ class LogEntry(SerializableModel):
         (POKE, 'Someone got poked'),
         (BAND_MEMBER_JOIN, 'Band member joined'),
         (BAND_MEMBER_QUIT, 'Band member quit'),
+        (NEW_PROJECT, 'New project'),
+        (SONG_JUST_CHECK_IN, 'Just check in'),
     )
 
     PUBLIC_ATTRS = (
@@ -393,6 +443,7 @@ class LogEntry(SerializableModel):
         'target',
         'node',
         'version',
+        'project',
     )
 
     entry_type = models.IntegerField(choices=ENTRY_TYPE_CHOICES)
@@ -413,12 +464,15 @@ class LogEntry(SerializableModel):
     # the project version for when a project is updated
     version = models.ForeignKey('ProjectVersion', null=True, blank=True)
 
+    # the project for when a project is just checked in
+    project = models.ForeignKey('Project', null=True, blank=True)
+
     def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
         data = super(LogEntry, self).to_dict(access, chains)
         if self.entry_type == LogEntry.SONG_RENAMED:
             # get the previous version
-            prev_version = ProjectVersion.objects.get(project=self.version.project, pk__lt=self.version.id).order_by('-pk')[1]
-            data['old_title'] = prev_version.project.title
+            prev_version = ProjectVersion.objects.filter(project=self.version.project, pk__lt=self.version.id, song__isnull=False).order_by('-pk')[0]
+            data['old_title'] = prev_version.song.title
         return data
 
     def save(self, *args, **kwargs):

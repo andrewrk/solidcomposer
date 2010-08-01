@@ -69,7 +69,7 @@ def activity_list(request):
         # get only ones since last_entry_id
         entries = entries.filter(pk__gt=last_entry_id).order_by('-timestamp')[:entry_count]
 
-    return [entry.to_dict(chains=['band', 'catalyst', 'target', 'version.project']) for entry in entries]
+    return [entry.to_dict(chains=['band', 'catalyst', 'target', 'version.project', 'project']) for entry in entries]
 
 def ajax_home(request):
     data = {
@@ -115,6 +115,8 @@ def handle_invite(request, accept):
         member.band = invite.band
         member.role = invite.role
         member.save()
+
+        createNewBandMemberLogEntry(member)
 
     invite.delete()
         
@@ -181,6 +183,8 @@ def redeem_invitation(request, password_hash):
             member.role = invite.role
             member.save()
 
+            createNewBandMemberLogEntry(member)
+
             # decrement the counter
             invite.count -= 1
 
@@ -192,6 +196,13 @@ def redeem_invitation(request, password_hash):
         err_msg = True
 
     return render_to_response('workbench/redeem_invitation.html', locals(), context_instance=RequestContext(request))
+
+def createNewBandMemberLogEntry(member):
+    entry = LogEntry()
+    entry.entry_type = LogEntry.BAND_MEMBER_JOIN
+    entry.band = member.band
+    entry.catalyst = member.user
+    entry.save()
 
 @json_login_required
 @json_post_required
@@ -580,6 +591,7 @@ def ajax_upload_samples_as_version(request):
 
     band.save()
     version.save()
+    version.makeLogEntry()
 
     return json_success()
 
@@ -659,7 +671,15 @@ def ajax_checkout(request):
         return json_failure(design.this_project_already_checked_out)
 
     project.checked_out_to = request.user
-    project.save();
+    project.save()
+
+    # create log entry
+    entry = LogEntry()
+    entry.entry_type = LogEntry.SONG_CHECKED_OUT
+    entry.band = project.band
+    entry.project = project
+    entry.catalyst = request.user
+    entry.save()
 
     return json_success()
 
@@ -683,6 +703,15 @@ def ajax_checkin(request):
         # just check in
         project.checked_out_to = None
         project.save()
+
+        # create log entry
+        entry = LogEntry()
+        entry.entry_type = LogEntry.SONG_JUST_CHECK_IN
+        entry.band = project.band
+        entry.catalyst = request.user
+        entry.project = project
+        entry.save()
+
         return json_success()
     
     # must supply a project file

@@ -49,7 +49,9 @@ var SCWorkbench = function () {
             SONG_RENAMED:       4,
             POKE:               5,
             BAND_MEMBER_JOIN:   6,
-            BAND_MEMBER_QUIT:   7
+            BAND_MEMBER_QUIT:   7,
+            NEW_PROJECT:        8,
+            SONG_JUST_CHECK_IN: 9
         }
     };
     
