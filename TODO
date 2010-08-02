@@ -1,22 +1,26 @@
 Version 1.0 Release "Boten Anna"
 = sitewide
+ * settings page
+   > whether or not you want to get emailed about new competitions (default true)
+   > account type - free, premium
+   > change password
+ * password recovery
+   > test
  * in workbench, need a hook when login changes to refresh the page
  * band settings
    > membership management
+   > test
  * song player: mouseover comments go away if you're not scrolled to the top
  * pagination is broken in project manager
  * user page
    > list entries
    > can invite them to join your band
- * settings page
-   > whether or not you want to get emailed about new competitions (default true)
-   > account type - free, premium
-   > change password
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
    > also always show a preview when things will be parsed by showdown.
  * home page
    > if logged in, it's a dashboard with good stuff on it
+   > test
  * design iteration
    > favicon
    > new logo
@@ -62,7 +66,6 @@ Version 1.0 Release "Boten Anna"
    with authors and a link so that I can have an attribution page at the bottom.
  * html emails as well as text.
  * spam protection on contact page
- * password recovery
  * javascript tests
  * have a progress bar during uploads
  * faster page loads by including the initial JSON request response in the served page
