@@ -1,25 +1,16 @@
-from django.test import TestCase
-from django.test.client import Client
-from django.core import mail
-from django.core.urlresolvers import reverse
-
-from main.models import *
-from chat.models import *
-
-from datetime import datetime, timedelta
-import simplejson as json
-
-from django.conf import settings
-
-import os
-import subprocess
-
-from django_extensions.management.jobs import get_job
-
 from chat import design
-import main
-
+from chat.models import ChatRoom, ChatMessage, Appearance
+from datetime import datetime, timedelta
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.test import TestCase
+from django_extensions.management.jobs import get_job
 from main.tests import commonSetUp, commonTearDown
+import main
+import os
+import simplejson as json
+import subprocess
 
 def system(command):
     "run a command on the system"
@@ -37,7 +28,7 @@ class SimpleTest(TestCase):
 
         # create some users
         for username in ("skiessi", "superjoe", "just64helpin"):
-            response = self.client.post(register_url, {
+            self.client.post(register_url, {
                 'username': username,
                 'artist_name': username + ' band',
                 'email': username + '@mailinator.com',
@@ -46,24 +37,24 @@ class SimpleTest(TestCase):
                 'agree_to_terms': True
             })
             code = User.objects.filter(username=username)[0].get_profile().activate_code
-            response = self.client.get(reverse('confirm', args=(username, code)))
+            self.client.get(reverse('confirm', args=(username, code)))
 
         self.skiessi = User.objects.filter(username="skiessi")[0]
         self.superjoe = User.objects.filter(username="superjoe")[0]
         self.just64helpin = User.objects.filter(username="just64helpin")[0]
 
         # create some chat rooms
-        self.open_room = ChatRoom.objects.create(permission_type=OPEN)
+        self.open_room = ChatRoom.objects.create(permission_type=ChatRoom.OPEN)
         self.open_room.save()
-        self.white_room = ChatRoom.objects.create(permission_type=WHITELIST)
+        self.white_room = ChatRoom.objects.create(permission_type=ChatRoom.WHITELIST)
         self.white_room.save()
-        self.black_room = ChatRoom.objects.create(permission_type=BLACKLIST)
+        self.black_room = ChatRoom.objects.create(permission_type=ChatRoom.BLACKLIST)
         self.black_room.save()
 
         now = datetime.now()
-        self.early_room = ChatRoom.objects.create(permission_type=OPEN, start_date=now+timedelta(minutes=1), end_date=now+timedelta(minutes=2))
-        self.late_room = ChatRoom.objects.create(permission_type=OPEN, start_date=now-timedelta(minutes=2), end_date=now-timedelta(minutes=1))
-        self.late_room = ChatRoom.objects.create(permission_type=OPEN, start_date=now-timedelta(minutes=2), end_date=now-timedelta(minutes=1))
+        self.early_room = ChatRoom.objects.create(permission_type=ChatRoom.OPEN, start_date=now+timedelta(minutes=1), end_date=now+timedelta(minutes=2))
+        self.late_room = ChatRoom.objects.create(permission_type=ChatRoom.OPEN, start_date=now-timedelta(minutes=2), end_date=now-timedelta(minutes=1))
+        self.late_room = ChatRoom.objects.create(permission_type=ChatRoom.OPEN, start_date=now-timedelta(minutes=2), end_date=now-timedelta(minutes=1))
 
     def tearDown(self):
         commonTearDown(self)
@@ -71,9 +62,9 @@ class SimpleTest(TestCase):
     def test_hear(self):
         # create some messages for each room
         for room in (self.open_room, self.white_room, self.black_room):
-            ChatMessage.objects.create(room=room, type=MESSAGE, author=self.superjoe, message="hi from supajoe")
-            ChatMessage.objects.create(room=room, type=MESSAGE, author=self.skiessi, message="skuz saiz hai")
-            ChatMessage.objects.create(room=room, type=MESSAGE, author=self.just64helpin, message="jh")
+            ChatMessage.objects.create(room=room, type=ChatMessage.MESSAGE, author=self.superjoe, message="hi from supajoe")
+            ChatMessage.objects.create(room=room, type=ChatMessage.MESSAGE, author=self.skiessi, message="skuz saiz hai")
+            ChatMessage.objects.create(room=room, type=ChatMessage.MESSAGE, author=self.just64helpin, message="jh")
 
         # anon requesting all messages, has permission
         self.client.logout()
@@ -177,7 +168,6 @@ class SimpleTest(TestCase):
         self.assertEqual(len(data['messages']), 4)
 
     def test_say(self):
-        hear_url = reverse('chat.hear')
         say_url = reverse('chat.say')
         # a room that is OK
         self.client.login(username="skiessi", password="temp1234")
@@ -340,7 +330,7 @@ class SimpleTest(TestCase):
         self.assertEqual(len(data['messages']), 3)
         # have to sort locally
         data['messages'].sort(lambda x, y: cmp(x['id'], y['id']))
-        self.assertEqual(data['messages'][2]['type'], LEAVE)
+        self.assertEqual(data['messages'][2]['type'], ChatMessage.LEAVE)
         self.assertEqual(data['messages'][2]['author']['username'], 'superjoe')
 
 

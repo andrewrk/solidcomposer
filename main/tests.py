@@ -1,17 +1,12 @@
-from main.models import *
-from workshop.models import *
-
-from django.test import TestCase
-from django.test.client import Client
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.core import mail
 from django.core.urlresolvers import reverse
-
-from datetime import datetime, timedelta
-import simplejson as json
-
-from django.conf import settings
-
+from django.test import TestCase
+from main.models import Song, TempFile
+from workshop.models import SampleFile
 import os
+import simplejson as json
 
 def rm(filename):
     if os.path.exists(filename):
@@ -52,7 +47,7 @@ class SimpleTest(TestCase):
 
         # create some users
         for username in ("skiessi", "superjoe", "just64helpin"):
-            response = self.client.post(register_url, {
+            self.client.post(register_url, {
                 'username': username,
                 'artist_name': username + ' band',
                 'email': username + '@mailinator.com',
@@ -61,7 +56,7 @@ class SimpleTest(TestCase):
                 'agree_to_terms': True
             })
             code = User.objects.filter(username=username)[0].get_profile().activate_code
-            response = self.client.get(reverse('confirm', args=(username, code)))
+            self.client.get(reverse('confirm', args=(username, code)))
 
         self.skiessi = User.objects.filter(username="skiessi")[0]
         self.superjoe = User.objects.filter(username="superjoe")[0]
@@ -75,7 +70,7 @@ class SimpleTest(TestCase):
         register_pending_url = reverse('register_pending')
 
         # how many emails in outbox
-        outboxCount = len(mail.outbox)
+        outboxCount = len(mail.outbox) #@UndefinedVariable
         # make sure the page loads
         response = self.client.get(register_url)
         self.assertEqual(response.status_code, 200)
@@ -108,7 +103,7 @@ class SimpleTest(TestCase):
         self.assertEqual(profile.activated, False)
 
         # make sure email sent
-        self.assertEqual(len(mail.outbox), outboxCount+1)
+        self.assertEqual(len(mail.outbox), outboxCount+1) #@UndefinedVariable
 
         # test register pending
         response = self.client.get(register_pending_url)
@@ -184,6 +179,7 @@ class SimpleTest(TestCase):
         logout_url = reverse('user_logout')
         self.client.login(username="skiessi", password="temp1234")
         response = self.client.get(logout_url)
+        self.assertEqual(response.status_code, 302)
         #TODO: assert logged out
 
     def test_about(self):

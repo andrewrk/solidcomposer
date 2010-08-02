@@ -1,11 +1,8 @@
-from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template, redirect_to
+from django.conf.urls.defaults import * #@UnusedWildImport
 from django.contrib import admin
-import os
+from django.views.generic.simple import direct_to_template
 
 admin.autodiscover()
-
-from django.conf import settings
 
 urlpatterns = patterns('',
     (r'^arena/', include('competitions.urls')),

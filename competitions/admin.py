@@ -1,4 +1,4 @@
-from competitions.models import *
+from competitions.models import Competition, ThumbsUp, Entry
 from django.contrib import admin
 
 stuff = (

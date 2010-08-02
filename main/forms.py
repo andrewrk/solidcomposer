@@ -1,11 +1,8 @@
-from django import forms
-
-from main.models import *
-from main import design
-from django.conf import settings
-
 from datetime import datetime, timedelta
-import string
+from django import forms
+from django.conf import settings
+from django.contrib.auth.models import User
+from main import design
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100,

@@ -1,14 +1,10 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.conf import settings
-
-from competitions.models import ThumbsUp
-import workshop
 from base.models import SerializableModel, create_url
-
-from main import design
-
+from competitions.models import ThumbsUp
 from datetime import datetime, timedelta
+from django.contrib.auth.models import User
+from django.db import models
+from main import design
+import workshop
 import hashlib
 
 class BandMember(SerializableModel):
@@ -234,11 +230,11 @@ class Profile(SerializableModel):
 
     def own_studio(self, studio):
         self.studios.add(studio)
-        self.plugins.add(PluginDepenency.objects.filter(comes_with_studio=studio))
+        self.plugins.add(workshop.models.PluginDepenency.objects.filter(comes_with_studio=studio))
 
     def disown_studio(self, studio):
         self.studios.remove(studio)
-        self.plugins.remove(PluginDepenency.objects.filter(comes_with_studio=studio))
+        self.plugins.remove(workshop.models.PluginDepenency.objects.filter(comes_with_studio=studio))
 
     def get_points(self):
         return ThumbsUp.objects.filter(entry__owner=self).count()

@@ -2,12 +2,6 @@
 from django.core.management import setup_environ
 import settings
 setup_environ(settings)
-from django.conf import settings
-
-import os
-import sys
-
-# todo: add simplejson, psycopg2
 
 """
 this file checks to make sure python dependencies are installed.
@@ -18,6 +12,8 @@ it outpus a space separated list of missing dependencies.
  * south - http://south.aeracode.org/
    - A good database system like postgresql or mysql so that the migration
      stuff can work. (sqlite3 will not work)
+ * psycopg2
+ * simplejson
  * django extensions - http://code.google.com/p/django-command-extensions/
  * mutagen - http://code.google.com/p/mutagen/
  * PyWaveform - http://github.com/superjoe30/PyWaveform
@@ -27,6 +23,8 @@ it outpus a space separated list of missing dependencies.
 """
 
 deps = [
+    'simplejson',
+    'psycopg2',
     'python-2.6',
     'django-1.2.1',
     'south-0.7.1',
@@ -43,16 +41,30 @@ import sys
 if sys.version_info[:2] >= (2, 6):
     deps.remove('python-2.6')
 
+# simplejson
+try:
+    import simplejson #@UnusedImport
+    deps.remove('simplejson')
+except ImportError:
+    pass
+
+# psycopg2
+try:
+    import psycopg2 #@UnusedImport
+    deps.remove('psycopg2')
+except ImportError:
+    pass
+
 # boto
 try:
-    import boto.s3
+    import boto.s3 #@UnusedImport
     deps.remove('boto')
 except ImportError:
     pass
 
 # django-storages
 try:
-    import storages.backends.s3boto
+    import storages.backends.s3boto #@UnusedImport
     deps.remove('django-storages')
 except ImportError:
     pass

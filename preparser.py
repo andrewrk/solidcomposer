@@ -1,21 +1,18 @@
 #!/usr/bin/python
 
-import os
-import sys
-import traceback
-import time
-
 # set django environment
 from django.core.management import setup_environ
 import settings
 setup_environ(settings)
-from django.conf import settings
 
 from django.template import Template, Context
-from django.template.loader import *
-
+import os
 import storage
+import sys
 import tempfile
+import time
+import traceback
+
 
 """
 Requires some things in your settings.py file:
@@ -84,7 +81,7 @@ def is_hidden(path):
     """
     Check if a file or folder is hidden.
     """
-    name, title = os.path.split(path)
+    _name, title = os.path.split(path)
     return title[-1] == '~' or title[0] == '.'
 
 def walk(compile_func):
@@ -94,9 +91,9 @@ def walk(compile_func):
         dest file absolute path
     """
     for i in range(len(settings.PREPARSE_CHAIN)):
-        in_folder, out_folder, out_ext, cmd = settings.PREPARSE_CHAIN[i]
+        in_folder, out_folder, out_ext, _cmd = settings.PREPARSE_CHAIN[i]
         if examine_watchlist(i):
-            for root, dirs, files in os.walk(in_folder, followlinks=True):
+            for root, _dirs, files in os.walk(in_folder, followlinks=True):
                 relative = root.replace(in_folder, "")
                 if len(relative) > 0 and relative[0] == os.sep:
                     relative = relative[1:]
@@ -104,7 +101,7 @@ def walk(compile_func):
                 for file in files:
                     in_file = os.path.join(root, file)
                     if not is_hidden(in_file):
-                        out_file_prefix, out_file_old_ext = os.path.splitext(file)
+                        out_file_prefix, _out_file_old_ext = os.path.splitext(file)
                         new_filename = out_file_prefix + out_ext
                         out_file = os.path.join(out_folder, relative, new_filename)
                         compile_func(settings.PREPARSE_CHAIN[i], in_file, out_file)
@@ -119,13 +116,13 @@ def examine_watchlist(chain_index):
     return True and update the list
     """
     new_item = False
-    in_folder, out_folder, out_ext, cmd = settings.PREPARSE_CHAIN[chain_index]
+    in_folder, _out_folder, _out_ext, _cmd = settings.PREPARSE_CHAIN[chain_index]
     watch_folders = settings.TEMPLATE_DIRS + (in_folder,)
     watch_folders = set([os.path.abspath(folder) for folder in watch_folders])
     for template_dir in watch_folders:
-        for root, dirs, files in os.walk(template_dir):
+        for root, _dirs, files in os.walk(template_dir):
             for file in files:
-                prefix, ext = os.path.splitext(file)
+                _prefix, ext = os.path.splitext(file)
                 if ext in ignored_extensions:
                     continue
                 
@@ -144,9 +141,9 @@ def compile_file(preparse_tuple, source, dest):
     """
     parse source and write to dest
     """
-    in_folder, out_folder, out_ext, cmd = preparse_tuple
-    source_path, source_title = os.path.split(source)
-    prefix, ext = os.path.splitext(source_title)
+    _in_folder, _out_folder, out_ext, cmd = preparse_tuple
+    _source_path, source_title = os.path.split(source)
+    _prefix, ext = os.path.splitext(source_title)
     print("Parsing %s." % source_title)
 
     in_text = open(source, 'r').read().decode()

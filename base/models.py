@@ -1,5 +1,4 @@
 from django.db import models
-from main import design
 from django.contrib.auth.models import User
 
 import string

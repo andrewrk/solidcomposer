@@ -1,12 +1,10 @@
-from django import forms
-
-from competitions.models import *
 from competitions import design
+from datetime import datetime, timedelta
+from django import forms
 from django.conf import settings
 
-from datetime import datetime, timedelta
-
-HOURS, DAYS, WEEKS = range(3)
+class TimeUnit:
+    HOURS, DAYS, WEEKS = range(3)
 
 class SubmitEntryForm(forms.Form):
     title = forms.CharField(max_length=100, error_messages={
@@ -26,9 +24,9 @@ class SubmitEntryForm(forms.Form):
 
 class CreateCompetitionForm(forms.Form):
     TIME_QUANTIFIERS = (
-        (HOURS, "hours"),
-        (DAYS, "days"),
-        (WEEKS, "weeks"),
+        (TimeUnit.HOURS, "hours"),
+        (TimeUnit.DAYS, "days"),
+        (TimeUnit.WEEKS, "weeks"),
     )
 
     title = forms.CharField(max_length=100, error_messages={'required': design.this_field_is_required})
@@ -49,7 +47,7 @@ class CreateCompetitionForm(forms.Form):
     listening_party_date = forms.DateTimeField(required=False)
 
     vote_time_quantity = forms.IntegerField(max_value=12, min_value=1, initial=1, error_messages={'required': design.this_field_is_required})
-    vote_time_measurement = forms.ChoiceField(choices=TIME_QUANTIFIERS, initial=WEEKS, error_messages={'required': design.this_field_is_required})
+    vote_time_measurement = forms.ChoiceField(choices=TIME_QUANTIFIERS, initial=TimeUnit.WEEKS, error_messages={'required': design.this_field_is_required})
 
     # add this many hours to the times to get the correct value
     tz_offset = forms.IntegerField(widget=forms.HiddenInput(), error_messages={'required': design.this_field_is_required})

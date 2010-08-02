@@ -1,25 +1,19 @@
-from django.core.urlresolvers import reverse
-from django.core.paginator import Paginator
-from django.template import RequestContext, Context, Template
-from django.http import HttpResponseRedirect, HttpResponse
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.forms.models import model_to_dict
-from django.shortcuts import render_to_response, get_object_or_404
-from django.db.models import Count
-
-from main.common import *
-from main.models import *
-from competitions.models import *
-from competitions.forms import *
-from chat.models import *
-from workshop.models import *
-from django.conf import settings
-
-from datetime import datetime, timedelta
-
-from main.uploadsong import upload_song, handle_project_upload
+from chat.models import ChatRoom
 from competitions import design
+from competitions.forms import CreateCompetitionForm, TimeUnit
+from competitions.models import Competition, Entry, ThumbsUp
+from datetime import datetime, timedelta
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from main.common import json_login_required, json_post_required, json_failure, \
+    json_response, get_obj_from_request, get_val
+from main.uploadsong import upload_song, handle_project_upload
+from workshop.models import Project, ProjectVersion, SampleDependency
 
 @json_login_required
 @json_post_required
@@ -192,10 +186,10 @@ def song_to_dict(song, user):
 
     return d
     
-def ajax_compo(request, id):
-    id = int(id)
+def ajax_compo(request, compo_id):
+    compo_id = int(compo_id)
     try:
-        compo = get_object_or_404(Competition, id=id)
+        compo = get_object_or_404(Competition, pk=compo_id)
     except Competition.DoesNotExist:
         return json_failure(design.competition_not_found)
 
@@ -345,9 +339,9 @@ def create(request):
             quantifier = int(form.cleaned_data.get('vote_time_measurement'))
 
             multiplier = {
-                HOURS: 60*60,
-                DAYS: 24*60*60,
-                WEEKS: 7*24*60*60,
+                TimeUnit.HOURS: 60*60,
+                TimeUnit.DAYS: 24*60*60,
+                TimeUnit.WEEKS: 7*24*60*60,
             }
             
             comp.vote_period_length = quantity * multiplier[quantifier]
@@ -370,7 +364,7 @@ def create(request):
 
             # create a chatroom for it
             chatroom = ChatRoom()
-            chatroom.permission_type = OPEN
+            chatroom.permission_type = ChatRoom.OPEN
             # open the chat room an hour before the competition
             chatroom.start_date = comp.start_date - timedelta(hours=1)
             # chat room is open an hour before and after competition
@@ -394,7 +388,7 @@ def create(request):
             'have_listening_party': True,
             'party_immediately': True,
             'vote_time_quantity': 1,
-            'vote_time_measurement': WEEKS,
+            'vote_time_measurement': TimeUnit.WEEKS,
         }
         form = CreateCompetitionForm(initial=initial)
     

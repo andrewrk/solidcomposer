@@ -54,6 +54,7 @@ can_only_delete_your_own_comment = 'You can only delete your own comments.'
 too_late_to_edit_comment = 'It is too late to edit your comment.'
 can_only_edit_your_own_comment = 'You can only edit your own comments.'
 must_agree_to_terms = 'You must agree to the terms and conditions to use SolidComposer.'
+content_required = "Content required."
 
 samples_dialog_title = "Download Project Files"
 dependencies_dialog_title = "Song Dependencies"

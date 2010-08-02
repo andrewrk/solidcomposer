@@ -1,11 +1,9 @@
-from django.shortcuts import get_object_or_404
-from chat.models import *
-from main.common import *
-from django.conf import settings
-
-from datetime import datetime, timedelta
-
 from chat import design
+from chat.models import ChatRoom, ChatMessage, Appearance
+from datetime import datetime, timedelta
+from django.conf import settings
+from main.common import json_get_required, get_obj_from_request, json_failure, \
+    json_response, json_login_required, json_post_required, get_val, json_success
 
 @json_get_required
 def ajax_hear(request):
@@ -74,7 +72,7 @@ def ajax_hear(request):
                 # join message
                 m = ChatMessage()
                 m.room=room
-                m.type=JOIN
+                m.type=ChatMessage.JOIN
                 m.author=request.user
                 m.save()
 
@@ -104,15 +102,15 @@ def ajax_say(request):
     if message == "":
         return json_failure(design.cannot_say_blank_message)
 
-    if len(message) > ChatMessage._meta.get_field('message').max_length:
+    if len(message) > ChatMessage._meta.get_field('message').max_length: #@UndefinedVariable
         return json_failure(design.message_too_long)
 
     if not data['user']['permission_write']:
         return json_failure(design.you_lack_write_permission)
 
-    msgType = get_val(request.POST, 'type', MESSAGE)
-    if msgType not in [MESSAGE, ACTION]:
-        msgType = MESSAGE
+    msgType = get_val(request.POST, 'type', ChatMessage.MESSAGE)
+    if msgType not in [ChatMessage.MESSAGE, ChatMessage.ACTION]:
+        msgType = ChatMessage.MESSAGE
 
     # we're clear. add the message
     m = ChatMessage()

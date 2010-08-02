@@ -1,19 +1,18 @@
-from django.core.urlresolvers import reverse
-from django.core.mail import send_mail, EmailMessage
-from django.template import RequestContext, Context, Template
-from django.template.loader import get_template
-from django.http import HttpResponseRedirect, HttpResponse
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render_to_response, get_object_or_404
-
-from main.models import *
-from main.forms import *
-from main.common import *
-from main import design
-from django.conf import settings
-
 from datetime import datetime, timedelta
+from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.core.mail import send_mail, EmailMessage
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext, Context
+from django.template.loader import get_template
+from main import design
+from main.common import json_response, json_login_required, json_post_required, \
+    get_obj_from_request, json_failure, json_success, create_hash
+from main.forms import LoginForm, RegisterForm, ContactForm
+from main.models import SongCommentNode, Band, Profile, BandMember
 
 def ajax_login_state(request):
     user = request.user

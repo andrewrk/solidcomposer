@@ -5,13 +5,11 @@ from datetime import datetime
 
 from base.models import SerializableModel
 
-SYSTEM, ACTION, MESSAGE, JOIN, LEAVE, NOTICE = range(6)
-OPEN, WHITELIST, BLACKLIST = range(3)
-
 class ChatRoom(SerializableModel):
     """
     ChatRoom contains ChatMessages and manages who is allowed to be in it
     """
+    OPEN, WHITELIST, BLACKLIST = range(3)
     PERMISSION_TYPES = (
         (OPEN, 'open'),
         (WHITELIST, 'whitelist'),
@@ -37,7 +35,7 @@ class ChatRoom(SerializableModel):
 
     def permission_to_hear(self, user):
         "whether a user has permission to read messages in this channel"
-        if self.permission_type in (OPEN, BLACKLIST):
+        if self.permission_type in (ChatRoom.OPEN, ChatRoom.BLACKLIST):
             return True
         else:
             # user has to be signed in and on the whitelist
@@ -49,14 +47,14 @@ class ChatRoom(SerializableModel):
         if not user.is_authenticated():
             return False
 
-        if self.permission_type == OPEN:
+        if self.permission_type == ChatRoom.OPEN:
             return True
         else:
-            if self.permission_type == WHITELIST:
+            if self.permission_type == ChatRoom.WHITELIST:
                 # user has to be on the whitelist
                 if self.whitelist.filter(pk=user.id).count() != 1:
                     return False
-            elif self.permission_type == BLACKLIST:
+            elif self.permission_type == ChatRoom.BLACKLIST:
                 # user is blocked if he is on the blacklist 
                 if self.blacklist.filter(pk=user.id).count() == 1:
                     return False
@@ -85,7 +83,7 @@ class ChatMessage(SerializableModel):
     """
     A message that belongs to a ChatRoom
     """
-
+    SYSTEM, ACTION, MESSAGE, JOIN, LEAVE, NOTICE = range(6)
     MESSAGE_TYPES = (
         (SYSTEM, 'system'),
         (ACTION, 'action'),
@@ -123,13 +121,13 @@ class ChatMessage(SerializableModel):
         Each message type has a special representation, return
         that representation.
         """
-        if self.type == SYSTEM:
+        if self.type == ChatMessage.SYSTEM:
             return u'SYSTEM: %s' % self.message[:30]
-        elif self.type == JOIN:
+        elif self.type == ChatMessage.JOIN:
             return 'JOIN: %s' % self.author
-        elif self.type == LEAVE:
+        elif self.type == ChatMessage.LEAVE:
             return 'LEAVE: %s' % self.author
-        elif self.type == ACTION:
+        elif self.type == ChatMessage.ACTION:
             return 'ACTION: %s > %s' % (self.author, self.message[:30])
         return self.message[:30]
 

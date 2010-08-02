@@ -3,7 +3,6 @@
 # committed to source control.
 
 import os
-import datetime
 
 def absolute(relative_path):
     "make a relative path absolute"
@@ -20,7 +19,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
+DATABASES = { #@UnusedVariable
     'default': {
         'NAME': 'solidcomposer',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -41,9 +40,9 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 
 # amazon s3 details
-AWS_ACCESS_KEY_ID = 'xxxxxxxxxxxxxxxxxxxx'
-AWS_SECRET_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-AWS_STORAGE_BUCKET_NAME = 'solidcomposer-test'
+AWS_ACCESS_KEY_ID = 'xxxxxxxxxxxxxxxxxxxx' #@UnusedVariable
+AWS_SECRET_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' #@UnusedVariable
+AWS_STORAGE_BUCKET_NAME = 'solidcomposer-test' #@UnusedVariable
 AWS_TEST_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 # copy and uncomment in settings_user.py to use s3 storage
 #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
@@ -140,7 +139,7 @@ COMMENT_EDIT_TIME_HOURS = 24
 
 # user defined settings
 if os.path.exists(absolute("settings_user.py")):
-    from settings_user import *
+    from settings_user import * #@UnusedWildImport
 
 # Preparser
 

@@ -1,4 +1,4 @@
-from chat.models import *
+from chat.models import ChatRoom, ChatMessage, Appearance
 from django.contrib import admin
 
 stuff = (
@@ -8,4 +8,3 @@ stuff = (
 )
 
 map(lambda x: admin.site.register(x), stuff)
-

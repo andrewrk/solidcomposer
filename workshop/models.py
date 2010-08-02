@@ -1,7 +1,9 @@
-from django.db import models
+from base.models import SerializableModel, create_url
+from datetime import datetime
+from django.conf import settings
 from django.contrib.auth.models import User
-from main.models import *
-from base.models import SerializableModel
+from django.db import models
+import main.models
 
 class BandInvitation(SerializableModel):
     """
@@ -26,7 +28,7 @@ class BandInvitation(SerializableModel):
     inviter = models.ForeignKey(User, related_name="inviter")
     band = models.ForeignKey('main.Band')
     timestamp = models.DateTimeField()
-    role = models.IntegerField(choices=BandMember.ROLE_CHOICES, default=BandMember.BAND_MEMBER)
+    role = models.IntegerField(choices=main.models.BandMember.ROLE_CHOICES, default=main.models.BandMember.BAND_MEMBER)
 
     # when the invite becomes inactive. null means never
     # (only applies if isLink() is True)
@@ -198,7 +200,7 @@ class PluginDepenency(SerializableModel):
     def associate_with_studio(self, studio):
         self.comes_with_studio = studio
         # every user that has studio should be marked as having self
-        for profile in Profile.objects.filter(studios=studio):
+        for profile in main.models.Profile.objects.filter(studios=studio):
             profile.plugins.add(self)
             profile.save()
 
@@ -225,7 +227,7 @@ class ProjectVersion(SerializableModel):
     date_added = models.DateTimeField()
 
     # if it's not null then this is a legit new song version.
-    song = models.ForeignKey(Song, null=True, blank=True)
+    song = models.ForeignKey('main.Song', null=True, blank=True)
     # version counter like subversion.
     # only increments when it is a song version.
     version = models.IntegerField()
@@ -339,7 +341,7 @@ class Project(SerializableModel):
     # latest_version is a cache of the latest version
     latest_version = models.ForeignKey('ProjectVersion', null=True, blank=True, related_name='latest_version')
 
-    band = models.ForeignKey(Band)
+    band = models.ForeignKey('main.Band')
     date_activity = models.DateTimeField()
 
     # who has it checked out, null if nobody
@@ -352,7 +354,7 @@ class Project(SerializableModel):
     forked_from = models.ForeignKey('ProjectVersion', null=True, blank=True, related_name='forked_from')
     merged_from = models.ManyToManyField('ProjectVersion', null=True, blank=True, related_name='merged_from')
 
-    tags = models.ManyToManyField(Tag, blank=True)
+    tags = models.ManyToManyField('main.Tag', blank=True)
 
     scrap_voters = models.ManyToManyField(User, blank=True, related_name='scrap_voters')
     promote_voters = models.ManyToManyField(User, blank=True, related_name='promote_voters')

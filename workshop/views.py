@@ -1,25 +1,30 @@
-from django.db.models import Q
-from django.core.urlresolvers import reverse
-from django.core.servers.basehttp import FileWrapper
+from base.models import SerializableModel
+from datetime import datetime, timedelta
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, HttpResponseForbidden
-from django.template import RequestContext, Context, Template
-from django.template.loader import get_template
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.servers.basehttp import FileWrapper
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, \
+    HttpResponseForbidden
 from django.shortcuts import render_to_response, get_object_or_404
-
-from workshop.models import *
-from workshop.forms import *
-from main.models import *
-from main.common import *
-from main.upload import *
+from django.template import RequestContext, Context
+from django.template.loader import get_template
+from main.common import get_val, json_response, get_obj_from_request, \
+    json_login_required, json_post_required, json_failure, create_hash, json_success, \
+    send_html_mail, json_get_required, make_timed_temp_file
+from main.models import BandMember, Band, SongCommentNode, Song
+from main.upload import upload_file_h, clean_filename
+from main.uploadsong import upload_song, handle_sample_file, handle_mp3_upload, \
+    handle_project_upload
 from workshop import design
-from main.uploadsong import upload_song, studio_extensions, handle_sample_file, handle_mp3_upload, handle_project_upload
-
-import zipfile
+from workshop.forms import NewBandForm, RenameBandForm, NewProjectForm
+from workshop.models import LogEntry, BandInvitation, Project, PluginDepenency, \
+    Studio, ProjectVersion, UploadedSample, SampleDependency
+import os
 import tempfile
-import shutil
-import hashlib
+import zipfile
 
 DEFAULT_FILTER = 'all'
 JFILTERS = {
@@ -40,19 +45,20 @@ JFILTERS = {
     },
 }
 
-FILTERS = dict(JFILTERS)
-FILTERS['all']['func'] = lambda projects: filterVisible(projects)
-FILTERS['available']['func'] = lambda projects: filterVisible(projects).filter(checked_out_to=None)
-FILTERS['out']['func'] = lambda projects: filterVisible(projects).exclude(checked_out_to=None)
-FILTERS['mine']['func'] = lambda projects, user: filterVisible(projects).filter(checked_out_to=user)
-FILTERS['scrapped']['func'] = lambda projects: filterScrapped(projects)
-
-
 def filterVisible(projects):
     return projects.filter(visible=True)
 
 def filterScrapped(projects):
     return projects.filter(visible=False)
+
+FILTERS = dict(JFILTERS)
+FILTERS['all']['func'] = filterVisible
+FILTERS['available']['func'] = lambda projects: filterVisible(projects).filter(checked_out_to=None)
+FILTERS['out']['func'] = lambda projects: filterVisible(projects).exclude(checked_out_to=None)
+FILTERS['mine']['func'] = lambda projects, user: filterVisible(projects).filter(checked_out_to=user)
+FILTERS['scrapped']['func'] = filterScrapped
+
+
 
 def activity_list(request):
     """
@@ -504,13 +510,13 @@ def handle_sample_upload(fileHandle, user, band, callback=None):
     uploads fileHandle, and runs handle_sample_file.
     """
     # copy it to temp file
-    name, ext = os.path.splitext(fileHandle.name)
+    _name, ext = os.path.splitext(fileHandle.name)
 
     handle = tempfile.NamedTemporaryFile(suffix=ext, delete=False)
     upload_file_h(fileHandle, handle)
     handle.close()
 
-    path, title = os.path.split(fileHandle.name)
+    _path, title = os.path.split(fileHandle.name)
     handle_sample_file(handle.name, title, user, band, callback=callback)
 
 @json_login_required
@@ -797,8 +803,6 @@ def create_project(request, band_str):
     if request.method == 'POST':
         form = NewProjectForm(request.POST, request.FILES)
         if form.is_valid():
-            prof = request.user.get_profile()
-
             mp3_file = request.FILES.get('file_mp3')
             source_file = request.FILES.get('file_source')
 
@@ -954,7 +958,7 @@ def download_zip(request):
         tmp.close()
         
     if want_project:
-        path, title = os.path.split(song.source_file)
+        _path, title = os.path.split(song.source_file)
         store_file_id(song.source_file, title)
 
     for dep in deps:

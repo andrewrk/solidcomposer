@@ -1,8 +1,6 @@
+from datetime import datetime
 from django_extensions.management.jobs import HourlyJob
-
-from datetime import datetime, timedelta
-from main.models import *
-
+from main.models import TempFile
 import os
 
 class Job(HourlyJob):

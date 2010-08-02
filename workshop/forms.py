@@ -1,7 +1,4 @@
 from django import forms
-
-from main.models import *
-from workshop.models import *
 from workshop import design
 
 class NewProjectForm(forms.Form):

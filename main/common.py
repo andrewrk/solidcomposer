@@ -1,7 +1,5 @@
 from django.http import HttpResponse
-from django.forms.models import model_to_dict
-from django.contrib.auth.models import User
-from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 
 from datetime import datetime
 import string
@@ -32,7 +30,7 @@ def create_hash(length):
     """
     chars = string.letters + string.digits
     code = ""
-    for i in range(length):
+    for _ in range(length):
         code += chars[random.randint(0, len(chars)-1)]
     return code
 
@@ -131,7 +129,7 @@ def zip_walk(zip_filename, callback):
     return
 
 def superwalk(folder):
-    for dirpath, dirnames, filenames in os.walk(folder):
+    for dirpath, _dirnames, filenames in os.walk(folder):
         for filename in filenames:
             yield os.path.join(dirpath, filename)
 

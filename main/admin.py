@@ -1,5 +1,6 @@
-from main.models import *
 from django.contrib import admin
+from main.models import Profile, AccountPlan, Song, SongCommentNode, Band, \
+    BandMember, Tag, TempFile
 
 stuff = (
     Profile,

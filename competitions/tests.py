@@ -1,22 +1,17 @@
-from django.test import TestCase
-from django.test.client import Client
-from django.core import mail
-from django.core.urlresolvers import reverse
-
-from main.models import *
-from chat.models import *
-from competitions.models import *
-from competitions.forms import *
+from chat.models import ChatRoom
 from competitions import design
-from django.conf import settings
-
+from competitions.models import Competition, Entry, ThumbsUp
 from datetime import datetime, timedelta
-import simplejson as json
-
-import os
-import tempfile
-
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.test import TestCase
+from main.models import Song, SongCommentNode
 from main.tests import commonSetUp, commonTearDown, rm
+import os
+import simplejson as json
+import tempfile
+from competitions.forms import TimeUnit
 
 def absolute(relative_path):
     "make a relative path absolute"
@@ -31,7 +26,7 @@ class SimpleTest(TestCase):
 
         # create some users
         for username in ("skiessi", "superjoe", "just64helpin"):
-            response = self.client.post(register_url, {
+            self.client.post(register_url, {
                 'username': username,
                 'artist_name': username + ' band',
                 'email': username + '@mailinator.com',
@@ -40,7 +35,7 @@ class SimpleTest(TestCase):
                 'agree_to_terms': True
             })
             code = User.objects.filter(username=username)[0].get_profile().activate_code
-            response = self.client.get(reverse('confirm', args=(username, code)))
+            self.client.get(reverse('confirm', args=(username, code)))
 
         self.skiessi = User.objects.filter(username="skiessi")[0]
         self.superjoe = User.objects.filter(username="superjoe")[0]
@@ -127,7 +122,7 @@ class SimpleTest(TestCase):
         
         # make sure paging works
         howMany = settings.ITEMS_PER_PAGE * 3 # should be 3 pages
-        for i in range(howMany):
+        for _ in range(howMany):
             now = datetime.now()
             comp = Competition()
             comp.title = "title"
@@ -285,7 +280,6 @@ class SimpleTest(TestCase):
     def test_create(self):
         "test creating a competition"
         url = reverse("arena.create")
-        url_login = reverse("user_login")
 
         # load the page, not logged in
         self.client.logout()
@@ -313,7 +307,7 @@ class SimpleTest(TestCase):
             #'party_immediately': False,
             'listening_party_date': self.validTimeStr(now + timedelta(minutes=2)),
             'vote_time_quantity': 1,
-            'vote_time_measurement': HOURS,
+            'vote_time_measurement': TimeUnit.HOURS,
         })
         self.assertFormError(response, 'form', 'title',
             design.this_field_is_required)
@@ -337,7 +331,7 @@ class SimpleTest(TestCase):
             'have_listening_party': 'on',
             #'party_immediately': False,
             'vote_time_quantity': 1,
-            'vote_time_measurement': HOURS,
+            'vote_time_measurement': TimeUnit.HOURS,
             'tz_offset': 0,
         })
         self.assertFormError(response, 'form', 'submission_deadline_date',
@@ -360,7 +354,7 @@ class SimpleTest(TestCase):
             'party_immediately': 'on',
             #'listening_party_date': None,
             'vote_time_quantity': 1,
-            'vote_time_measurement': HOURS,
+            'vote_time_measurement': TimeUnit.HOURS,
             'tz_offset': 0,
         })
         self.assertFormError(response, 'form', 'start_date',
@@ -384,7 +378,7 @@ class SimpleTest(TestCase):
             'party_immediately': True,
             #'listening_party_date': None,
             'vote_time_quantity': 1,
-            'vote_time_measurement': HOURS,
+            'vote_time_measurement': TimeUnit.HOURS,
             'tz_offset': 0,
         })
         url_arena = reverse("arena.home")

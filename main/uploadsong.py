@@ -1,25 +1,23 @@
 from django.db.models import Q
-from django.conf import settings
-from main.upload import *
-from main.common import create_hash, zip_walk, file_hash
-from main.models import Song
-from workshop.models import *
-
-import os
-import stat
-import tempfile
-
-from mutagen.easyid3 import EasyID3
-from mutagen.mp3 import MP3
-from mutagen.id3 import error as MutagenID3Error
-
-import waveform
-import daw
-
 from main import design
+from main.common import create_hash, zip_walk, file_hash
+from main.models import Song, SongCommentNode
+from main.upload import clean_filename, move_to_storage, upload_file_h
+from mutagen.easyid3 import EasyID3
+from mutagen.id3 import error as MutagenID3Error
+from mutagen.mp3 import MP3
+from workshop.models import SampleFile, UploadedSample, SampleDependency, Studio, \
+    PluginDepenency
+import daw
+import os
+import tempfile
+import waveform
+
+def flatten_list(lst):
+    return [item for sublist in lst for item in sublist]
 
 def studio_extensions():
-    return [item for sublist in [x.fileExtensions for x in daw._class_dict.values()] for item in sublist]
+    return flatten_list([x.fileExtensions for x in daw._class_dict.values()])
 
 def obfuscated_url(band):
     return os.path.join('band', band.url, create_hash(16))   
@@ -51,13 +49,13 @@ def handle_sample_file(filename, file_id, user, band, callback=None):
 
     # check if it is a zip file
     skipExts = studio_extensions()
-    name, ext = os.path.splitext(filename)
+    _name, ext = os.path.splitext(filename)
     if ext.lower() == '.zip':
         def zipCallback(extracted_file):
-            path, title = os.path.split(extracted_file)
+            _path, title = os.path.split(extracted_file)
 
             # skip studio files when uploading sample zips
-            prefix, ext = os.path.splitext(title)
+            _prefix, ext = os.path.splitext(title)
             if ext[1:].lower() in skipExts:
                 os.remove(extracted_file)
                 return
@@ -136,7 +134,7 @@ def handle_project_file(filename, user, song, filename_appendix=""):
     moves filename to storage or deletes it if there is a problem.
     increments the band's used space. be sure to save song and song.band after calling.
     """
-    prefix, ext = os.path.splitext(filename)
+    _prefix, ext = os.path.splitext(filename)
     profile = user.get_profile()
 
     # handle zip files
@@ -144,8 +142,8 @@ def handle_project_file(filename, user, song, filename_appendix=""):
         studioExts = studio_extensions()
         song.studio = None
         def zipCallback(extracted_filename):
-            path, title = os.path.split(extracted_filename)
-            prefix, ext = os.path.splitext(extracted_filename)
+            _path, title = os.path.split(extracted_filename)
+            _prefix, ext = os.path.splitext(extracted_filename)
             if ext[1:].lower() in studioExts:
                 if song.studio is None:
                     handle_project_file(extracted_filename, user, song, filename_appendix=filename_appendix)
@@ -208,7 +206,7 @@ def handle_project_file(filename, user, song, filename_appendix=""):
             if sample.strip() == '':
                 continue
 
-            path, title = os.path.split(sample)
+            _path, title = os.path.split(sample)
 
             # create the dependency
             dep = SampleDependency()
@@ -325,7 +323,7 @@ def handle_mp3_upload(file_mp3_handle, song, max_song_len=None, filename_appendi
 
 def handle_project_upload(file_source_handle, user, song, filename_appendix=""):
     # upload project file to temp file
-    source_prefix, source_ext = os.path.splitext(file_source_handle.name)
+    _source_prefix, source_ext = os.path.splitext(file_source_handle.name)
     handle = tempfile.NamedTemporaryFile(suffix=source_ext, delete=False)
     upload_file_h(file_source_handle, handle)
     handle.close()

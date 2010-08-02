@@ -1,8 +1,8 @@
+from chat.models import Appearance, ChatMessage
+from datetime import datetime, timedelta
+from django.conf import settings
 from django_extensions.management.jobs import BaseJob
 
-from datetime import datetime, timedelta
-from chat.models import *
-from django.conf import settings
 
 class Job(BaseJob):
     """
@@ -21,7 +21,7 @@ class Job(BaseJob):
             # generate leave messages in each room
             m = ChatMessage()
             m.room=appearance.room
-            m.type=LEAVE
+            m.type=ChatMessage.LEAVE
             m.author=appearance.person
             m.save()
 
