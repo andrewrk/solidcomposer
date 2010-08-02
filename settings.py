@@ -138,6 +138,10 @@ URL_DISALLOWED_CHARS = r'\./?'
 COMMENT_EDIT_TIME_HOURS = 24
 
 
+# user defined settings
+if os.path.exists(absolute("settings_user.py")):
+    from settings_user import *
+
 # Preparser
 
 if not DEBUG:
@@ -158,7 +162,3 @@ PREPARSE_CHAIN = (
 
 PREPARSE_CONTEXT_MODULE = 'preparse_context'
 
-
-# leave this at the very end
-if os.path.exists("settings_user.py"):
-    from settings_user import *

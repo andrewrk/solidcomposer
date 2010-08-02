@@ -5,6 +5,9 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
+    depends_on = (
+        ('main', '0033_auto__add_field_band_url'),
+    )
     
     def forwards(self, orm):
         
