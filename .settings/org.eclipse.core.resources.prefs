@@ -1,0 +1,4 @@
+#Mon Aug 02 02:08:07 MST 2010
+eclipse.preferences.version=1
+encoding//chat/migrations/0002_auto__chg_field_appearance_timestamp__chg_field_chatmessage_timestamp.py=utf-8
+encoding//workshop/migrations/0002_auto__add_bandinvitation__del_field_project_can_check_out.py=utf-8
