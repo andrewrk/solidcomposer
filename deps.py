@@ -7,6 +7,8 @@ from django.conf import settings
 import os
 import sys
 
+# todo: add simplejson, psycopg2
+
 """
 this file checks to make sure python dependencies are installed.
 it outpus a space separated list of missing dependencies.
@@ -32,8 +34,8 @@ deps = [
     'waveform-0.2',
     'PyDaw-0.3.3',
     'django_extensions-0.4.1',
-    'django-storages',
     'boto',
+    'django-storages',
 ]
 
 # python

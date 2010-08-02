@@ -1,9 +1,14 @@
-Version 1.0 Release "Boten Anna"
+Release "Boten Anna" (Basshunter)
 = sitewide
  * settings page
-   > whether or not you want to get emailed about new competitions (default true)
-   > account type - free, premium
+   > email subscriptions
+   > account type
    > change password
+   > tests for this stuff
+ * upgrade page where you can choose a plan and sign up and pay
+   > monthly, 1 year, two years
+   > tests for this stuff
+ * link the "Get More" in workbench to the correct account tab
  * password recovery
    > test
  * in workbench, need a hook when login changes to refresh the page
@@ -15,6 +20,9 @@ Version 1.0 Release "Boten Anna"
  * user page
    > list entries
    > can invite them to join your band
+ * make sure bands are read only when they should be
+   > ui to indicate that bands are read only and link to upgrade account
+ * workbench tests
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
    > also always show a preview when things will be parsed by showdown.
@@ -45,16 +53,7 @@ Version 1.0 Release "Boten Anna"
    > movie showing off features
    > replace "About" with a link to the introductory blog post
 
-= workbench
- * workbench page
-   > show widget indicating how much space is used / left and how to upgrade
- * enforce the business plan
-   > make it so that a user's plan gives him a certain amount of 
-     credits, which can be spent on any band.
-   > make it so that a band is read-only when its bytes_used < bytes_total
- * tests
- 
-
+Release "April Rain" (The Cynic Project)
 = sitewide =
  * recent activty entry log:
    > band member leaving
