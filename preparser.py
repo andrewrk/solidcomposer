@@ -6,6 +6,8 @@ import settings
 setup_environ(settings)
 
 from django.template import Template, Context
+from django.template.loader import *
+
 import os
 import storage
 import sys
