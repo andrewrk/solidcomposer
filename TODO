@@ -1,5 +1,6 @@
 Release "Boten Anna" (Basshunter)
 = sitewide
+ * workbench tests
  * settings page
    > email subscriptions
    > account type
@@ -22,7 +23,6 @@ Release "Boten Anna" (Basshunter)
    > can invite them to join your band
  * make sure bands are read only when they should be
    > ui to indicate that bands are read only and link to upgrade account
- * workbench tests
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
    > also always show a preview when things will be parsed by showdown.
@@ -48,6 +48,7 @@ Release "Boten Anna" (Basshunter)
      I manually approve it and bill everybody.
    > able to do a one-time payment or recurring
    > able to downgrade/upgrade account at any time.
+ * edit competition
  * manually test all the features to make sure they work.
  * blog post announcing release
    > movie showing off features
@@ -142,7 +143,6 @@ Release "April Rain" (The Cynic Project)
  * show upcoming/new competitions before old ones in bookmarked
    competitions. there should be a clear divide.
    > better competition ordering in arena
- * edit competition
  * better moderator features
    > ability to pause, skip, previous in listening party
    > ability to open submission up even during listening party

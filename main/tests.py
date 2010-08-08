@@ -39,9 +39,7 @@ def commonTearDown(obj):
 
 class SimpleTest(TestCase):
     def setUp(self):
-        # use test bucket
-        self.prev_bucket_name = settings.AWS_STORAGE_BUCKET_NAME
-        settings.AWS_STORAGE_BUCKET_NAME = settings.AWS_TEST_STORAGE_BUCKET_NAME
+        commonSetUp(self)
 
         register_url = reverse('register')
 
@@ -63,7 +61,7 @@ class SimpleTest(TestCase):
         self.just64helpin = User.objects.filter(username="just64helpin")[0]
 
     def tearDown(self):
-        settings.AWS_STORAGE_BUCKET_NAME = self.prev_bucket_name
+        commonTearDown(self)
 
     def test_register_account(self):
         register_url = reverse('register')

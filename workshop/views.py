@@ -102,10 +102,12 @@ def ajax_home(request):
 
     return json_response(data)
 
+@json_login_required
+@json_post_required
 def handle_invite(request, accept):
     data = {'success': False}
 
-    invite = get_obj_from_request(request.GET, 'invitation', BandInvitation)
+    invite = get_obj_from_request(request.POST, 'invitation', BandInvitation)
     if invite is None:
         return HttpResponseNotFound()
 
@@ -129,11 +131,9 @@ def handle_invite(request, accept):
     data['success'] = True
     return json_response(data)
 
-@json_login_required
 def ajax_accept_invite(request):
     return handle_invite(request, accept=True)
     
-@json_login_required
 def ajax_ignore_invite(request):
     return handle_invite(request, accept=False)
 
@@ -147,9 +147,17 @@ def ajax_create_invite(request):
         return json_failure(design.bad_band_id)
 
     if not band.openness == Band.OPEN_SOURCE:
-        member = BandMember.objects.get(user=request.user, band=band)
+        try:
+            member = BandMember.objects.get(user=request.user, band=band)
+        except BandMember.DoesNotExist:
+            return json_failure(design.can_only_invite_to_your_own_band)
+
         if member.role != BandMember.MANAGER:
             return json_failure(design.only_managers_can_create_invitations)
+
+    # make sure user isn't already in band
+    if BandMember.objects.filter(band=band, user=invitee).count() > 0:
+        return json_failure(design.x_already_in_band.format(invitee.username))
 
     invite = BandInvitation()
     invite.inviter = request.user
@@ -161,9 +169,14 @@ def ajax_create_invite(request):
         invite.save()
         data = {'url': invite.redeemHyperlink()}
     else:
+        # make sure invitation doesn't exist already
+        if BandInvitation.objects.filter(band=band, invitee=invitee).count() > 0:
+            return json_failure(design.already_invited_x_to_your_band.format(invitee.username))
+
         invite.invitee = invitee
         invite.save()
         data = {}
+        send_invitation_email(request.user, band, invite)
 
     return json_success(data)
 
@@ -240,17 +253,19 @@ def ajax_username_invite(request):
     invite.save()
 
     # send a heads up email
-    subject = design.x_is_inviting_you_to_join_y.format(request.user.username, band.title)
+    send_invitation_email(request.user, band, invite)
+    return json_success()
+
+def send_invitation_email(user, band, invite):
+    subject = design.x_is_inviting_you_to_join_y.format(user.username, band.title)
     context = Context({
-        'user': request.user,
+        'user': user,
         'band': band,
         'invite': invite,
     })
     message_txt = get_template('workbench/invitation_direct_email.txt').render(context)
     message_html = get_template('workbench/invitation_direct_email.html').render(context)
-    send_html_mail(subject, message_txt, message_html, [invitee.email])
-
-    return json_success()
+    send_html_mail(subject, message_txt, message_html, [invite.invitee.email])
 
 @json_login_required
 @json_post_required

@@ -31,7 +31,6 @@ class BandInvitation(SerializableModel):
     role = models.IntegerField(choices=main.models.BandMember.ROLE_CHOICES, default=main.models.BandMember.BAND_MEMBER)
 
     # when the invite becomes inactive. null means never
-    # (only applies if isLink() is True)
     expire_date = models.DateTimeField(null=True, blank=True)
 
     # how many people can join the band based on this a

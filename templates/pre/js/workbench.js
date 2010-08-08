@@ -79,7 +79,7 @@ var SCWorkbench = function () {
                 url = state.urls.ignoreInvite;
                 err_msg = "Error ignoring invite: ";
             }
-            $.getJSON(url,
+            $.post(url,
                 {
                     invitation: state.json.invites[index].id
                 },
@@ -93,7 +93,7 @@ var SCWorkbench = function () {
                     } else {
                         alert(err_msg + data.reason);
                     }
-                }
+                }, 'json'
             );
         };
         $(".action a.accept").click(inviteAction);
