@@ -105,16 +105,13 @@ def ajax_home(request):
 @json_login_required
 @json_post_required
 def handle_invite(request, accept):
-    data = {'success': False}
-
     invite = get_obj_from_request(request.POST, 'invitation', BandInvitation)
     if invite is None:
         return HttpResponseNotFound()
 
     # make sure the user has permission to reject this invitation
     if invite.invitee != request.user:
-        data['reason'] = "This invitation was not sent to you."
-        return json_response(data)
+        return json_failure(design.invitation_not_sent_to_you)
 
     if accept:
         # apply the invitation
@@ -128,8 +125,7 @@ def handle_invite(request, accept):
 
     invite.delete()
         
-    data['success'] = True
-    return json_response(data)
+    return json_success()
 
 def ajax_accept_invite(request):
     return handle_invite(request, accept=True)
@@ -168,6 +164,7 @@ def ajax_create_invite(request):
         invite.code = create_hash(32)
         invite.save()
         data = {'url': invite.redeemHyperlink()}
+        return json_success(data)
     else:
         # make sure invitation doesn't exist already
         if BandInvitation.objects.filter(band=band, invitee=invitee).count() > 0:
@@ -175,10 +172,10 @@ def ajax_create_invite(request):
 
         invite.invitee = invitee
         invite.save()
-        data = {}
         send_invitation_email(request.user, band, invite)
 
-    return json_success(data)
+        return json_success()
+
 
 @login_required
 def redeem_invitation(request, password_hash):

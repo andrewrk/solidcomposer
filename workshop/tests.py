@@ -136,8 +136,48 @@ class SimpleTest(TestCase):
         # TODO
 
     def test_ignore_invite(self):
-        """url(r'^ajax/invite/ignore/$', 'workshop.views.ajax_ignore_invite', name="workbench.ajax_ignore_invite"),"""
-        pass
+        ajax_ignore_invite = reverse('workbench.ajax_ignore_invite')
+        band_member_count = BandMember.objects.count()
+        
+        # create an invitation
+        invite = BandInvitation()
+        invite.inviter = self.superjoe
+        invite.band = self.superjoe.get_profile().solo_band
+        invite.invitee = self.skiessi
+        invite.save()
+
+        # anonymous try to ignore it
+        self.client.logout()
+        response = self.client.post(ajax_ignore_invite, {
+            'invitation': invite.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.not_authenticated)
+        self.assertEqual(BandMember.objects.count(), band_member_count)
+
+        # wrong person try to ignore it
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.post(ajax_ignore_invite, {
+            'invitation': invite.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.invitation_not_sent_to_you)
+        self.assertEqual(BandMember.objects.count(), band_member_count)
+
+        # correct person try to ignore it
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.post(ajax_ignore_invite, {
+            'invitation': invite.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(BandInvitation.objects.count(), 0)
+        self.assertEqual(BandMember.objects.count(), band_member_count)
 
     def test_accept_invite(self):
         """url(r'^ajax/invite/accept/$', 'workshop.views.ajax_accept_invite', name="workbench.ajax_accept_invite"),"""
