@@ -1,0 +1,10 @@
+{% extends 'email.html' %}
+
+{% block content %}
+    <h1>{{ invite.invitee }} has accepted your invitation to join {{ invite.band.title }}!</h1>
+    <p>
+        <a href="http://solidcomposer.com{% url userpage invite.invitee.username %}">{{ invite.invitee.username }}</a>
+        is now a part of
+        <a href="http://solidcomposer.com{% url workbench.band invite.band.id %}">{{ invite.band.title }}</a>.
+    </p>
+{% endblock %}

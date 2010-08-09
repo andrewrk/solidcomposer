@@ -10,6 +10,7 @@ from workshop.models import BandInvitation
 from workshop import design
 
 import simplejson as json
+from datetime import datetime, timedelta
 
 class SimpleTest(TestCase):
     def setUp(self):
@@ -47,6 +48,15 @@ class SimpleTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+    def anonPostFail(self, url, data):
+        self.client.logout()
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.not_authenticated)
+        return response
+
     def test_home(self):
         return self.staticPage('workbench.home')
         
@@ -57,16 +67,11 @@ class SimpleTest(TestCase):
         outboxCount = len(mail.outbox)
 
         # anonymous, inviting just64helpin to superjoe's band
-        self.client.logout()
         superjoe_solo = self.superjoe.get_profile().solo_band
-        response = self.client.post(ajax_create_invite, {
+        self.anonPostFail(ajax_create_invite, {
             'band': superjoe_solo.id,
             'invitee': self.just64helpin.id,
         })
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['reason'], design.not_authenticated)
         self.assertEqual(len(mail.outbox), outboxCount)
         
         # skiessi logged in, inviting just64helpin to superjoe's band
@@ -118,6 +123,7 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['success'], True)
+        outboxCount += 1
         self.assertEqual(len(mail.outbox), outboxCount)
 
         self.client.logout()
@@ -147,14 +153,10 @@ class SimpleTest(TestCase):
         invite.save()
 
         # anonymous try to ignore it
-        self.client.logout()
-        response = self.client.post(ajax_ignore_invite, {
+        self.anonPostFail(ajax_ignore_invite, {
             'invitation': invite.id,
         })
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['reason'], design.not_authenticated)
+        self.assertEqual(BandInvitation.objects.count(), 1)
         self.assertEqual(BandMember.objects.count(), band_member_count)
 
         # wrong person try to ignore it
@@ -166,6 +168,7 @@ class SimpleTest(TestCase):
         data = json.loads(response.content)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.invitation_not_sent_to_you)
+        self.assertEqual(BandInvitation.objects.count(), 1)
         self.assertEqual(BandMember.objects.count(), band_member_count)
 
         # correct person try to ignore it
@@ -180,8 +183,75 @@ class SimpleTest(TestCase):
         self.assertEqual(BandMember.objects.count(), band_member_count)
 
     def test_accept_invite(self):
-        """url(r'^ajax/invite/accept/$', 'workshop.views.ajax_accept_invite', name="workbench.ajax_accept_invite"),"""
-        pass
+        ajax_accept_invite = reverse("workbench.ajax_accept_invite")
+        band_member_count = BandMember.objects.count()
+        outbox_count = len(mail.outbox)
+        invitation_count = BandInvitation.objects.count()
+
+        # create an invitation
+        invite = BandInvitation()
+        invite.inviter = self.superjoe
+        invite.band = self.superjoe.get_profile().solo_band
+        invite.invitee = self.skiessi
+        invite.expire_date = datetime.now() + timedelta(days=1)
+        invite.save()
+        invitation_count += 1
+
+        # try as anonymous 
+        self.anonPostFail(ajax_accept_invite, {
+            'invitation': invite.id,
+        })
+        self.assertEqual(BandMember.objects.count(), band_member_count)
+        self.assertEqual(BandInvitation.objects.count(), invitation_count)
+        self.assertEqual(len(mail.outbox), outbox_count)
+
+        # try as wrong person
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.post(ajax_accept_invite, {
+            'invitation': invite.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.invitation_not_sent_to_you)
+        self.assertEqual(BandMember.objects.count(), band_member_count)
+        self.assertEqual(BandInvitation.objects.count(), invitation_count)
+        self.assertEqual(len(mail.outbox), outbox_count)
+
+        # try as correct person, after expired date
+        self.client.login(username='skiessi', password='temp1234')
+
+        invite.expire_date = datetime.now() - timedelta(days=1)
+        invite.save()
+
+        response = self.client.post(ajax_accept_invite, {
+            'invitation': invite.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.invitation_expired)
+        self.assertEqual(BandMember.objects.count(), band_member_count)
+        self.assertEqual(BandInvitation.objects.count(), invitation_count)
+        self.assertEqual(len(mail.outbox), outbox_count)
+
+        # should work
+        invite.expire_date = None
+        invite.save()
+
+        response = self.client.post(ajax_accept_invite, {
+            'invitation': invite.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+
+        band_member_count += 1
+        outbox_count += 1
+        invitation_count -= 1
+        self.assertEqual(BandMember.objects.count(), band_member_count)
+        self.assertEqual(BandInvitation.objects.count(), invitation_count)
+        self.assertEqual(len(mail.outbox), outbox_count)
 
     def test_email_invite(self):
         """url(r'^ajax/invite/email/$', 'workshop.views.ajax_email_invite', name="workbench.ajax_email_invite"),"""

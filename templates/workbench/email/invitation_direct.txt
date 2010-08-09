@@ -1,9 +1,9 @@
 {% extends 'email.txt' %}
 
 {% block content %}
-    {{ user.username }} wants you to join their band, {{ band.title }}.
+    {{ invite.inviter.username }} wants you to join their band, {{ invite.band.title }}.
 
-    If you'd like to join forces with {{ user.username }}, head over to the
+    If you'd like to join forces with {{ invite.inviter.username }}, head over to the
     Workbench and accept the invitation:
     http://solidcomposer.com{% url workbench.home %}
 

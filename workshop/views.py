@@ -113,6 +113,10 @@ def handle_invite(request, accept):
     if invite.invitee != request.user:
         return json_failure(design.invitation_not_sent_to_you)
 
+    # make sure it's not expired
+    if invite.expire_date is not None and datetime.now() > invite.expire_date:
+        return json_failure(design.invitation_expired)
+
     if accept:
         # apply the invitation
         member = BandMember()
@@ -122,10 +126,20 @@ def handle_invite(request, accept):
         member.save()
 
         createNewBandMemberLogEntry(member)
+        send_invitation_accepted_email(invite)
 
     invite.delete()
         
     return json_success()
+
+def send_invitation_accepted_email(invite):
+    subject = design.x_has_accepted_your_invitation_to_join_y.format(invite.invitee.username, invite.band.title)
+    context = Context({
+        'invite': invite,
+    })
+    message_txt = get_template('workbench/email/invitation_accepted.txt').render(context)
+    message_html = get_template('workbench/email/invitation_accepted.html').render(context)
+    send_html_mail(subject, message_txt, message_html, [invite.inviter.email])
 
 def ajax_accept_invite(request):
     return handle_invite(request, accept=True)
@@ -172,7 +186,7 @@ def ajax_create_invite(request):
 
         invite.invitee = invitee
         invite.save()
-        send_invitation_email(request.user, band, invite)
+        send_invitation_email(invite)
 
         return json_success()
 
@@ -206,6 +220,8 @@ def redeem_invitation(request, password_hash):
 
             if invite.count <= 0:
                 invite.delete()
+
+            send_invitation_accepted_email(invite)
 
             band = invite.band
     else:
@@ -250,18 +266,16 @@ def ajax_username_invite(request):
     invite.save()
 
     # send a heads up email
-    send_invitation_email(request.user, band, invite)
+    send_invitation_email(invite)
     return json_success()
 
-def send_invitation_email(user, band, invite):
-    subject = design.x_is_inviting_you_to_join_y.format(user.username, band.title)
+def send_invitation_email(invite):
+    subject = design.x_is_inviting_you_to_join_y.format(invite.inviter.username, invite.band.title)
     context = Context({
-        'user': user,
-        'band': band,
         'invite': invite,
     })
-    message_txt = get_template('workbench/invitation_direct_email.txt').render(context)
-    message_html = get_template('workbench/invitation_direct_email.html').render(context)
+    message_txt = get_template('workbench/email/invitation_direct.txt').render(context)
+    message_html = get_template('workbench/email/invitation_direct.html').render(context)
     send_html_mail(subject, message_txt, message_html, [invite.invitee.email])
 
 @json_login_required
@@ -323,8 +337,8 @@ def ajax_email_invite(request):
             'band': band,
             'invite': invite,
         })
-        message_txt = get_template('workbench/invitation_link_email.txt').render(context)
-        message_html = get_template('workbench/invitation_link_email.html').render(context)
+        message_txt = get_template('workbench/email/invitation_link.txt').render(context)
+        message_html = get_template('workbench/email/invitation_link.html').render(context)
         send_html_mail(subject, message_txt, message_html, [to_email])
 
         return json_success()
