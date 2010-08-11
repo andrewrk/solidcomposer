@@ -16,6 +16,7 @@ from main.models import TempFile
 import os
 
 from django.conf import settings
+from django.core.validators import email_re
 
 def file_hash(filename):
     md5 = hashlib.md5()
@@ -168,3 +169,5 @@ def send_html_mail(subject, message_txt, message_html, to_list):
     msg.attach_alternative(message_html, 'text/html')
     msg.send(fail_silently=True)
 
+def is_valid_email(email):
+    return True if email_re.match(email) else False

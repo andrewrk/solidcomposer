@@ -13,7 +13,7 @@ from django.template import RequestContext, Context
 from django.template.loader import get_template
 from main.common import get_val, json_response, get_obj_from_request, \
     json_login_required, json_post_required, json_failure, create_hash, json_success, \
-    send_html_mail, json_get_required, make_timed_temp_file
+    send_html_mail, json_get_required, make_timed_temp_file, is_valid_email
 from main.models import BandMember, Band, SongCommentNode, Song
 from main.upload import upload_file_h, clean_filename
 from main.uploadsong import upload_song, handle_sample_file, handle_mp3_upload, \
@@ -250,6 +250,9 @@ def ajax_username_invite(request):
     if band is None:
         return json_failure(design.bad_band_id)
 
+    if not band.permission_to_invite(request.user):
+        return json_failure(design.lack_permission_to_invite)
+
     # make sure the user isn't already in the band
     if BandMember.objects.filter(user=invitee, band=band).count() > 0:
         return json_failure(design.x_already_in_band.format(invitee.username))
@@ -281,14 +284,21 @@ def send_invitation_email(invite):
 @json_login_required
 @json_post_required
 def ajax_email_invite(request):
+    "send a band invitation by email."
     to_email = get_val(request.POST, 'email', '')
     band = get_obj_from_request(request.POST, 'band', Band)
     
     if band is None:
         return json_failure(design.bad_band_id)
 
+    if not band.permission_to_invite(request.user):
+        return json_failure(design.lack_permission_to_invite)
+
     if to_email == '':
         return json_failure(design.you_must_supply_an_email_address)
+
+    if not is_valid_email(to_email):
+        return json_failure(design.invalid_email_address)
 
     # if the email is a registered solid composer user, simply translate into direct invitation.
     try:
@@ -320,8 +330,8 @@ def ajax_email_invite(request):
             'band': band,
             'invite': invite,
         })
-        message_txt = get_template('workbench/invitation_direct_email.txt').render(context)
-        message_html = get_template('workbench/invitation_direct_email.html').render(context)
+        message_txt = get_template('workbench/email/invitation_direct.txt').render(context)
+        message_html = get_template('workbench/email/invitation_direct.html').render(context)
         send_html_mail(subject, message_txt, message_html, [to_email])
 
         return json_success()

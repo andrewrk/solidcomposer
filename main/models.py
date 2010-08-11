@@ -145,6 +145,21 @@ class Band(SerializableModel):
 
         return member.role in (BandMember.MANAGER, BandMember.BAND_MEMBER, BandMember.CRITIC)
 
+    def permission_to_invite(self, user):
+        if not user.is_authenticated():
+            return False
+
+        if self.openness == Band.FULL_OPEN:
+            return True
+
+        # get the BandMember for this user
+        try:
+            member = BandMember.objects.get(user=user, band=self)
+        except BandMember.DoesNotExist:
+            return False
+
+        return member.role == BandMember.MANAGER
+
     def __unicode__(self):
         return self.title
 
