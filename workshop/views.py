@@ -434,8 +434,8 @@ def ajax_project_list(request):
     if band is None:
         return json_failure(design.bad_band_id)
 
-    if not band.permission_to_work(request.user):
-        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+    if not band.permission_to_critique(request.user):
+        return json_failure(design.you_dont_have_permission_to_critique_this_band)
 
     # get a list of filtered projects 
     projects = performFilter(filterName, Project.objects.filter(band=band), request.user)

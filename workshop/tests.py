@@ -792,6 +792,52 @@ class SimpleTest(TestCase):
     def test_project_list(self):
         ajax_project_list = reverse("workbench.ajax_project_list")
 
+        self.setUpTBA()
+        tba = Band.objects.get(title='The Burning Awesome')
+        the_castle = Project.objects.get(title='The Castle')
+
+        # anon
+        self.anonGetFail(ajax_project_list, {
+            'band': tba.id,
+        })
+
+        # try to access list from other private band
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.get(ajax_project_list, {
+            'band': tba.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_critique_this_band)
+
+        # list all contents
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get(ajax_project_list, {
+            'band': tba.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['data']['projects']), 2)
+
+        # test paging
+        # TODO
+
+        # test filter
+        # TODO
+
+        # test search
+        response = self.client.get(ajax_project_list, {
+            'band': tba.id,
+            'search': 'astl he',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['data']['projects']), 1)
+        self.assertEqual(data['data']['projects'][0]['id'], the_castle.id)
+
     def test_upload_samples(self):
         ajax_upload_samples = reverse("workbench.ajax_upload_samples")
 
