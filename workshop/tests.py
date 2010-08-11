@@ -6,7 +6,8 @@ from main.models import BandMember, Band, Profile
 from main.tests import commonSetUp, commonTearDown
 from django.contrib.auth.models import User
 
-from workshop.models import BandInvitation
+from workshop.models import BandInvitation, Project, ProjectVersion, PluginDepenency, Studio
+from workshop import syncdaw
 from workshop import design
 
 import simplejson as json
@@ -48,13 +49,14 @@ class SimpleTest(TestCase):
         self.superjoe = User.objects.get(username="superjoe")
         self.just64helpin = User.objects.get(username="just64helpin")
 
+        syncdaw.logging = False
+        syncdaw.syncdaw()
 
     def tearDown(self):
         commonTearDown(self)
 
-    def staticPage(self, url_name):
+    def staticPage(self, url):
         "tests if the page doesn't error out logged in and logged out."
-        url = reverse(url_name)
         self.client.login(username="skiessi", password="temp1234")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -113,7 +115,7 @@ class SimpleTest(TestCase):
         }))
         # skiessi create The Castle 
         blank_mp3file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
-        blank_project = open(absolute('fixtures/blank.flp'),'rb')
+        blank_project = open(absolute('fixtures/4frontpiano.flp'),'rb')
         response = self.client.post(reverse('workbench.create_project', args=[tba.id]), {
             'title': "The Castle",
             'file_source': blank_project,
@@ -134,7 +136,7 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_home(self):
-        return self.staticPage('workbench.home')
+        return self.staticPage(reverse('workbench.home'))
         
     def test_create_invite(self):
         ajax_create_invite = reverse("workbench.ajax_create_invite")
@@ -719,29 +721,29 @@ class SimpleTest(TestCase):
         data = json.loads(response.content)
         self.assertEqual(data['success'], True)
 
-    def test_project(self):
+    def test_ajax_project(self):
         ajax_project = reverse("workbench.ajax_project")
-        the_castle = Project.objects.get(title='The Castle')
 
         self.setUpTBA()
+        the_castle = Project.objects.get(title='The Castle')
 
         # anon access open source band
         # TODO
 
         # anon access private band
         self.client.logout()
-        response = self.client.get(ajax_project_filters, {
+        response = self.client.get(ajax_project, {
             'last_version': 'null',
             'project': the_castle.id,
         })
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['reason'], design.you_dont_have_permission_to_critique_this_band)
+        self.assertEqual(data['reason'], design.not_authenticated)
 
         # someone not in band access private band
         self.client.login(username='just64helpin', password='temp1234')
-        response = self.client.get(ajax_project_filters, {
+        response = self.client.get(ajax_project, {
             'last_version': 'null',
             'project': the_castle.id,
         })
@@ -752,7 +754,7 @@ class SimpleTest(TestCase):
 
         # project that doesn't exist
         self.client.login(username='skiessi', password='temp1234')
-        response = self.client.get(ajax_project_filters, {
+        response = self.client.get(ajax_project, {
             'last_version': 'null',
             'project': 113,
         })
@@ -762,7 +764,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['reason'], design.bad_project_id)
 
         # legit project, get all versions
-        response = self.client.get(ajax_project_filters, {
+        response = self.client.get(ajax_project, {
             'last_version': 'null',
             'project': the_castle.id,
         })
@@ -772,10 +774,10 @@ class SimpleTest(TestCase):
         self.assertEqual(data['project']['id'], the_castle.id)
         self.assertEqual(data['user']['has_permission'], True)
         self.assertEqual(data['user']['is_authenticated'], True)
-        self.assertEqual(len(data['versions']), 2)
+        self.assertEqual(len(data['versions']), 1)
 
         # legit project, get versions since the only one (should return none)
-        response = self.client.get(ajax_project_filters, {
+        response = self.client.get(ajax_project, {
             'last_version': the_castle.latest_version.id,
             'project': the_castle.id,
         })
@@ -819,10 +821,11 @@ class SimpleTest(TestCase):
         pass
 
     def test_band(self):
-        """url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),"""
-        pass
+        self.staticPage(reverse('workbench.band', args=[self.skiessi.get_profile().solo_band.id]))
+        self.staticPage(reverse('workbench.band', args=[self.superjoe.get_profile().solo_band.id]))
+        self.staticPage(reverse('workbench.band', args=[self.just64helpin.get_profile().solo_band.id]))
 
-    def test_band_settings_space(self):
+    def test_band_settings(self):
         """url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),"""
         pass
 
@@ -835,12 +838,19 @@ class SimpleTest(TestCase):
         pass
 
     def test_project(self):
-        """url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),"""
-        pass
+        self.setUpTBA()
+        tba = Band.objects.get(title='The Burning Awesome')
+        the_castle = Project.objects.get(title='The Castle')
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get(reverse('workbench.project', args=[tba.id, the_castle.id]))
+        self.assertEqual(response.status_code, 200)
 
     def test_band_invite(self):
-        """url(r'^band/(\d+)/invite/$', 'workshop.views.band_invite', name="workbench.band_invite"),"""
-        pass
+        self.setUpTBA()
+        tba = Band.objects.get(title='The Burning Awesome')
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get(reverse('workbench.band_invite', args=[tba.id]))
+        self.assertEqual(response.status_code, 200)
 
     def test_download_zip(self):
         """url(r'^download/zip/$', 'workshop.views.download_zip', name="workbench.download_zip"),"""
@@ -855,9 +865,10 @@ class SimpleTest(TestCase):
         pass
 
     def test_plugin(self):
-        """url(r'^plugin/(.+)/$', 'workshop.views.plugin', name="workbench.plugin"),"""
-        pass
+        self.setUpTBA()
+        plugin = PluginDepenency.objects.all()[0]
+        self.staticPage(reverse('workbench.plugin', args=[plugin.url]))
 
     def test_studio(self):
-        """url(r'^studio/(.+)/$', 'workshop.views.studio', name="workbench.studio"),"""
-        pass
+        self.staticPage(reverse('workbench.studio', args=['flstudio']))
+        self.staticPage(reverse('workbench.studio', args=['lmms']))

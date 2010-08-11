@@ -827,17 +827,8 @@ def band_settings_space(request, band_id_str):
 
 @login_required
 def project(request, band_id_str, project_id_str):
-    try:
-        band_id = int(band_id_str)
-    except ValueError:
-        band_id = 0
-    try:
-        project_id = int(project_id_str)
-    except ValueError:
-        project_id = 0
-
-    band = get_object_or_404(Band, id=band_id)
-    project = get_object_or_404(Project, id=project_id)
+    band = get_object_or_404(Band, id=int(band_id_str))
+    project = get_object_or_404(Project, id=int(project_id_str))
     return render_to_response('workbench/project.html', locals(), context_instance=RequestContext(request))
 
 @login_required
@@ -1031,8 +1022,12 @@ def song_to_dict(song, user):
     profile = user.get_profile()
 
     d = song.to_dict(access=SerializableModel.OWNER, chains=['owner', 'studio', 'comment_node'])
-    if song.studio:
-        d['studio']['logo_16x16'] = song.studio.logo_16x16.url
+    if song.studio is not None:
+        if song.studio.logo_16x16.name != '':
+            d['studio']['logo_16x16'] = song.studio.logo_16x16.url
+        else:
+            d['studio']['logo_16x16'] = None
+
         d['studio']['missing'] = song.studio not in profile.studios.all()
 
     d['source_file'] = song.source_file
