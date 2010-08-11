@@ -1,35 +1,35 @@
 Release "Boten Anna" (Basshunter)
 = sitewide
- * workbench tests
- * settings page
+ * workbench tests - Aug 10
+ * settings page - Aug 11
    > email subscriptions
    > account type
    > change password
    > tests for this stuff
- * upgrade page where you can choose a plan and sign up and pay
+ * upgrade page where you can choose a plan and sign up and pay - Aug 12
    > monthly, 1 year, two years
    > tests for this stuff
- * link the "Get More" in workbench to the correct account tab
- * password recovery
+ * link the "Get More" in workbench to the correct account tab - Aug 17
+ * password recovery - Aug 17
    > test
- * in workbench, need a hook when login changes to refresh the page
- * band settings
+ * in workbench, need a hook when login changes to refresh the page - Aug 17
+ * band settings - Aug 17
    > membership management
    > test
- * song player: mouseover comments go away if you're not scrolled to the top
- * pagination is broken in project manager
- * user page
+ * song player: mouseover comments go away if you're not scrolled to the top - Aug 18
+ * pagination is broken in project manager - Aug 18
+ * user page - Aug 18
    > list entries
    > can invite them to join your band
- * make sure bands are read only when they should be
+ * make sure bands are read only when they should be - Aug 20
    > ui to indicate that bands are read only and link to upgrade account
- * editor controls on fields that will be parsed by showdown.
+ * editor controls on fields that will be parsed by showdown. - Aug 20
    > http://wmd-editor.com/
    > also always show a preview when things will be parsed by showdown.
- * home page
+ * home page - Aug 21
    > if logged in, it's a dashboard with good stuff on it
    > test
- * design iteration
+ * design iteration - Aug 24, 25, 26, 27, 28, 29
    > favicon
    > new logo
    > make header area take up less vertical room
@@ -42,20 +42,22 @@ Release "Boten Anna" (Basshunter)
    > home page - if not logged in, it's an attractive pricing & signup page
    > maxWidth and maxHeight don't work in jquery dialog
    > html email instead of txt
- * migration to create projects and versions for everything on the site.
- * code to bill customers monthly
+ * migration to create projects and versions for everything on the site. - Aug 30
+ * code to bill customers monthly - Aug 31
    > set it up so that it sends me an email of what it's about to do, then
      I manually approve it and bill everybody.
    > able to do a one-time payment or recurring
    > able to downgrade/upgrade account at any time.
- * edit competition
- * manually test all the features to make sure they work.
+ * manually test all the features to make sure they work. - Aug 31
+ * WE DO IT LIVE - Sept 1
  * blog post announcing release
    > movie showing off features
    > replace "About" with a link to the introductory blog post
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+ * on create band page, if they are out of bands, have it say that they need to upgrade to create more bands.
+ * edit competition
  * recent activty entry log:
    > band member leaving
    > trashed project

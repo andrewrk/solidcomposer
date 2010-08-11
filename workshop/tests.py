@@ -59,6 +59,15 @@ class SimpleTest(TestCase):
         self.assertEqual(data['reason'], design.not_authenticated)
         return response
 
+    def anonGetFail(self, url, data):
+        self.client.logout()
+        response = self.client.get(url, data)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.not_authenticated)
+        return response
+
     def checkLoginRedirect(self, url):
         self.client.logout()
         response = self.client.get(url)
@@ -589,6 +598,7 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['success'], False)
+        self.assertEqual(band_count, Band.objects.count())
 
         # normal case which should work
         response = self.client.post(ajax_create_band, {
@@ -597,6 +607,8 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['success'], True)
+        band_count += 1
+        self.assertEqual(band_count, Band.objects.count())
         
         # doesn't have any bands left in account
         prof = self.just64helpin.get_profile()
@@ -608,50 +620,75 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data['success'], False)
+        self.assertEqual(band_count, Band.objects.count())
 
     def test_project_filters(self):
-        """url(r'^ajax/project_filters/$', 'workshop.views.ajax_project_filters', name="workbench.ajax_project_filters"),"""
-        pass
+        ajax_project_filters = reverse("workbench.ajax_project_filters")
+
+        # anon
+        skiessi_solo = self.skiessi.get_profile().solo_band
+        self.anonGetFail(ajax_project_filters, {
+            'band': skiessi_solo.id,
+        })
+
+        # bogus band
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get(ajax_project_filters, {
+            'band': 0,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_band_id)
+
+        # band not owned by user
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get(ajax_project_filters, {
+            'band': self.superjoe.get_profile().solo_band.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_work_on_this_band)
+
+        # valid request
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get(ajax_project_filters, {
+            'band': skiessi_solo.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
 
     def test_project(self):
-        """url(r'^ajax/project/$', 'workshop.views.ajax_project', name="workbench.ajax_project"),"""
-        pass
+        ajax_project = reverse("workbench.ajax_project")
 
     def test_project_list(self):
-        """url(r'^ajax/project_list/$', 'workshop.views.ajax_project_list', name="workbench.ajax_project_list"),"""
-        pass
+        ajax_project_list = reverse("workbench.ajax_project_list")
 
     def test_upload_samples(self):
-        """url(r'^ajax/upload_samples/$', 'workshop.views.ajax_upload_samples', name="workbench.ajax_upload_samples"),"""
-        pass
+        ajax_upload_samples = reverse("workbench.ajax_upload_samples")
 
     def test_upload_samples_as_version(self):
-        """url(r'^ajax/upload_samples_as_version/$', 'workshop.views.ajax_upload_samples_as_version', name="workbench.ajax_upload_samples_as_version"),"""
-        pass
+        ajax_upload_samples_as_version = reverse("workbench.ajax_upload_samples_as_version")
         
     def test_rename_project(self):
-        """url(r'^ajax/rename_project/$', 'workshop.views.ajax_rename_project', name="workbench.ajax_rename_project"),"""
-        pass
+        ajax_rename_project = reverse("workbench.ajax_rename_project")
 
     def test_dependency_ownership(self):
-        """url(r'^ajax/dependency_ownership/$', 'workshop.views.ajax_dependency_ownership', name="workbench.ajax_dependency_ownership"),"""
-        pass
+        ajax_dependency_ownership = reverse("workbench.ajax_dependency_ownership")
 
     def test_provide_project(self):
-        """url(r'^ajax/provide_project/$', 'workshop.views.ajax_provide_project', name="workbench.ajax_provide_project"),"""
-        pass
+        ajax_provide_project = reverse("workbench.ajax_provide_project")
 
     def test_provide_mp3(self):
-        """url(r'^ajax/provide_mp3/$', 'workshop.views.ajax_provide_mp3', name="workbench.ajax_provide_mp3"),"""
-        pass
+        ajax_provide_mp3 = reverse("workbench.ajax_provide_mp3")
 
     def test_checkout(self):
-        """url(r'^ajax/checkout/$', 'workshop.views.ajax_checkout', name="workbench.ajax_checkout"),"""
-        pass
+        ajax_checkout = reverse("workbench.ajax_checkout")
 
     def test_checkin(self):
-        """url(r'^ajax/checkin/$', 'workshop.views.ajax_checkin', name="workbench.ajax_checkin"),"""
-        pass
+        ajax_checkin = reverse("workbench.ajax_checkin")
 
     def test_create(self):
         """url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),"""
@@ -700,4 +737,3 @@ class SimpleTest(TestCase):
     def test_studio(self):
         """url(r'^studio/(.+)/$', 'workshop.views.studio', name="workbench.studio"),"""
         pass
-
