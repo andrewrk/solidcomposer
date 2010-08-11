@@ -485,13 +485,13 @@ def ajax_project(request):
     data = {
         'user': {
             'is_authenticated': request.user.is_authenticated(),
-            'has_permission': project.band.permission_to_work(request.user),
+            'has_permission': project.band.permission_to_critique(request.user),
         },
         'success': False,
     }
 
     if not data['user']['has_permission']:
-        data['reason'] = design.you_dont_have_permission_to_work_on_this_band
+        data['reason'] = design.you_dont_have_permission_to_critique_this_band
         return json_response(data)
 
     data['project'] = project.to_dict(SerializableModel.OWNER, chains=['checked_out_to', 'band'])

@@ -37,6 +37,10 @@ def commonTearDown(obj):
     for tmp in TempFile.objects.all():
         rm(tmp.path)
 
+def absolute(relative_path):
+    "make a relative path absolute"
+    return os.path.normpath(os.path.join(os.path.dirname(__file__), relative_path))
+
 class SimpleTest(TestCase):
     def setUp(self):
         commonSetUp(self)

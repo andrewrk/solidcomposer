@@ -14,7 +14,18 @@ from datetime import datetime, timedelta
 
 from main.common import create_hash
 
+import os
+
+def absolute(relative_path):
+    "make a relative path absolute"
+    return os.path.normpath(os.path.join(os.path.dirname(__file__), relative_path))
+
 class SimpleTest(TestCase):
+    def verifyAjax(self, response):
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+
     def setUp(self):
         commonSetUp(self)
 
@@ -36,6 +47,7 @@ class SimpleTest(TestCase):
         self.skiessi = User.objects.get(username="skiessi")
         self.superjoe = User.objects.get(username="superjoe")
         self.just64helpin = User.objects.get(username="just64helpin")
+
 
     def tearDown(self):
         commonTearDown(self)
@@ -73,6 +85,53 @@ class SimpleTest(TestCase):
         response = self.client.get(url)
         login_url = reverse('user_login') + "?next=" + url
         self.assertRedirects(response, login_url)
+
+    def setUpTBA(self):
+        """
+        creates a band called The Burning Awesome with superjoe and skiessi excluding just64helpin.
+        superjoe is manager and skiessi is band member.
+        creates two projects: 
+            The Castle - Only one ProjectVersion.
+            Top Hat - Only one ProjectVersion.
+        """
+        # superjoe create The Burning Awesome
+        self.client.login(username='superjoe', password='temp1234')
+        self.verifyAjax(self.client.post(reverse('workbench.ajax_create_band'), {
+            'band_name': 'The Burning Awesome',
+        }))
+        tba = Band.objects.get(title='The Burning Awesome')
+        # superjoe invite skiessi
+        self.verifyAjax(self.client.post(reverse('workbench.ajax_create_invite'), {
+            'band': tba.id,
+            'invitee': self.skiessi.id,
+        }))
+        invite = BandInvitation.objects.order_by('-pk')[0]
+        # skiessi accept invite
+        self.client.login(username='skiessi', password='temp1234')
+        self.verifyAjax(self.client.post(reverse('workbench.ajax_accept_invite'), {
+            'invitation': invite.id,
+        }))
+        # skiessi create The Castle 
+        blank_mp3file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
+        blank_project = open(absolute('fixtures/blank.flp'),'rb')
+        response = self.client.post(reverse('workbench.create_project', args=[tba.id]), {
+            'title': "The Castle",
+            'file_source': blank_project,
+            'file_mp3': blank_mp3file,
+            'comments': "The Castle Comments",
+        })
+        self.assertEqual(response.status_code, 302)
+        # superjoe create Top Hat
+        self.client.login(username='superjoe', password='temp1234')
+        blank_mp3file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
+        blank_project = open(absolute('fixtures/blank.flp'),'rb')
+        response = self.client.post(reverse('workbench.create_project', args=[tba.id]), {
+            'title': "Top Hat",
+            'file_source': blank_project,
+            'file_mp3': blank_mp3file,
+            'comments': "Top Hat Comments",
+        })
+        self.assertEqual(response.status_code, 302)
 
     def test_home(self):
         return self.staticPage('workbench.home')
@@ -662,6 +721,71 @@ class SimpleTest(TestCase):
 
     def test_project(self):
         ajax_project = reverse("workbench.ajax_project")
+        the_castle = Project.objects.get(title='The Castle')
+
+        self.setUpTBA()
+
+        # anon access open source band
+        # TODO
+
+        # anon access private band
+        self.client.logout()
+        response = self.client.get(ajax_project_filters, {
+            'last_version': 'null',
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_critique_this_band)
+
+        # someone not in band access private band
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.get(ajax_project_filters, {
+            'last_version': 'null',
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_critique_this_band)
+
+        # project that doesn't exist
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get(ajax_project_filters, {
+            'last_version': 'null',
+            'project': 113,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_project_id)
+
+        # legit project, get all versions
+        response = self.client.get(ajax_project_filters, {
+            'last_version': 'null',
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['project']['id'], the_castle.id)
+        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(data['user']['is_authenticated'], True)
+        self.assertEqual(len(data['versions']), 2)
+
+        # legit project, get versions since the only one (should return none)
+        response = self.client.get(ajax_project_filters, {
+            'last_version': the_castle.latest_version.id,
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['project']['id'], the_castle.id)
+        self.assertEqual(data['user']['has_permission'], True)
+        self.assertEqual(data['user']['is_authenticated'], True)
+        self.assertEqual(len(data['versions']), 0)
 
     def test_project_list(self):
         ajax_project_list = reverse("workbench.ajax_project_list")
