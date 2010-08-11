@@ -864,7 +864,38 @@ class SimpleTest(TestCase):
 
     def test_create(self):
         """url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),"""
-        pass
+        create_url = reverse('workbench.create_band')
+        band_count = Band.objects.count()
+
+        # anon
+        self.checkLoginRedirect(create_url)
+        self.assertEqual(band_count, Band.objects.count())
+
+        # too long a name
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.post(create_url, {
+            'band_name': 'a' * 101,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(band_count, Band.objects.count())
+
+        # normal case which should work
+        response = self.client.post(create_url, {
+            'band_name': 'JH Sounds',
+        })
+        self.assertRedirects(response, reverse('workbench.home'))
+        band_count += 1
+        self.assertEqual(band_count, Band.objects.count())
+
+        # doesn't have any bands left in account
+        prof = self.just64helpin.get_profile()
+        prof.band_count_limit = 2
+        prof.save()
+        response = self.client.post(create_url, {
+            'band_name': 'OMGZOMB',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(band_count, Band.objects.count())
 
     def test_band(self):
         self.staticPage(reverse('workbench.band', args=[self.skiessi.get_profile().solo_band.id]))
