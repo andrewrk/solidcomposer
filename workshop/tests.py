@@ -266,6 +266,7 @@ class SimpleTest(TestCase):
             'band': skiessi_solo.id,
         })
         self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
 
         # invalid email address
         self.client.login(username='skiessi', password='temp1234')
@@ -381,8 +382,114 @@ class SimpleTest(TestCase):
         self.assertEqual(invite_count, BandInvitation.objects.count())
 
     def test_invite_username(self):
-        """url(r'^ajax/invite/username/$', 'workshop.views.ajax_username_invite', name="workbench.ajax_username_invite"),"""
-        pass
+        ajax_username_invite = reverse("workbench.ajax_username_invite")
+        ajax_accept_invite = reverse("workbench.ajax_accept_invite")
+        outbox_count = len(mail.outbox)
+        invite_count = BandInvitation.objects.count()
+
+        # anonymously
+        skiessi_solo = self.skiessi.get_profile().solo_band
+        self.anonPostFail(ajax_username_invite, {
+            'username': self.superjoe.username,
+            'band': skiessi_solo.id,
+        })
+        self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+
+        # nonexistant username
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.post(ajax_username_invite, {
+            'username': "happy_unicorn_26",
+            'band': skiessi_solo.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.that_user_does_not_exist)
+        self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+
+        # invalid band
+        response = self.client.post(ajax_username_invite, {
+            'username': self.superjoe.username,
+            'band': 0,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_band_id)
+        self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+
+        # band not owned by user
+        response = self.client.post(ajax_username_invite, {
+            'username': self.superjoe.username,
+            'band': self.just64helpin.get_profile().solo_band.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.lack_permission_to_invite)
+        self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+
+        # valid username and band
+        response = self.client.post(ajax_username_invite, {
+            'username': self.superjoe.username,
+            'band': skiessi_solo.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        outbox_count += 1
+        self.assertEqual(len(mail.outbox), outbox_count)
+        invite_count += 1
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+        invite = BandInvitation.objects.order_by('-pk')[0]
+        self.assertEqual(invite.inviter.id, self.skiessi.id)
+        self.assertEqual(invite.band.id, skiessi_solo.id)
+        self.assertEqual(invite.role, BandMember.BAND_MEMBER)
+        self.assertEqual(invite.isLink(), False)
+        self.assertEqual(invite.invitee.id, self.superjoe.id)
+
+        # ...who has already been invited
+        response = self.client.post(ajax_username_invite, {
+            'username': self.superjoe.username,
+            'band': skiessi_solo.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.already_invited_x_to_your_band.format(self.superjoe.username))
+        self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+
+        # ...who is in the band already
+        self.client.logout()
+        self.client.login(username="superjoe", password="temp1234")
+        response = self.client.post(ajax_accept_invite, {
+            'invitation': invite.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        outbox_count += 1
+        self.assertEqual(len(mail.outbox), outbox_count)
+        invite_count -= 1
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+
+        self.client.logout()
+        self.client.login(username="skiessi", password="temp1234")
+        response = self.client.post(ajax_username_invite, {
+            'username': self.superjoe.username,
+            'band': skiessi_solo.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.x_already_in_band.format(self.superjoe.username))
+        self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
         
     def test_redeem_invitation(self):
         """url(r'^redeem/(.+)/$', 'workshop.views.redeem_invitation', name="workbench.redeem_invitation"),"""
