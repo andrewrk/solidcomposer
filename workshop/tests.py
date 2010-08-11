@@ -12,6 +12,8 @@ from workshop import design
 import simplejson as json
 from datetime import datetime, timedelta
 
+from main.common import create_hash
+
 class SimpleTest(TestCase):
     def setUp(self):
         commonSetUp(self)
@@ -56,6 +58,12 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.not_authenticated)
         return response
+
+    def checkLoginRedirect(self, url):
+        self.client.logout()
+        response = self.client.get(url)
+        login_url = reverse('user_login') + "?next=" + url
+        self.assertRedirects(response, login_url)
 
     def test_home(self):
         return self.staticPage('workbench.home')
@@ -492,8 +500,77 @@ class SimpleTest(TestCase):
         self.assertEqual(invite_count, BandInvitation.objects.count())
         
     def test_redeem_invitation(self):
-        """url(r'^redeem/(.+)/$', 'workshop.views.redeem_invitation', name="workbench.redeem_invitation"),"""
-        pass
+        redeem_invitation_url_name = 'workbench.redeem_invitation'
+        invite_count = BandInvitation.objects.count()
+        member_count = BandMember.objects.count()
+
+        # anon
+        self.checkLoginRedirect(reverse(redeem_invitation_url_name, args=['aoeu']))
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+        self.assertEqual(member_count, BandMember.objects.count())
+
+        # try with invalid hash
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.get(reverse(redeem_invitation_url_name, args=['aoeu']))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['err_msg'], True)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+        self.assertEqual(member_count, BandMember.objects.count())
+
+        # invitation exists, but expired
+        invite = BandInvitation()
+        invite.inviter = self.skiessi
+        invite.band = self.skiessi.get_profile().solo_band
+        invite.expire_date = datetime.now() - timedelta(days=1)
+        invite.code = create_hash(32)
+        invite.count = 2
+        invite.save()
+        invite_count += 1
+
+        response = self.client.get(reverse(redeem_invitation_url_name, args=[invite.code]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['err_msg'], True)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+        self.assertEqual(member_count, BandMember.objects.count())
+
+        # redeem good invitation
+        invite.expire_date = None
+        invite.save()
+
+        response = self.client.get(reverse(redeem_invitation_url_name, args=[invite.code]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['err_msg'], False)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+        invite = BandInvitation.objects.get(pk=invite.id)
+        self.assertEqual(invite.count, 1)
+        member_count += 1
+        self.assertEqual(member_count, BandMember.objects.count())
+        member = BandMember.objects.order_by('-pk')[0]
+        self.assertEqual(member.user.id, self.just64helpin.id)
+        self.assertEqual(member.band.id, self.skiessi.get_profile().solo_band.id)
+        self.assertEqual(member.role, BandMember.BAND_MEMBER)
+
+        # band member exists already
+        response = self.client.get(reverse(redeem_invitation_url_name, args=[invite.code]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['err_msg'], True)
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+        self.assertEqual(member_count, BandMember.objects.count())
+        
+        # check that it deletes the invitation if the count is zero
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get(reverse(redeem_invitation_url_name, args=[invite.code]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['err_msg'], False)
+        invite_count -= 1
+        self.assertEqual(invite_count, BandInvitation.objects.count())
+        member_count += 1
+        self.assertEqual(member_count, BandMember.objects.count())
+        member = BandMember.objects.order_by('-pk')[0]
+        self.assertEqual(member.user.id, self.superjoe.id)
+        self.assertEqual(member.band.id, self.skiessi.get_profile().solo_band.id)
+        self.assertEqual(member.role, BandMember.BAND_MEMBER)
+
 
     def test_create_band(self):
         """url(r'^ajax/create_band/$', 'workshop.views.ajax_create_band', name="workbench.ajax_create_band"),"""

@@ -196,16 +196,15 @@ def redeem_invitation(request, password_hash):
     """
     join the band if the invitation is valid
     """
+    err_msg = True
     try:
         invite = BandInvitation.objects.get(code=password_hash)
     except BandInvitation.DoesNotExist:
         invite = None
 
-    if invite and datetime.now() <= invite.expire_date and invite.count > 0:
+    if invite is not None and (invite.expire_date is None or (datetime.now() <= invite.expire_date and invite.count > 0)):
         # make sure the band member doesn't already exist
-        if BandMember.objects.filter(user=request.user, band=invite.band, role=invite.role).count() > 0:
-            err_msg = True
-        else:
+        if BandMember.objects.filter(user=request.user, band=invite.band, role=invite.role).count() == 0:
             # create a band member for the invitation
             member = BandMember()
             member.user = request.user
@@ -220,12 +219,14 @@ def redeem_invitation(request, password_hash):
 
             if invite.count <= 0:
                 invite.delete()
+            else:
+                invite.save()
 
+            invite.invitee = request.user # we fill this field for the sake of send_invitation_accepted_email
             send_invitation_accepted_email(invite)
 
             band = invite.band
-    else:
-        err_msg = True
+            err_msg = False
 
     return render_to_response('workbench/redeem_invitation.html', locals(), context_instance=RequestContext(request))
 
