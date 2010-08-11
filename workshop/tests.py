@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core import mail
 
-from main.models import BandMember
+from main.models import BandMember, Band, Profile
 from main.tests import commonSetUp, commonTearDown
 from django.contrib.auth.models import User
 
@@ -571,11 +571,44 @@ class SimpleTest(TestCase):
         self.assertEqual(member.band.id, self.skiessi.get_profile().solo_band.id)
         self.assertEqual(member.role, BandMember.BAND_MEMBER)
 
-
     def test_create_band(self):
-        """url(r'^ajax/create_band/$', 'workshop.views.ajax_create_band', name="workbench.ajax_create_band"),"""
-        pass
+        ajax_create_band = reverse("workbench.ajax_create_band")
+        band_count = Band.objects.count()
+
+        # anonymous
+        self.anonPostFail(ajax_create_band, {
+            'band_name': 'The Burning Awesome',
+        })
+        self.assertEqual(band_count, Band.objects.count())
+
+        # a band with a friggin long name
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.post(ajax_create_band, {
+            'band_name': 'a' * 101,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+
+        # normal case which should work
+        response = self.client.post(ajax_create_band, {
+            'band_name': 'The Burning Awesome',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
         
+        # doesn't have any bands left in account
+        prof = self.just64helpin.get_profile()
+        prof.band_count_limit = 2
+        prof.save()
+        response = self.client.post(ajax_create_band, {
+            'band_name': 'Octopus',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+
     def test_project_filters(self):
         """url(r'^ajax/project_filters/$', 'workshop.views.ajax_project_filters', name="workbench.ajax_project_filters"),"""
         pass

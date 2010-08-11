@@ -285,6 +285,10 @@ class Profile(SerializableModel):
             data['email'] = self.user.email
         return data
 
+    def bands_in_count(self):
+        "returns how many bands the user is in"
+        return BandMember.objects.filter(user=self, role__in=(BandMember.BAND_MEMBER,BandMember.MANAGER)).count() 
+
 class Song(SerializableModel):
     PUBLIC_ATTRS = (
         'mp3_file',

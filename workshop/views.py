@@ -524,6 +524,10 @@ def create_band(request):
     if request.method == 'POST':
         form = NewBandForm(request.POST)
         if form.is_valid():
+            profile = request.user.get_profile()
+            if profile.bands_in_count() >= profile.band_count_limit:
+                return json_failure(design.you_have_reached_your_band_count_limit)
+
             actually_create_band(request.user, form.cleaned_data.get('band_name'))
             return HttpResponseRedirect(reverse("workbench.home"))
     else:
@@ -537,10 +541,14 @@ def ajax_create_band(request):
     form = NewBandForm(request.POST)
 
     if form.is_valid():
+        profile = request.user.get_profile()
+        if profile.bands_in_count() >= profile.band_count_limit:
+            return json_failure(design.you_have_reached_your_band_count_limit)
+
         actually_create_band(request.user, form.cleaned_data.get('band_name'))
         return json_success()
 
-    return json_failure("\n".join(['%s: %s' % (k, v) for k, v in form.errors]))
+    return json_failure("\n".join(['%s: %s' % (k, ', '.join(v)) for k, v in form.errors.iteritems()]))
 
 def handle_sample_upload(fileHandle, user, band, callback=None):
     """
