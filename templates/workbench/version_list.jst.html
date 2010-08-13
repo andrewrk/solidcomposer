@@ -172,7 +172,7 @@
                             <div class="missing-samples-form">
                                 <form id="missing-samples-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_upload_samples %}">
                                     <fieldset>
-                                        <input type="hidden" name="version" value="<%=version.id%>" />
+                                        <input type="hidden" name="band" value="<%=project.band.id%>" />
                                         <table>
                                             {% include 'workbench/sample_upload_row.jst.html' %}
                                             <tr>

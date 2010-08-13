@@ -1,7 +1,7 @@
 from django.db.models import Q
 from main import design
 from main.common import create_hash, zip_walk, file_hash
-from main.models import Song, SongCommentNode
+from main.models import Song, SongCommentNode, BandMember
 from main.upload import clean_filename, move_to_storage, upload_file_h
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import error as MutagenID3Error
@@ -117,7 +117,8 @@ def handle_sample_file(filename, file_id, user, band, callback=None):
 
     # if any songs of any of the user's bands are missing this sample,
     # resolve the dependency.
-    deps = SampleDependency.objects.filter(title=sample.title, song__band=sample.band)
+    user_bands = BandMember.objects.filter(user=user, role__in=[BandMember.BAND_MEMBER, BandMember.MANAGER]).values_list('band', flat=True)
+    deps = SampleDependency.objects.filter(title=sample.title, song__band__in=user_bands)
     for dep in deps:
         dep.uploaded_sample = sample
         dep.save()

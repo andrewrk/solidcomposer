@@ -116,7 +116,12 @@ def zip_walk(zip_filename, callback):
 
     # extract every file to a temp folder 
     tmpdir = tempfile.mkdtemp()
-    z.extractall(path=tmpdir)
+    try:
+        z.extractall(path=tmpdir)
+    except zipfile.BadZipfile:
+        shutil.rmtree(tmpdir)
+        return -1
+
     extracted_files = superwalk(tmpdir)
     for extracted_file in extracted_files:
         callback(extracted_file)

@@ -6,7 +6,8 @@ from main.models import BandMember, Band, Profile
 from main.tests import commonSetUp, commonTearDown
 from django.contrib.auth.models import User
 
-from workshop.models import BandInvitation, Project, ProjectVersion, PluginDepenency, Studio
+from workshop.models import BandInvitation, Project, ProjectVersion, \
+    PluginDepenency, Studio, SampleDependency, UploadedSample, SampleFile
 from workshop import syncdaw
 from workshop import design
 
@@ -840,27 +841,227 @@ class SimpleTest(TestCase):
 
     def test_upload_samples(self):
         ajax_upload_samples = reverse("workbench.ajax_upload_samples")
+        create_project_url = lambda band_id: reverse("workbench.create_project", args=[band_id])
+
+        self.setUpTBA()
+        tba = Band.objects.get(title="The Burning Awesome")
+        superjoe_solo = self.superjoe.get_profile().solo_band
+        # upload a project to The Burning Awesome that depends on a.wav and is missing samples
+        self.client.login(username='superjoe', password='temp1234')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
+        project_file = open(absolute('fixtures/depends-a.flp'),'rb')
+        response = self.client.post(create_project_url(tba.id), {
+            'title': "A",
+            'file_source': project_file,
+            'file_mp3':  mp3_file,
+        })
+        self.assertEqual(response.status_code, 302)
+
+        # upload a project to superjoe solo band that depends on b.wav and is missing samples
+        project_file = open(absolute('fixtures/depends-b.flp'),'rb')
+        response = self.client.post(create_project_url(superjoe_solo.id), {
+            'title': "B",
+            'file_source': project_file,
+        })
+        self.assertEqual(response.status_code, 302)
+
+        # anon
+        sample_file_count = SampleFile.objects.count()
+        self.client.logout()
+        sample_c = open(absolute('fixtures/c.wav'), 'rb')
+        sample_d = open(absolute('fixtures/d.wav'), 'rb')
+        self.anonPostFail(ajax_upload_samples, {
+            'band': tba.id,
+            'file': [sample_c, sample_d],
+        })
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+
+        # bogus band
+        self.client.login(username='just64helpin', password='temp1234')
+        sample_c = open(absolute('fixtures/c.wav'), 'rb')
+        sample_d = open(absolute('fixtures/d.wav'), 'rb')
+        response = self.client.post(ajax_upload_samples, {
+            'band': 0,
+            'file': [sample_c, sample_d],
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_band_id)
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+
+        # not a band member
+        self.client.login(username='just64helpin', password='temp1234')
+        sample_c = open(absolute('fixtures/c.wav'), 'rb')
+        sample_d = open(absolute('fixtures/d.wav'), 'rb')
+        response = self.client.post(ajax_upload_samples, {
+            'band': tba.id,
+            'file': [sample_c, sample_d],
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_work_on_this_band)
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+
+        # band member but without edit permission
+        # TODO
+
+        # upload 3 samples. 1 of them this band is missing. 1 of them another
+        # of the user's bands is missing. the SampleDependency should be filled out.
+        dependency_a = SampleDependency.objects.get(title='a.wav')
+        dependency_b = SampleDependency.objects.get(title='b.wav')
+        self.assertEqual(dependency_a.uploaded_sample, None)
+        self.assertEqual(dependency_b.uploaded_sample, None)
+        self.client.login(username='superjoe', password='temp1234')
+        sample_a = open(absolute('fixtures/a.wav'), 'rb')
+        sample_b = open(absolute('fixtures/b.wav'), 'rb')
+        sample_c = open(absolute('fixtures/c.wav'), 'rb')
+        response = self.client.post(ajax_upload_samples, {
+            'band': tba.id,
+            'file': [sample_a, sample_b, sample_c],
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        sample_file_count += 3
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        dependency_a = SampleDependency.objects.get(title='a.wav')
+        dependency_b = SampleDependency.objects.get(title='b.wav')
+        uploaded_sample_a = UploadedSample.objects.get(title='a.wav')
+        uploaded_sample_b = UploadedSample.objects.get(title='b.wav')
+        self.assertEqual(dependency_a.uploaded_sample.id, uploaded_sample_a.id)
+        self.assertEqual(dependency_b.uploaded_sample.id, uploaded_sample_b.id)
+
+        # upload 2 samples in a .zip file. one of the samples we already have uploaded.
+        # should only create 1 new SampleFile
+        sample_a = open(absolute('fixtures/a.wav'), 'rb')
+        cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
+        response = self.client.post(ajax_upload_samples, {
+            'band': tba.id,
+            'file': [cd_zip, sample_a],
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        sample_file_count += 1
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+
+        # corrupt .zip file
+        corrupt_zip = open(absolute('fixtures/corrupt.zip'), 'rb')
+        response = self.client.post(ajax_upload_samples, {
+            'band': tba.id,
+            'file': corrupt_zip,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+
+        # upload same samples as a different user and make sure that no new SampleFiles are generated
+        self.client.login(username='just64helpin', password='temp1234')
+        cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
+        response = self.client.post(ajax_upload_samples, {
+            'band': self.just64helpin.get_profile().solo_band.id,
+            'file': cd_zip,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
 
     def test_upload_samples_as_version(self):
         ajax_upload_samples_as_version = reverse("workbench.ajax_upload_samples_as_version")
+
+        # anon
+
+        # don't have edit permission
+
+        # upload 2 samples
+
         
     def test_rename_project(self):
         ajax_rename_project = reverse("workbench.ajax_rename_project")
 
+        # anon
+
+        # don't have edit permission
+
+        # too long of a name
+
+        # ok
+
     def test_dependency_ownership(self):
         ajax_dependency_ownership = reverse("workbench.ajax_dependency_ownership")
+
+        # anon
+
+        # say we have something
+
+        # say we don't have something
 
     def test_provide_project(self):
         ajax_provide_project = reverse("workbench.ajax_provide_project")
 
+        # anon
+
+        # don't have edit permission
+
+        # ok
+
     def test_provide_mp3(self):
         ajax_provide_mp3 = reverse("workbench.ajax_provide_mp3")
+
+        # anon
+
+        # don't have edit permission
+
+        # corrupt mp3
+
+        # ok
 
     def test_checkout(self):
         ajax_checkout = reverse("workbench.ajax_checkout")
 
+        # anon
+
+        # don't have edit permission
+
+        # already checked out
+
+        # ok
+
     def test_checkin(self):
         ajax_checkin = reverse("workbench.ajax_checkin")
+        dependency_count = SampleDependency.objects.count()
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+
+        # anon
+
+        # don't have edit permission
+
+        # not checked out
+
+        # missing project file
+
+        # missing mp3 file
+
+        # missing comment field
+        
+        # supply everything. FL Studio project
+        # there should be missing sample files
+
+        # supply everything. LMMS project
+        # there should be missing sample files
+
+        # supply everything. unknown project
+        # should not break anything, but also should not create sample files
+
+        # supply everything, FL Studio project, including samples in .zip
+        # should make all missing samples resolved
+
+        # supply everything, unknown project, including samples in .zip
+        # should add samples from zip but leave the .zip file as the project file.
 
     def test_create(self):
         """url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),"""
@@ -904,15 +1105,18 @@ class SimpleTest(TestCase):
 
     def test_band_settings(self):
         """url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),"""
-        pass
+        band_settings_url_name = 'workbench.band_settings'
+        # TODO
 
     def test_band_settings_space(self):
         """url(r'^band/(\d+)/settings/space/$', 'workshop.views.band_settings_space', name="workbench.band_settings_space"),"""
-        pass
+        band_settings_space_url_name = 'workbench.band_settings_space'
+        # TODO
 
     def test_create_project(self):
         """url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),"""
-        pass
+        create_project_url_name = 'workbench.create_project'
+        # TODO
 
     def test_project(self):
         self.setUpTBA()
@@ -930,16 +1134,17 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_download_zip(self):
-        """url(r'^download/zip/$', 'workshop.views.download_zip', name="workbench.download_zip"),"""
-        pass
+        download_zip_url = reverse('workbench.download_zip')
+        # TODO
 
     def test_download_sample(self):
         """url(r'^download/sample/(\d+)/(.+)/$', 'workshop.views.download_sample', name="workbench.download_sample"),"""
-        pass
+        download_sample_url_name = 'workbench.download_sample'
+        # TODO
 
     def test_download_sample_zip(self):
-        """url(r'^download/samples/$', 'workshop.views.download_sample_zip', name="workbench.download_sample_zip"),"""
-        pass
+        download_sample_zip_url = reverse('workbench.download_sample_zip')
+        # TODO
 
     def test_plugin(self):
         self.setUpTBA()

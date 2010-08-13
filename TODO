@@ -1,11 +1,12 @@
 Release "Boten Anna" (Basshunter)
 = sitewide
- * workbench tests - Aug 10
- * settings page - Aug 11
+ * settings page - Aug 12
    > email subscriptions
    > account type
    > change password
    > tests for this stuff
+ * workbench tests - Aug 12
+   > take into account bytes used and whether bands are read only
  * upgrade page where you can choose a plan and sign up and pay - Aug 12
    > monthly, 1 year, two years
    > tests for this stuff
@@ -23,6 +24,7 @@ Release "Boten Anna" (Basshunter)
    > can invite them to join your band
  * make sure bands are read only when they should be - Aug 20
    > ui to indicate that bands are read only and link to upgrade account
+   > on create band page, if they are out of bands, have it say that they need to upgrade to create more bands.
  * editor controls on fields that will be parsed by showdown. - Aug 20
    > http://wmd-editor.com/
    > also always show a preview when things will be parsed by showdown.
@@ -56,7 +58,6 @@ Release "Boten Anna" (Basshunter)
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
- * on create band page, if they are out of bands, have it say that they need to upgrade to create more bands.
  * edit competition
  * recent activty entry log:
    > band member leaving

@@ -649,12 +649,10 @@ def ajax_upload_samples_as_version(request):
 @json_login_required
 @json_post_required
 def ajax_upload_samples(request):
-    version = get_obj_from_request(request.POST, 'version', ProjectVersion)
+    band = get_obj_from_request(request.POST, 'band', Band)
 
-    if version is None:
-        return json_failure(design.bad_version_id)
-
-    band = version.project.band
+    if band is None:
+        return json_failure(design.bad_band_id)
 
     if not band.permission_to_work(request.user):
         return json_failure(design.you_dont_have_permission_to_work_on_this_band)
