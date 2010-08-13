@@ -1,7 +1,6 @@
 Release "Boten Anna" (Basshunter)
 = sitewide
  * workbench tests - Aug 12
-   > test_download_zip
    > test_download_sample
    > test_download_sample_zip
  * main tests - Aug 12
@@ -67,6 +66,7 @@ Release "Boten Anna" (Basshunter)
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+ * finish up TODOs in tests
  * edit competition
  * recent activty entry log:
    > band member leaving

@@ -1903,7 +1903,63 @@ class SimpleTest(TestCase):
 
     def test_download_zip(self):
         download_zip_url = reverse('workbench.download_zip')
+        create_project_url = lambda band_id: reverse('workbench.create_project', args=[band_id])
+
+        # upload a project with a bunch of samples
+        superjoe_solo = self.superjoe.get_profile().solo_band
+        self.client.login(username='superjoe', password='temp1234')
+        project_file = open(absolute('fixtures/depends-abcdef.zip'),'rb')
+        response = self.client.post(create_project_url(superjoe_solo.id), {
+            'title': "Blank",
+            'file_source': project_file,
+        })
+        self.assertEqual(response.status_code, 302)
+
+        song = Song.objects.order_by('-pk')[0]
+        
+        # anon
+        self.client.logout()
+        self.checkLoginRedirect(download_zip_url)
+
+        # bogus song
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get(download_zip_url, {
+            'song': 13,
+        })
+        self.assertEqual(response.status_code, 404)
+
+        # not in band
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.get(download_zip_url, {
+            'song': song.id,
+        })
+        self.assertRedirects(response, reverse('user_login') + "?next=" + download_zip_url)
+
+        # in band but not permission to view
         # TODO
+
+        # we want everything
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get(download_zip_url, {
+            'song': song.id,
+        })
+        self.assertEquals(response['Content-Type'], 'application/zip')
+        # TODO: check that the samples made it into the zip OK
+
+        # sneak in an id of a SampleDependency which shouldn't have access to
+        # TODO
+
+        # normal case
+        sample_deps = []
+        sample_deps.append(SampleDependency.objects.get(title='a.wav'))
+        sample_deps.append(SampleDependency.objects.get(title='c.wav'))
+        sample_deps.append(SampleDependency.objects.get(title='e.wav'))
+        response = self.client.get(download_zip_url, {
+            'song': song.id,
+            's': sample_deps,
+        })
+        self.assertEquals(response['Content-Type'], 'application/zip')
+        # TODO: check that the samples made it into the zip OK
 
     def test_download_sample(self):
         """url(r'^download/sample/(\d+)/(.+)/$', 'workshop.views.download_sample', name="workbench.download_sample"),"""

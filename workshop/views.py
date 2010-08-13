@@ -961,16 +961,12 @@ def download_sample(request, sample_id_str, sample_title):
     sample_file_h.seek(0)
     return response
     
-@json_login_required
-@json_get_required
+@login_required
 def download_zip(request):
-    song = get_obj_from_request(request.GET, 'song', Song)
-
-    if song is None:
-        return json_failure(design.bad_song_id)
+    song = get_object_or_404(Song, pk=get_val(request.GET, 'song', 0))
 
     if not song.permission_to_view_source(request.user):
-        return json_failure(design.you_dont_have_permission_to_view_source)
+        return HttpResponseRedirect(reverse('user_login') + "?next=" + request.path)
 
     wanted_samples = request.GET.getlist('s')
     if len(wanted_samples) == 0:
