@@ -844,8 +844,11 @@ class SimpleTest(TestCase):
         create_project_url = lambda band_id: reverse("workbench.create_project", args=[band_id])
 
         self.setUpTBA()
+        uploaded_sample_count = UploadedSample.objects.count()
+        sample_dependency_count = SampleDependency.objects.count()
         tba = Band.objects.get(title="The Burning Awesome")
         superjoe_solo = self.superjoe.get_profile().solo_band
+
         # upload a project to The Burning Awesome that depends on a.wav and is missing samples
         self.client.login(username='superjoe', password='temp1234')
         mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
@@ -856,6 +859,9 @@ class SimpleTest(TestCase):
             'file_mp3':  mp3_file,
         })
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        sample_dependency_count += 1
+        self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
 
         # upload a project to superjoe solo band that depends on b.wav and is missing samples
         project_file = open(absolute('fixtures/depends-b.flp'),'rb')
@@ -864,6 +870,9 @@ class SimpleTest(TestCase):
             'file_source': project_file,
         })
         self.assertEqual(response.status_code, 302)
+        sample_dependency_count += 1
+        self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
 
         # anon
         sample_file_count = SampleFile.objects.count()
@@ -875,6 +884,8 @@ class SimpleTest(TestCase):
             'file': [sample_c, sample_d],
         })
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
 
         # bogus band
         self.client.login(username='just64helpin', password='temp1234')
@@ -889,6 +900,8 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.bad_band_id)
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
 
         # not a band member
         self.client.login(username='just64helpin', password='temp1234')
@@ -903,6 +916,8 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.you_dont_have_permission_to_work_on_this_band)
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
 
         # band member but without edit permission
         # TODO
@@ -932,6 +947,9 @@ class SimpleTest(TestCase):
         uploaded_sample_b = UploadedSample.objects.get(title='b.wav')
         self.assertEqual(dependency_a.uploaded_sample.id, uploaded_sample_a.id)
         self.assertEqual(dependency_b.uploaded_sample.id, uploaded_sample_b.id)
+        self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
+        uploaded_sample_count += 3
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
 
         # upload 2 samples in a .zip file. one of the samples we already have uploaded.
         # should only create 1 new SampleFile
@@ -946,6 +964,8 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], True)
         sample_file_count += 1
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        uploaded_sample_count += 1
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
 
         # corrupt .zip file
         corrupt_zip = open(absolute('fixtures/corrupt.zip'), 'rb')
@@ -957,6 +977,8 @@ class SimpleTest(TestCase):
         data = json.loads(response.content)
         self.assertEqual(data['success'], True)
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
 
         # upload same samples as a different user and make sure that no new SampleFiles are generated
         self.client.login(username='just64helpin', password='temp1234')
@@ -969,23 +991,93 @@ class SimpleTest(TestCase):
         data = json.loads(response.content)
         self.assertEqual(data['success'], True)
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
+        uploaded_sample_count += 2
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
 
     def test_upload_samples_as_version(self):
         ajax_upload_samples_as_version = reverse("workbench.ajax_upload_samples_as_version")
 
-        # anon
+        self.setUpTBA()
+        the_castle = Project.objects.get(title='The Castle')
+        sample_file_count = SampleFile.objects.count()
+        uploaded_sample_count = UploadedSample.objects.count()
+        version_count = ProjectVersion.objects.count()
 
-        # don't have edit permission
+        # anon
+        cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
+        self.anonPostFail(ajax_upload_samples_as_version, {
+            'project': the_castle.id,
+            'comments': "uploaded samples comments",
+            'file': cd_zip,
+        })
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+
+        # bogus project
+        self.client.login(username='just64helpin', password='temp1234')
+        cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
+        response = self.client.post(ajax_upload_samples_as_version, {
+            'project': 0,
+            'comments': "uploaded samples comments",
+            'file': cd_zip,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_project_id)
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+
+        # not in band
+        cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
+        response = self.client.post(ajax_upload_samples_as_version, {
+            'project': the_castle.id,
+            'comments': "uploaded samples comments",
+            'file': cd_zip,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_work_on_this_band)
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+
+        # in band but not edit permission
+        # TODO
 
         # upload 2 samples
-
+        self.client.login(username='superjoe', password='temp1234')
+        cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
+        self.client.post(ajax_upload_samples_as_version, {
+            'project': the_castle.id,
+            'comments': "uploaded samples comments",
+            'file': cd_zip,
+        })
+        sample_file_count += 2
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        uploaded_sample_count += 2
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        version_count += 1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertEqual(version.comment_node.content, "uploaded samples comments")
+        self.assertEqual(version.provided_samples.count(), 2)
         
     def test_rename_project(self):
         ajax_rename_project = reverse("workbench.ajax_rename_project")
 
         # anon
 
-        # don't have edit permission
+        # bogus band
+
+        # not in band
+
+        # in band, but don't have edit permission
+        # TODO
 
         # too long of a name
 

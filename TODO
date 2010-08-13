@@ -1,15 +1,27 @@
 Release "Boten Anna" (Basshunter)
 = sitewide
+ * workbench tests - Aug 12
+   > test_rename_project
+   > test_dependency_ownership
+   > test_provide_project
+   > test_provide_mp3
+   > test_checkout
+   > test_checkin
+   > test_create_project
+   > test_download_zip
+   > test_download_sample
+   > test_download_sample_zip
  * settings page - Aug 12
    > email subscriptions
    > account type
    > change password
-   > tests for this stuff
- * workbench tests - Aug 12
-   > take into account bytes used and whether bands are read only
+   > test_band_settings
+   > test_band_settings_space
  * upgrade page where you can choose a plan and sign up and pay - Aug 12
    > monthly, 1 year, two years
    > tests for this stuff
+ * workbench tests - Aug 12
+   > take into account bytes used and whether bands are read only
  * link the "Get More" in workbench to the correct account tab - Aug 17
  * password recovery - Aug 17
    > test
