@@ -1787,8 +1787,104 @@ class SimpleTest(TestCase):
 
     def test_create_project(self):
         """url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),"""
-        create_project_url_name = 'workbench.create_project'
-        # TODO
+        create_project_url = lambda band_id: reverse('workbench.create_project', args=[band_id])
+
+        project_count = Project.objects.count()
+        version_count = ProjectVersion.objects.count()
+        plugin_deps_count = PluginDepenency.objects.count()
+        
+        skiessi_solo = self.skiessi.get_profile().solo_band
+        # anon
+        self.checkLoginRedirect(create_project_url(skiessi_solo.id))
+
+        # bogus band
+        self.client.login(username='skiessi', password='temp1234')
+        project_file = open(absolute('fixtures/4frontpiano.flp'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(create_project_url(0), {
+            'title': 'Front',
+            'file_source': project_file,
+            'file_mp3': mp3_file,
+            'comments': 'abc123',
+        })
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(project_count, Project.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
+
+        # not in band
+        self.client.login(username='just64helpin', password='temp1234')
+        project_file = open(absolute('fixtures/4frontpiano.flp'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(create_project_url(skiessi_solo.id), {
+            'title': 'Front',
+            'file_source': project_file,
+            'file_mp3': mp3_file,
+            'comments': 'abc123',
+        })
+        self.assertRedirects(response, reverse('user_login') + '?next=' + create_project_url(skiessi_solo.id))
+        self.assertEqual(project_count, Project.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
+
+        # leave out project file (should not work)
+        self.client.login(username='skiessi', password='temp1234')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(create_project_url(skiessi_solo.id), {
+            'title': 'Front',
+            'file_mp3': mp3_file,
+            'comments': 'abc123',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'file_source', design.this_field_is_required)
+        self.assertEqual(project_count, Project.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
+
+        # leave out mp3 and comments (should work)
+        project_file = open(absolute('fixtures/4frontpiano.flp'), 'rb')
+        response = self.client.post(create_project_url(skiessi_solo.id), {
+            'title': 'Front',
+            'file_source': project_file,
+        })
+        self.assertEqual(response.status_code, 302)
+        project_count += 1
+        self.assertEqual(project_count, Project.objects.count())
+        version_count +=  1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        project = Project.objects.order_by('-pk')[0]
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertEqual(version.project.id, project.id)
+        self.assertEqual(version.version, 1)
+        self.assertNotEqual(version.song.comment_node, None)
+        plugin_deps_count += 1
+        self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
+        plugin = PluginDepenency.objects.order_by('-pk')[0]
+        self.assertEqual(plugin.title, '4Front Piano')
+        song = version.song
+        self.assertEqual(song.plugins.all()[0].id, plugin.id)
+        
+        # supply everything
+        project_file = open(absolute('fixtures/4frontpiano.flp'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(create_project_url(skiessi_solo.id), {
+            'title': 'Front',
+            'file_source': project_file,
+            'file_mp3': mp3_file,
+            'comments': 'I have been writing tests for 9 hours.',
+        })
+        self.assertEqual(response.status_code, 302)
+        project_count += 1
+        self.assertEqual(project_count, Project.objects.count())
+        version_count +=  1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        project = Project.objects.order_by('-pk')[0]
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertEqual(version.project.id, project.id)
+        self.assertEqual(version.version, 1)
+        self.assertNotEqual(version.song.comment_node, None)
+        self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
+        self.assertEqual(version.song.comment_node.content, 'I have been writing tests for 9 hours.')
 
     def test_project(self):
         self.setUpTBA()

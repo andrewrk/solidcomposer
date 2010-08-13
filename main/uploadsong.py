@@ -13,6 +13,11 @@ import os
 import tempfile
 import waveform
 
+IGNORED_PLUGINS = (
+    'sampler',
+    'fruity wrapper',
+)
+
 def flatten_list(lst):
     return [item for sublist in lst for item in sublist]
 
@@ -180,6 +185,9 @@ def handle_project_file(filename, user, song, filename_appendix=""):
             for plugin in plugins:
                 # if it's an invalid name, ignore
                 if plugin.strip() == '':
+                    continue
+
+                if plugin in IGNORED_PLUGINS:
                     continue
 
                 # see if it already exists

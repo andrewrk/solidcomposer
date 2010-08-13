@@ -840,10 +840,14 @@ def project(request, band_id_str, project_id_str):
     return render_to_response('workbench/project.html', locals(), context_instance=RequestContext(request))
 
 @login_required
-def create_project(request, band_str):
-    band_id = int(band_str)
-    band = get_object_or_404(Band, id=band_id)
+def create_project(request, band_id_str):
+    band = get_object_or_404(Band, id=int(band_id_str))
     err_msg = ''
+
+    if not band.permission_to_work(request.user):
+        # redirect to login
+        return HttpResponseRedirect(reverse('user_login') + '?next=' + request.path)
+
     if request.method == 'POST':
         form = NewProjectForm(request.POST, request.FILES)
         if form.is_valid():
