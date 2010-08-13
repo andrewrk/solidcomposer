@@ -1822,7 +1822,7 @@ class SimpleTest(TestCase):
             'file_mp3': mp3_file,
             'comments': 'abc123',
         })
-        self.assertRedirects(response, reverse('user_login') + '?next=' + create_project_url(skiessi_solo.id))
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(project_count, Project.objects.count())
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
@@ -1933,7 +1933,7 @@ class SimpleTest(TestCase):
         response = self.client.get(download_zip_url, {
             'song': song.id,
         })
-        self.assertRedirects(response, reverse('user_login') + "?next=" + download_zip_url)
+        self.assertEquals(response.status_code, 403)
 
         # in band but not permission to view
         # TODO

@@ -846,7 +846,7 @@ def create_project(request, band_id_str):
 
     if not band.permission_to_work(request.user):
         # redirect to login
-        return HttpResponseRedirect(reverse('user_login') + '?next=' + request.path)
+        return HttpResponseForbidden()
 
     if request.method == 'POST':
         form = NewProjectForm(request.POST, request.FILES)
@@ -966,7 +966,7 @@ def download_zip(request):
     song = get_object_or_404(Song, pk=get_val(request.GET, 'song', 0))
 
     if not song.permission_to_view_source(request.user):
-        return HttpResponseRedirect(reverse('user_login') + "?next=" + request.path)
+        return HttpResponseForbidden()
 
     wanted_samples = request.GET.getlist('s')
     if len(wanted_samples) == 0:
