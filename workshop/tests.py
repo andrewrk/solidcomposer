@@ -1420,40 +1420,320 @@ class SimpleTest(TestCase):
 
     def test_checkin(self):
         ajax_checkin = reverse("workbench.ajax_checkin")
+        ajax_checkout = reverse("workbench.ajax_checkout")
+
+        # set up a band and stuff
+        self.setUpTBA()
+        the_castle = Project.objects.get(title='The Castle')
+
         dependency_count = SampleDependency.objects.count()
-        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        uploaded_sample_count = UploadedSample.objects.count()
+        sample_file_count = SampleFile.objects.count()
+        version_count = ProjectVersion.objects.count()
+
+        # superjoe check out the castle
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
 
         # anon
+        self.client.logout()
+        project_file = open(absolute('fixtures/depends-a.flp'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        self.anonPostFail(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'comments1234',
+        })
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
 
         # bogus project
+        self.client.login(username='superjoe', password='temp1234')
+        project_file = open(absolute('fixtures/depends-a.flp'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': 0,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'comments1234',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_project_id)
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
 
         # not in band
+        self.client.login(username='just64helpin', password='temp1234')
+        project_file = open(absolute('fixtures/depends-a.flp'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'comments1234',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.not_checked_out_to_you)
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
 
         # band member but don't have edit permission
         # TODO
 
+        # someone else has it checked out
+        self.client.login(username='skiessi', password='temp1234')
+        project_file = open(absolute('fixtures/depends-a.flp'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'comments1234',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.not_checked_out_to_you)
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+
+        # just check in
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.checked_out_to, None)
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+
+        # re-check out
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        # missing project file (should not work)
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'mp3_preview': mp3_file,
+            'comments': 'comments1234',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.must_submit_project_file)
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+
+        # missing mp3 file, and comment field (should work)
+        project_file = open(absolute('fixtures/depends-a.flp'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        dependency_count += 1
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        version_count += 1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        depend = SampleDependency.objects.order_by('-pk')[0]
+        self.assertEqual(depend.title, 'a.wav')
+        self.assertEqual(depend.uploaded_sample, None)
+        self.assertNotEqual(depend.song.comment_node, None)
+
         # not checked out
+        project_file = open(absolute('fixtures/depends-a.flp'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'comments1234',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.not_checked_out_to_you)
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
 
-        # missing project file
+        # re-check out
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
 
-        # missing mp3 file
-
-        # missing comment field
-        
-        # supply everything. FL Studio project
+        # supply everything. LMMS project .mmpz
         # there should be missing sample files
+        project_file = open(absolute('fixtures/depends-clap01.mmpz'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'comments1234',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        dependency_count += 1
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        version_count += 1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        depend = SampleDependency.objects.order_by('-pk')[0]
+        self.assertEqual(depend.title, 'clap01.ogg')
+        self.assertEqual(depend.uploaded_sample, None)
+        self.assertEqual(depend.song.comment_node.content, "comments1234")
 
-        # supply everything. LMMS project
-        # there should be missing sample files
+        # re-check out
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        # supply everything. LMMS project .mmp
+        # same dependency so should not add any dependencies.
+        project_file = open(absolute('fixtures/depends-clap01.mmp'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'abc123',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        version_count += 1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "abc123")
+
+        # re-check out
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
 
         # supply everything. unknown project
         # should not break anything, but also should not create sample files
+        project_file = open(absolute('fixtures/unknown-studio.xyz'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'unknown studio wtf',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        version_count += 1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "unknown studio wtf")
+
+        # re-check out
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
 
         # supply everything, FL Studio project, including samples in .zip
         # should make all missing samples resolved
+        project_file = open(absolute('fixtures/a.flp.zip'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'ah much better',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        dependency_count += 1
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        version_count += 1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        uploaded_sample_count += 1
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        sample_file_count += 1
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "ah much better")
+        dep = SampleDependency.objects.filter(title='a.wav').order_by('-pk')[0]
+        self.assertEqual(dep.uploaded_sample.id, UploadedSample.objects.order_by('-pk')[0].id)
+
+        # re-check out
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
 
         # supply everything, unknown project, including samples in .zip
         # should add samples from zip but leave the .zip file as the project file.
+        project_file = open(absolute('fixtures/unknown-studio-ef.zip'), 'rb')
+        mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
+        response = self.client.post(ajax_checkin, {
+            'project': the_castle.id,
+            'project_file': project_file,
+            'mp3_preview': mp3_file,
+            'comments': 'unknown studio zip',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(dependency_count, SampleDependency.objects.count())
+        version_count += 1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+        uploaded_sample_count += 3 # we're counting the studio here.
+        self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        sample_file_count += 3
+        self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "unknown studio zip")
 
     def test_create(self):
         """url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),"""

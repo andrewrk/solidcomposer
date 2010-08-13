@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE multimedia-project>
+<multimedia-project version="1.0" creator="Linux MultiMedia Studio (LMMS)" creatorversion="0.4.90" type="song">
+  <head timesig_numerator="4" mastervol="100" timesig_denominator="4" bpm="140" masterpitch="0"/>
+  <song>
+    <trackcontainer width="600" x="5" y="5" maximized="0" height="300" visible="1" type="song" minimized="0"/>
+    <track muted="0" type="6" name="Automation track">
+      <automationtrack/>
+      <automationpattern name="Tempo" pos="0" len="192">
+        <time value="140" pos="0"/>
+      </automationpattern>
+      <automationpattern name="Master volume" pos="0" len="192">
+        <time value="100" pos="0"/>
+      </automationpattern>
+      <automationpattern name="Master pitch" pos="0" len="192">
+        <time value="0" pos="0"/>
+      </automationpattern>
+    </track>
+    <fxmixer width="558" x="5" y="310" maximized="0" height="349" visible="1" minimized="0">
+      <fxchannel num="0" muted="0" volume="1" name="Master">
+        <fxchain numofeffects="0" enabled="0"/>
+      </fxchannel>
+    </fxmixer>
+    <ControllerRackView width="258" x="880" y="310" maximized="0" height="142" visible="1" minimized="0"/>
+    <pianoroll width="840" x="0" y="0" maximized="0" height="480" visible="0" minimized="0"/>
+    <automationeditor width="740" x="0" y="0" maximized="0" height="480" visible="0" minimized="0"/>
+    <projectnotes width="400" x="700" y="10" maximized="0" height="300" visible="0" minimized="0"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" color:#e0e0e0;">Put down your project notes here.</span></p></body></html>]]></projectnotes>
+    <timeline lp1pos="192" lp0pos="0" lpstate="0"/>
+    <controllers/>
+  </song>
+</multimedia-project>

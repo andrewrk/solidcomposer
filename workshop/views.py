@@ -751,7 +751,7 @@ def ajax_checkin(request):
         return json_failure(design.bad_project_id)
 
     # make sure project is checked out to request user
-    if project.checked_out_to.id != request.user.id:
+    if project.checked_out_to is None or project.checked_out_to.id != request.user.id:
         return json_failure(design.not_checked_out_to_you)
 
     project_file = request.FILES.get('project_file')
