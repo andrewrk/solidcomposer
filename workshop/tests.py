@@ -1070,18 +1070,77 @@ class SimpleTest(TestCase):
     def test_rename_project(self):
         ajax_rename_project = reverse("workbench.ajax_rename_project")
 
-        # anon
+        self.setUpTBA()
+        version_count = ProjectVersion.objects.count()
+        the_castle = Project.objects.get(title='The Castle')
 
-        # bogus band
+        # anon
+        self.anonPostFail(ajax_rename_project, {
+            'project': the_castle.id,
+            'title': "The Castle LOL",
+            'comments': 'comments1',
+        })
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.title, 'The Castle')
+        self.assertEqual(version_count, ProjectVersion.objects.count())
+
+        # bogus project
+        self.client.login(username='just64helpin', password='temp1234')
+        cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
+        response = self.client.post(ajax_rename_project, {
+            'project': 0,
+            'title': "The Castle LOL",
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_project_id)
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.title, 'The Castle')
+        self.assertEqual(version_count, ProjectVersion.objects.count())
 
         # not in band
+        response = self.client.post(ajax_rename_project, {
+            'project': the_castle.id,
+            'title': "The Castle LOL",
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_work_on_this_band)
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.title, 'The Castle')
+        self.assertEqual(version_count, ProjectVersion.objects.count())
 
         # in band, but don't have edit permission
         # TODO
 
         # too long of a name
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_rename_project, {
+            'project': the_castle.id,
+            'title': 'a' * 101,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.title, 'The Castle')
+        self.assertEqual(version_count, ProjectVersion.objects.count())
 
         # ok
+        response = self.client.post(ajax_rename_project, {
+            'project': the_castle.id,
+            'title': "The Castle LOL",
+            'comments': "I thought this would be a good idea.",
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.title, 'The Castle LOL')
+        version_count += 1
+        self.assertEqual(version_count, ProjectVersion.objects.count())
 
     def test_dependency_ownership(self):
         ajax_dependency_ownership = reverse("workbench.ajax_dependency_ownership")

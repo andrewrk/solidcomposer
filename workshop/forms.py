@@ -2,10 +2,8 @@ from django import forms
 from workshop import design
 
 class NewProjectForm(forms.Form):
-    title = forms.CharField(max_length=100,
-        error_messages={'required': design.this_field_is_required})
-    file_source = forms.FileField(label="Project file", error_messages={
-        'required': design.this_field_is_required})
+    title = forms.CharField(max_length=100, error_messages={'required': design.this_field_is_required})
+    file_source = forms.FileField(label="Project file", error_messages={ 'required': design.this_field_is_required})
     file_mp3 = forms.FileField(label="MP3 Preview", required=False)
     comments = forms.CharField(max_length=1000, required=False, widget=forms.Textarea)
 
@@ -21,9 +19,12 @@ class NewProjectForm(forms.Form):
         return filename
 
 class NewBandForm(forms.Form):
-    band_name = forms.CharField(max_length=100,
-        error_messages={'required': design.this_field_is_required})
+    band_name = forms.CharField(max_length=100, error_messages={'required': design.this_field_is_required})
 
 class RenameBandForm(forms.Form):
-    new_name = forms.CharField(max_length=100,
-        error_messages={'required': design.this_field_is_required})
+    new_name = forms.CharField(max_length=100, error_messages={'required': design.this_field_is_required})
+
+class RenameProjectForm(forms.Form):
+    title = forms.CharField(max_length=100, error_messages={'required': design.you_must_have_a_title})
+    comments = forms.CharField(max_length=1000, required=False, widget=forms.Textarea)
+    project = forms.IntegerField()

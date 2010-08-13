@@ -19,7 +19,8 @@ from main.upload import upload_file_h, clean_filename
 from main.uploadsong import upload_song, handle_sample_file, handle_mp3_upload, \
     handle_project_upload
 from workshop import design
-from workshop.forms import NewBandForm, RenameBandForm, NewProjectForm
+from workshop.forms import NewBandForm, RenameBandForm, NewProjectForm, \
+    RenameProjectForm
 from workshop.models import LogEntry, BandInvitation, Project, PluginDepenency, \
     Studio, ProjectVersion, UploadedSample, SampleDependency
 import os
@@ -548,7 +549,10 @@ def ajax_create_band(request):
         actually_create_band(request.user, form.cleaned_data.get('band_name'))
         return json_success()
 
-    return json_failure("\n".join(['%s: %s' % (k, ', '.join(v)) for k, v in form.errors.iteritems()]))
+    return json_failure(form_errors(form))
+
+def form_errors(form):
+    return "\n".join(['%s: %s' % (k, ', '.join(v)) for k, v in form.errors.iteritems()])
 
 def handle_sample_upload(fileHandle, user, band, callback=None):
     """
@@ -570,37 +574,39 @@ def ajax_rename_project(request):
     """
     Make a new version that renames the project.
     """
-    new_title = request.POST.get('title', '')
-    comments  = request.POST.get('comments', '')
+    form = RenameProjectForm(request.POST)
+    if form.is_valid():
+        new_title = form.cleaned_data.get('title')
+        comments  = form.cleaned_data.get('comments', '')
     
-    if new_title == '':
-        return json_failure(design.you_must_have_a_title)
+        project_id = form.cleaned_data.get('project')
+        try:
+            project = Project.objects.get(pk=project_id)
+        except Project.DoesNotExist:
+            return json_failure(design.bad_project_id)
 
-    project = get_obj_from_request(request.POST, 'project', Project)
+        if not project.band.permission_to_work(request.user):
+            return json_failure(design.you_dont_have_permission_to_work_on_this_band)
 
-    if project is None:
-        return json_failure(design.bad_project_id)
+        node = SongCommentNode()
+        node.owner = request.user
+        node.content = comments
+        node.save()
 
-    if not project.band.permission_to_work(request.user):
-        return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+        version = ProjectVersion()
+        version.project = project
+        version.owner = request.user
+        version.comment_node = node
+        version.version = project.latest_version.version # no +1 because only renaming
+        version.new_title = new_title
+        version.save()
 
-    node = SongCommentNode()
-    node.owner = request.user
-    node.content = comments
-    node.save()
+        project.title = new_title
+        project.save()
 
-    version = ProjectVersion()
-    version.project = project
-    version.owner = request.user
-    version.comment_node = node
-    version.version = project.latest_version.version # no +1 because only renaming
-    version.new_title = new_title
-    version.save()
+        return json_success()
 
-    project.title = new_title
-    project.save()
-
-    return json_success()
+    return json_failure(form_errors(form))
 
 @json_login_required
 @json_post_required
