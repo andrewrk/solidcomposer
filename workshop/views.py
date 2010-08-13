@@ -673,6 +673,8 @@ def ajax_upload_samples(request):
     
     return json_success()
 
+@json_login_required
+@json_post_required
 def ajax_provide_project(request):
     version = get_obj_from_request(request.POST, 'version', ProjectVersion)
 

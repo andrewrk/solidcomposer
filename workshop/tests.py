@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core import mail
 
-from main.models import BandMember, Band, Profile
+from main.models import BandMember, Band, Profile, Song
 from main.tests import commonSetUp, commonTearDown
 from django.contrib.auth.models import User
 
@@ -1231,11 +1231,48 @@ class SimpleTest(TestCase):
     def test_provide_project(self):
         ajax_provide_project = reverse("workbench.ajax_provide_project")
 
+        # set up the db so that there is a project without a project
+        self.setUpTBA()
+        the_castle = Project.objects.get(title='The Castle')
+        castle_song = the_castle.latest_version.song
+        castle_song.source_file = ""
+        castle_song.save()
+
         # anon
+        project_file = open(absolute('fixtures/blank.flp'), 'rb')
+        self.anonPostFail(ajax_provide_project, {
+            'version': the_castle.latest_version.id,
+            'file': project_file,
+        })
+        castle_song = Song.objects.get(pk=castle_song.id)
+        self.assertEqual(castle_song.source_file, "")
 
         # don't have edit permission
+        self.client.login(username='just64helpin', password='temp1234')
+        project_file = open(absolute('fixtures/blank.flp'), 'rb')
+        response = self.client.post(ajax_provide_project, {
+            'version': the_castle.latest_version.id,
+            'file': project_file,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_work_on_this_band)
+        castle_song = Song.objects.get(pk=castle_song.id)
+        self.assertEqual(castle_song.source_file, "")
 
         # ok
+        self.client.login(username='skiessi', password='temp1234')
+        project_file = open(absolute('fixtures/blank.flp'), 'rb')
+        response = self.client.post(ajax_provide_project, {
+            'version': the_castle.latest_version.id,
+            'file': project_file,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        castle_song = Song.objects.get(pk=castle_song.id)
+        self.assertNotEqual(castle_song.source_file, "")
 
     def test_provide_mp3(self):
         ajax_provide_mp3 = reverse("workbench.ajax_provide_mp3")

@@ -262,6 +262,8 @@ def handle_project_file(filename, user, song, filename_appendix=""):
         # move to storage
         move_to_storage(filename, song.source_file)
 
+    song.save()
+
 def handle_mp3_upload(file_mp3_handle, song, max_song_len=None, filename_appendix=""):
     data = {'success': False}
 
