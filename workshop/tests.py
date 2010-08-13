@@ -1145,11 +1145,88 @@ class SimpleTest(TestCase):
     def test_dependency_ownership(self):
         ajax_dependency_ownership = reverse("workbench.ajax_dependency_ownership")
 
+        self.setUpTBA()
+
+        plugin = PluginDepenency.objects.all()[0]
+        studio = Studio.objects.all()[0]
+        prof = self.just64helpin.get_profile()
+        prof.plugins.clear()
+        prof.studios.clear()
+        prof.save()
+
         # anon
+        self.anonPostFail(ajax_dependency_ownership, {
+            'dependency_type': PluginDepenency.STUDIO,
+            'dependency_id': studio.id,
+            'have': 'true',
+        })
+        prof = Profile.objects.get(pk=prof.id)
+        self.assertEqual(prof.plugins.count(), 0)
+        self.assertEqual(prof.studios.count(), 0)
 
-        # say we have something
+        # bogus
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.post(ajax_dependency_ownership, {
+            'dependency_type': PluginDepenency.STUDIO,
+            'dependency_id': 0,
+            'have': 'true',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_dependency_id)
 
-        # say we don't have something
+        # say we have a plugin
+        response = self.client.post(ajax_dependency_ownership, {
+            'dependency_type': PluginDepenency.EFFECT,
+            'dependency_id': plugin.id,
+            'have': 'true',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        prof = Profile.objects.get(pk=prof.id)
+        self.assertEqual(prof.plugins.count(), 1)
+        self.assertEqual(prof.studios.count(), 0)
+
+        # say we don't have a plugin
+        response = self.client.post(ajax_dependency_ownership, {
+            'dependency_type': PluginDepenency.EFFECT,
+            'dependency_id': plugin.id,
+            'have': 'false',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        prof = Profile.objects.get(pk=prof.id)
+        self.assertEqual(prof.plugins.count(), 0)
+        self.assertEqual(prof.studios.count(), 0)
+
+        # say we have a studio
+        response = self.client.post(ajax_dependency_ownership, {
+            'dependency_type': PluginDepenency.STUDIO,
+            'dependency_id': studio.id,
+            'have': 'true',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        prof = Profile.objects.get(pk=prof.id)
+        self.assertEqual(prof.plugins.count(), 0)
+        self.assertEqual(prof.studios.count(), 1)
+
+        # say we don't have a studio
+        response = self.client.post(ajax_dependency_ownership, {
+            'dependency_type': PluginDepenency.STUDIO,
+            'dependency_id': studio.id,
+            'have:': 'false',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        prof = Profile.objects.get(pk=prof.id)
+        self.assertEqual(prof.plugins.count(), 0)
+        self.assertEqual(prof.studios.count(), 0)
 
     def test_provide_project(self):
         ajax_provide_project = reverse("workbench.ajax_provide_project")

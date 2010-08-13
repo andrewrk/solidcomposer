@@ -397,9 +397,11 @@ def ajax_dependency_ownership(request):
     if dep is None:
         return json_failure(design.bad_dependency_id)
 
-    have = request.POST.get('have', False)
+    have = request.POST.get('have', 'false')
     if have == 'false':
         have = False
+    else:
+        have = True
 
     if have:
         collection.add(dep)

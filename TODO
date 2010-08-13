@@ -1,7 +1,6 @@
 Release "Boten Anna" (Basshunter)
 = sitewide
  * workbench tests - Aug 12
-   > test_dependency_ownership
    > test_provide_project
    > test_provide_mp3
    > test_checkout
