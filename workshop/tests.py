@@ -14,9 +14,9 @@ from workshop import design
 import simplejson as json
 from datetime import datetime, timedelta
 
-from main.common import create_hash
+from main.common import create_hash, file_hash
 
-import os
+import os, hashlib
 
 def absolute(relative_path):
     "make a relative path absolute"
@@ -1962,9 +1962,40 @@ class SimpleTest(TestCase):
         # TODO: check that the samples made it into the zip OK
 
     def test_download_sample(self):
-        """url(r'^download/sample/(\d+)/(.+)/$', 'workshop.views.download_sample', name="workbench.download_sample"),"""
-        download_sample_url_name = 'workbench.download_sample'
-        # TODO
+        download_sample_url = lambda uploaded_sample_id, sample_title: reverse('workbench.download_sample', args=[uploaded_sample_id, sample_title])
+        create_project_url = lambda band_id: reverse('workbench.create_project', args=[band_id])
+
+        # upload a project with a bunch of samples
+        superjoe_solo = self.superjoe.get_profile().solo_band
+        self.client.login(username='superjoe', password='temp1234')
+        project_file = open(absolute('fixtures/depends-abcdef.zip'),'rb')
+        response = self.client.post(create_project_url(superjoe_solo.id), {
+            'title': "Blank",
+            'file_source': project_file,
+        })
+        self.assertEqual(response.status_code, 302)
+
+        sample = UploadedSample.objects.get(title='c.wav')
+        sample_hash = file_hash(absolute('fixtures/c.wav'))
+
+        # anon
+        self.client.logout()
+        self.checkLoginRedirect(download_sample_url(sample.id, 'monkey.wav'))
+
+        # not authorized to get sample
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.get(download_sample_url(sample.id, 'monkey.wav'))
+        self.assertEquals(response.status_code, 403)
+
+        # bogus sample 
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get(download_sample_url(1337, 'monkey.wav'))
+        self.assertEquals(response.status_code, 404)
+
+        # ok
+        response = self.client.get(download_sample_url(sample.id, 'monkey.wav'))
+        md5 = hashlib.md5(response.content)
+        self.assertEquals(md5.hexdigest(), sample_hash)
 
     def test_download_sample_zip(self):
         download_sample_zip_url = reverse('workbench.download_sample_zip')
