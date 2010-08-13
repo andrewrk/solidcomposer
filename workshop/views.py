@@ -896,6 +896,10 @@ def create_project(request, band_id_str):
 
 @login_required
 def download_sample_zip(request):
+    """
+    when someone uploads samples as a version, there is an option to "Download all as .zip"
+    which is this view.
+    """
     sample_id_strs = request.GET.getlist('s')
     
     sample_ids = []

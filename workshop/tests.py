@@ -1999,7 +1999,37 @@ class SimpleTest(TestCase):
 
     def test_download_sample_zip(self):
         download_sample_zip_url = reverse('workbench.download_sample_zip')
-        # TODO
+        ajax_upload_samples_as_version = reverse("workbench.ajax_upload_samples_as_version")
+
+        self.setUpTBA()
+        the_castle = Project.objects.get(title='The Castle')
+
+        # skiessi provide samples as version
+        self.client.login(username='skiessi', password='temp1234')
+        cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
+        self.verifyAjax(self.client.post(ajax_upload_samples_as_version, {
+            'project': the_castle.id,
+            'file': cd_zip,
+        }))
+        sample = UploadedSample.objects.get(title='c.wav')
+
+        # anon
+        self.client.logout()
+        self.checkLoginRedirect(download_sample_zip_url)
+
+        # just64helpin try to get one of skiessi's samples
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.get(download_sample_zip_url, {
+            's': sample.id,
+        })
+        self.assertEqual(response.status_code, 403)
+
+        # ok
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get(download_sample_zip_url, {
+            's': UploadedSample.objects.all(),
+        })
+        self.assertEqual(response['Content-Type'], 'application/zip')
 
     def test_plugin(self):
         self.setUpTBA()
