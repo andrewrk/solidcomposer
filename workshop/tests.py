@@ -1247,6 +1247,20 @@ class SimpleTest(TestCase):
         castle_song = Song.objects.get(pk=castle_song.id)
         self.assertEqual(castle_song.source_file, "")
 
+        # bogus version
+        self.client.login(username='skiessi', password='temp1234')
+        project_file = open(absolute('fixtures/blank.flp'), 'rb')
+        response = self.client.post(ajax_provide_project, {
+            'version': 0,
+            'file': project_file,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_version_id)
+        castle_song = Song.objects.get(pk=castle_song.id)
+        self.assertEqual(castle_song.source_file, "")
+
         # don't have edit permission
         self.client.login(username='just64helpin', password='temp1234')
         project_file = open(absolute('fixtures/blank.flp'), 'rb')
@@ -1276,14 +1290,70 @@ class SimpleTest(TestCase):
 
     def test_provide_mp3(self):
         ajax_provide_mp3 = reverse("workbench.ajax_provide_mp3")
+        create_project_url = lambda band_id: reverse("workbench.create_project", args=[band_id])
+
+        superjoe_solo = self.superjoe.get_profile().solo_band
+
+        # create a project without mp3 to add it later
+        self.client.login(username='superjoe', password='temp1234')
+        project_file = open(absolute('fixtures/blank.flp'),'rb')
+        response = self.client.post(create_project_url(superjoe_solo.id), {
+            'title': "Blank",
+            'file_source': project_file,
+        })
+        self.assertEqual(response.status_code, 302)
+        project = Project.objects.order_by('-pk')[0]
+        project_song = project.latest_version.song
 
         # anon
+        blank_mp3file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
+        self.anonPostFail(ajax_provide_mp3, {
+            'version': project.latest_version.id,
+            'file': blank_mp3file,
+        })
+        project_song = Song.objects.get(pk=project_song.id)
+        self.assertEqual(project_song.mp3_file, "")
 
         # don't have edit permission
+        self.client.login(username='just64helpin', password='temp1234')
+        blank_mp3file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
+        response = self.client.post(ajax_provide_mp3, {
+            'version': project.latest_version.id,
+            'file': blank_mp3file,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_work_on_this_band)
+        project_song = Song.objects.get(pk=project_song.id)
+        self.assertEqual(project_song.mp3_file, "")
 
         # corrupt mp3
+        self.client.login(username='superjoe', password='temp1234')
+        blank_mp3file = open(absolute('fixtures/corrupt.mp3'),'rb')
+        response = self.client.post(ajax_provide_mp3, {
+            'version': project.latest_version.id,
+            'file': blank_mp3file,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.invalid_mp3_file)
+        project_song = Song.objects.get(pk=project_song.id)
+        self.assertEqual(project_song.mp3_file, "")
 
         # ok
+        self.client.login(username='superjoe', password='temp1234')
+        blank_mp3file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
+        response = self.client.post(ajax_provide_mp3, {
+            'version': project.latest_version.id,
+            'file': blank_mp3file,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        project_song = Song.objects.get(pk=project_song.id)
+        self.assertNotEqual(project_song.mp3_file, "")
 
     def test_checkout(self):
         ajax_checkout = reverse("workbench.ajax_checkout")

@@ -311,7 +311,7 @@ class Song(SerializableModel):
     )
 
     # filename where mp3 can be found
-    mp3_file = models.CharField(max_length=500, null=True, blank=True)
+    mp3_file = models.CharField(max_length=500, blank=True)
 
     # in case the artist was generous enough to provide source
     source_file = models.CharField(max_length=500, blank=True)
