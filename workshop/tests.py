@@ -1358,13 +1358,65 @@ class SimpleTest(TestCase):
     def test_checkout(self):
         ajax_checkout = reverse("workbench.ajax_checkout")
 
+        self.setUpTBA()
+        the_castle = Project.objects.get(title="The Castle")
+
         # anon
+        self.anonPostFail(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.checked_out_to, None)
 
-        # don't have edit permission
+        # bogus project
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': 0,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_project_id)
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.checked_out_to, None)
 
-        # already checked out
+        # not a band member
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_work_on_this_band)
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.checked_out_to, None)
+
+        # band member but don't have edit permission
+        # TODO
 
         # ok
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.checked_out_to.id, self.superjoe.id)
+
+        # already checked out
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.post(ajax_checkout, {
+            'project': the_castle.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.this_project_already_checked_out)
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(the_castle.checked_out_to.id, self.superjoe.id)
 
     def test_checkin(self):
         ajax_checkin = reverse("workbench.ajax_checkin")
@@ -1373,7 +1425,12 @@ class SimpleTest(TestCase):
 
         # anon
 
-        # don't have edit permission
+        # bogus project
+
+        # not in band
+
+        # band member but don't have edit permission
+        # TODO
 
         # not checked out
 
