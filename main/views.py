@@ -167,8 +167,8 @@ def ajax_edit_comment(request):
 
     content = request.POST.get('content', '')
     
-    if not content:
-        return json_failure(design.cannot_leave_blank_post)
+    if len(content) == 0 or len(content) > 2000:
+        return json_failure(design.content_wrong_length)
 
     node.content = content
     node.save()

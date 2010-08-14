@@ -1,7 +1,5 @@
 Release "Boten Anna" (Basshunter)
 = sitewide
- * main tests - Aug 14
-   > test_edit_comment
  * settings page - Aug 14
    > email subscriptions
    > account type
@@ -242,6 +240,8 @@ Release "April Rain" (The Cynic Project)
    > if you have access to the source of another band's song, you can fork it
      into your own project manager
  * show who is voting to scrap, who is voting to promote
+ * breaking DRY with 2000. search it
+ * in tests, assert the actual object, not their ids
 
 = fan page / interface with band page = 
 

@@ -460,16 +460,112 @@ class SimpleTest(TestCase):
     def test_edit_comment(self):
         ajax_edit_comment = reverse('ajax_edit_comment')
 
+        # create a song to comment on
+        superjoe_solo = self.superjoe.get_profile().solo_band
+        blank_mp3file = open(absolute('../workshop/fixtures/silence10s-flstudio-tags.mp3'),'rb')
+        blank_project = open(absolute('../workshop/fixtures/blank.flp'),'rb')
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(reverse('workbench.create_project', args=[superjoe_solo.id]), {
+            'title': "Blank",
+            'file_source': blank_project,
+            'file_mp3': blank_mp3file,
+            'comments': "parent comments",
+        })
+        self.assertEqual(response.status_code, 302)
+        parent_node = SongCommentNode.objects.order_by('-pk')[0]
+
+        # create a comment on that song to test
+        response = self.client.post(reverse('ajax_comment'), {
+            'parent': parent_node.id,
+            'content': 'original',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        target_comment = SongCommentNode.objects.order_by('-pk')[0]
+
         # anon
+        self.client.logout()
+        response = self.client.post(ajax_edit_comment, {
+            'comment': target_comment.id,
+            'content': 'new',
+        })
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.not_authenticated)
+        target_comment = SongCommentNode.objects.get(pk=target_comment.id)
+        self.assertEqual(target_comment.content, 'original')
 
         # bogus comment id
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_edit_comment, {
+            'comment': 232,
+            'content': 'new',
+        })
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_song_comment_node_id)
+        target_comment = SongCommentNode.objects.get(pk=target_comment.id)
+        self.assertEqual(target_comment.content, 'original')
 
         # try to edit someone else's comment
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.post(ajax_edit_comment, {
+            'comment': target_comment.id,
+            'content': 'new',
+        })
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.can_only_edit_your_own_comment)
+        target_comment = SongCommentNode.objects.get(pk=target_comment.id)
+        self.assertEqual(target_comment.content, 'original')
 
         # try to edit after a day has gone by
+        target_comment.date_created = datetime.now() - timedelta(days=1, minutes=1)
+        target_comment.save()
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_edit_comment, {
+            'comment': target_comment.id,
+            'content': 'new',
+        })
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.too_late_to_edit_comment)
+        target_comment = SongCommentNode.objects.get(pk=target_comment.id)
+        self.assertEqual(target_comment.content, 'original')
 
         # no content
+        target_comment.date_created = datetime.now()
+        target_comment.save()
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_edit_comment, {
+            'comment': target_comment.id,
+            'content': '',
+        })
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.content_wrong_length)
+        target_comment = SongCommentNode.objects.get(pk=target_comment.id)
+        self.assertEqual(target_comment.content, 'original')
 
         # content too long
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_edit_comment, {
+            'comment': target_comment.id,
+            'content': 'a' * 2001,
+        })
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.content_wrong_length)
+        target_comment = SongCommentNode.objects.get(pk=target_comment.id)
+        self.assertEqual(target_comment.content, 'original')
 
         # ok
+        response = self.client.post(ajax_edit_comment, {
+            'comment': target_comment.id,
+            'content': 'new',
+        })
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        target_comment = SongCommentNode.objects.get(pk=target_comment.id)
+        self.assertEqual(target_comment.content, 'new')
