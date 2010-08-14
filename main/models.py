@@ -411,7 +411,7 @@ class SongCommentNode(SerializableModel):
     date_edited = models.DateTimeField()
 
     owner = models.ForeignKey(User)
-    content = models.TextField(blank=True)
+    content = models.TextField(blank=True, max_length=2000)
 
     # how many seconds into the song the comment was made.
     # null indicates no particular position

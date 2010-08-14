@@ -114,8 +114,8 @@ def ajax_comment(request):
 
     content = request.POST.get('content')
 
-    if not content:
-        return json_failure(design.content_required)
+    if len(content) == 0 or len(content) > 2000:
+        return json_failure(design.content_wrong_length)
 
     node = SongCommentNode()
     node.song = parent.song

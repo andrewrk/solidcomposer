@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from main.models import Song, TempFile
+from main.models import Song, TempFile, SongCommentNode
+from main import design
 from workshop.models import SampleFile
 import os
 import simplejson as json
@@ -219,3 +220,178 @@ class SimpleTest(TestCase):
         self.client.logout()
         response = self.client.get(terms_url)
         self.assertEqual(response.status_code, 200)
+
+    def test_comment(self):
+        ajax_comment = reverse('ajax_comment')
+
+        # create a song to comment on
+        superjoe_solo = self.superjoe.get_profile().solo_band
+        blank_mp3file = open(absolute('../workshop/fixtures/silence10s-flstudio-tags.mp3'),'rb')
+        blank_project = open(absolute('../workshop/fixtures/blank.flp'),'rb')
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(reverse('workbench.create_project', args=[superjoe_solo.id]), {
+            'title': "Blank",
+            'file_source': blank_project,
+            'file_mp3': blank_mp3file,
+            'comments': "parent comments",
+        })
+        self.assertEqual(response.status_code, 302)
+        parent_node = SongCommentNode.objects.order_by('-pk')[0]
+        comment_count = SongCommentNode.objects.count()
+
+        # anon
+        self.client.logout()
+        response = self.client.post(ajax_comment, {
+            'parent': parent_node.id,
+            'content': 'first',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.not_authenticated)
+        self.assertEqual(comment_count, SongCommentNode.objects.count())
+
+        # bogus parent
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_comment, {
+            'parent': 1231,
+            'content': 'first',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.bad_song_comment_node_id)
+        self.assertEqual(comment_count, SongCommentNode.objects.count())
+
+        # does not have permission to critique
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.post(ajax_comment, {
+            'parent': parent_node.id,
+            'content': 'first',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.you_dont_have_permission_to_comment)
+        self.assertEqual(comment_count, SongCommentNode.objects.count())
+
+        # parent has reply disabled
+        parent_node.reply_disabled = True
+        parent_node.save()
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(ajax_comment, {
+            'parent': parent_node.id,
+            'content': 'first',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.comments_disabled_for_this_version)
+        self.assertEqual(comment_count, SongCommentNode.objects.count())
+
+        # no content
+        parent_node.reply_disabled = False
+        parent_node.save()
+        response = self.client.post(ajax_comment, {
+            'parent': parent_node.id,
+            'content': '',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.content_wrong_length)
+        self.assertEqual(comment_count, SongCommentNode.objects.count())
+
+        # content too long
+        response = self.client.post(ajax_comment, {
+            'parent': parent_node.id,
+            'content': 'a' * 2001,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.content_wrong_length)
+        self.assertEqual(comment_count, SongCommentNode.objects.count())
+
+        # position longer than song
+        response = self.client.post(ajax_comment, {
+            'parent': parent_node.id,
+            'content': 'first',
+            'position': 15,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['reason'], design.invalid_position)
+        self.assertEqual(comment_count, SongCommentNode.objects.count())
+
+        # ok, no position
+        response = self.client.post(ajax_comment, {
+            'parent': parent_node.id,
+            'content': 'first',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['data']['song'], parent_node.song.id)
+        self.assertEqual(data['data']['parent'], parent_node.id)
+        self.assertEqual(data['data']['content'], 'first')
+        node = SongCommentNode.objects.order_by('-pk')[0]
+        self.assertEqual(node.song, parent_node.song)
+        self.assertEqual(node.parent, parent_node)
+        self.assertEqual(node.content, 'first')
+        comment_count += 1
+        self.assertEqual(comment_count, SongCommentNode.objects.count())
+
+        # ok, with position
+        response = self.client.post(ajax_comment, {
+            'parent': parent_node.id,
+            'content': 'second',
+            'position': 7,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['data']['song'], parent_node.song.id)
+        self.assertEqual(data['data']['parent'], parent_node.id)
+        self.assertEqual(data['data']['content'], 'second')
+        node = SongCommentNode.objects.order_by('-pk')[0]
+        self.assertEqual(node.song, parent_node.song)
+        self.assertEqual(node.parent, parent_node)
+        self.assertEqual(node.content, 'second')
+        comment_count += 1
+        self.assertEqual(comment_count, SongCommentNode.objects.count())
+
+    def test_delete_comment(self):
+        ajax_comment = reverse('ajax_delete_comment')
+
+        # anon
+
+        # bogus comment id
+
+        # someone else's comment
+
+        # try to delete after a day has gone by
+
+        # try to delete the root comment node for a song
+
+        # delete a leaf node. it should actually get deleted.
+
+        # ok
+
+    def test_edit_comment(self):
+        ajax_edit_comment = reverse('ajax_edit_comment')
+
+        # anon
+
+        # bogus comment id
+
+        # try to edit someone else's comment
+
+        # try to edit after a day has gone by
+
+        # no content
+
+        # content too long
+
+        # ok
