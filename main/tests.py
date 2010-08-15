@@ -191,9 +191,6 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 302)
         #TODO: assert logged out
 
-    def test_about(self):
-        return self.staticPage(reverse('about'))
-
     def test_policy(self):
         return self.staticPage(reverse('policy'))
 
