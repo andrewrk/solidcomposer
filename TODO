@@ -4,20 +4,18 @@ Release "Boten Anna" (Basshunter)
    > email subscriptions
    > account type
    > change password
-   > test_band_settings
-   > test_band_settings_space
+ * code to bill customers monthly - Aug 14
+   > set it up so that it sends me an email of what it's about to do, then
+     I manually approve it and bill everybody.
+   > able to do a one-time payment or recurring
+   > able to downgrade/upgrade account at any time.
  * upgrade page where you can choose a plan and sign up and pay - Aug 14
    > monthly, 1 year, two years
-   > tests for this stuff
- * workbench tests - Aug 14
-   > take into account bytes used and whether bands are read only
- * link the "Get More" in workbench to the correct account tab - Aug 17
- * password recovery - Aug 17
-   > test
- * in workbench, need a hook when login changes to refresh the page - Aug 17
  * band settings - Aug 17
    > membership management
-   > test
+ * link the "Get More" in workbench to the correct account tab - Aug 17
+ * password recovery - Aug 17
+ * in workbench, need a hook when login changes to refresh the page - Aug 17
  * song player: mouseover comments go away if you're not scrolled to the top - Aug 18
  * pagination is broken in project manager - Aug 18
  * user page - Aug 18
@@ -26,13 +24,20 @@ Release "Boten Anna" (Basshunter)
  * make sure bands are read only when they should be - Aug 20
    > ui to indicate that bands are read only and link to upgrade account
    > on create band page, if they are out of bands, have it say that they need to upgrade to create more bands.
- * editor controls on fields that will be parsed by showdown. - Aug 20
-   > http://wmd-editor.com/
-   > also always show a preview when things will be parsed by showdown.
  * home page - Aug 21
    > if logged in, it's a dashboard with good stuff on it
-   > test
+ * workbench tests - Aug 14
+   > test_band_settings
+   > test_band_settings_space
+   > take into account bytes used and whether bands are read only
+   > tests for upgrade page
+   > tests for password recovery
+   > tests for band settings -> membership management
+   > test for home page (just make sure it shows up)
  * design iteration - Aug 24, 25, 26, 27, 28, 29
+   > editor controls on fields that will be parsed by showdown. - Aug 20
+     - http://wmd-editor.com/
+     - also always show a preview when things will be parsed by showdown.
    > favicon
    > new logo
    > make header area take up less vertical room
@@ -46,11 +51,6 @@ Release "Boten Anna" (Basshunter)
    > maxWidth and maxHeight don't work in jquery dialog
    > html email instead of txt
  * migration to create projects and versions for everything on the site. - Aug 30
- * code to bill customers monthly - Aug 31
-   > set it up so that it sends me an email of what it's about to do, then
-     I manually approve it and bill everybody.
-   > able to do a one-time payment or recurring
-   > able to downgrade/upgrade account at any time.
  * manually test all the features to make sure they work. - Aug 31
  * WE DO IT LIVE - Sept 1
  * blog post announcing release

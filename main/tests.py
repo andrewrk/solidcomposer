@@ -69,6 +69,15 @@ class SimpleTest(TestCase):
     def tearDown(self):
         commonTearDown(self)
 
+    def staticPage(self, url):
+        "tests if the page doesn't error out logged in and logged out."
+        self.client.login(username="skiessi", password="temp1234")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
     def test_register_account(self):
         register_url = reverse('register')
         register_pending_url = reverse('register_pending')
@@ -127,12 +136,8 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_userpage(self):
-        self.client.login(username="skiessi", password="temp1234")
-        response = self.client.get(reverse('userpage', args=['skiessi']))
-        self.assertEqual(response.status_code, 200)
-        self.client.logout()
-        response = self.client.get(reverse('userpage', args=['skiessi']))
-        self.assertEqual(response.status_code, 200)
+        self.staticPage(reverse('userpage', args=['superjoe']))
+        self.staticPage(reverse('userpage', args=['skiessi']))
 
     def test_ajax_login_state(self):
         ajax_login_state_url = reverse('ajax_login_state')
@@ -187,40 +192,16 @@ class SimpleTest(TestCase):
         #TODO: assert logged out
 
     def test_about(self):
-        about_url = reverse('about')
-        self.client.login(username="skiessi", password="temp1234")
-        response = self.client.get(about_url)
-        self.assertEqual(response.status_code, 200)
-        self.client.logout()
-        response = self.client.get(about_url)
-        self.assertEqual(response.status_code, 200)
+        return self.staticPage(reverse('about'))
 
     def test_policy(self):
-        policy_url = reverse('policy')
-        self.client.login(username="skiessi", password="temp1234")
-        response = self.client.get(policy_url)
-        self.assertEqual(response.status_code, 200)
-        self.client.logout()
-        response = self.client.get(policy_url)
-        self.assertEqual(response.status_code, 200)
+        return self.staticPage(reverse('policy'))
 
     def test_account(self):
-        account_url = reverse('account')
-        self.client.login(username="skiessi", password="temp1234")
-        response = self.client.get(account_url)
-        self.assertEqual(response.status_code, 200)
-        self.client.logout()
-        response = self.client.get(account_url)
-        self.assertEqual(response.status_code, 200)
+        return self.staticPage(reverse('account'))
 
     def test_terms(self):
-        terms_url = reverse('terms')
-        self.client.login(username="skiessi", password="temp1234")
-        response = self.client.get(terms_url)
-        self.assertEqual(response.status_code, 200)
-        self.client.logout()
-        response = self.client.get(terms_url)
-        self.assertEqual(response.status_code, 200)
+        return self.staticPage(reverse('terms'))
 
     def test_comment(self):
         ajax_comment = reverse('ajax_comment')
@@ -569,3 +550,9 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], True)
         target_comment = SongCommentNode.objects.get(pk=target_comment.id)
         self.assertEqual(target_comment.content, 'new')
+
+    def test_404(self):
+        return self.staticPage(reverse('404'))
+
+    def test_500(self):
+        return self.staticPage(reverse('500'))

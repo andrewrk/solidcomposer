@@ -34,4 +34,8 @@ urlpatterns = patterns('',
     url(r'^privacy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),
     url(r'^terms/$', direct_to_template, {'template': 'terms.html'}, name="terms"),
     url(r'^account/$', direct_to_template, {'template': 'account.html'}, name="account"),
+
+
+    url(r'^500/$', direct_to_template, {'template': '500.html'}, name='500'),
+    url(r'^404/$', direct_to_template, {'template': '404.html'}, name='404'),
 )
