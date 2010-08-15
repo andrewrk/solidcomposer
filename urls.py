@@ -38,6 +38,7 @@ urlpatterns = patterns('',
     url(r'^account/plan/$', 'main.views.account_plan', name="account.plan"),
     url(r'^account/email/$', 'main.views.account_email', name="account.email"),
     url(r'^account/password/$', 'main.views.account_password', name="account.password"),
+    url(r'^account/password/ok/$', direct_to_template, {'template': 'account/password_ok.html'}, name="account.password.ok"),
 
     # for testing purposes
     url(r'^500/$', direct_to_template, {'template': '500.html'}, name='500'),

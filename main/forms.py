@@ -71,3 +71,23 @@ class RegisterForm(forms.Form):
 class ContactForm(forms.Form):
     from_email = forms.EmailField(label="Your email:", error_messages={'required': design.this_field_is_required})
     message = forms.CharField(max_length=5000, widget=forms.Textarea)
+
+class ChangePasswordForm(forms.Form):
+    old_password = forms.CharField(max_length=50,
+        widget=forms.widgets.PasswordInput(),
+        error_messages={'required': design.this_field_is_required})
+    new_password = forms.CharField(max_length=50,
+        widget=forms.widgets.PasswordInput(),
+        error_messages={'required': design.this_field_is_required})
+    confirm_password = forms.CharField(max_length=50,
+        widget=forms.widgets.PasswordInput(),
+        error_messages={'required': design.this_field_is_required})
+
+    def clean_confirm_password(self):
+        new_password = self.cleaned_data.get('new_password')
+        confirm_password = self.cleaned_data.get('confirm_password')
+
+        if new_password != confirm_password:
+            raise forms.ValidationError(design.passwords_do_not_match)
+
+        return confirm_password

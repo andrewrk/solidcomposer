@@ -11,7 +11,7 @@ from django.template.loader import get_template
 from main import design
 from main.common import json_response, json_login_required, json_post_required, \
     get_obj_from_request, json_failure, json_success, create_hash
-from main.forms import LoginForm, RegisterForm, ContactForm
+from main.forms import LoginForm, RegisterForm, ContactForm, ChangePasswordForm
 from main.models import SongCommentNode, Band, Profile, BandMember
 
 def ajax_login_state(request):
@@ -287,6 +287,20 @@ def account_email(request):
 
 def account_password(request):
     user = request.user
+    err_msg = ''
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+        if form.is_valid():
+            old_password = form.cleaned_data.get('old_password')
+            if user.check_password(old_password):
+                user.set_password(form.cleaned_data.get('new_password'))
+                user.save()
+                return HttpResponseRedirect(reverse('account.password.ok'))
+            else:
+                err_msg = design.invalid_old_password
+    else:
+        form = ChangePasswordForm()
+
     return render_to_response('account/password.html', locals(), context_instance=RequestContext(request))
 
 def plans(request):
