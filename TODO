@@ -242,6 +242,7 @@ Release "April Rain" (The Cynic Project)
  * show who is voting to scrap, who is voting to promote
  * breaking DRY with 2000. search it
  * in tests, assert the actual object, not their ids
+ * a zip file might extract itself. could be a security hole
 
 = fan page / interface with band page = 
 

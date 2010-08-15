@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Settings - {{ block.super }}{% endblock %}
+
+{% block nav %}
+    {{ block.super }}
+    <div id='nav-2'>
+        <ul>
+            <li class="{% block nav2_plan_li_class %}unselected{% endblock %}">
+                <a href="{% url account.plan %}"><span>Plan</span></a>
+            </li>
+            <li class="{% block nav2_email_li_class %}unselected{% endblock %}">
+                <a href="{% url account.email %}"><span>Email Subscription</span></a>
+            </li>
+            <li class="{% block nav2_password_li_class %}unselected{% endblock %}">
+                <a href="{% url account.password %}"><span>Change Password</span></a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}

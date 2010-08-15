@@ -1,6 +1,6 @@
-from django.conf.urls.defaults import * #@UnusedWildImport
+from django.conf.urls.defaults import *
 from django.contrib import admin
-from django.views.generic.simple import direct_to_template
+from django.views.generic.simple import direct_to_template, redirect_to
 
 admin.autodiscover()
 
@@ -33,9 +33,12 @@ urlpatterns = patterns('',
     url(r'^about/$', direct_to_template, {'template': 'about.html'}, name="about"),
     url(r'^privacy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),
     url(r'^terms/$', direct_to_template, {'template': 'terms.html'}, name="terms"),
-    url(r'^account/$', direct_to_template, {'template': 'account.html'}, name="account"),
+    url(r'^account/$', direct_to_template, {'template': 'account/plan.html'}, name="account"),
+    url(r'^account/plan/$', direct_to_template, {'template': 'account/plan.html'}, name="account.plan"),
+    url(r'^account/email/$', direct_to_template, {'template': 'account/email.html'}, name="account.email"),
+    url(r'^account/password/$', direct_to_template, {'template': 'account/password.html'}, name="account.password"),
 
-
+    # for testing purposes
     url(r'^500/$', direct_to_template, {'template': '500.html'}, name='500'),
     url(r'^404/$', direct_to_template, {'template': '404.html'}, name='404'),
 )
