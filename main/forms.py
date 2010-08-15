@@ -95,3 +95,6 @@ class ChangePasswordForm(forms.Form):
 class EmailSubscriptionsForm(forms.Form):
     notifications = forms.BooleanField(required=False)
     newsletter = forms.BooleanField(required=False)
+
+class PasswordResetForm(forms.Form):
+    email = forms.EmailField(max_length=80, error_messages={'required': design.this_field_is_required})

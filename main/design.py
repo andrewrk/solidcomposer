@@ -55,6 +55,7 @@ too_late_to_edit_comment = 'It is too late to edit your comment.'
 can_only_edit_your_own_comment = 'You can only edit your own comments.'
 must_agree_to_terms = 'You must agree to the terms and conditions to use SolidComposer.'
 content_wrong_length = "Content must be between 1 and 2000 characters."
+no_such_email_in_database = "No such email in database."
 
 samples_dialog_title = "Download Project Files"
 dependencies_dialog_title = "Song Dependencies"
@@ -62,3 +63,6 @@ comment_dialog_title = "Comments at "
 
 # form labels
 label_artist_name = 'Solo band name'
+
+# email subjects
+password_reset_on_website = "Your new password on SolidComposer"

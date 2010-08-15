@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail, EmailMessage
 from django.core.urlresolvers import reverse
@@ -10,9 +11,10 @@ from django.template import RequestContext, Context
 from django.template.loader import get_template
 from main import design
 from main.common import json_response, json_login_required, json_post_required, \
-    get_obj_from_request, json_failure, json_success, create_hash
+    get_obj_from_request, json_failure, json_success, create_hash, \
+    send_html_mail
 from main.forms import LoginForm, RegisterForm, ContactForm, \
-    ChangePasswordForm, EmailSubscriptionsForm
+    ChangePasswordForm, EmailSubscriptionsForm, PasswordResetForm
 from main.models import SongCommentNode, Band, Profile, BandMember
 
 def ajax_login_state(request):
@@ -268,6 +270,7 @@ def contact(request):
 
     return render_to_response('contact.html', locals(), context_instance=RequestContext(request))
 
+@login_required
 def account_plan(request):
     """The page that shows the user what plan their on and wants them to click to the upgrade plans page."""
     user = request.user
@@ -282,6 +285,7 @@ def account_plan(request):
     memberships = BandMember.objects.filter(user=user)
     return render_to_response('account/plan.html', locals(), context_instance=RequestContext(request))
 
+@login_required
 def account_email(request):
     user = request.user
     profile = user.get_profile()
@@ -299,6 +303,7 @@ def account_email(request):
         })
     return render_to_response('account/email.html', locals(), context_instance=RequestContext(request))
 
+@login_required
 def account_password(request):
     user = request.user
     err_msg = ''
@@ -316,6 +321,41 @@ def account_password(request):
         form = ChangePasswordForm()
 
     return render_to_response('account/password.html', locals(), context_instance=RequestContext(request))
+
+def account_password_reset(request):
+    err_msg = ''
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                err_msg = design.no_such_email_in_database
+
+            if err_msg == '':
+                # change password to new random hash
+                new_password = create_hash(12)
+
+                # save it
+                user.set_password(new_password)
+                user.save()
+
+                # send it in email
+                subject = design.password_reset_on_website
+                context = Context({
+                    'new_password': new_password,
+                })
+                message_txt = get_template('email/password_reset.txt').render(context)
+                message_html = get_template('email/password_reset.html').render(context)
+                send_html_mail(subject, message_txt, message_html, [email])
+
+                return HttpResponseRedirect(reverse('account.password.reset.ok'))
+    else:
+        form = PasswordResetForm()
+
+    return render_to_response('account/password_reset.html', locals(), context_instance=RequestContext(request))
 
 def plans(request):
     """The page where we try to get people to sign up for paying us money"""
