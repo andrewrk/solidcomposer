@@ -1,5 +1,5 @@
 Used space: <%= band.used_space %> / <%= band.total_space %>{% include 'tips/spaceLeftMeter.html' %}
 {% include 'workbench/spacemeter.jst.html' %}
 <div>
-    <a href="<%= urls.band_settings_space(band.id) %>">Get more</a>
+    <a href="{% url account.plan %}">Get more</a>
 </div>

@@ -30,7 +30,6 @@ urlpatterns = patterns('',
 
     url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),
     url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
-    url(r'^band/(\d+)/settings/space/$', 'workshop.views.band_settings_space', name="workbench.band_settings_space"),
     url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),
     url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
     url(r'^band/(\d+)/invite/$', 'workshop.views.band_invite', name="workbench.band_invite"),
