@@ -3,6 +3,7 @@ Release "Boten Anna" (Basshunter)
  * settings page - Aug 14
    > email subscriptions
    > account type
+     - make log entries when the amount donated is changed
    > change password
  * code to bill customers monthly - Aug 14
    > set it up so that it sends me an email of what it's about to do, then
@@ -59,6 +60,7 @@ Release "Boten Anna" (Basshunter)
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+ * support adding bands to the 'fund' list in account/plan
  * finish up TODOs in tests
  * edit competition
  * recent activty entry log:

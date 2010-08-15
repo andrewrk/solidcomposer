@@ -19,6 +19,8 @@ urlpatterns = patterns('',
     url(r'^ajax/delete_comment/$', 'main.views.ajax_delete_comment', name="ajax_delete_comment"),
     url(r'^ajax/edit_comment/$', 'main.views.ajax_edit_comment', name="ajax_edit_comment"),
 
+    url(r'^plans/$', 'main.views.plans', name='plans'),
+
     url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
 
     url(r'^login/$', 'main.views.user_login', name="user_login"),
@@ -32,10 +34,10 @@ urlpatterns = patterns('',
     
     url(r'^privacy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),
     url(r'^terms/$', direct_to_template, {'template': 'terms.html'}, name="terms"),
-    url(r'^account/$', direct_to_template, {'template': 'account/plan.html'}, name="account"),
-    url(r'^account/plan/$', direct_to_template, {'template': 'account/plan.html'}, name="account.plan"),
-    url(r'^account/email/$', direct_to_template, {'template': 'account/email.html'}, name="account.email"),
-    url(r'^account/password/$', direct_to_template, {'template': 'account/password.html'}, name="account.password"),
+    url(r'^account/$', 'main.views.account_plan', name="account"),
+    url(r'^account/plan/$', 'main.views.account_plan', name="account.plan"),
+    url(r'^account/email/$', 'main.views.account_email', name="account.email"),
+    url(r'^account/password/$', 'main.views.account_password', name="account.password"),
 
     # for testing purposes
     url(r'^500/$', direct_to_template, {'template': '500.html'}, name='500'),

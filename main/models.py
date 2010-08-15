@@ -23,9 +23,14 @@ class BandMember(SerializableModel):
         'role',
     )
 
+    OWNER_ATTRS = (
+        'space_donated',
+    )
+
     user = models.ForeignKey(User)
     band = models.ForeignKey('main.Band')
     role = models.IntegerField(choices=ROLE_CHOICES, default=MANAGER)
+    space_donated = models.IntegerField(default=0)
 
     def __unicode__(self):
         return u'%s - %s: %s' % (str(self.band), dict(BandMember.ROLE_CHOICES)[self.role], str(self.user))
@@ -288,6 +293,9 @@ class Profile(SerializableModel):
     def bands_in_count(self):
         "returns how many bands the user is in"
         return BandMember.objects.filter(user=self.user, role__in=(BandMember.BAND_MEMBER,BandMember.MANAGER)).count() 
+
+    def space_used(self):
+        return sum([member.space_donated for member in BandMember.objects.filter(user=self.user)])
 
 class Song(SerializableModel):
     PUBLIC_ATTRS = (

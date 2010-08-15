@@ -267,3 +267,29 @@ def contact(request):
 
     return render_to_response('contact.html', locals(), context_instance=RequestContext(request))
 
+def account_plan(request):
+    """The page that shows the user what plan their on and wants them to click to the upgrade plans page."""
+    user = request.user
+    plan = user.get_profile().plan
+    if plan is None:
+        plan = {
+            'title': 'Free',
+            'band_count_limit': settings.FREE_BAND_LIMIT,
+            'usd_per_month': 0,
+            'total_space': 0,
+        }
+    memberships = BandMember.objects.filter(user=user)
+    return render_to_response('account/plan.html', locals(), context_instance=RequestContext(request))
+
+def account_email(request):
+    user = request.user
+    return render_to_response('account/email.html', locals(), context_instance=RequestContext(request))
+
+def account_password(request):
+    user = request.user
+    return render_to_response('account/password.html', locals(), context_instance=RequestContext(request))
+
+def plans(request):
+    """The page where we try to get people to sign up for paying us money"""
+    user = request.user
+    return render_to_response('plans.html', locals(), context_instance=RequestContext(request))

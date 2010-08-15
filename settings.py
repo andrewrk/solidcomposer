@@ -73,6 +73,10 @@ TEMPLATE_DIRS = (
     absolute('templates'),
 )
 
+INTERNAL_IPS = (
+    '127.0.0.1',
+)
+
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',
     'django.core.context_processors.debug',

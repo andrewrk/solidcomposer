@@ -4,4 +4,44 @@
 
 {% block content %}
     <h1>Account Plan</h1>
+    <h2>Plan</h2>
+    {{ plan.title }}
+    <a href="{% url plans %}">Upgrade</a>
+    <h2>Space Used</h2>
+    {% with user.get_profile.space_used as used_space %}
+        {% with user.get_profile.purchased_bytes as total_space %}
+            {% include 'workbench/spacemeter.html' %}
+        {% endwith %}
+    {% endwith %}
+
+    <h2>Bands Used</h2>
+    {% with user.get_profile.bands_in_count as used_space %}
+        {% with plan.band_count_limit as total_space %}
+            {% include 'workbench/spacemeter.html' %}
+        {% endwith %}
+    {% endwith %}
+
+    <h1>Bands You Fund</h1>
+    <table>
+        <tr>
+            <th>Band</th>
+            <th>Used Space</th>
+            <th>Amount Donated</th>
+        </tr>
+        {% for member in memberships %}
+            <tr>
+                <td>{{ member.band.title }}</td>
+                <td>
+                    {% with member.band.used_space as used_space %}
+                        {% with member.band.total_space as total_space %}
+                            {% include 'workbench/spacemeter.html' %}
+                        {% endwith %}
+                    {% endwith %}
+                </td>
+                <td>{{ member.space_donated }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <input type="button" value="Reset" />
+    <input type="button" value="Save" />
 {% endblock %}
