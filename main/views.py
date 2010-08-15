@@ -11,7 +11,8 @@ from django.template.loader import get_template
 from main import design
 from main.common import json_response, json_login_required, json_post_required, \
     get_obj_from_request, json_failure, json_success, create_hash
-from main.forms import LoginForm, RegisterForm, ContactForm, ChangePasswordForm
+from main.forms import LoginForm, RegisterForm, ContactForm, \
+    ChangePasswordForm, EmailSubscriptionsForm
 from main.models import SongCommentNode, Band, Profile, BandMember
 
 def ajax_login_state(request):
@@ -283,6 +284,19 @@ def account_plan(request):
 
 def account_email(request):
     user = request.user
+    profile = user.get_profile()
+    if request.method == 'POST':
+        form = EmailSubscriptionsForm(request.POST)
+        if form.is_valid():
+            profile.email_notifications = form.cleaned_data.get('notifications')
+            profile.email_newsletter = form.cleaned_data.get('newsletter')
+            profile.save()
+            success = True
+    else:
+        form = EmailSubscriptionsForm(initial={
+            'notifications': user.get_profile().email_notifications,
+            'newsletter': user.get_profile().email_newsletter,
+        })
     return render_to_response('account/email.html', locals(), context_instance=RequestContext(request))
 
 def account_password(request):

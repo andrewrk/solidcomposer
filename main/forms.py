@@ -91,3 +91,7 @@ class ChangePasswordForm(forms.Form):
             raise forms.ValidationError(design.passwords_do_not_match)
 
         return confirm_password
+
+class EmailSubscriptionsForm(forms.Form):
+    notifications = forms.BooleanField(required=False)
+    newsletter = forms.BooleanField(required=False)

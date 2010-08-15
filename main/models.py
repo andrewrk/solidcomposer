@@ -245,6 +245,10 @@ class Profile(SerializableModel):
     # if a user uploads a project with a plugin, do we assume they own it?
     assume_uploaded_plugins_owned = models.BooleanField(default=True)
 
+    # email subscription settings (True means subscribed)
+    email_notifications = models.BooleanField(default=True)
+    email_newsletter = models.BooleanField(default=True)
+
     def __unicode__(self):
         return self.user.username
 
