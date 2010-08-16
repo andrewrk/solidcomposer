@@ -1,8 +1,5 @@
 Release "Boten Anna" (Basshunter):
 Sunday, August 15:
-* band page
-  > list members
-  > list open songs
 * dashboard
   > band activity
   > upcoming competitions
@@ -30,6 +27,7 @@ Wednesday, August 18:
 Friday, August 20:
 * workbench tests
   > make sure a song's comment node is never null
+  > make sure when a song is uploaded to the workbench, is_open_for_comments and is_open_source are False
   > make sure log entries are created when they should be
   > test_band_settings
   > tests for account

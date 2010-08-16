@@ -252,12 +252,14 @@ def userpage(request, username):
     members = BandMember.objects.filter(user=user).order_by('-space_donated')
     songs = Song.objects.filter(Q(owner=user), Q(is_open_for_comments=True)|Q(is_open_source=True)).order_by('-date_added')[:10]
     song_data = json_dump([song.to_dict(chains=['band', 'comment_node']) for song in songs])
-    user_data = json_dump(user.get_profile().to_dict())
+    user_data = json_dump(request.user.get_profile().to_dict())
     return render_to_response('userpage.html', locals(), context_instance=RequestContext(request))
 
 def bandpage(request, band_url):
-    "TODO"
     band = get_object_or_404(Band, url=band_url)
+    songs = Song.objects.filter(Q(band=band), Q(is_open_for_comments=True)|Q(is_open_source=True)).order_by('-date_added')[:10]
+    song_data = json_dump([song.to_dict(chains=['band', 'comment_node']) for song in songs])
+    user_data = json_dump(request.user.get_profile().to_dict())
     return render_to_response('bandpage.html', locals(), context_instance=RequestContext(request))
 
 def contact(request):

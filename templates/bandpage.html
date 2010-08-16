@@ -2,6 +2,36 @@
 
 {% block title %}{{ band.title }} - {{ block.super }}{% endblock %}
 
+{% block css %}bandpage.pre.css{% endblock %}
+
+{% block extra_header %}
+    {{ block.super }}
+    {% include 'sc_script_framework.html' %}
+    {% include 'player/script_player.html' %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.pre.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/userpage.pre.js"></script>
+    <script type="text/javascript">
+var recent_song_data = ({% autoescape off %}{{ song_data }}{% endautoescape %});
+var user_data = ({% autoescape off %}{{ user_data }}{% endautoescape %});
+    </script>
+{% endblock %}
+
 {% block content %}
-    This will be the band page for {{ band.title }}
+    <h1>{{ band.title }}</h1>
+    <h2>Members</h2>
+    <div>
+        {% for member in band.bandmember_set.all %}
+            <div>
+                <a href="{% url userpage member.user.username %}">
+                    <img src="{{ member.user.get_profile.gravatar }}" alt="" />
+                </a>
+                <a href="{% url userpage member.user.username %}">{{ member.user.username }}</a>
+                <p><img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" /> x {{ member.user.get_profile.get_points }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <h2>Recent Songs</h2>
+    <div id="recent-songs">
+    {% include 'loading.html' %}
+    </div>
 {% endblock %}
