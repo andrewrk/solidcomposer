@@ -273,6 +273,50 @@ def contact(request):
 @login_required
 def account_plan(request):
     """The page that shows the user what plan their on and wants them to click to the upgrade plans page."""
+
+    err_msg = ""
+    if request.method == 'POST':
+        changes = []
+        space_total = 0
+        for key, val in request.POST.iteritems():
+            # format: member-X-amt=Y
+            # X = member id, Y = amount donated
+            member_str, member_id, amt_str = key.split('-')
+            if member_str != 'member' or amt_str != 'amt':
+                err_msg = design.invalid_parameters
+                break
+            try:
+                member_id = int(member_id)
+                member = BandMember.objects.get(pk=member_id)
+            except ValueError, BandMember.DoesNotExist:
+                err_msg = design.bad_band_member_id
+                break
+
+            # make sure the user is the band member
+            if member.user != request.user:
+                err_msg = design.can_only_edit_your_own_amount_donated
+                break
+
+            try:
+                val = int(val)
+            except ValueError:
+                err_msg = design.invalid_amount
+                break
+
+            changes.append({'member': member, 'val': val})
+            space_total += val
+
+        if err_msg == "":
+            if space_total <= request.user.get_profile().purchased_bytes:
+                # everything is good. apply the change.
+                for change in changes:
+                    change['member'].space_donated = change['val']
+                    change['member'].save()
+
+                return HttpResponseRedirect(reverse('account.plan'))
+            else:
+                err_msg = design.you_dont_have_enough_space_to_do_that
+
     user = request.user
     plan = user.get_profile().plan
     if plan is None:

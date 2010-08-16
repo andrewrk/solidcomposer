@@ -1,9 +1,18 @@
 {% extends 'account/base.html' %}
 
+{% block extra_header %}
+    {{ block.super }}
+    {% include 'sc_script_framework.html' %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/account_plan.pre.js"></script>
+{% endblock %}
+
 {% block nav2_plan_li_class %}selected{% endblock %}
 
 {% block content %}
     <h1>Account Plan</h1>
+    {% if err_msg %}
+    <p>{{ err_msg }}</p>
+    {% endif %}
     <h2>Plan</h2>
     {{ plan.title }}
     <a href="{% url plans %}">Upgrade</a>
@@ -38,10 +47,23 @@
                         {% endwith %}
                     {% endwith %}
                 </td>
-                <td>{{ member.space_donated }}</td>
+                <td>
+                    <input
+                        type="text"
+                        class="amt-donated"
+                        value="{{ member.space_donated }}"
+                        data-member-id="{{ member.id }}"
+                        data-init-amt="{{ member.space_donated }}"
+                    />
+                </td>
             </tr>
         {% endfor %}
     </table>
-    <input type="button" value="Reset" />
-    <input type="button" value="Save" />
+    <form action="." method="post">
+        {% for member in memberships %}
+            <input type="hidden" id="member-{{ member.id }}-amt" name="member-{{ member.id }}-amt" value="{{ member.space_donated }}" />
+        {% endfor %}
+        <input type="button" value="Reset" id="reset-button" />
+        <input type="submit" value="Save" id="save-button" />
+    </form>
 {% endblock %}

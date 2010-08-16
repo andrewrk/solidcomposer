@@ -1780,11 +1780,6 @@ class SimpleTest(TestCase):
         band_settings_url_name = 'workbench.band_settings'
         # TODO
 
-    def test_band_settings_space(self):
-        """url(r'^band/(\d+)/settings/space/$', 'workshop.views.band_settings_space', name="workbench.band_settings_space"),"""
-        band_settings_space_url_name = 'workbench.band_settings_space'
-        # TODO
-
     def test_create_project(self):
         """url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),"""
         create_project_url = lambda band_id: reverse('workbench.create_project', args=[band_id])
