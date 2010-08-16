@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     (r'^workbench/', include('workshop.urls')),
     (r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),
+    url(r'^$', 'main.views.home', name='home'),
 
     url(r'^ajax/login_state/$', 'main.views.ajax_login_state', name="ajax_login_state"),
     url(r'^ajax/login/$', 'main.views.ajax_login', name="ajax_login"),
@@ -41,6 +41,10 @@ urlpatterns = patterns('',
     url(r'^account/password/reset/$', 'main.views.account_password_reset', name="account.password.reset"),
     url(r'^account/password/reset/ok/$', direct_to_template, {'template': 'account/password_reset_ok.html'}, name="account.password.reset.ok"),
     url(r'^account/password/ok/$', direct_to_template, {'template': 'account/password_ok.html'}, name="account.password.ok"),
+
+    url(r'^landing/$', 'main.views.landing', name='landing'),
+    url(r'^info/$', direct_to_template, {'template': 'info.html'}, name='info'),
+    url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
 
     # for testing purposes
     url(r'^500/$', direct_to_template, {'template': '500.html'}, name='500'),

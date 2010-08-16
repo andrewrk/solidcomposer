@@ -424,3 +424,17 @@ def plans(request):
     """The page where we try to get people to sign up for paying us money"""
     user = request.user
     return render_to_response('plans.html', locals(), context_instance=RequestContext(request))
+
+def home(request):
+    """If they're logged in, do the same thing as dashboard. If not, do the same thing as landing."""
+    if request.user.is_authenticated():
+        return dashboard(request)
+    else:
+        return landing(request)
+
+@login_required
+def dashboard(request):
+    return render_to_response('dashboard.html', {}, context_instance=RequestContext(request))
+
+def landing(request):
+    return render_to_response('landing.html', {}, context_instance=RequestContext(request))

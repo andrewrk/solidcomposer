@@ -225,13 +225,21 @@ class Profile(SerializableModel):
     # account stuff. When a user signs up for a plan, this is inherited from
     # the plan's data, but it can be overridden here.
     plan = models.ForeignKey(AccountPlan, blank=True, null=True)
+    # how many bands can the user create
+    band_count_limit = models.IntegerField(default=1)
     # how much space does the user have in their account in bytes
     # the actual accounting is done in Band. this field is simply where purchased bytes
     # are accumulated, which are then doled out to one or more Bands' total_space
     purchased_bytes = models.BigIntegerField(default=0)
+
+    # billing information
+    # if they are on a monthly plan, this field will be greater than 0.
     usd_per_month = models.FloatField(default=0.0)
-    # how many bands can the user create
-    band_count_limit = models.IntegerField(default=1)
+    # if they are on a pre-paid plan, this will be non-null.
+    # when the billing cron job runs, it checks for account_expire_date less than 
+    # a month away and bills, adding a month. This means when a person signs up,
+    # we bill them immediately and give them 2 months.
+    account_expire_date = models.DateTimeField(null=True, blank=True)
     # the string that identifies a customer with the merchant
     customer_id = models.CharField(max_length=256, blank=True)
 

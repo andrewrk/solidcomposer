@@ -1,27 +1,30 @@
 Release "Boten Anna" (Basshunter)
 = sitewide
+ * user page - Aug 18
+   > list entries
+   > can invite them to join your band
+ * landing page
+ * dashboard
+   > band activity
+   > upcoming competitions
+   > link to workbench and arena
+ * upgrade page where you can choose a plan and sign up and pay - Aug 14
+   > monthly, 1 year, two years
  * code to bill customers monthly - Aug 14
    > set it up so that it sends me an email of what it's about to do, then
      I manually approve it and bill everybody.
    > able to do a one-time payment or recurring
    > able to downgrade/upgrade account at any time.
- * upgrade page where you can choose a plan and sign up and pay - Aug 14
-   > monthly, 1 year, two years
  * band settings - Aug 17
    > membership management
- * in workbench, need a hook when login changes to refresh the page - Aug 17
  * song player: mouseover comments go away if you're not scrolled to the top - Aug 18
  * pagination is broken in project manager - Aug 18
- * user page - Aug 18
-   > list entries
-   > can invite them to join your band
  * page for songs so people can link to them. put a button in the song player widget to get this link.
  * make sure bands are read only when they should be - Aug 20
    > ui to indicate that bands are read only and link to upgrade account
    > on create band page, if they are out of bands, have it say that they need to upgrade to create more bands.
- * home page - Aug 21
-   > if logged in, it's a dashboard with good stuff on it
  * workbench tests - Aug 14
+   > make sure log entries are created when they should be
    > test_band_settings
    > tests for account
    > take into account bytes used and whether bands are read only
@@ -54,6 +57,7 @@ Release "Boten Anna" (Basshunter)
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+ * in workbench, need a hook when login changes to refresh the page
  * login page should focus the username text box
  * support adding bands to the 'fund' list in account/plan
  * finish up TODOs in tests
