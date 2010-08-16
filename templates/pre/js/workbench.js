@@ -41,19 +41,7 @@ var SCWorkbench = function () {
             "Fan",
             "Banned"
         ],
-        entryTypeEnum: {
-            SONG_CRITIQUE:      0,
-            SONG_CHECKED_IN:    1,
-            SONG_CHECKED_OUT:   2,
-            SAMPLES_UPLOADED:   3,
-            SONG_RENAMED:       4,
-            POKE:               5,
-            BAND_MEMBER_JOIN:   6,
-            BAND_MEMBER_QUIT:   7,
-            NEW_PROJECT:        8,
-            SONG_JUST_CHECK_IN: 9,
-            SPACE_ALLOCATED_CHANGE: 10
-        }
+        entryTypeEnum:{% include 'workbench/entryTypeEnum.jst.html' %} 
     };
     
     // private functions

@@ -78,6 +78,12 @@ def activity_list(request):
 
     return [entry.to_dict(chains=['band', 'catalyst', 'target', 'version.project', 'project']) for entry in entries]
 
+@json_login_required
+@json_get_required
+def ajax_activity(request):
+    return json_success(activity_list(request))
+    
+@json_get_required
 def ajax_home(request):
     data = {
         'user': {

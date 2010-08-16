@@ -3,7 +3,7 @@
  *
  * If you want a callback when someone logs in or out, use
  *
- * Login.addStateChangeCallback(function);
+ * Login.addStateChangeCallback(function(user){});
  *
  */
 

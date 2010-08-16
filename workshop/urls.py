@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
 
     url(r'^ajax/home/$', 'workshop.views.ajax_home', name="workbench.ajax_home"),
+    url(r'^ajax/activity/$', 'workshop.views.ajax_activity', name="workbench.ajax_activity"),
     url(r'^ajax/invite/ignore/$', 'workshop.views.ajax_ignore_invite', name="workbench.ajax_ignore_invite"),
     url(r'^ajax/invite/accept/$', 'workshop.views.ajax_accept_invite', name="workbench.ajax_accept_invite"),
     url(r'^ajax/invite/create/$', 'workshop.views.ajax_create_invite', name="workbench.ajax_create_invite"),

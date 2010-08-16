@@ -1,0 +1,7 @@
+<ul>
+    <% $.each(compo_list, function(index, compo) { %>
+        <li>
+            <a href="<%= urls.compete(compo.id) %>"><%= compo.title %></a>
+        </li>
+    <% }); %>
+</ul>

@@ -1,10 +1,4 @@
 Release "Boten Anna" (Basshunter):
-Sunday, August 15:
-* dashboard
-  > band activity
-  > upcoming competitions
-  > link to workbench and arena
-
 Tuesday, August 17:
 * upgrade page where you can choose a plan and sign up and pay
   > monthly, 1 year, two years
@@ -34,6 +28,7 @@ Friday, August 20:
   > tests for password recovery
   > tests for band settings -> membership management
   > test for home page (just make sure it shows up)
+  > workbench.ajax_activity
 
 Saturday, August 21:
 Sunday, August 22:
@@ -41,7 +36,9 @@ Friday, August 27:
 Saturday, August 28:
 Sunday, August 29:
 * design iteration
+  > all of workbench
   > landing page
+  > dashboard
   > editor controls on fields that will be parsed by showdown. - Aug 20
     - http://wmd-editor.com/
     - also always show a preview when things will be parsed by showdown.
@@ -51,7 +48,6 @@ Sunday, August 29:
   > test on 1024 page width.
   > arena home
   > ajax login
-  > all of workbench
   > tip framework
     - tips should show up where the tip element is but not on top of it.
   > home page - if not logged in, it's an attractive pricing & signup page

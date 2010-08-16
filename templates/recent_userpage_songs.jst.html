@@ -1,5 +1,9 @@
-<ul>
-    <% $.each(songs, function(index, song) { %>
-        {% include 'player/player.jst.html' %}
-    <% }); %>
-</ul>
+<% if (songs.length > 0) { %>
+    <ul>
+        <% $.each(songs, function(index, song) { %>
+            {% include 'player/player.jst.html' %}
+        <% }); %>
+    </ul>
+<% } else { %>
+    <p>No songs</p>
+<% } %>
