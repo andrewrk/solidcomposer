@@ -4,8 +4,6 @@ Sunday, August 15:
   > band activity
   > upcoming competitions
   > link to workbench and arena
-* band settings
-  > membership management
 
 Tuesday, August 17:
 * upgrade page where you can choose a plan and sign up and pay
@@ -76,6 +74,8 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+ * band settings
+   > membership management
  * user page - can invite them to join your band
  * in workbench, need a hook when login changes to refresh the page
  * login page should focus the username text box

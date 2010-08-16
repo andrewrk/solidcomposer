@@ -34,7 +34,16 @@
                 </tr>
             </table>
         </form>
-        <p><em>More settings coming soon.</em></p>
+        <h2>Members</h2>
+        <ul>
+        {% for member in band.bandmember_set.all %}
+            {% with member.user as user %}
+                <div>
+                    {% include 'username.html' %}
+                </div>
+            {% endwith %}
+        {% endfor %}
+        </ul>
     </div>
     
 {% endblock %}
