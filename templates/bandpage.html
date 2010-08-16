@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ band.title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+    This will be the band page for {{ band.title }}
+{% endblock %}

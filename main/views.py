@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -6,17 +6,19 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail, EmailMessage
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.template.loader import get_template
 from main import design
 from main.common import json_response, json_login_required, json_post_required, \
     get_obj_from_request, json_failure, json_success, create_hash, \
-    send_html_mail
+    send_html_mail, json_dump
 from main.forms import LoginForm, RegisterForm, ContactForm, \
     ChangePasswordForm, EmailSubscriptionsForm, PasswordResetForm
-from main.models import SongCommentNode, Band, Profile, BandMember
+from main.models import SongCommentNode, Band, Profile, BandMember, Song
 from workshop.models import LogEntry
+
+from datetime import datetime, timedelta
 
 def ajax_login_state(request):
     user = request.user
@@ -246,10 +248,17 @@ def confirm(request, username, code):
         return render_to_response('confirm_failure.html', locals(), context_instance=RequestContext(request))
 
 def userpage(request, username):
-    """
-    TODO
-    """
+    user = get_object_or_404(User, username=username)
+    members = BandMember.objects.filter(user=user).order_by('-space_donated')
+    songs = Song.objects.filter(Q(owner=user), Q(is_open_for_comments=True)|Q(is_open_source=True)).order_by('-date_added')[:10]
+    song_data = json_dump([song.to_dict(chains=['band', 'comment_node']) for song in songs])
+    user_data = json_dump(user.get_profile().to_dict())
     return render_to_response('userpage.html', locals(), context_instance=RequestContext(request))
+
+def bandpage(request, band_url):
+    "TODO"
+    band = get_object_or_404(Band, url=band_url)
+    return render_to_response('bandpage.html', locals(), context_instance=RequestContext(request))
 
 def contact(request):
     if request.method == 'POST':

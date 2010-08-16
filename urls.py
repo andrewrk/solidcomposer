@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^plans/$', 'main.views.plans', name='plans'),
 
     url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
+    url(r'^band/(.+)/$', 'main.views.bandpage', name='bandpage'),
 
     url(r'^login/$', 'main.views.user_login', name="user_login"),
     url(r'^logout/$', 'main.views.user_logout', name="user_logout"),

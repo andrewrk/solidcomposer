@@ -1,6 +1,6 @@
 /*  Requires that you call Player.processSong(song) for each song data
  *      structure that you want the player to use.
- *  Call Player.setUser() as soon as you have user data.
+ *  If you don't use Login, you need to call Player.setUser() as soon as you have user data.
  *  After you generate the dom for the player, run Player.addUiToDom(dom) on it.
  *  At this point, Player takes care of the rest!
  */
@@ -1082,7 +1082,7 @@ var Player = function() {
             cacheImages();
             createDialogs();
 
-            if (Login) {
+            if (typeof Login !== "undefined") {
                 Login.getUser(loginStateChanged);
                 Login.addStateChangeCallback(loginStateChanged);
             }
@@ -1249,7 +1249,8 @@ var Player = function() {
         // hax to display "Buffering" in the song player
         setBufferTimeLeft: function(seconds) {
             playedTime = -seconds;
-        }
+        },
+        setUser: loginStateChanged
     };
     return that;
 } ();

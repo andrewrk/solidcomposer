@@ -1,7 +1,41 @@
 {% extends 'base.html' %}
 
+{% block title %}{{ user.username }} - {{ block.super }}{% endblock %}
+
+{% block css %}userpage.pre.css{% endblock %}
+
+{% block extra_header %}
+    {{ block.super }}
+    {% include 'sc_script_framework.html' %}
+    {% include 'player/script_player.html' %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.pre.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/userpage.pre.js"></script>
+    <script type="text/javascript">
+var recent_song_data = ({% autoescape off %}{{ song_data }}{% endautoescape %});
+var user_data = ({% autoescape off %}{{ user_data }}{% endautoescape %});
+    </script>
+{% endblock %}
+
 {% block content %}
-<div class="textblock">
-    <p>This will be the userpage for {{ user }}</p>
-</div>
+    <div>
+        <img src="{{ user.get_profile.gravatar}}" alt="" />
+        <h1>{{ user.username }}</h1>
+        <p><img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" /> x {{ user.get_profile.get_points }}</p>
+    </div>
+    <h2>Bands</h2>
+        {% if members %}
+            <ul>
+                {% for member in members %}
+                    <li>
+                        <a href="{% url bandpage member.band.url %}">{{ member.band.title }}</a> 
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No bands</p>
+        {% endif %}
+    <h2>Recent Songs</h2>
+    <div id="recent-songs">
+    {% include 'loading.html' %}
+    </div>
 {% endblock %}
