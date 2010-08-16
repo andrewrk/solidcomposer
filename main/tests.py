@@ -194,9 +194,6 @@ class SimpleTest(TestCase):
     def test_policy(self):
         return self.staticPage(reverse('policy'))
 
-    def test_account(self):
-        return self.staticPage(reverse('account'))
-
     def test_terms(self):
         return self.staticPage(reverse('terms'))
 

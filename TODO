@@ -23,7 +23,7 @@ Release "Boten Anna" (Basshunter)
    > if logged in, it's a dashboard with good stuff on it
  * workbench tests - Aug 14
    > test_band_settings
-   > tests for account.plan
+   > tests for account
    > take into account bytes used and whether bands are read only
    > tests for upgrade page
    > tests for password recovery
