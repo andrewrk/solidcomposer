@@ -16,6 +16,7 @@ from main.common import json_response, json_login_required, json_post_required, 
 from main.forms import LoginForm, RegisterForm, ContactForm, \
     ChangePasswordForm, EmailSubscriptionsForm, PasswordResetForm
 from main.models import SongCommentNode, Band, Profile, BandMember
+from workshop.models import LogEntry
 
 def ajax_login_state(request):
     user = request.user
@@ -303,15 +304,33 @@ def account_plan(request):
                 err_msg = design.invalid_amount
                 break
 
-            changes.append({'member': member, 'val': val})
+            changes.append((member, val,))
             space_total += val
 
         if err_msg == "":
             if space_total <= request.user.get_profile().purchased_bytes:
                 # everything is good. apply the change.
-                for change in changes:
-                    change['member'].space_donated = change['val']
-                    change['member'].save()
+                # also create log entries for affected bands
+                for member, new_space in changes:
+                    old_space = member.space_donated
+                    if old_space != new_space:
+                        # save new space into member
+                        member.space_donated = new_space
+                        member.save()
+
+                        # add or take away space from the band
+                        band = member.band
+                        band.total_space += new_space - old_space
+                        band.save()
+
+                        # make log entry
+                        entry = LogEntry()
+                        entry.entry_type = LogEntry.SPACE_ALLOCATED_CHANGE
+                        entry.band = member.band
+                        entry.catalyst = request.user
+                        entry.old_amount = old_space
+                        entry.new_amount = new_space
+                        entry.save()
 
                 return HttpResponseRedirect(reverse('account.plan'))
             else:
@@ -326,7 +345,7 @@ def account_plan(request):
             'usd_per_month': 0,
             'total_space': 0,
         }
-    memberships = BandMember.objects.filter(user=user)
+    memberships = BandMember.objects.filter(user=user).order_by('-space_donated')
     return render_to_response('account/plan.html', locals(), context_instance=RequestContext(request))
 
 @login_required

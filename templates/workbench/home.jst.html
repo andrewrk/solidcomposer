@@ -76,6 +76,8 @@
                             <% } else if (entry.entry_type === entryTypeEnum.SONG_JUST_CHECK_IN) { %>
                                 checked in
                                 <a href="<%= urls.project(entry.project.id, entry.band.id) %>"><%= entry.project.title %></a>.
+                            <% } else if (entry.entry_type === entryTypeEnum.SPACE_ALLOCATED_CHANGE) { %>
+                                went from donating <%= entry.old_amount %> bytes to <%= entry.new_amount %> bytes.
                             <% } %>
                             <span class="activity-date"><%= Time.printableTimeSince(entry.timestamp) %> ago</span>
                         </li>

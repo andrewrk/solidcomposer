@@ -51,7 +51,8 @@ var SCWorkbench = function () {
             BAND_MEMBER_JOIN:   6,
             BAND_MEMBER_QUIT:   7,
             NEW_PROJECT:        8,
-            SONG_JUST_CHECK_IN: 9
+            SONG_JUST_CHECK_IN: 9,
+            SPACE_ALLOCATED_CHANGE: 10
         }
     };
     

@@ -421,7 +421,9 @@ class LogEntry(SerializableModel):
     Something that happened that is relevant to a band. We use this to have a Recent Events pane in workbench.
     """
 
-    SONG_CRITIQUE, SONG_CHECKED_IN, SONG_CHECKED_OUT, SAMPLES_UPLOADED, SONG_RENAMED, POKE, BAND_MEMBER_JOIN, BAND_MEMBER_QUIT, NEW_PROJECT, SONG_JUST_CHECK_IN = range(10)
+    SONG_CRITIQUE, SONG_CHECKED_IN, SONG_CHECKED_OUT, SAMPLES_UPLOADED, \
+        SONG_RENAMED, POKE, BAND_MEMBER_JOIN, BAND_MEMBER_QUIT, NEW_PROJECT, \
+        SONG_JUST_CHECK_IN, SPACE_ALLOCATED_CHANGE = range(11)
 
     ENTRY_TYPE_CHOICES = (
         (SONG_CRITIQUE, 'Song critique'),
@@ -434,6 +436,7 @@ class LogEntry(SerializableModel):
         (BAND_MEMBER_QUIT, 'Band member quit'),
         (NEW_PROJECT, 'New project'),
         (SONG_JUST_CHECK_IN, 'Just check in'),
+        (SPACE_ALLOCATED_CHANGE, 'Space allocated change'),
     )
 
     PUBLIC_ATTRS = (
@@ -445,6 +448,8 @@ class LogEntry(SerializableModel):
         'node',
         'version',
         'project',
+        'old_amount',
+        'new_amount',
     )
 
     entry_type = models.IntegerField(choices=ENTRY_TYPE_CHOICES)
@@ -467,6 +472,10 @@ class LogEntry(SerializableModel):
 
     # the project for when a project is just checked in
     project = models.ForeignKey('Project', null=True, blank=True)
+
+    # the amount of space donated changed
+    old_amount = models.IntegerField(default=0)
+    new_amount = models.IntegerField(default=0)
 
     def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
         data = super(LogEntry, self).to_dict(access, chains)
