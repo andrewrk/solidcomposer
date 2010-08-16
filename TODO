@@ -1,59 +1,79 @@
-Release "Boten Anna" (Basshunter)
-= sitewide
- * user page - Aug 18
-   > list entries
-   > can invite them to join your band
- * landing page
- * dashboard
-   > band activity
-   > upcoming competitions
-   > link to workbench and arena
- * upgrade page where you can choose a plan and sign up and pay - Aug 14
-   > monthly, 1 year, two years
- * code to bill customers monthly - Aug 14
-   > set it up so that it sends me an email of what it's about to do, then
-     I manually approve it and bill everybody.
-   > able to do a one-time payment or recurring
-   > able to downgrade/upgrade account at any time.
- * band settings - Aug 17
-   > membership management
- * song player: mouseover comments go away if you're not scrolled to the top - Aug 18
- * pagination is broken in project manager - Aug 18
- * page for songs so people can link to them. put a button in the song player widget to get this link.
- * make sure bands are read only when they should be - Aug 20
-   > ui to indicate that bands are read only and link to upgrade account
-   > on create band page, if they are out of bands, have it say that they need to upgrade to create more bands.
- * workbench tests - Aug 14
-   > make sure log entries are created when they should be
-   > test_band_settings
-   > tests for account
-   > take into account bytes used and whether bands are read only
-   > tests for upgrade page
-   > tests for password recovery
-   > tests for band settings -> membership management
-   > test for home page (just make sure it shows up)
- * design iteration - Aug 24, 25, 26, 27, 28, 29
-   > editor controls on fields that will be parsed by showdown. - Aug 20
-     - http://wmd-editor.com/
-     - also always show a preview when things will be parsed by showdown.
-   > favicon
-   > new logo
-   > make header area take up less vertical room
-   > test on 1024 page width.
-   > arena home
-   > ajax login
-   > all of workbench
-   > tip framework
-     - tips should show up where the tip element is but not on top of it.
-   > home page - if not logged in, it's an attractive pricing & signup page
-   > maxWidth and maxHeight don't work in jquery dialog
-   > html email instead of txt
- * migration to create projects and versions for everything on the site. - Aug 30
- * manually test all the features to make sure they work. - Aug 31
- * WE DO IT LIVE - Sept 1
- * blog post announcing release
-   > movie showing off features
-   > replace "About" with a link to the introductory blog post
+Release "Boten Anna" (Basshunter):
+Sunday, August 15:
+* user page
+  > list entries
+  > can invite them to join your band
+* dashboard
+  > band activity
+  > upcoming competitions
+  > link to workbench and arena
+* band settings
+  > membership management
+
+Tuesday, August 17:
+* upgrade page where you can choose a plan and sign up and pay
+  > monthly, 1 year, two years
+* code to bill customers monthly
+  > set it up so that it sends me an email of what it's about to do, then
+    I manually approve it and bill everybody.
+  > able to do a one-time payment or recurring
+  > able to downgrade/upgrade account at any time.
+* make sure bands are read only when they should be
+  > ui to indicate that bands are read only and link to upgrade account
+  > on create band page, if they are out of bands, have it say that they need to upgrade to create more bands.
+
+Wednesday, August 18:
+* song player: mouseover comments go away if you're not scrolled to the top
+* pagination is broken in project manager
+* page for songs so people can link to them. put a button in the song player widget to get this link.
+
+Friday, August 20:
+* workbench tests
+  > make sure log entries are created when they should be
+  > test_band_settings
+  > tests for account
+  > take into account bytes used and whether bands are read only
+  > tests for upgrade page
+  > tests for password recovery
+  > tests for band settings -> membership management
+  > test for home page (just make sure it shows up)
+
+Saturday, August 21:
+Sunday, August 22:
+Friday, August 27:
+Saturday, August 28:
+Sunday, August 29:
+* design iteration
+  > landing page
+  > editor controls on fields that will be parsed by showdown. - Aug 20
+    - http://wmd-editor.com/
+    - also always show a preview when things will be parsed by showdown.
+  > favicon
+  > new logo
+  > make header area take up less vertical room
+  > test on 1024 page width.
+  > arena home
+  > ajax login
+  > all of workbench
+  > tip framework
+    - tips should show up where the tip element is but not on top of it.
+  > home page - if not logged in, it's an attractive pricing & signup page
+  > maxWidth and maxHeight don't work in jquery dialog
+  > html email instead of txt
+
+Tuesday, August 31:
+* manually test all the features to make sure they work.
+
+Wednesday, September 1:
+* WE DO IT LIVE
+  > shut down solidcomposer.com
+  > migrate data to new place.
+  > test everything
+  > change domain to new place
+  > make sure email is working.
+* blog post announcing release
+  > movie showing off features
+  > replace "About" with a link to the introductory blog post
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
