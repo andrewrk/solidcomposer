@@ -34,7 +34,8 @@ class SimpleTest(TestCase):
                 'email': username + '@mailinator.com',
                 'password': 'temp1234',
                 'confirm_password': 'temp1234',
-                'agree_to_terms': True
+                'agree_to_terms': True,
+                'plan': 0, 
             })
             code = User.objects.filter(username=username)[0].get_profile().activate_code
             self.client.get(reverse('confirm', args=(username, code)))

@@ -4,5 +4,47 @@
 
 {% block content %}
     <h1>Pricing &amp; Signup</h1>
-    
+    <table>
+        <tr>
+            <th>Plan</th>
+            <th>Monthly Cost</th>
+            <th>Features</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>Free</th>
+            <td>Free</th>
+            <td>
+                <ul>
+                    <li>up to {{ free_plan.band_count_limit }} bands</li>
+                </ul>
+            </td>
+            <td><a href="{% url register %}">Sign up!</a></td>
+        </tr>
+        {% for plan in plans %}
+            <tr>
+                <td>{{ plan.title }}</td>
+                <td>${{ plan.usd_per_month|floatformat:2 }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            {% if plan.total_space >= 1099511627776 %}
+                                Unlimited disk space
+                            {% else %}
+                                {{ plan.total_space|filesizeformat }} extra space
+                            {% endif %}
+                        </li>
+                        <li>
+                            {% if plan.band_count_limit >= 10000 %}
+                                Unlimited number of bands
+                            {% else %}
+                                up to {{ plan.band_count_limit }} bands
+                            {% endif %}
+                        </li>
+                    </ul>
+                </td>
+                <td><a href="{% url register_plan plan.url %}">Sign up!</a></td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

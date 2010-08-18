@@ -4,6 +4,6 @@
     {{ invite.invitee.username }} has accepted your invitation to join {{ invite.band.title }}!
 
     {{ invite.invitee.username }} is now a part of your band:
-    http://solidcomposer.com{% url workbench.band invite.band.id %}
+    http://{{ host }}{% url workbench.band invite.band.id %}
 {% endblock %}
 

@@ -9,13 +9,14 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.template.loader import get_template
-from main import design
+from main import design, payment
 from main.common import json_response, json_login_required, json_post_required, \
     get_obj_from_request, json_failure, json_success, create_hash, \
     send_html_mail, json_dump
 from main.forms import LoginForm, RegisterForm, ContactForm, \
     ChangePasswordForm, EmailSubscriptionsForm, PasswordResetForm
-from main.models import SongCommentNode, Band, Profile, BandMember, Song
+from main.models import SongCommentNode, Band, Profile, BandMember, Song, \
+    AccountPlan
 from workshop.models import LogEntry
 
 from datetime import datetime, timedelta
@@ -181,10 +182,18 @@ def ajax_edit_comment(request):
 
     return json_success(node.to_dict())
 
-def user_register(request):
+def user_register_plan(request, plan_url):
+    "plan_url of 'free' means free plan"
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
+            try:
+                plan_id = int(form.cleaned_data.get('plan'))
+                plan = AccountPlan.objects.get(pk=plan_id)
+            except AccountPlan.DoesNotExist:
+                plan_id = 0
+                plan = None
+
             # create the user
             user = User.objects.create_user(form.cleaned_data.get('username'),
                 form.cleaned_data.get('email'),
@@ -215,16 +224,50 @@ def user_register(request):
             manager.save()
 
             # send an activation email
-            subject = "Account Confirmation - SolidComposer"
-            message = get_template('activation_email.txt').render(Context({ 'username': user.username, 'code': profile.activate_code}))
-            from_email = 'admin@solidcomposer.com'
-            to_email = user.email
-            send_mail(subject, message, from_email, [to_email], fail_silently=True)
+            subject = design.account_confirmation
+            context = Context({
+                'user': user.username,
+                'activate_url': request.build_absolute_uri(reverse('confirm', args=[user.username, profile.activate_code])),
+                'host': request.get_host(),
+            })
+            message_txt = get_template('email/activation.txt').render(context)
+            message_html = get_template('email/activation.html').render(context)
+            send_html_mail(subject, message_txt, message_html, [user.email])
 
-            return HttpResponseRedirect(reverse("register_pending"))
+            if plan is None:
+                return HttpResponseRedirect(reverse("register_pending"))
+            else:
+                return HttpResponseRedirect(payment.pipeline_url(user, request.build_absolute_uri(reverse("register_pending")), plan))
     else:
-        form = RegisterForm()
+        try:
+            plan = AccountPlan.objects.get(url=plan_url)
+            plan_id = plan.id
+        except AccountPlan.DoesNotExist:
+            plan = None
+            plan_id = 0
+
+        form = RegisterForm(initial={'plan': plan_id})
     return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))
+
+def user_register(request):
+    return user_register_plan(request, 0)
+
+def register_pending(request):
+    status, transaction = payment.process_pipeline_result(request)
+    if status == payment.SUCCESS:
+        # give the user the premium account
+        profile = transaction.user.get_profile()
+        plan = transaction.plan
+        profile.plan = plan
+        profile.band_count_limit = plan.band_count_limit
+        profile.purchased_bytes = plan.total_space
+        profile.usd_per_month = plan.usd_per_month
+        # give them a day while payment cron job runs
+        profile.account_expire_date = datetime.now() + timedelta(days=1)
+        profile.active_transaction = transaction
+        profile.save()
+
+    return render_to_response('pending.html', locals(), context_instance=RequestContext(request))
 
 def confirm(request, username, code):
     try:
@@ -252,7 +295,10 @@ def userpage(request, username):
     members = BandMember.objects.filter(user=user).order_by('-space_donated')
     songs = Song.objects.filter(Q(owner=user), Q(is_open_for_comments=True)|Q(is_open_source=True)).order_by('-date_added')[:10]
     song_data = json_dump([song.to_dict(chains=['band', 'comment_node']) for song in songs])
-    user_data = json_dump(request.user.get_profile().to_dict())
+    if request.user.is_authenticated():
+        user_data = json_dump(request.user.get_profile().to_dict())
+    else:
+        user_data = 'null'
     return render_to_response('userpage.html', locals(), context_instance=RequestContext(request))
 
 def bandpage(request, band_url):
@@ -420,6 +466,7 @@ def account_password_reset(request):
                 subject = design.password_reset_on_website
                 context = Context({
                     'new_password': new_password,
+                    'host': request.get_host(),
                 })
                 message_txt = get_template('email/password_reset.txt').render(context)
                 message_html = get_template('email/password_reset.html').render(context)
@@ -434,6 +481,13 @@ def account_password_reset(request):
 def plans(request):
     """The page where we try to get people to sign up for paying us money"""
     user = request.user
+    free_plan = {
+        'title': 'Free',
+        'usd_per_month': 0,
+        'total_space': 0,
+        'band_count_limit': settings.FREE_BAND_LIMIT,
+    }
+    plans = AccountPlan.objects.order_by('usd_per_month')
     return render_to_response('plans.html', locals(), context_instance=RequestContext(request))
 
 def home(request):

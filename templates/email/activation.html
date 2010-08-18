@@ -1,0 +1,11 @@
+{% block content %}
+    <h1>{{ host }} Account Confirmation</h1>
+    <p>
+        Hi {{ user.username }},
+    </p>
+    <p>
+        Please enter this link into your browser to confirm your account:
+        <br />
+        <a href="{{ activate_url }}">{{ activate_url }}</a>
+    </p>
+{% endblock %}

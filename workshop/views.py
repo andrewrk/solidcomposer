@@ -133,16 +133,17 @@ def handle_invite(request, accept):
         member.save()
 
         createNewBandMemberLogEntry(member)
-        send_invitation_accepted_email(invite)
+        send_invitation_accepted_email(invite, request.get_host())
 
     invite.delete()
         
     return json_success()
 
-def send_invitation_accepted_email(invite):
+def send_invitation_accepted_email(invite, host):
     subject = design.x_has_accepted_your_invitation_to_join_y.format(invite.invitee.username, invite.band.title)
     context = Context({
         'invite': invite,
+        'host': host,
     })
     message_txt = get_template('workbench/email/invitation_accepted.txt').render(context)
     message_html = get_template('workbench/email/invitation_accepted.html').render(context)
@@ -193,7 +194,7 @@ def ajax_create_invite(request):
 
         invite.invitee = invitee
         invite.save()
-        send_invitation_email(invite)
+        send_invitation_email(invite, request.get_host())
 
         return json_success()
 
@@ -230,7 +231,7 @@ def redeem_invitation(request, password_hash):
                 invite.save()
 
             invite.invitee = request.user # we fill this field for the sake of send_invitation_accepted_email
-            send_invitation_accepted_email(invite)
+            send_invitation_accepted_email(invite, request.get_host())
 
             band = invite.band
             err_msg = False
@@ -277,13 +278,14 @@ def ajax_username_invite(request):
     invite.save()
 
     # send a heads up email
-    send_invitation_email(invite)
+    send_invitation_email(invite, request.get_host())
     return json_success()
 
-def send_invitation_email(invite):
+def send_invitation_email(invite, host):
     subject = design.x_is_inviting_you_to_join_y.format(invite.inviter.username, invite.band.title)
     context = Context({
         'invite': invite,
+        'host': host,
     })
     message_txt = get_template('workbench/email/invitation_direct.txt').render(context)
     message_html = get_template('workbench/email/invitation_direct.html').render(context)
@@ -337,6 +339,7 @@ def ajax_email_invite(request):
             'user': request.user,
             'band': band,
             'invite': invite,
+            'host': request.get_host(),
         })
         message_txt = get_template('workbench/email/invitation_direct.txt').render(context)
         message_html = get_template('workbench/email/invitation_direct.html').render(context)
@@ -354,6 +357,7 @@ def ajax_email_invite(request):
             'user': request.user,
             'band': band,
             'invite': invite,
+            'host': request.get_host(),
         })
         message_txt = get_template('workbench/email/invitation_link.txt').render(context)
         message_html = get_template('workbench/email/invitation_link.html').render(context)

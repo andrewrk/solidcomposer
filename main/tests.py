@@ -51,14 +51,16 @@ class SimpleTest(TestCase):
 
         # create some users
         for username in ("skiessi", "superjoe", "just64helpin"):
-            self.client.post(register_url, {
+            response = self.client.post(register_url, {
                 'username': username,
                 'artist_name': username + ' band',
                 'email': username + '@mailinator.com',
                 'password': 'temp1234',
                 'confirm_password': 'temp1234',
-                'agree_to_terms': True
+                'agree_to_terms': True,
+                'plan': 0,
             })
+            self.assertEqual(response.status_code, 302)
             code = User.objects.filter(username=username)[0].get_profile().activate_code
             self.client.get(reverse('confirm', args=(username, code)))
 
@@ -108,6 +110,7 @@ class SimpleTest(TestCase):
             'password': 'temp1234',
             'confirm_password': 'temp1234',
             'agree_to_terms': True,
+            'plan': 0,
         })
         self.assertRedirects(response, register_pending_url)
         # verify the profile was created

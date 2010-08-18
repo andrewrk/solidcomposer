@@ -71,3 +71,5 @@ label_artist_name = 'Solo band name'
 
 # email subjects
 password_reset_on_website = "Your new password on SolidComposer"
+account_confirmation = "Account Confirmation - SolidComposer"
+contact_message_subject = "SolidComposer Contact Message"

@@ -182,6 +182,7 @@ class AccountPlan(SerializableModel):
     )
 
     title = models.CharField(max_length=50)
+    url = models.CharField(max_length=20, unique=True)
     # how much the user has to pay per month
     usd_per_month = models.FloatField()
     # byte count limit of their account
@@ -192,6 +193,31 @@ class AccountPlan(SerializableModel):
     def __unicode__(self):
         return "%s - $%s/mo" % (self.title, self.usd_per_month)
 
+class Transaction(models.Model):
+    """
+    Represents a request to get a recurring billing token from Amazon.
+    we use the Transaction id for caller_reference.
+    """
+    transaction_id = models.CharField(max_length=256, null=True, blank=True)
+    request_id = models.CharField(max_length=256, null=True, blank=True) 
+    token_id = models.CharField(max_length=65, null=True, blank=True)
+    expiry = models.CharField(max_length=20, null=True, blank=True)
+    timestamp = models.DateTimeField()
+
+    user = models.ForeignKey(User)
+    amount = models.FloatField()
+    # true when the amount is successfully paid
+    confirmed = models.BooleanField(default=False)
+    # the plan that will be given to the user upon successful payment
+    plan = models.ForeignKey('AccountPlan')
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.timestamp = datetime.now()
+        self._save(*args, **kwargs)
+
+    def _save(self, *args, **kwargs):
+        super(Transaction, self).save(*args, **kwargs)
 
 class Profile(SerializableModel):
     PUBLIC_ATTRS = (
@@ -235,13 +261,12 @@ class Profile(SerializableModel):
     # billing information
     # if they are on a monthly plan, this field will be greater than 0.
     usd_per_month = models.FloatField(default=0.0)
-    # if they are on a pre-paid plan, this will be non-null.
     # when the billing cron job runs, it checks for account_expire_date less than 
     # a month away and bills, adding a month. This means when a person signs up,
-    # we bill them immediately and give them 2 months.
+    # we bill them and set it to now + 1 month.
     account_expire_date = models.DateTimeField(null=True, blank=True)
-    # the string that identifies a customer with the merchant
-    customer_id = models.CharField(max_length=256, blank=True)
+    # the transation that was used to purchase the current plan.
+    active_transaction = models.ForeignKey('Transaction', null=True, blank=True)
 
     # the plugins that the user owns
     plugins = models.ManyToManyField('workshop.PluginDepenency', blank=True, related_name='profile_plugins')

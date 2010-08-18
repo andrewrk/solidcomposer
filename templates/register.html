@@ -2,6 +2,12 @@
 
 {% block title %}Create an account - {{ block.super }}{% endblock %}
 
+{% block extra_header %}
+    {{ block.super }}
+    {% include 'sc_script_framework.html' %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/register.pre.js"></script>
+{% endblock %}
+
 {% block content %}
     <div class="textblock">
         <h1>Create an account</h1>
@@ -45,7 +51,6 @@
                         {{ form.password.errors }}{{ form.password }}
                     </td>
                 </tr>
-
                 <tr>
                     <th>
                         {{ form.confirm_password.label }}:
@@ -55,15 +60,27 @@
                     </td>
                 </tr>
                 <tr>
-                    <td></td>
+                    <th>
+                        {{ form.plan.label }}:
+                    </th>
                     <td>
-                        {{ form.agree_to_terms.errors }}{{ form.agree_to_terms }}
-                        <label for="id_agree_to_terms">I agree to the </label><a href="{% url terms %}" target="_BLANK">Terms &amp; Conditions</a>
+                        {{ form.plan.errors }}{{ form.plan }} <a href="{% url plans %}">Plan Details</a>
                     </td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td><input type="submit" value="Register" /></td>
+                    <td>
+                        {{ form.agree_to_terms.errors }}{{ form.agree_to_terms }}
+                        <label for="id_agree_to_terms">I agree to the </label><a href="{% url terms %}" target="_BLANK">Terms of Use</a>
+                    </td>
+                </tr>
+                <tr class="ui-free">
+                    <td></td>
+                    <td><input type="submit" value="Create a Free Account" /></td>
+                </tr>
+                <tr class="ui-paid">
+                    <td></td>
+                    <td><input type="image" src="{{ MEDIA_URL }}img/golden_medium_paynow_withmsg_whitebg.gif" value="Pay with Amazon" /></td>
                 </tr>
             </table>
         </form>

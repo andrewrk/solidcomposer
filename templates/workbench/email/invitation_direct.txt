@@ -5,7 +5,7 @@
 
     If you'd like to join forces with {{ invite.inviter.username }}, head over to the
     Workbench and accept the invitation:
-    http://solidcomposer.com{% url workbench.home %}
+    http://{{ host }}{% url workbench.home %}
 
     If this doesn't interest you, simply ignore this message.
 {% endblock %}

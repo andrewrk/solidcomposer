@@ -51,7 +51,9 @@ class BandInvitation(SerializableModel):
             return None
         else:
             from django.core.urlresolvers import reverse
-            return settings.ROOT_URL + reverse('workbench.redeem_invitation', args=[self.code])
+            from django.contrib.sites.models import Site
+            current_site = Site.objects.get_current()
+            return 'http://' + current_site.domain + reverse('workbench.redeem_invitation', args=[self.code])
             
     def save(self, *args, **kwargs):
         if not self.id:

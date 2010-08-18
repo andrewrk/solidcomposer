@@ -1,8 +1,6 @@
 {% block content %}{% endblock %}
 
-Thank you!
-SolidComposer Admin
+{{ host }}
 
 Manage subscription settings:
-http://solidcomposer.com{% url account %}
-
+http://{{ host }}{% url account %}

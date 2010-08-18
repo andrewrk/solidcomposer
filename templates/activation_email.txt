@@ -1,9 +1,0 @@
-==========SolidComposer Account Confirmation==========
-
-Please enter this link into your browser to confirm your account:
-http://solidcomposer.com/confirm/{{ username }}/{{ code }}/
-
-Thank you!
-
--SolidComposer Admin
-solidcomposer.com

@@ -40,14 +40,13 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 
 # amazon s3 details
-AWS_ACCESS_KEY_ID = 'xxxxxxxxxxxxxxxxxxxx' #@UnusedVariable
-AWS_SECRET_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' #@UnusedVariable
-AWS_STORAGE_BUCKET_NAME = 'solidcomposer-test' #@UnusedVariable
+AWS_ACCESS_KEY_ID = 'xxxxxxxxxxxxxxxxxxxx'
+AWS_SECRET_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+AWS_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 AWS_TEST_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 # copy and uncomment in settings_user.py to use s3 storage
 #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-ROOT_URL = 'http://localhost:8000' # http://solidcomposer.com for production
 DEFAULT_FROM_EMAIL = 'admin@solidcomposer.com'
 MEDIA_ROOT = absolute('media')
 MEDIA_URL = 'http://localhost:8080/django/solidcomposer/'
@@ -62,6 +61,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'base.SSLMiddleware.SSLRedirect',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

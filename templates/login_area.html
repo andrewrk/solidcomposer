@@ -3,11 +3,11 @@
         {% if user.is_authenticated %}
             {% include 'username.html' %}
             <a href="{% url account %}">settings</a>
-            <a href="{% url user_logout %}" id="signOut">sign out</a>
+            <a href="{% url user_logout %}" id="signOut">log out</a>
         {% else %}
             Not logged in.
-            <a href="{% url user_login %}" id="signIn">sign in</a>
-            <a href="{% url register %}">register</a>
+            <a href="{% url user_login %}" id="signIn">log in</a>
+            <a href="{% url plans %}">sign up</a>
         {% endif %}
     </div>
 </div>

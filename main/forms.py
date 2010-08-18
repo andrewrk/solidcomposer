@@ -3,6 +3,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
 from main import design
+from main.models import AccountPlan
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100,
@@ -29,6 +30,9 @@ class RegisterForm(forms.Form):
         widget=forms.widgets.PasswordInput(),
         error_messages={'required': design.this_field_is_required})
     agree_to_terms = forms.BooleanField(error_messages={'required': design.must_agree_to_terms})
+    plan = forms.ChoiceField(
+        choices=[(0, "Free")] + [(plan.id, "{0} - ${1}/mo".format(plan.title, plan.usd_per_month)) for plan in AccountPlan.objects.order_by('usd_per_month')],
+        error_messages={'required': design.this_field_is_required})
 
     def clean_confirm_password(self):
         password1 = self.cleaned_data['password']
