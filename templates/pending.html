@@ -6,10 +6,26 @@
 <div class="textblock">
     <h1>Account created</h1>
     <p>
-        An email was sent to the address you provided to confirm your account. Please check your email right now!
+        An email was sent to the address you provided to confirm your account. Please <strong>check your email</strong> right now!
     </p>
-    <p>
-        status: {{ status }}
-    </p>
+    {% if status == payment_result.SUCCESS %}
+        <p>
+            Monthly payments were set up successfully. Thanks for joining the {{ plan.title }} plan.
+        </p>
+    {% else %}{% if status == payment_result.FAILURE %}
+        <p>
+            There was an error setting up mothly payments, so we've set you up with the free plan for now.
+        </p>
+    {% else %}{% if status == payment_result.NO_PIPELINE %}
+    {% else %}{% if status == payment_result.INVALID_SIGNATURE %}
+        <p>
+            The result that came back from Amazon doesn't look like it's really from Amazon.
+            Either you're being very naughty, or something is broken.
+        </p>
+        <p>
+            Either way, we've set you up with the free plan for now. If this is a legitimate 
+            error, please <a href="{% url contact %}">contact support</a>.
+        </p>
+    {% endif %}{% endif %}{% endif %}{% endif %}
 </div>
 {% endblock %}

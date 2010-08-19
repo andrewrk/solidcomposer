@@ -1,10 +1,6 @@
 Release "Boten Anna" (Basshunter):
 Tuesday, August 17:
-* upgrade page where you can choose a plan and sign up and pay
-  > monthly, 1 year, two years
 * code to bill customers monthly
-  > set it up so that it sends me an email of what it's about to do, then
-    I manually approve it and bill everybody.
   > able to downgrade/upgrade/cancel/edit account at any time.
 * make sure bands are read only when they should be
   > ui to indicate that bands are read only and link to upgrade account
@@ -20,6 +16,8 @@ Friday, August 20:
 * make sure https works. buy an https cert and install it on linode
 * workbench tests
   > test the billing, especially when it returns pending
+    - billing cron job
+    - /signup/*
   > test redeemHyperlink
   > make sure a song's comment node is never null
   > make sure when a song is uploaded to the workbench, is_open_for_comments and is_open_source are False

@@ -19,7 +19,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = { #@UnusedVariable
+DATABASES = {
     'default': {
         'NAME': 'solidcomposer',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -46,6 +46,11 @@ AWS_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 AWS_TEST_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 # copy and uncomment in settings_user.py to use s3 storage
 #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+# make sure DEBUG is set to the value you want and run ./setup_amazon_payments.py to get these values.
+AWS_RECIPIENT_INSTRUCTION_TOKEN_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+AWS_RECIPIENT_INSTRUCTION_REQUEST_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+AWS_CALLER_INSTRUCTION_TOKEN_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+AWS_CALLER_INSTRUCTION_REQUEST_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 DEFAULT_FROM_EMAIL = 'admin@solidcomposer.com'
 MEDIA_ROOT = absolute('media')

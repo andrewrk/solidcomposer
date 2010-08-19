@@ -254,6 +254,12 @@ def user_register(request):
 
 def register_pending(request):
     status, transaction = payment.process_pipeline_result(request)
+    payment_result = {
+        'SUCCESS': payment.SUCCESS,
+        'FAILURE': payment.FAILURE,
+        'NO_PIPELINE': payment.NO_PIPELINE,
+        'INVALID_SIGNATURE': payment.INVALID_SIGNATURE,
+    }
     if status == payment.SUCCESS:
         # give the user the premium account
         profile = transaction.user.get_profile()
@@ -263,7 +269,7 @@ def register_pending(request):
         profile.purchased_bytes = plan.total_space
         profile.usd_per_month = plan.usd_per_month
         # give them a day while payment cron job runs
-        profile.account_expire_date = datetime.now() + timedelta(days=1)
+        profile.account_expire_date = datetime.now()
         profile.active_transaction = transaction
         profile.save()
 
@@ -285,9 +291,12 @@ def confirm(request, username, code):
         user.save()
         profile.activated = True
         profile.save()
+        user = request.user
+        profile = None
         return render_to_response('confirm_success.html', locals(), context_instance=RequestContext(request))
     else:
         err_msg = design.invalid_activation_code
+        user = request.user
         return render_to_response('confirm_failure.html', locals(), context_instance=RequestContext(request))
 
 def userpage(request, username):

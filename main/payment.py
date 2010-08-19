@@ -3,7 +3,9 @@ from django.conf import settings
 from main.models import Transaction
 import sys
 
-FAILED, SUCCESS, NO_PIPELINE, INVALID_SIGNATURE = range(4)
+from datetime import datetime, timedelta
+
+FAILURE, SUCCESS, NO_PIPELINE, INVALID_SIGNATURE = range(4)
 
 def _get_client():
     if settings.DEBUG:
@@ -42,6 +44,8 @@ def process_pipeline_result(request):
     if sig is None:
         return (NO_PIPELINE, None)
 
+    sig = sig.replace(" ", "+")
+
     client = _get_client()
     request_dict = dict([(key,val) for key, val in request.GET.iteritems()])
     valid = client.validate_pipeline_signature(sig, request.path+'?', request_dict)
@@ -52,7 +56,7 @@ def process_pipeline_result(request):
                 transaction = Transaction.objects.get(pk=int(transaction_id))
             except Transaction.DoesNotExist, ValueError:
                 sys.stderr.write("Got transaction id {0} from amazon which we don't have in our records.".format(transaction_id))
-                return (FAILED, None)
+                return (FAILURE, None)
 
             transaction.token_id = request.GET.get('tokenID')
             transaction.expiry = request.GET.get('expiry', '')
@@ -60,6 +64,48 @@ def process_pipeline_result(request):
 
             return (SUCCESS, transaction)
         else:
-            return (FAILED, None)
+            return (FAILURE, None)
     else:
         return (INVALID_SIGNATURE, None)
+
+def bill_user(user):
+    """
+    if the user owes payment, this function will use amazon to bill them their
+    monthly cost and add a month onto their account expire date
+    """
+    profile = user.get_profile()
+    now = datetime.now()
+    if profile.usd_per_month > 0 and profile.account_expire_date <= now:
+        # hai amazon can we plz have their money?
+        transaction = Transaction()
+        transaction.plan = profile.plan
+        transaction.token_id = profile.active_transaction.token_id
+        transaction.amount = profile.usd_per_month
+        transaction.user = user
+        transaction.save()
+
+        client = _get_client()
+        response = client.pay(
+            caller_token=settings.AWS_CALLER_INSTRUCTION_TOKEN_ID,
+            sender_token=transaction.token_id,
+            recipient_token=settings.AWS_RECIPIENT_INSTRUCTION_TOKEN_ID,
+            amount=transaction.amount,
+            caller_reference=str(transaction.id)
+        )
+
+        if not response.success:
+            # TODO send of some kind of error email
+            return
+
+        transaction.request_id = response.requestId
+        transaction.transaction_id = response.transaction.transactionId
+        transaction.save()
+
+        if response.transaction.status in ('Failure', 'Cancelled'):
+            # TODO send some kind of error email
+            return
+
+        # give them the goods
+        profile.account_expire_date += timedelta(days=31)
+        profile.save()
+

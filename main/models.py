@@ -261,9 +261,11 @@ class Profile(SerializableModel):
     # billing information
     # if they are on a monthly plan, this field will be greater than 0.
     usd_per_month = models.FloatField(default=0.0)
-    # when the billing cron job runs, it checks for account_expire_date less than 
-    # a month away and bills, adding a month. This means when a person signs up,
-    # we bill them and set it to now + 1 month.
+    # when the billing cron job runs, it checks for account_expire_date which
+    # is in the past and bills, adding a month. This means when a person signs up,
+    # we set the date to now() and allow the cron job to bill them.
+    # if account_expire_date is more than some threshold days ago, we
+    # automatically downgrade the account to free.
     account_expire_date = models.DateTimeField(null=True, blank=True)
     # the transation that was used to purchase the current plan.
     active_transaction = models.ForeignKey('Transaction', null=True, blank=True)
