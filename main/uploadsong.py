@@ -48,7 +48,7 @@ def handle_sample_file(filename, file_id, user, band, callback=None):
 
     if callback is defined, it will be called with each UploadedSample created.
     """
-    if band.isReadOnly():
+    if band.is_read_only():
         os.remove(filename)
         return
 

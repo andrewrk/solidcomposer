@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # TODO: synchronize media with amazon s3
+# TODO: make sure the wsgi process has permission to access the django project
 
 URL="http://solidcomposer.com/"
 SSH="web" # the ssh connection to make (here I am using one from .ssh/config)

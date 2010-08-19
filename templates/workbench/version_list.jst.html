@@ -1,4 +1,7 @@
 <% (function (project, versions) { %>
+    <% if (project.band.used_space > project.band.total_space) { %>
+        {% include 'workbench/space_warning.jst.html' %}
+    <% } %>
     <% if (versions.length) { %>
         {% include 'workbench/project_status.jst.html' %}
         <div id="next-version" class="version" data-projectid="<%=project.id%>">

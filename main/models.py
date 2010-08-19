@@ -88,7 +88,7 @@ class Band(SerializableModel):
     # how long has it been since used_space > total_space
     abandon_date = models.DateTimeField(blank=True, null=True)
 
-    def isReadOnly(self):
+    def is_read_only(self):
         return self.used_space > self.total_space
 
     def save(self, *args, **kwargs):

@@ -507,7 +507,8 @@ def ajax_project(request):
         data['reason'] = design.you_dont_have_permission_to_critique_this_band
         return json_response(data)
 
-    data['project'] = project.to_dict(SerializableModel.OWNER, chains=['checked_out_to', 'band'])
+    data['project'] = project.to_dict(SerializableModel.OWNER, chains=['checked_out_to'])
+    data['project']['band'] = project.band.to_dict(SerializableModel.OWNER)
 
     if last_version_id == 0:
         # get entire version list
@@ -600,6 +601,9 @@ def ajax_rename_project(request):
         if not project.band.permission_to_work(request.user):
             return json_failure(design.you_dont_have_permission_to_work_on_this_band)
 
+        if project.band.is_read_only():
+            return json_failure(design.band_in_readonly_mode)
+
         node = SongCommentNode()
         node.owner = request.user
         node.content = comments
@@ -638,6 +642,9 @@ def ajax_upload_samples_as_version(request):
     if not band.permission_to_work(request.user):
         return json_failure(design.you_dont_have_permission_to_work_on_this_band)
 
+    if band.is_read_only():
+        return json_failure(design.band_in_readonly_mode)
+
     node = SongCommentNode()
     node.owner = request.user
     node.content = comments
@@ -675,6 +682,9 @@ def ajax_upload_samples(request):
     if not band.permission_to_work(request.user):
         return json_failure(design.you_dont_have_permission_to_work_on_this_band)
 
+    if band.is_read_only():
+        return json_failure(design.band_in_readonly_mode)
+
     files = request.FILES.getlist('file')
 
     for item in files:
@@ -696,6 +706,9 @@ def ajax_provide_project(request):
     if not band.permission_to_work(request.user):
         return json_failure(design.you_dont_have_permission_to_work_on_this_band)
 
+    if band.is_read_only():
+        return json_failure(design.band_in_readonly_mode)
+
     project_handle = request.FILES.get('file')
     handle_project_upload(project_handle, request.user, version.song)
 
@@ -713,6 +726,9 @@ def ajax_provide_mp3(request):
 
     if not band.permission_to_work(request.user):
         return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    if band.is_read_only():
+        return json_failure(design.band_in_readonly_mode)
 
     mp3_handle = request.FILES.get('file')
 
@@ -734,6 +750,9 @@ def ajax_checkout(request):
     # make sure user can work on this band
     if not project.band.permission_to_work(request.user):
         return json_failure(design.you_dont_have_permission_to_work_on_this_band)
+
+    if project.band.is_read_only():
+        return json_failure(design.band_in_readonly_mode)
 
     # make sure project is available
     if project.checked_out_to is not None:
@@ -763,6 +782,9 @@ def ajax_checkin(request):
     # make sure project is checked out to request user
     if project.checked_out_to is None or project.checked_out_to.id != request.user.id:
         return json_failure(design.not_checked_out_to_you)
+
+    if project.band.is_read_only():
+        return json_failure(design.band_in_readonly_mode)
 
     project_file = request.FILES.get('project_file')
     mp3_preview = request.FILES.get('mp3_preview')
