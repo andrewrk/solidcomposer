@@ -61,10 +61,10 @@ Wednesday, September 1:
   > make sure email is working.
 * blog post announcing release
   > movie showing off features
-  > replace "About" with a link to the introductory blog post
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+ * caching
  * band meter on workbench page
  * ability to pay in advance
  * handle amazon co-branded requests that don't return
