@@ -1,5 +1,5 @@
 from django_extensions.management.jobs import DailyJob
-from main.models import Profile, BandMember
+from main.models import Profile
 from main import payment
 from django.conf import settings
 
@@ -22,22 +22,6 @@ class Job(DailyJob):
         # the way it should work is that a report is made of people whose accounts
         # we could not bill, and we contact those people to tell them we'll have to 
         # revert them to free if they don't pay.
-        
         #profiles = Profile.objects.filter(account_expire_date__lte=now-timedelta(days=7))
         #for profile in profiles:
-        #    # change their plan to free
-        #    profile.plan = None
-        #    profile.band_count_limit = settings.FREE_BAND_LIMIT
-        #    profile.usd_per_month = 0
-        #    profile.active_transaction = None
-
-        #    members = BandMember.objects.filter(user=profile.user)
-        #    for member in members:
-        #        band = member.band
-        #        band.total_space -= member.space_donated
-        #        band.save()
-        #        member.space_donated = 0
-        #        member.save()
-        #    profile.purchased_bytes = 0
-
-        #    profile.save()
+        #    downgrade_account_to_free(profile.user)

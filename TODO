@@ -1,7 +1,5 @@
 Release "Boten Anna" (Basshunter):
 Tuesday, August 17:
-* code to bill customers monthly
-  > able to downgrade/upgrade/cancel/edit account at any time.
 * make sure bands are read only when they should be
   > ui to indicate that bands are read only and link to upgrade account
   > on create band page, if they are out of bands, have it say that they need to upgrade to create more bands.

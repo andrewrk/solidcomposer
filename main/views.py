@@ -14,7 +14,8 @@ from main.common import json_response, json_login_required, json_post_required, 
     get_obj_from_request, json_failure, json_success, create_hash, \
     send_html_mail, json_dump
 from main.forms import LoginForm, RegisterForm, ContactForm, \
-    ChangePasswordForm, EmailSubscriptionsForm, PasswordResetForm
+    ChangePasswordForm, EmailSubscriptionsForm, PasswordResetForm, \
+    ChangePlanForm
 from main.models import SongCommentNode, Band, Profile, BandMember, Song, \
     AccountPlan
 from workshop.models import LogEntry
@@ -182,8 +183,63 @@ def ajax_edit_comment(request):
 
     return json_success(node.to_dict())
 
+def downgrade_account_to_free(user):
+    profile = user.get_profile()
+
+    # change their plan to free
+    profile.plan = None
+    profile.band_count_limit = settings.FREE_BAND_LIMIT
+    profile.usd_per_month = 0
+    profile.active_transaction = None
+
+    members = BandMember.objects.filter(user=profile.user)
+    for member in members:
+        band = member.band
+        band.total_space -= member.space_donated
+        band.save()
+        member.space_donated = 0
+        member.save()
+    profile.purchased_bytes = 0
+
+    profile.save()
+
+@login_required
+def change_plan(request, plan_url):
+    if request.method == 'POST':
+        form = ChangePlanForm(request.POST)
+        if form.is_valid():
+            try:
+                plan_id = int(form.cleaned_data.get('plan'))
+                plan = AccountPlan.objects.get(pk=plan_id)
+            except AccountPlan.DoesNotExist:
+                plan_id = 0
+                plan = None
+            if plan is None:
+                downgrade_account_to_free(request.user)
+                
+                # destroy token from amazon
+                # TODO
+
+                return render_to_response('downgraded_to_free.html', {}, context_instance=RequestContext(request))
+            else:
+                # need token from amazon
+                return HttpResponseRedirect(payment.pipeline_url(request.user, request.build_absolute_uri(reverse("account.plan_changed")), plan))
+    else:
+        try:
+            plan = AccountPlan.objects.get(url=plan_url)
+            plan_id = plan.id
+        except AccountPlan.DoesNotExist:
+            plan = None
+            plan_id = 0
+        form = ChangePlanForm(initial={'plan': plan_id})
+
+    return render_to_response('change_plan.html', {'form': form}, context_instance=RequestContext(request))
+
 def user_register_plan(request, plan_url):
     "plan_url of 'free' means free plan"
+    if request.user.is_authenticated():
+        return change_plan(request, plan_url)
+
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -250,7 +306,52 @@ def user_register_plan(request, plan_url):
     return render_to_response('register.html', {'form': form}, context_instance=RequestContext(request))
 
 def user_register(request):
-    return user_register_plan(request, 0)
+    if request.user.is_authenticated():
+        return change_plan(request, 'free')
+    else:
+        return user_register_plan(request, 'free')
+
+def changed_plan_results(request):
+    status, transaction = payment.process_pipeline_result(request)
+    payment_result = {
+        'SUCCESS': payment.SUCCESS,
+        'FAILURE': payment.FAILURE,
+        'NO_PIPELINE': payment.NO_PIPELINE,
+        'INVALID_SIGNATURE': payment.INVALID_SIGNATURE,
+    }
+    if status == payment.SUCCESS:
+        # change the user to the new account
+        profile = transaction.user.get_profile()
+        plan = transaction.plan
+
+        if profile.space_used() > plan.total_space:
+            had_to_remove_band_support = True
+
+            members = BandMember.objects.filter(user=profile.user)
+            for member in members:
+                band = member.band
+                band.total_space -= member.space_donated
+                band.save()
+                member.space_donated = 0
+                member.save()
+
+        profile.plan = plan
+        profile.purchased_bytes = plan.total_space
+        profile.band_count_limit = plan.band_count_limit
+        profile.usd_per_month = plan.usd_per_month
+
+        # give them a day while payment cron job runs
+        now = datetime.now()
+        if profile.account_expire_date < now:
+            profile.account_expire_date = now
+        profile.active_transaction = transaction
+        profile.save()
+    else:
+        # TODO: send some kind of error email
+        if request.user.is_authenticated():
+            plan = request.user.get_profile().plan
+
+    return render_to_response('changed_plan_results.html', locals(), context_instance=RequestContext(request))
 
 def register_pending(request):
     status, transaction = payment.process_pipeline_result(request)

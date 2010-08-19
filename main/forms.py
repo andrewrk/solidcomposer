@@ -15,6 +15,11 @@ class LoginForm(forms.Form):
         widget=forms.HiddenInput,
         error_messages={'required': design.this_field_is_required})
 
+class ChangePlanForm(forms.Form):
+    plan = forms.ChoiceField(
+        choices=[(0, "Free")] + [(plan.id, "{0} - ${1}/mo".format(plan.title, plan.usd_per_month)) for plan in AccountPlan.objects.order_by('usd_per_month')],
+        error_messages={'required': design.this_field_is_required})
+
 class RegisterForm(forms.Form):
     username = forms.CharField(max_length=30,
         error_messages={'required': design.this_field_is_required})

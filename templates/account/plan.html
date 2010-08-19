@@ -15,7 +15,11 @@
     {% endif %}
     <h2>Plan</h2>
     {{ plan.title }}
-    <a href="{% url plans %}">Upgrade</a>
+    {% if plan.usd_per_month == 0 %}
+        <a href="{% url plans %}">Upgrade</a>
+    {% else %}
+        <a href="{% url plans %}">Change</a>
+    {% endif %}
     <h2>Space Used</h2>
     {% with user.get_profile.space_used as used_space %}
         {% with user.get_profile.purchased_bytes as total_space %}

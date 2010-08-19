@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Changed - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="textblock">
+    <h1>Account updated</h1>
+    <p>
+        You are now on the Free plan. You will not be billed any more.
+    </p>
+    <p>
+        Keep in mind that if you were supplying any bands with space,
+        that space will be withdrawn and the bands might go into 
+        read only mode until they are supplied with more space.
+    </p>
+</div>
+{% endblock %}

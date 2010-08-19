@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 FAILURE, SUCCESS, NO_PIPELINE, INVALID_SIGNATURE = range(4)
 
 def _get_client():
-    if settings.DEBUG:
+    if settings.DEBUG or not getattr(settings, 'TESTING', False):
         fps_url = "https://fps.sandbox.amazonaws.com"
         pipeline_url = "https://authorize.payments-sandbox.amazon.com/cobranded-ui/actions/start"
     else:

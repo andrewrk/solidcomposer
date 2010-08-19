@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Plan Change - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="textblock">
+    {% if status == payment_result.SUCCESS %}
+        <h1>Account Plan Changed</h1>
+        <p>
+            Monthly payments were set up successfully. Thanks for joining the {{ plan.title }} plan.
+        </p>
+    {% else %}{% if status == payment_result.FAILURE %}
+        <h1>Unable to Change Account</h1>
+        <p>
+            There was an error setting up mothly payments, so we've kept you with the {{ plan.title }} plan for now.
+        </p>
+        <p>
+            Please <a href="{% url contact %}">contact support</a> if you need help.
+        </p>
+    {% else %}{% if status == payment_result.NO_PIPELINE %}
+    {% else %}{% if status == payment_result.INVALID_SIGNATURE %}
+        <h1>Unable to Change Account</h1>
+        <p>
+            The result that came back from Amazon doesn't look like it's really from Amazon.
+            Either you're being very naughty, or something is broken.
+        </p>
+        <p>
+            Either way, we've kept you up with the {{ plan.title }} plan for now. If this is a legitimate 
+            error, please <a href="{% url contact %}">contact support</a>.
+        </p>
+    {% endif %}{% endif %}{% endif %}{% endif %}
+</div>
+{% endblock %}
