@@ -1,8 +1,4 @@
 Release "Boten Anna" (Basshunter):
-Tuesday, August 17:
-* make sure bands are read only when they should be
-  > on create band page, if they are out of bands, have it say that they need to upgrade to create more bands.
-
 Wednesday, August 18:
 * song player: mouseover comments go away if you're not scrolled to the top
 * pagination is broken in project manager
@@ -67,6 +63,7 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+ * band meter on workbench page
  * ability to pay in advance
  * handle amazon co-branded requests that don't return
    > http://docs.amazonwebservices.com/AmazonFPS/latest/FPSAdvancedGuide/index.html?HandlingTransactionsThatDoNotReturn.html#CBUIRequestsNoReturn

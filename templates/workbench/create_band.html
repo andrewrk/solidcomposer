@@ -16,19 +16,28 @@
     </div>
     <div class="textblock">
         <h1>Create Band</h1>
-        {% if err_msg %}
-            <div class="err">
-                <p>{{ err_msg }}</p>
-            </div>
+        {% if request.user.get_profile.bands_in_count >= request.user.get_profile.band_count_limit %}
+            <p>
+                You have used up all {{ request.user.get_profile.band_count_limit }} of your bands.
+            </p>
+            <p>
+                Would you like to <a href="{% url plans %}">upgrade your account</a> and get a bunch more?
+            </p>
+        {% else %}
+            {% if err_msg %}
+                <div class="err">
+                    <p>{{ err_msg }}</p>
+                </div>
+            {% endif %}
+            <form action="." method="post">
+                <table>
+                    {{ form.as_table }}
+                    <tr>
+                        <td></td>
+                        <td><input type="submit" value="Create" /></td>
+                    </tr>
+                </table>
+            </form>
         {% endif %}
-        <form action="." method="post">
-            <table>
-                {{ form.as_table }}
-                <tr>
-                    <td></td>
-                    <td><input type="submit" value="Create" /></td>
-                </tr>
-            </table>
-        </form>
     </div>
 {% endblock %}

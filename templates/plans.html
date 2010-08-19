@@ -19,7 +19,13 @@
                     <li>up to {{ free_plan.band_count_limit }} bands</li>
                 </ul>
             </td>
-            <td><a href="{% url register %}">Sign up!</a></td>
+            <td>
+                {% if request.user.is_authenticated and request.user.get_profile.usd_per_month == 0 %}
+                    Your plan
+                {% else %}
+                    <a href="{% url register %}">Sign up!</a>
+                {% endif %}
+            </td>
         </tr>
         {% for plan in plans %}
             <tr>

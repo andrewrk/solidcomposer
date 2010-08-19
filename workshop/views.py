@@ -535,19 +535,20 @@ def actually_create_band(user, band_name):
 
 @login_required
 def create_band(request):
+    err_msg = ''
     if request.method == 'POST':
         form = NewBandForm(request.POST)
         if form.is_valid():
             profile = request.user.get_profile()
             if profile.bands_in_count() >= profile.band_count_limit:
-                return json_failure(design.you_have_reached_your_band_count_limit)
-
-            actually_create_band(request.user, form.cleaned_data.get('band_name'))
-            return HttpResponseRedirect(reverse("workbench.home"))
+                err_msg = design.you_have_reached_your_band_count_limit
+            else:
+                actually_create_band(request.user, form.cleaned_data.get('band_name'))
+                return HttpResponseRedirect(reverse("workbench.home"))
     else:
         form = NewBandForm()
 
-    return render_to_response('workbench/create_band.html', {'form': form}, context_instance=RequestContext(request))
+    return render_to_response('workbench/create_band.html', {'form': form, 'err_msg': err_msg}, context_instance=RequestContext(request))
 
 @json_login_required
 @json_post_required
