@@ -613,3 +613,8 @@ def dashboard(request):
 
 def landing(request):
     return render_to_response('landing.html', {}, context_instance=RequestContext(request))
+
+def article(request, article_url):
+    # return the template for the article_url
+    template_name = "articles/{0}.html".format(article_url)
+    return render_to_response(template_name, {}, context_instance=RequestContext(request))

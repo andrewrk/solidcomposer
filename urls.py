@@ -20,6 +20,8 @@ urlpatterns = patterns('',
     url(r'^ajax/delete_comment/$', 'main.views.ajax_delete_comment', name="ajax_delete_comment"),
     url(r'^ajax/edit_comment/$', 'main.views.ajax_edit_comment', name="ajax_edit_comment"),
 
+    url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
+
     url(r'^plans/$', 'main.views.plans', name='plans'),
 
     url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
@@ -47,7 +49,6 @@ urlpatterns = patterns('',
     url(r'^account/password/ok/$', direct_to_template, {'template': 'account/password_ok.html', 'SSL': True}, name="account.password.ok"),
 
     url(r'^landing/$', 'main.views.landing', name='landing'),
-    url(r'^info/$', direct_to_template, {'template': 'info.html'}, name='info'),
     url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
 )
 

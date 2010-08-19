@@ -1,5 +1,7 @@
 Release "Boten Anna" (Basshunter):
 Wednesday, August 18:
+* email band members when a new project is uploaded.
+* don't email when email notifications are off.
 * song player: mouseover comments go away if you're not scrolled to the top
 * pagination is broken in project manager
 * page for songs so people can link to them. put a button in the song player widget to get this link.
