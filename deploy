@@ -1,114 +1,105 @@
 #!/bin/bash
 
-# TODO: synchronize media with amazon s3
-# TODO: make sure the wsgi process has permission to access the django project
-
-URL="http://solidcomposer.com/"
-SSH="web" # the ssh connection to make (here I am using one from .ssh/config)
-REMOTE_TMP="/home/superjoe/temp"
-INSTALL_PATH="/home/superjoe/django_code"
+######### variables #######
+LIVE_CODE="/home/andy/apps/solidcomposer"
+TEST_CODE="/home/andy/apps/test-solidcomposer"
+MIGRATE_CODE="/home/andy/apps/migrate-solidcomposer"
 
 ######### initial checking before deploying #########
-PRJ_PATH="$INSTALL_PATH/solidcomposer"
-# crash if any program has error status code
+echo "====== CHECKING ======="
+# stop on any error
 set -e
 
-# ensure that all dependencies are installed on client
-# (necessary for testing)
-echo "Checking dependencies on this machine..."
-MISSING=$(python deps.py)
-if [ -n "$MISSING" ]; then
-    echo "cannot continue, missing dependencies on deploying machine:";
-    echo "$MISSING";
-    exit 1;
-fi
+# git the live code revision
+cd $LIVE_CODE
+LIVE_REV=$(git rev-parse HEAD)
+
+# update the test code to the newest release
+echo "Updating the test code base..."
+cd $TEST_CODE
+git pull
 
 # ensure that all dependencies are installed on server
-echo "Copying dependency script to server..."
-scp deps.py $SSH:$PRJ_PATH/deps.py
-echo "Checking dependencies on server..."
-MISSING=$(ssh $SSH "source .bashrc; cd $PRJ_PATH; python deps.py")
+echo "Checking python module dependencies..."
+MISSING=$(python deps.py)
 if [ -n "$MISSING" ]; then
-    echo "cannot continue, missing dependencies on the server:";
+    echo "FAILURE: missing dependencies on the server:";
     echo "$MISSING";
     exit 1;
 fi
 
-# the folder that contains this script
-WORKING="$(pwd)/$(dirname \"$0\")"
-cd $WORKING
-
 # test the migrations
-# export the old git revision to a temp folder
-echo "Getting old version hash from server..."
-OLDHASH=$(ssh $SSH "source .bashrc; cd $PRJ_PATH; cat deploy_revision;")
-OLD=$(mktemp -d)/solidcomposer
-mkdir $OLD
+echo "Testing migrations."
+cd $LIVE_CODE
+echo "Generating fixtures from live database..."
+python manage.py dumpdata >$MIGRATE_CODE/dump.json --exclude=contenttypes
 
-git archive $OLDHASH | tar -x -C $OLD
-if [ -f $WORKING/settings_user.py ]; then
-    cp $WORKING/settings_user.py $OLD/
-fi
-cd $OLD
+echo "Updating migrate code to live code revision..."
+cd $MIGRATE_CODE
+git checkout $LIVE_REV
 
-echo "Generating fixtures on the server..."
-ssh $SSH "source .bashrc; cd $PRJ_PATH; python manage.py dumpdata --exclude=contenttypes >dump.json"
-echo "Transferring fixtures from the server..."
-scp $SSH:$PRJ_PATH/dump.json ./
-
-# reset the client database
-echo "Resetting the client database..."
-python $WORKING/resetdb.py
+echo "Resetting the test database..."
+sudo -u postgres dropdb solidcomposer-test
+sudo -u postgres createdb solidcomposer-test
 python manage.py syncdb --noinput
 
-echo "Migrating the client to the server's state..."
+echo "Migrating the test database to the live database state..."
 python manage.py migrate
 
 # install fixtures from the server
-echo "Installing fixtures from the server..."
+echo "Installing fixtures from the live database..."
 python manage.py loaddata dump.json
 
 # ok now we can use the new code
-cd $WORKING
+echo "Updating the migration code base to the newest version..."
+git checkout release
+git pull
+
 # migrate to the latest migration
 # (this makes sure the server won't fail when migrating)
-echo "Migrating the client to the latest version..."
+echo "Migrating the test database to the latest version..."
 python manage.py migrate
 
+# prepare to run test suite
+cd $TEST_CODE
 echo "Preparsing javascript for tests..."
 python preparser.py parse
 
 # run test suite locally
-echo "Running test suite locally..."
+echo "Running test suite..."
 python manage.py test
 
-######## update the server ############
-echo 
-echo "== All Tests Passed =="
+######### deploy steps ###############
 echo
+echo "===== DEPLOYING ======="
 
-NEWHASH=$(git log --pretty="%H" -n 1)
-CMD=""
-# copy django code to server
-echo "Copying django code to server..."
-rsync -avz --exclude-from "$WORKING/.gitignore" $WORKING $SSH:$PRJ_PATH/
+# synchronize media with amazon s3
+cd $LIVE_CODE
+echo "Synchronizing media with Amazon S3"
+python syncmedia.py
 
-# make sure database is migrated to latest version
-CMD="$CMD source .bashrc;"
-CMD="$CMD cd $PRJ_PATH;"
-CMD="$CMD echo \"$NEWHASH\" >deploy_revision;"
-CMD="$CMD python manage.py migrate;"
-# preparser
-CMD="$CMD python preparser.py parse;"
-# run tests
-CMD="$CMD python manage.py test;"
-# reset django daemon
-CMD="$CMD killall django.fcgi;"
+# turn off server while we update code
+echo "Stop server while we update code..."
+sudo -u root /etc/init.d/apache2 stop
 
-echo "Migrating, preparsing, testing, and refreshing Django..."
-ssh $SSH $CMD
-echo "Getting home page to force django to get loaded..."
-wget $URL -O $(mktemp) -q
+# update code
+echo "Updating code..."
+git pull
 
-echo "== Deploy Success =="
+# migrate database
+echo "Migrating database..."
+python manage.py migrate
+
+echo "Synchronizing daw module capabilities..."
+python syncdaw.py
+
+# run parser
+echo "Parsing javascript and scss..."
+python preparser.py parse
+
+# turn server back on 
+echo "Starting server..."
+sudo -u root /etc/init.d/apache2 start
+
 echo
+echo "===== SUCCESS ======="
