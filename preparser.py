@@ -9,8 +9,8 @@ from django.template import Template, Context
 from django.template.loader import *
 
 import os
-import storage
 import sys
+import shutil
 import tempfile
 import time
 import traceback
@@ -168,8 +168,11 @@ def compile_file(preparse_tuple, source, dest):
     else:
         store_name = f.name
 
-    storage.engine.store(store_name, dest, reducedRedundancy=True)
-    os.remove(store_name)
+    try:
+        os.makedirs(os.path.dirname(dest))
+    except OSError:
+        pass
+    shutil.move(store_name, dest)
 
 def clean_file(preparse_tuple, source, dest, force):
     if os.path.exists(dest):
