@@ -226,10 +226,10 @@ var Player = function() {
     function checkHideComment(e){
         // how far away does it have to be to hide?
         var closeDistance = 100;
-        var close = e.pageX > dialogCommentRect.right + closeDistance ||
-            e.pageX < dialogCommentRect.left - closeDistance ||
-            e.pageY > dialogCommentRect.bottom + closeDistance ||
-            e.pageY < dialogComment.top - closeDistance;
+        var close = e.clientX > dialogCommentRect.right + closeDistance ||
+            e.clientX < dialogCommentRect.left - closeDistance ||
+            e.clientY > dialogCommentRect.bottom + closeDistance ||
+            e.clientY < dialogComment.top - closeDistance;
 
         if (close) {
             hideCommentDialog();
@@ -517,7 +517,7 @@ var Player = function() {
             return false;
         });
 
-        // clicking on comments
+        // mouseover comments
         jdom.find('.player-large .timed-comments li a').mouseover(function(e){
             e.preventDefault();
             var comment_id = parseInt($(this).attr('data-commentid'));
@@ -527,6 +527,7 @@ var Player = function() {
             return false;
         });
 
+        // clicking on comments
         jdom.find('.player-large .timed-comments li a').click(function(e){
             e.preventDefault();
             var comment_id = parseInt($(this).attr('data-commentid'));
