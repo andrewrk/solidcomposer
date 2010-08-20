@@ -16,6 +16,7 @@ Friday, August 20:
   > tests for band settings -> membership management
   > test for home page (just make sure it shows up)
   > workbench.ajax_activity
+  > test sending emails when notifications are on/off
 
 Saturday, August 21:
 Sunday, August 22:
@@ -26,7 +27,7 @@ Sunday, August 29:
   > all of workbench
   > landing page
   > dashboard
-  > editor controls on fields that will be parsed by showdown. - Aug 20
+  > editor controls on fields that will be parsed by showdown.
     - http://wmd-editor.com/
     - also always show a preview when things will be parsed by showdown.
   > favicon
