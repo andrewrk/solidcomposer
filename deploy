@@ -36,6 +36,8 @@ python manage.py dumpdata >$MIGRATE_CODE/dump.json --exclude=contenttypes
 
 echo "Updating migrate code to live code revision..."
 cd $MIGRATE_CODE
+git checkout release
+git pull
 git checkout $LIVE_REV
 
 echo "Resetting the test database..."
