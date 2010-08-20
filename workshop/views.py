@@ -913,6 +913,19 @@ def create_project(request, band_id_str):
                 project.subscribers.add(request.user)
                 project.save()
 
+                # email band members saying that a new project is posted.
+                for member in BandMember.objects.filter(band=band).exclude(user=request.user):
+                    context = Context({
+                        'project': project,
+                        'version': version,
+                        'member': member,
+                        'host': request.get_host(),
+                    })
+                    message_txt = get_template('workbench/email/new_project.txt').render(context)
+                    message_html = get_template('workbench/email/new_project.html').render(context)
+                    subject = design.x_uploaded_new_project_to_y.format(member.user.username, band.title)
+                    send_html_mail(subject, message_txt, message_html, [member.user.email])
+
                 return HttpResponseRedirect(reverse("workbench.project", args=[band.id, project.id]))
     else:
         form = NewProjectForm()

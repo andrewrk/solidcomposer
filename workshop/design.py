@@ -33,3 +33,4 @@ x_has_accepted_your_invitation_to_join_y = "{0} has accepted your invitation to 
 lack_permission_to_invite = "You lack permission to invite people to this band."
 you_have_reached_your_band_count_limit = "You have reached your band count limit."
 band_in_readonly_mode = "This band is in read-only mode until you give it more space."
+x_uploaded_new_project_to_y = "{0} uploaded a new project to {1}"

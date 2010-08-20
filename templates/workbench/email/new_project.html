@@ -1,0 +1,13 @@
+{% extends 'email.html' %}
+
+{% block content %}
+    <p>
+        <a href="http://{{ host }}{% url userpage version.owner.username %}">{{ version.owner.username }}</a>
+        uploaded a new project called
+        <a href="http://{{ host }}{% url workbench.project project.band.id project.id %}">{{ project.title }}</a>
+        to your band,
+        <a href="http://{{ host }}{% url workbench.band project.band.id %}">{{ project.band.title }}</a>.
+    </p>
+{% endblock %}
+
+

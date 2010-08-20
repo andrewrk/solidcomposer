@@ -1,11 +1,8 @@
 Release "Boten Anna" (Basshunter):
 Wednesday, August 18:
-* email band members when a new project is uploaded.
 * don't email when email notifications are off.
 * song player: mouseover comments go away if you're not scrolled to the top
 * pagination is broken in project manager
-* page for songs so people can link to them. put a button in the song player widget to get this link.
-* info page
 
 Friday, August 20:
 * workbench tests
@@ -65,6 +62,7 @@ Wednesday, September 1:
 Release "April Rain" (The Cynic Project)
 = sitewide =
  * caching
+ * page for songs so people can link to them. put a button in the song player widget to get this link.
  * band meter on workbench page
  * ability to pay in advance
  * handle amazon co-branded requests that don't return

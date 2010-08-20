@@ -1,0 +1,9 @@
+{% extends 'email.txt' %}
+
+{% block content %}
+    {{ version.owner.username }} uploaded a new project called "{{ project.title }}" to your band, {{ project.band.title }}.
+
+    Go check it out:
+    http://{{ host }}{% url workbench.project project.band.id project.id %}
+{% endblock %}
+
