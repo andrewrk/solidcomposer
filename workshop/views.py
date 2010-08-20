@@ -140,6 +140,9 @@ def handle_invite(request, accept):
     return json_success()
 
 def send_invitation_accepted_email(invite, host):
+    if not invite.inviter.get_profile().email_notifications:
+        return
+
     subject = design.x_has_accepted_your_invitation_to_join_y.format(invite.invitee.username, invite.band.title)
     context = Context({
         'invite': invite,
@@ -282,6 +285,9 @@ def ajax_username_invite(request):
     return json_success()
 
 def send_invitation_email(invite, host):
+    if not invite.invitee.get_profile().email_notifications:
+        return
+
     subject = design.x_is_inviting_you_to_join_y.format(invite.inviter.username, invite.band.title)
     context = Context({
         'invite': invite,
@@ -335,15 +341,16 @@ def ajax_email_invite(request):
         invite.save()
         
         # send a heads up email
-        context = Context({
-            'user': request.user,
-            'band': band,
-            'invite': invite,
-            'host': request.get_host(),
-        })
-        message_txt = get_template('workbench/email/invitation_direct.txt').render(context)
-        message_html = get_template('workbench/email/invitation_direct.html').render(context)
-        send_html_mail(subject, message_txt, message_html, [to_email])
+        if local_user.get_profile().email_notifications:
+            context = Context({
+                'user': request.user,
+                'band': band,
+                'invite': invite,
+                'host': request.get_host(),
+            })
+            message_txt = get_template('workbench/email/invitation_direct.txt').render(context)
+            message_html = get_template('workbench/email/invitation_direct.html').render(context)
+            send_html_mail(subject, message_txt, message_html, [to_email])
 
         return json_success()
     else:
@@ -915,16 +922,17 @@ def create_project(request, band_id_str):
 
                 # email band members saying that a new project is posted.
                 for member in BandMember.objects.filter(band=band).exclude(user=request.user):
-                    context = Context({
-                        'project': project,
-                        'version': version,
-                        'member': member,
-                        'host': request.get_host(),
-                    })
-                    message_txt = get_template('workbench/email/new_project.txt').render(context)
-                    message_html = get_template('workbench/email/new_project.html').render(context)
-                    subject = design.x_uploaded_new_project_to_y.format(member.user.username, band.title)
-                    send_html_mail(subject, message_txt, message_html, [member.user.email])
+                    if member.user.get_profile().email_notifications:
+                        context = Context({
+                            'project': project,
+                            'version': version,
+                            'member': member,
+                            'host': request.get_host(),
+                        })
+                        message_txt = get_template('workbench/email/new_project.txt').render(context)
+                        message_html = get_template('workbench/email/new_project.html').render(context)
+                        subject = design.x_uploaded_new_project_to_y.format(member.user.username, band.title)
+                        send_html_mail(subject, message_txt, message_html, [member.user.email])
 
                 return HttpResponseRedirect(reverse("workbench.project", args=[band.id, project.id]))
     else:

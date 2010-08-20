@@ -1,6 +1,5 @@
 Release "Boten Anna" (Basshunter):
 Wednesday, August 18:
-* don't email when email notifications are off.
 * song player: mouseover comments go away if you're not scrolled to the top
 * pagination is broken in project manager
 
