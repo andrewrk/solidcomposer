@@ -75,18 +75,23 @@ python manage.py test
 echo
 echo "===== DEPLOYING ======="
 
-# synchronize media with amazon s3
 cd $LIVE_CODE
-echo "Synchronizing media with Amazon S3"
-python syncmedia.py
-
-# turn off server while we update code
-echo "Stop server while we update code..."
-sudo -u root /etc/init.d/apache2 stop
 
 # update code
 echo "Updating code..."
 git pull
+
+# run parser
+echo "Parsing javascript and scss..."
+python preparser.py parse
+
+# synchronize media with amazon s3
+echo "Synchronizing media with Amazon S3"
+python syncmedia.py
+
+# turn off server while we update code
+echo "Stopping server..."
+sudo -u root /etc/init.d/apache2 stop
 
 # migrate database
 echo "Migrating database..."
@@ -94,10 +99,6 @@ python manage.py migrate
 
 echo "Synchronizing daw module capabilities..."
 python syncdaw.py
-
-# run parser
-echo "Parsing javascript and scss..."
-python preparser.py parse
 
 # turn server back on 
 echo "Starting server..."
