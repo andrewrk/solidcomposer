@@ -27,6 +27,11 @@ The first time you install this project, you need to:
     * set up mp3 on the media server to be served with
       content-disposition: attachment
     * follow the directions below for deploying
+    * in the admin, add:
+      > account plans
+      > known plugins
+      > known studios
+      > configure the site to be the correct domain
 
 Whenever PyDaw is updated (and initially) you need to run
 

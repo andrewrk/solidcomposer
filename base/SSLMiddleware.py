@@ -63,7 +63,7 @@ class SSLRedirect:
         else:
             secure = False
 
-        if not getattr(settings, 'TESTING', False):
+        if getattr(settings, 'TESTING', False):
             return
 
         if not secure == request.is_secure():

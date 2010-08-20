@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -18,10 +19,12 @@ def commonSetUp(obj):
     # use test bucket
     obj.prev_bucket_name = settings.AWS_STORAGE_BUCKET_NAME
     settings.AWS_STORAGE_BUCKET_NAME = settings.AWS_TEST_STORAGE_BUCKET_NAME
+    settings.TESTING = True
 
 def commonTearDown(obj):
     # restore original bucket
     settings.AWS_STORAGE_BUCKET_NAME = obj.prev_bucket_name
+    settings.TESTING = False
 
     import storage
 
@@ -61,12 +64,12 @@ class SimpleTest(TestCase):
                 'plan': 0,
             })
             self.assertEqual(response.status_code, 302)
-            code = User.objects.filter(username=username)[0].get_profile().activate_code
+            code = User.objects.get(username=username).get_profile().activate_code
             self.client.get(reverse('confirm', args=(username, code)))
 
-        self.skiessi = User.objects.filter(username="skiessi")[0]
-        self.superjoe = User.objects.filter(username="superjoe")[0]
-        self.just64helpin = User.objects.filter(username="just64helpin")[0]
+        self.skiessi = User.objects.get(username="skiessi")
+        self.superjoe = User.objects.get(username="superjoe")
+        self.just64helpin = User.objects.get(username="just64helpin")
 
     def tearDown(self):
         commonTearDown(self)
@@ -548,8 +551,3 @@ class SimpleTest(TestCase):
         target_comment = SongCommentNode.objects.get(pk=target_comment.id)
         self.assertEqual(target_comment.content, 'new')
 
-    def test_404(self):
-        return self.staticPage(reverse('404'))
-
-    def test_500(self):
-        return self.staticPage(reverse('500'))

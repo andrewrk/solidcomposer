@@ -4,7 +4,7 @@ Friday, August 20:
   > test the billing, especially when it returns pending
     - billing cron job
     - /signup/*
-  > test redeemHyperlink
+    - downgrading/upgrading
   > make sure a song's comment node is never null
   > make sure when a song is uploaded to the workbench, is_open_for_comments and is_open_source are False
   > make sure log entries are created when they should be

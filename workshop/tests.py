@@ -221,6 +221,25 @@ class SimpleTest(TestCase):
         # just64helpin try to invite but he's not a manager
         # TODO
 
+    def test_invitation_link(self):
+        ajax_create_invite = reverse("workbench.ajax_create_invite")
+
+        # superjoe create invitation
+        self.client.login(username='superjoe', password='temp1234')
+        superjoe_solo = self.superjoe.get_profile().solo_band
+        response = self.client.post(ajax_create_invite, {
+            'band': superjoe_solo.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        invite = BandInvitation.objects.all()[0]
+        self.assertEqual(invite.inviter, self.superjoe)
+        self.assertEqual(invite.band, superjoe_solo)
+        self.assertEqual(invite.role, BandMember.BAND_MEMBER)
+        self.assertEqual(invite.invitee, None)
+        self.assertEqual(invite.redeemHyperlink(), "http://example.com" + reverse('workbench.redeem_invitation', args=[invite.code]))
+
     def test_ignore_invite(self):
         ajax_ignore_invite = reverse('workbench.ajax_ignore_invite')
         band_member_count = BandMember.objects.count()
@@ -572,18 +591,18 @@ class SimpleTest(TestCase):
         self.assertEqual(invite_count, BandInvitation.objects.count())
         
     def test_redeem_invitation(self):
-        redeem_invitation_url_name = 'workbench.redeem_invitation'
+        redeem_invitation = lambda pw: reverse('workbench.redeem_invitation', args=[pw])
         invite_count = BandInvitation.objects.count()
         member_count = BandMember.objects.count()
 
         # anon
-        self.checkLoginRedirect(reverse(redeem_invitation_url_name, args=['aoeu']))
+        self.checkLoginRedirect(redeem_invitation('aoeu'))
         self.assertEqual(invite_count, BandInvitation.objects.count())
         self.assertEqual(member_count, BandMember.objects.count())
 
         # try with invalid hash
         self.client.login(username='just64helpin', password='temp1234')
-        response = self.client.get(reverse(redeem_invitation_url_name, args=['aoeu']))
+        response = self.client.get(redeem_invitation('aoeu'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['err_msg'], True)
         self.assertEqual(invite_count, BandInvitation.objects.count())
@@ -599,7 +618,7 @@ class SimpleTest(TestCase):
         invite.save()
         invite_count += 1
 
-        response = self.client.get(reverse(redeem_invitation_url_name, args=[invite.code]))
+        response = self.client.get(redeem_invitation(invite.code))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['err_msg'], True)
         self.assertEqual(invite_count, BandInvitation.objects.count())
@@ -609,7 +628,7 @@ class SimpleTest(TestCase):
         invite.expire_date = None
         invite.save()
 
-        response = self.client.get(reverse(redeem_invitation_url_name, args=[invite.code]))
+        response = self.client.get(redeem_invitation(invite.code))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['err_msg'], False)
         self.assertEqual(invite_count, BandInvitation.objects.count())
@@ -623,7 +642,7 @@ class SimpleTest(TestCase):
         self.assertEqual(member.role, BandMember.BAND_MEMBER)
 
         # band member exists already
-        response = self.client.get(reverse(redeem_invitation_url_name, args=[invite.code]))
+        response = self.client.get(redeem_invitation(invite.code))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['err_msg'], True)
         self.assertEqual(invite_count, BandInvitation.objects.count())
@@ -631,7 +650,7 @@ class SimpleTest(TestCase):
         
         # check that it deletes the invitation if the count is zero
         self.client.login(username='superjoe', password='temp1234')
-        response = self.client.get(reverse(redeem_invitation_url_name, args=[invite.code]))
+        response = self.client.get(redeem_invitation(invite.code))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['err_msg'], False)
         invite_count -= 1

@@ -52,7 +52,7 @@ urlpatterns = patterns('',
     url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
 )
 
-if settings.DEBUG or not getattr(settings, 'TESTING', False):
+if settings.DEBUG:
     urlpatterns += patterns('',
         url(r'^500/$', direct_to_template, {'template': '500.html'}, name='404'),
         url(r'^404/$', direct_to_template, {'template': '404.html'}, name='500'),
