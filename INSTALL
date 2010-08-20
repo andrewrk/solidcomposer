@@ -32,6 +32,7 @@ The first time you install this project, you need to:
       > known plugins
       > known studios
       > configure the site to be the correct domain
+    * make sure the wsgi process has permission to access the django project.
 
 Whenever PyDaw is updated (and initially) you need to run
 
