@@ -1,7 +1,4 @@
 Release "Boten Anna" (Basshunter):
-Wednesday, August 18:
-* pagination is broken in project manager
-
 Friday, August 20:
 * workbench tests
   > test the billing, especially when it returns pending

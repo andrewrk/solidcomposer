@@ -57,6 +57,13 @@ var SCBand = function() {
         $("#project-list").html(Jst.evaluate(template_project_list_s, state));
         Player.addUi("#project-list");
         SCTips.addUi("#project-list");
+
+        // page navigation
+        $(".nav a").click(function(){
+            page = $(this).attr('data-page');
+            ajaxRequestProjectList();
+            return false;
+        });
     }
 
     function updateSpaceMeter() {

@@ -1,4 +1,5 @@
 <% (function (project_data) { %>
+    {% include 'workbench/project_list_nav.jst.html' %}
     <% for (var i=0; i<project_data.projects.length; ++i) { var project = project_data.projects[i]; %>
         <div class="project" id="project-<%=project.id%>">
             <div class="header">
@@ -46,9 +47,5 @@
             {% endcomment %}
         </div>
     <% } %>
-
-    <div class="nav">
-        <% var pagination = {count: project_data.page_count, number: project_data.page_number}; %>
-        {% include 'page_nav.jst.html' %}
-    </div>
+    {% include 'workbench/project_list_nav.jst.html' %}
 <% }(projects)); %>
