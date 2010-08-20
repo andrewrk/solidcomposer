@@ -7,7 +7,8 @@ from main.tests import commonSetUp, commonTearDown
 from django.contrib.auth.models import User
 
 from workshop.models import BandInvitation, Project, ProjectVersion, \
-    PluginDepenency, Studio, SampleDependency, UploadedSample, SampleFile
+    PluginDepenency, Studio, SampleDependency, UploadedSample, SampleFile, \
+    LogEntry
 from workshop import syncdaw
 from workshop import design
 
@@ -286,6 +287,7 @@ class SimpleTest(TestCase):
         band_member_count = BandMember.objects.count()
         outbox_count = len(mail.outbox)
         invitation_count = BandInvitation.objects.count()
+        log_entry_count = LogEntry.objects.count()
 
         # create an invitation
         invite = BandInvitation()
@@ -295,6 +297,7 @@ class SimpleTest(TestCase):
         invite.expire_date = datetime.now() + timedelta(days=1)
         invite.save()
         invitation_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # try as anonymous 
         self.anonPostFail(ajax_accept_invite, {
@@ -303,6 +306,7 @@ class SimpleTest(TestCase):
         self.assertEqual(BandMember.objects.count(), band_member_count)
         self.assertEqual(BandInvitation.objects.count(), invitation_count)
         self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # try as wrong person
         self.client.login(username='just64helpin', password='temp1234')
@@ -316,6 +320,7 @@ class SimpleTest(TestCase):
         self.assertEqual(BandMember.objects.count(), band_member_count)
         self.assertEqual(BandInvitation.objects.count(), invitation_count)
         self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # try as correct person, after expired date
         self.client.login(username='skiessi', password='temp1234')
@@ -333,6 +338,7 @@ class SimpleTest(TestCase):
         self.assertEqual(BandMember.objects.count(), band_member_count)
         self.assertEqual(BandInvitation.objects.count(), invitation_count)
         self.assertEqual(len(mail.outbox), outbox_count)
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # should work
         invite.expire_date = None
@@ -351,6 +357,12 @@ class SimpleTest(TestCase):
         self.assertEqual(BandMember.objects.count(), band_member_count)
         self.assertEqual(BandInvitation.objects.count(), invitation_count)
         self.assertEqual(len(mail.outbox), outbox_count)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.BAND_MEMBER_JOIN)
+        self.assertEqual(log_entry.catalyst, self.skiessi)
+        self.assertEqual(log_entry.band, invite.band)
 
     def test_email_invite(self):
         ajax_email_invite = reverse("workbench.ajax_email_invite")
@@ -594,11 +606,13 @@ class SimpleTest(TestCase):
         redeem_invitation = lambda pw: reverse('workbench.redeem_invitation', args=[pw])
         invite_count = BandInvitation.objects.count()
         member_count = BandMember.objects.count()
+        log_entry_count = LogEntry.objects.count()
 
         # anon
         self.checkLoginRedirect(redeem_invitation('aoeu'))
         self.assertEqual(invite_count, BandInvitation.objects.count())
         self.assertEqual(member_count, BandMember.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # try with invalid hash
         self.client.login(username='just64helpin', password='temp1234')
@@ -607,6 +621,7 @@ class SimpleTest(TestCase):
         self.assertEqual(response.context['err_msg'], True)
         self.assertEqual(invite_count, BandInvitation.objects.count())
         self.assertEqual(member_count, BandMember.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # invitation exists, but expired
         invite = BandInvitation()
@@ -623,6 +638,7 @@ class SimpleTest(TestCase):
         self.assertEqual(response.context['err_msg'], True)
         self.assertEqual(invite_count, BandInvitation.objects.count())
         self.assertEqual(member_count, BandMember.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # redeem good invitation
         invite.expire_date = None
@@ -640,6 +656,13 @@ class SimpleTest(TestCase):
         self.assertEqual(member.user.id, self.just64helpin.id)
         self.assertEqual(member.band.id, self.skiessi.get_profile().solo_band.id)
         self.assertEqual(member.role, BandMember.BAND_MEMBER)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.BAND_MEMBER_JOIN)
+        self.assertEqual(log_entry.catalyst, self.just64helpin)
+        self.assertEqual(log_entry.band, invite.band)
+
 
         # band member exists already
         response = self.client.get(redeem_invitation(invite.code))
@@ -647,6 +670,7 @@ class SimpleTest(TestCase):
         self.assertEqual(response.context['err_msg'], True)
         self.assertEqual(invite_count, BandInvitation.objects.count())
         self.assertEqual(member_count, BandMember.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
         
         # check that it deletes the invitation if the count is zero
         self.client.login(username='superjoe', password='temp1234')
@@ -661,6 +685,12 @@ class SimpleTest(TestCase):
         self.assertEqual(member.user.id, self.superjoe.id)
         self.assertEqual(member.band.id, self.skiessi.get_profile().solo_band.id)
         self.assertEqual(member.role, BandMember.BAND_MEMBER)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.BAND_MEMBER_JOIN)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.band, invite.band)
 
     def test_create_band(self):
         ajax_create_band = reverse("workbench.ajax_create_band")
@@ -866,6 +896,7 @@ class SimpleTest(TestCase):
         self.setUpTBA()
         uploaded_sample_count = UploadedSample.objects.count()
         sample_dependency_count = SampleDependency.objects.count()
+        log_entry_count = LogEntry.objects.count()
         tba = Band.objects.get(title="The Burning Awesome")
         superjoe_solo = self.superjoe.get_profile().solo_band
 
@@ -882,6 +913,8 @@ class SimpleTest(TestCase):
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         sample_dependency_count += 1
         self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # upload a project to superjoe solo band that depends on b.wav and is missing samples
         project_file = open(absolute('fixtures/depends-b.flp'),'rb')
@@ -893,6 +926,8 @@ class SimpleTest(TestCase):
         sample_dependency_count += 1
         self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # anon
         sample_file_count = SampleFile.objects.count()
@@ -906,6 +941,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # bogus band
         self.client.login(username='just64helpin', password='temp1234')
@@ -922,6 +958,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # not a band member
         self.client.login(username='just64helpin', password='temp1234')
@@ -938,6 +975,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # band member but without edit permission
         # TODO
@@ -970,6 +1008,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
         uploaded_sample_count += 3
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # upload 2 samples in a .zip file. one of the samples we already have uploaded.
         # should only create 1 new SampleFile
@@ -986,6 +1025,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         uploaded_sample_count += 1
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # corrupt .zip file
         corrupt_zip = open(absolute('fixtures/corrupt.zip'), 'rb')
@@ -999,6 +1039,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # upload same samples as a different user and make sure that no new SampleFiles are generated
         self.client.login(username='just64helpin', password='temp1234')
@@ -1014,6 +1055,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_dependency_count, SampleDependency.objects.count())
         uploaded_sample_count += 2
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
     def test_upload_samples_as_version(self):
         ajax_upload_samples_as_version = reverse("workbench.ajax_upload_samples_as_version")
@@ -1023,6 +1065,7 @@ class SimpleTest(TestCase):
         sample_file_count = SampleFile.objects.count()
         uploaded_sample_count = UploadedSample.objects.count()
         version_count = ProjectVersion.objects.count()
+        log_entry_count = LogEntry.objects.count()
 
         # anon
         cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
@@ -1034,6 +1077,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # bogus project
         self.client.login(username='just64helpin', password='temp1234')
@@ -1050,6 +1094,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # not in band
         cd_zip = open(absolute('fixtures/samples-cd.zip'), 'rb')
@@ -1065,6 +1110,7 @@ class SimpleTest(TestCase):
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # in band but not edit permission
         # TODO
@@ -1086,12 +1132,19 @@ class SimpleTest(TestCase):
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertEqual(version.comment_node.content, "uploaded samples comments")
         self.assertEqual(version.provided_samples.count(), 2)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.SAMPLES_UPLOADED)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
         
     def test_rename_project(self):
         ajax_rename_project = reverse("workbench.ajax_rename_project")
 
         self.setUpTBA()
         version_count = ProjectVersion.objects.count()
+        log_entry_count = LogEntry.objects.count()
         the_castle = Project.objects.get(title='The Castle')
 
         # anon
@@ -1103,6 +1156,7 @@ class SimpleTest(TestCase):
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(the_castle.title, 'The Castle')
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # bogus project
         self.client.login(username='just64helpin', password='temp1234')
@@ -1118,6 +1172,7 @@ class SimpleTest(TestCase):
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(the_castle.title, 'The Castle')
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # not in band
         response = self.client.post(ajax_rename_project, {
@@ -1131,6 +1186,7 @@ class SimpleTest(TestCase):
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(the_castle.title, 'The Castle')
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # in band, but don't have edit permission
         # TODO
@@ -1147,6 +1203,7 @@ class SimpleTest(TestCase):
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(the_castle.title, 'The Castle')
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # ok
         response = self.client.post(ajax_rename_project, {
@@ -1161,6 +1218,16 @@ class SimpleTest(TestCase):
         self.assertEqual(the_castle.title, 'The Castle LOL')
         version_count += 1
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertEqual(version.new_title, 'The Castle LOL')
+        self.assertNotEqual(version.comment_node, None)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_RENAMED)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.version, version)
 
     def test_dependency_ownership(self):
         ajax_dependency_ownership = reverse("workbench.ajax_dependency_ownership")
@@ -1381,12 +1448,15 @@ class SimpleTest(TestCase):
         self.setUpTBA()
         the_castle = Project.objects.get(title="The Castle")
 
+        log_entry_count = LogEntry.objects.count()
+
         # anon
         self.anonPostFail(ajax_checkout, {
             'project': the_castle.id,
         })
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(the_castle.checked_out_to, None)
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # bogus project
         self.client.login(username='superjoe', password='temp1234')
@@ -1399,6 +1469,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['reason'], design.bad_project_id)
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(the_castle.checked_out_to, None)
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # not a band member
         self.client.login(username='just64helpin', password='temp1234')
@@ -1411,6 +1482,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['reason'], design.you_dont_have_permission_to_work_on_this_band)
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(the_castle.checked_out_to, None)
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # band member but don't have edit permission
         # TODO
@@ -1425,6 +1497,13 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], True)
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(the_castle.checked_out_to.id, self.superjoe.id)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_CHECKED_OUT)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.project, the_castle)
 
         # already checked out
         self.client.login(username='skiessi', password='temp1234')
@@ -1437,6 +1516,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['reason'], design.this_project_already_checked_out)
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(the_castle.checked_out_to.id, self.superjoe.id)
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
     def test_checkin(self):
         ajax_checkin = reverse("workbench.ajax_checkin")
@@ -1450,6 +1530,7 @@ class SimpleTest(TestCase):
         uploaded_sample_count = UploadedSample.objects.count()
         sample_file_count = SampleFile.objects.count()
         version_count = ProjectVersion.objects.count()
+        log_entry_count = LogEntry.objects.count()
 
         # superjoe check out the castle
         self.client.login(username='superjoe', password='temp1234')
@@ -1457,6 +1538,8 @@ class SimpleTest(TestCase):
             'project': the_castle.id,
         })
         self.assertEqual(response.status_code, 200)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # anon
         self.client.logout()
@@ -1472,6 +1555,7 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # bogus project
         self.client.login(username='superjoe', password='temp1234')
@@ -1491,6 +1575,7 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # not in band
         self.client.login(username='just64helpin', password='temp1234')
@@ -1510,6 +1595,7 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # band member but don't have edit permission
         # TODO
@@ -1532,6 +1618,7 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # just check in
         self.client.login(username='superjoe', password='temp1234')
@@ -1547,6 +1634,14 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_JUST_CHECK_IN)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.version, None)
+        self.assertEqual(log_entry.project, the_castle)
 
         # re-check out
         self.client.login(username='superjoe', password='temp1234')
@@ -1554,6 +1649,8 @@ class SimpleTest(TestCase):
             'project': the_castle.id,
         })
         self.assertEqual(response.status_code, 200)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # missing project file (should not work)
         mp3_file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'), 'rb')
@@ -1570,6 +1667,7 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # missing mp3 file, and comment field (should work)
         project_file = open(absolute('fixtures/depends-a.flp'), 'rb')
@@ -1590,6 +1688,15 @@ class SimpleTest(TestCase):
         self.assertEqual(depend.title, 'a.wav')
         self.assertEqual(depend.uploaded_sample, None)
         self.assertNotEqual(depend.song.comment_node, None)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_CHECKED_IN)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.version, the_castle.latest_version)
+        self.assertEqual(log_entry.project, None)
 
         # not checked out
         project_file = open(absolute('fixtures/depends-a.flp'), 'rb')
@@ -1608,6 +1715,7 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # re-check out
         self.client.login(username='superjoe', password='temp1234')
@@ -1615,6 +1723,8 @@ class SimpleTest(TestCase):
             'project': the_castle.id,
         })
         self.assertEqual(response.status_code, 200)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # supply everything. LMMS project .mmpz
         # there should be missing sample files
@@ -1639,6 +1749,16 @@ class SimpleTest(TestCase):
         self.assertEqual(depend.title, 'clap01.ogg')
         self.assertEqual(depend.uploaded_sample, None)
         self.assertEqual(depend.song.comment_node.content, "comments1234")
+        # check log entry
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_CHECKED_IN)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.version, the_castle.latest_version)
+        self.assertEqual(log_entry.project, None)
 
         # re-check out
         self.client.login(username='superjoe', password='temp1234')
@@ -1646,6 +1766,8 @@ class SimpleTest(TestCase):
             'project': the_castle.id,
         })
         self.assertEqual(response.status_code, 200)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # supply everything. LMMS project .mmp
         # same dependency so should not add any dependencies.
@@ -1666,6 +1788,16 @@ class SimpleTest(TestCase):
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "abc123")
+        # check log entry
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_CHECKED_IN)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.version, the_castle.latest_version)
+        self.assertEqual(log_entry.project, None)
 
         # re-check out
         self.client.login(username='superjoe', password='temp1234')
@@ -1673,6 +1805,8 @@ class SimpleTest(TestCase):
             'project': the_castle.id,
         })
         self.assertEqual(response.status_code, 200)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # supply everything. unknown project
         # should not break anything, but also should not create sample files
@@ -1693,6 +1827,16 @@ class SimpleTest(TestCase):
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "unknown studio wtf")
+        # check log entry
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_CHECKED_IN)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.version, the_castle.latest_version)
+        self.assertEqual(log_entry.project, None)
 
         # re-check out
         self.client.login(username='superjoe', password='temp1234')
@@ -1700,6 +1844,8 @@ class SimpleTest(TestCase):
             'project': the_castle.id,
         })
         self.assertEqual(response.status_code, 200)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # supply everything, FL Studio project, including samples in .zip
         # should make all missing samples resolved
@@ -1725,6 +1871,16 @@ class SimpleTest(TestCase):
         self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "ah much better")
         dep = SampleDependency.objects.filter(title='a.wav').order_by('-pk')[0]
         self.assertEqual(dep.uploaded_sample.id, UploadedSample.objects.order_by('-pk')[0].id)
+        # check log entry
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_CHECKED_IN)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.version, the_castle.latest_version)
+        self.assertEqual(log_entry.project, None)
 
         # re-check out
         self.client.login(username='superjoe', password='temp1234')
@@ -1732,6 +1888,8 @@ class SimpleTest(TestCase):
             'project': the_castle.id,
         })
         self.assertEqual(response.status_code, 200)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # supply everything, unknown project, including samples in .zip
         # should add samples from zip but leave the .zip file as the project file.
@@ -1754,6 +1912,16 @@ class SimpleTest(TestCase):
         sample_file_count += 3
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "unknown studio zip")
+        # check log entry
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        the_castle = Project.objects.get(pk=the_castle.id)
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_CHECKED_IN)
+        self.assertEqual(log_entry.band, the_castle.band)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.version, the_castle.latest_version)
+        self.assertEqual(log_entry.project, None)
 
     def test_create(self):
         """url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),"""
@@ -1807,10 +1975,12 @@ class SimpleTest(TestCase):
         project_count = Project.objects.count()
         version_count = ProjectVersion.objects.count()
         plugin_deps_count = PluginDepenency.objects.count()
+        log_entry_count = LogEntry.objects.count()
         
         skiessi_solo = self.skiessi.get_profile().solo_band
         # anon
         self.checkLoginRedirect(create_project_url(skiessi_solo.id))
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # bogus band
         self.client.login(username='skiessi', password='temp1234')
@@ -1826,6 +1996,7 @@ class SimpleTest(TestCase):
         self.assertEqual(project_count, Project.objects.count())
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # not in band
         self.client.login(username='just64helpin', password='temp1234')
@@ -1841,6 +2012,7 @@ class SimpleTest(TestCase):
         self.assertEqual(project_count, Project.objects.count())
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # leave out project file (should not work)
         self.client.login(username='skiessi', password='temp1234')
@@ -1855,6 +2027,7 @@ class SimpleTest(TestCase):
         self.assertEqual(project_count, Project.objects.count())
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # leave out mp3 and comments (should work)
         project_file = open(absolute('fixtures/4frontpiano.flp'), 'rb')
@@ -1878,6 +2051,13 @@ class SimpleTest(TestCase):
         self.assertEqual(plugin.title, '4Front Piano')
         song = version.song
         self.assertEqual(song.plugins.all()[0].id, plugin.id)
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.NEW_PROJECT)
+        self.assertEqual(log_entry.catalyst, self.skiessi)
+        self.assertEqual(log_entry.version, version)
+        self.assertEqual(log_entry.band, skiessi_solo)
         
         # supply everything
         project_file = open(absolute('fixtures/4frontpiano.flp'), 'rb')
@@ -1900,6 +2080,13 @@ class SimpleTest(TestCase):
         self.assertNotEqual(version.song.comment_node, None)
         self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
         self.assertEqual(version.song.comment_node.content, 'I have been writing tests for 9 hours.')
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.NEW_PROJECT)
+        self.assertEqual(log_entry.catalyst, self.skiessi)
+        self.assertEqual(log_entry.version, version)
+        self.assertEqual(log_entry.band, skiessi_solo)
 
     def test_project(self):
         self.setUpTBA()
@@ -1948,7 +2135,7 @@ class SimpleTest(TestCase):
         response = self.client.get(download_zip_url, {
             'song': song.id,
         })
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
         # in band but not permission to view
         # TODO
@@ -1958,7 +2145,7 @@ class SimpleTest(TestCase):
         response = self.client.get(download_zip_url, {
             'song': song.id,
         })
-        self.assertEquals(response['Content-Type'], 'application/zip')
+        self.assertEqual(response['Content-Type'], 'application/zip')
         # TODO: check that the samples made it into the zip OK
 
         # sneak in an id of a SampleDependency which shouldn't have access to
@@ -1973,7 +2160,7 @@ class SimpleTest(TestCase):
             'song': song.id,
             's': sample_deps,
         })
-        self.assertEquals(response['Content-Type'], 'application/zip')
+        self.assertEqual(response['Content-Type'], 'application/zip')
         # TODO: check that the samples made it into the zip OK
 
     def test_download_sample(self):
@@ -2000,17 +2187,17 @@ class SimpleTest(TestCase):
         # not authorized to get sample
         self.client.login(username='just64helpin', password='temp1234')
         response = self.client.get(download_sample_url(sample.id, 'monkey.wav'))
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
         # bogus sample 
         self.client.login(username='superjoe', password='temp1234')
         response = self.client.get(download_sample_url(1337, 'monkey.wav'))
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
         # ok
         response = self.client.get(download_sample_url(sample.id, 'monkey.wav'))
         md5 = hashlib.md5(response.content)
-        self.assertEquals(md5.hexdigest(), sample_hash)
+        self.assertEqual(md5.hexdigest(), sample_hash)
 
     def test_download_sample_zip(self):
         download_sample_zip_url = reverse('workbench.download_sample_zip')

@@ -490,6 +490,8 @@ class SongCommentNode(SerializableModel):
         self.date_edited = datetime.now()
         if not self.id:
             self.date_created = self.date_edited
+            # get an id so that self is not None
+            self._save(*args, **kwargs)
 
             # create a log entry
             if self.parent != None:

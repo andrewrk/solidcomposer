@@ -7,7 +7,6 @@ Friday, August 20:
     - downgrading/upgrading
   > make sure a song's comment node is never null
   > make sure when a song is uploaded to the workbench, is_open_for_comments and is_open_source are False
-  > make sure log entries are created when they should be
   > test_band_settings
   > tests for account
   > take into account bytes used and whether bands are read only

@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from main.models import Song, TempFile, SongCommentNode
 from main import design
-from workshop.models import SampleFile
+from workshop.models import SampleFile, LogEntry
 import os
 import simplejson as json
 from datetime import datetime, timedelta
@@ -205,6 +205,7 @@ class SimpleTest(TestCase):
 
     def test_comment(self):
         ajax_comment = reverse('ajax_comment')
+        log_entry_count = LogEntry.objects.count()
 
         # create a song to comment on
         superjoe_solo = self.superjoe.get_profile().solo_band
@@ -220,6 +221,8 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 302)
         parent_node = SongCommentNode.objects.order_by('-pk')[0]
         comment_count = SongCommentNode.objects.count()
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # anon
         self.client.logout()
@@ -232,6 +235,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.not_authenticated)
         self.assertEqual(comment_count, SongCommentNode.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # bogus parent
         self.client.login(username='superjoe', password='temp1234')
@@ -244,6 +248,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.bad_song_comment_node_id)
         self.assertEqual(comment_count, SongCommentNode.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # does not have permission to critique
         self.client.login(username='just64helpin', password='temp1234')
@@ -256,6 +261,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.you_dont_have_permission_to_comment)
         self.assertEqual(comment_count, SongCommentNode.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # parent has reply disabled
         parent_node.reply_disabled = True
@@ -270,6 +276,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.comments_disabled_for_this_version)
         self.assertEqual(comment_count, SongCommentNode.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # no content
         parent_node.reply_disabled = False
@@ -283,6 +290,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.content_wrong_length)
         self.assertEqual(comment_count, SongCommentNode.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # content too long
         response = self.client.post(ajax_comment, {
@@ -294,6 +302,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.content_wrong_length)
         self.assertEqual(comment_count, SongCommentNode.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # position longer than song
         response = self.client.post(ajax_comment, {
@@ -306,6 +315,7 @@ class SimpleTest(TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['reason'], design.invalid_position)
         self.assertEqual(comment_count, SongCommentNode.objects.count())
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
 
         # ok, no position
         response = self.client.post(ajax_comment, {
@@ -324,6 +334,17 @@ class SimpleTest(TestCase):
         self.assertEqual(node.content, 'first')
         comment_count += 1
         self.assertEqual(comment_count, SongCommentNode.objects.count())
+        comment = SongCommentNode.objects.order_by('-pk')[0]
+        self.assertEqual(comment.song, parent_node.song)
+        self.assertEqual(comment.parent, parent_node)
+        self.assertEqual(comment.content, 'first')
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_CRITIQUE)
+        self.assertEqual(log_entry.band, superjoe_solo)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.node, comment)
 
         # ok, with position
         response = self.client.post(ajax_comment, {
@@ -343,6 +364,17 @@ class SimpleTest(TestCase):
         self.assertEqual(node.content, 'second')
         comment_count += 1
         self.assertEqual(comment_count, SongCommentNode.objects.count())
+        comment = SongCommentNode.objects.order_by('-pk')[0]
+        self.assertEqual(comment.song, parent_node.song)
+        self.assertEqual(comment.parent, parent_node)
+        self.assertEqual(comment.content, 'second')
+        log_entry_count += 1
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.order_by('-pk')[0]
+        self.assertEqual(log_entry.entry_type, LogEntry.SONG_CRITIQUE)
+        self.assertEqual(log_entry.band, superjoe_solo)
+        self.assertEqual(log_entry.catalyst, self.superjoe)
+        self.assertEqual(log_entry.node, comment)
 
     def test_delete_comment(self):
         ajax_delete_comment = reverse('ajax_delete_comment')
