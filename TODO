@@ -4,7 +4,6 @@ Release "Boten Anna" (Basshunter):
   > test_register
   > test_signup_pending
   > test_account_email
-  > test_article
   > billing cron job
   > make sure a song's comment node is never null
   > make sure when a song is uploaded to the workbench, is_open_for_comments and is_open_source are False

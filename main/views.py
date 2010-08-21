@@ -5,9 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail, EmailMessage
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
+from django.core.exceptions import PermissionDenied as Http403
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext, Context
+from django.template import RequestContext, Context, TemplateDoesNotExist
 from django.template.loader import get_template
 from main import design, payment
 from main.common import json_response, json_login_required, json_post_required, \
@@ -615,4 +616,7 @@ def landing(request):
 def article(request, article_url):
     # return the template for the article_url
     template_name = "articles/{0}.html".format(article_url)
-    return render_to_response(template_name, {}, context_instance=RequestContext(request))
+    try:
+        return render_to_response(template_name, {}, context_instance=RequestContext(request))
+    except TemplateDoesNotExist:
+        raise Http404

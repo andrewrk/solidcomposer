@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, \
-    HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.core.exceptions import PermissionDenied as Http403
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.template.loader import get_template
@@ -114,7 +114,7 @@ def ajax_home(request):
 def handle_invite(request, accept):
     invite = get_obj_from_request(request.POST, 'invitation', BandInvitation)
     if invite is None:
-        return HttpResponseNotFound()
+        raise Http404
 
     # make sure the user has permission to reject this invitation
     if invite.invitee != request.user:
@@ -980,7 +980,7 @@ def download_sample_zip(request):
     # authorize
     for sample in samples:
         if sample.user.id != request.user.id and not sample.band.permission_to_view_source(request.user):
-            return HttpResponseForbidden()
+            raise Http403
 
     # package as zip
     zip_file_h = make_timed_temp_file()
@@ -1014,7 +1014,7 @@ def download_sample(request, sample_id_str, sample_title):
 
     if sample.user.id != request.user.id and not sample.band.permission_to_view_source(request.user):
         # not authorized
-        return HttpResponseForbidden()
+        raise Http403
 
     # grab the sample from storage to temp file
     import storage
@@ -1035,7 +1035,7 @@ def download_zip(request):
     song = get_object_or_404(Song, pk=get_val(request.GET, 'song', 0))
 
     if not song.permission_to_view_source(request.user):
-        return HttpResponseForbidden()
+        raise Http403
 
     wanted_samples = request.GET.getlist('s')
     if len(wanted_samples) == 0:

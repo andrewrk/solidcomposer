@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from main.models import Song, TempFile, SongCommentNode, BandMember, Band
 from main import design
+from main.common import superwalk
 from workshop.models import SampleFile, LogEntry
 import os
 import simplejson as json
@@ -731,11 +732,23 @@ class SimpleTest(TestCase):
 
     def test_article(self):
         # url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
-        pass
+        article_url = lambda article: reverse('article', args=[article])
 
         # should return 404 if template not found
+        response = self.client.get(article_url('bogus-article-does-not-exist-12349919929hqcrxdarcot'))
+        self.assertEqual(response.status_code, 404)
 
         # should return a static page if found
+        # test all static pages
+        def lsdir(folder):
+            for dirpath, _dirnames, filenames in os.walk(folder):
+                for filename in filenames:
+                    yield os.path.join(dirpath, filename)
+                break
+        for filename in lsdir(os.path.join(os.path.dirname(__file__), '..', 'templates', 'articles')):
+            path, title = os.path.split(filename)
+            url, ext = os.path.splitext(title)
+            self.staticPage(article_url(url))
         
     def test_home(self):
         self.staticPage('/') # make sure we have a home page.
