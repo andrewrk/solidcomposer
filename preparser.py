@@ -14,6 +14,7 @@ import shutil
 import tempfile
 import time
 import traceback
+import stat
 
 
 """
@@ -173,6 +174,8 @@ def compile_file(preparse_tuple, source, dest):
     except OSError:
         pass
     shutil.move(store_name, dest)
+    perms = stat.S_IRUSR|stat.S_IRGRP|stat.S_IROTH|stat.S_IWUSR|stat.S_IWGRP
+    os.chmod(dest, perms)
 
 def clean_file(preparse_tuple, source, dest, force):
     if os.path.exists(dest):
