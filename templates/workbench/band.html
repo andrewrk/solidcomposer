@@ -9,33 +9,41 @@
     </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/time.pre.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/login.pre.js"></script>
-    {% include 'player/script_player.html' %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/workbench/band.pre.js"></script>
+    {% if permission %}
+        {% include 'player/script_player.html' %}
+        <script type="text/javascript" src="{{ MEDIA_URL }}js/workbench/band.pre.js"></script>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-    {% include 'workbench/tools.html' %}
-    <div id="bread">
-        <a href="{% url home %}">Home</a>
-        &gt;
-        <a href="{% url workbench.home %}">Workbench</a>
-        &gt;
-        <span class="dest">{{ band.title }}</span>
-    </div>
-    <div id="band-spacemeter">
-        {% include 'loading.html' %}
-    </div>
-    <div id="filters">
-        {% include 'loading.html' %}
-    </div>
-    <div id="new_project">
-        <a href="{% url workbench.create_project band.id %}">New Project</a>
-    </div>
-    <div>
-        <input type="text" id="search" class="inactive" />
-    </div>
-    <div id="project-list">
-        {% include 'loading.html' %}
-    </div>
+    {% if permission %}
+        {% include 'workbench/tools.html' %}
+        <div id="bread">
+            <a href="{% url home %}">Home</a>
+            &gt;
+            <a href="{% url workbench.home %}">Workbench</a>
+            &gt;
+            <span class="dest">{{ band.title }}</span>
+        </div>
+        <div id="band-spacemeter">
+            {% include 'loading.html' %}
+        </div>
+        <div id="filters">
+            {% include 'loading.html' %}
+        </div>
+        <div id="new_project">
+            <a href="{% url workbench.create_project band.id %}">New Project</a>
+        </div>
+        <div>
+            <input type="text" id="search" class="inactive" />
+        </div>
+        <div id="project-list">
+            {% include 'loading.html' %}
+        </div>
+    {% else %}
+        <p>
+            Only {{ band.title }} band members can access this page.
+        </p>
+    {% endif %}
 {% endblock %}
 

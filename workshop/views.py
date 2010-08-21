@@ -167,7 +167,7 @@ def ajax_create_invite(request):
     if band is None:
         return json_failure(design.bad_band_id)
 
-    if not band.openness == Band.OPEN_SOURCE:
+    if not band.openness == Band.FULL_OPEN:
         try:
             member = BandMember.objects.get(user=request.user, band=band)
         except BandMember.DoesNotExist:
@@ -374,7 +374,8 @@ def ajax_email_invite(request):
 
 def band(request, band_id_str):
     band = get_object_or_404(Band, pk=int(band_id_str))
-    return render_to_response('workbench/band.html', {"band": band}, context_instance=RequestContext(request))
+    permission = band.permission_to_critique(request.user)
+    return render_to_response('workbench/band.html', locals(), context_instance=RequestContext(request))
 
 @json_login_required
 @json_get_required
@@ -474,7 +475,10 @@ def ajax_project_list(request):
         data['latest_version'] = version_to_dict(project.latest_version, request.user)
         return data
 
-    member = BandMember.objects.get(band=band, user=request.user)
+    try:
+        member_dict = BandMember.objects.get(band=band, user=request.user).to_dict()
+    except BandMember.DoesNotExist:
+        member_dict = None
 
     # build the json object
     data = {
@@ -482,7 +486,7 @@ def ajax_project_list(request):
         'page_count': paginator.num_pages,
         'page_number': page_number,
         'band': band.to_dict(access=SerializableModel.OWNER),
-        'band_member': member.to_dict(),
+        'band_member': member_dict,
     }
 
     return json_success(data)
@@ -854,9 +858,20 @@ def ajax_checkin(request):
 def band_settings(request, band_id_str):
     band = get_object_or_404(Band, pk=int(band_id_str))
 
+    permission = True
+    err_msg = ""
+    try:
+        member = BandMember.objects.get(user=request.user, band=band)
+        if member.role != BandMember.MANAGER:
+            permission = False
+            err_msg = design.only_managers_can_edit_band_settings
+    except BandMember.DoesNotExist:
+        permission = False
+        err_msg = design.only_managers_can_edit_band_settings
+
     if request.method == 'POST':
         form = RenameBandForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() and permission:
             # rename the band
             new_name = form.cleaned_data.get('new_name')
             band.rename(new_name)
@@ -879,13 +894,13 @@ def create_project(request, band_id_str):
     band = get_object_or_404(Band, id=int(band_id_str))
     err_msg = ''
 
-    if not band.permission_to_work(request.user):
-        # redirect to login
-        return HttpResponseForbidden()
+    permission = band.permission_to_work(request.user)
+    if not permission:
+        err_msg = design.only_band_members_can_create_projects
 
     if request.method == 'POST':
         form = NewProjectForm(request.POST, request.FILES)
-        if form.is_valid():
+        if form.is_valid() and permission:
             mp3_file = request.FILES.get('file_mp3')
             source_file = request.FILES.get('file_source')
 
@@ -941,6 +956,7 @@ def create_project(request, band_id_str):
             'form': form,
             'err_msg': err_msg,
             'band': band,
+            'permission': permission,
         }, context_instance=RequestContext(request))
 
 @login_required
@@ -1132,6 +1148,8 @@ def version_to_dict(version, user):
 
     return data
 
+@login_required
 def band_invite(request, band_id_str):
     band = get_object_or_404(Band, pk=int(band_id_str))
+    permission = band.permission_to_invite(request.user)
     return render_to_response('workbench/band_invite.html', locals(), context_instance=RequestContext(request))

@@ -19,31 +19,37 @@
     </div>
     <div class="textblock">
         <h1>Band Settings</h1>
-        <h2>Rename Band</h2>
-        {% if err_msg %}
-            <div class="err">
-                <p>{{ err_msg }}</p>
-            </div>
-        {% endif %}
-        <form action="." method="post">
-            <table>
-                {{ form.as_table }}
-                <tr>
-                    <td></td>
-                    <td><input type="submit" value="Rename" /></td>
-                </tr>
-            </table>
-        </form>
-        <h2>Members</h2>
-        <ul>
-        {% for member in band.bandmember_set.all %}
-            {% with member.user as user %}
-                <div>
-                    {% include 'username.html' %}
+        {% if permission %}
+            <h2>Rename Band</h2>
+            {% if err_msg %}
+                <div class="err">
+                    <p>{{ err_msg }}</p>
                 </div>
-            {% endwith %}
-        {% endfor %}
-        </ul>
+            {% endif %}
+            <form action="." method="post">
+                <table>
+                    {{ form.as_table }}
+                    <tr>
+                        <td></td>
+                        <td><input type="submit" value="Rename" /></td>
+                    </tr>
+                </table>
+            </form>
+            <h2>Members</h2>
+            <ul>
+            {% for member in band.bandmember_set.all %}
+                {% with member.user as user %}
+                    <div>
+                        {% include 'username.html' %}
+                    </div>
+                {% endwith %}
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>
+                {{ err_msg }}
+            </p>
+        {% endif %}
     </div>
     
 {% endblock %}

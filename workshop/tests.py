@@ -1964,12 +1964,49 @@ class SimpleTest(TestCase):
         self.staticPage(reverse('workbench.band', args=[self.just64helpin.get_profile().solo_band.id]))
 
     def test_band_settings(self):
-        """url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),"""
-        band_settings_url_name = 'workbench.band_settings'
-        # TODO
+        band_settings = lambda band_id: reverse('workbench.band_settings', args=[band_id])
+        skiessi_solo = self.skiessi.get_profile().solo_band
+
+        # anon
+        self.checkLoginRedirect(band_settings(skiessi_solo.id))
+
+        # bogus band
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get(band_settings(928))
+        self.assertEqual(response.status_code, 404)
+
+        # not in band
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.get(band_settings(skiessi_solo.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['err_msg'], design.only_managers_can_edit_band_settings)
+        self.assertEqual(response.context['permission'], False)
+
+        # ok
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get(band_settings(skiessi_solo.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['err_msg'], "")
+        self.assertEqual(response.context['permission'], True)
+
+        # rename with same name, url should not change
+        old_url = skiessi_solo.url
+        response = self.client.post(band_settings(skiessi_solo.id), {
+            'new_name': skiessi_solo.title,
+        })
+        self.assertEqual(response.status_code, 302)
+        skiessi_solo = Band.objects.get(pk=skiessi_solo.id)
+        self.assertEqual(old_url, skiessi_solo.url)
+
+        # rename with different name
+        response = self.client.post(band_settings(skiessi_solo.id), {
+            'new_name': 'LOL HOTDOG',
+        })
+        self.assertEqual(response.status_code, 302)
+        skiessi_solo = Band.objects.get(pk=skiessi_solo.id)
+        self.assertEqual(skiessi_solo.title, 'LOL HOTDOG')
 
     def test_create_project(self):
-        """url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),"""
         create_project_url = lambda band_id: reverse('workbench.create_project', args=[band_id])
 
         project_count = Project.objects.count()
@@ -2008,7 +2045,9 @@ class SimpleTest(TestCase):
             'file_mp3': mp3_file,
             'comments': 'abc123',
         })
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['permission'], False)
+        self.assertEqual(response.context['err_msg'], design.only_band_members_can_create_projects)
         self.assertEqual(project_count, Project.objects.count())
         self.assertEqual(version_count, ProjectVersion.objects.count())
         self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())

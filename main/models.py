@@ -109,6 +109,10 @@ class Band(SerializableModel):
         self.url = create_url(self.title, lambda proposed: Band.objects.filter(url=proposed).count() == 0)
 
     def rename(self, new_name):
+        # if it's the same, do nothing
+        if self.title == new_name:
+            return
+
         self.title = new_name
         self.create_url()
 
