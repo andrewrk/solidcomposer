@@ -1,7 +1,4 @@
 Release "Boten Anna" (Basshunter):
-* tests
-  > take into account bytes used and whether bands are read only
-  > test workbench.ajax_activity
 * design iteration
   > favicon
   > main design / navigation / new logo / login bar
@@ -65,6 +62,7 @@ Wednesday, September 1:
 Release "April Rain" (The Cynic Project)
 = sitewide =
 * tests
+  > take into account bytes used and whether bands are read only
   > test_register
   > billing cron job
   > test_account_plan_changed

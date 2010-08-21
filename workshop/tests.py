@@ -2309,3 +2309,46 @@ class SimpleTest(TestCase):
     def test_studio(self):
         self.staticPage(reverse('workbench.studio', args=['flstudio']))
         self.staticPage(reverse('workbench.studio', args=['lmms']))
+
+    def test_ajax_activity_list(self):
+        ajax_activity_list = reverse('workbench.ajax_activity')
+        superjoe_solo = self.superjoe.get_profile().solo_band
+
+        # anon
+        self.anonGetFail(ajax_activity_list, {})
+
+        # ok
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get(ajax_activity_list, {})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['data']), 0)
+
+        # create a project and see if it did anything
+        blank_mp3file = open(absolute('fixtures/silence10s-flstudio-tags.mp3'),'rb')
+        blank_project = open(absolute('fixtures/4frontpiano.flp'),'rb')
+        response = self.client.post(reverse('workbench.create_project', args=[superjoe_solo.id]), {
+            'title': "The Castle",
+            'file_source': blank_project,
+            'file_mp3': blank_mp3file,
+            'comments': "The Castle Comments",
+        })
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.get(ajax_activity_list, {})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['data']), 1)
+        entry = data['data'][0]
+        self.assertEqual(entry['entry_type'], LogEntry.NEW_PROJECT)
+
+        # now send the last id, should return none
+        response = self.client.get(ajax_activity_list, {
+            'lastEntry': entry['id'],
+        })
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['data']), 0)

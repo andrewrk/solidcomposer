@@ -59,8 +59,6 @@ FILTERS['out']['func'] = lambda projects: filterVisible(projects).exclude(checke
 FILTERS['mine']['func'] = lambda projects, user: filterVisible(projects).filter(checked_out_to=user)
 FILTERS['scrapped']['func'] = filterScrapped
 
-
-
 def activity_list(request):
     """
     return the 10 newest log entries since the id supplied.
