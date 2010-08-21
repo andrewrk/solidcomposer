@@ -45,8 +45,6 @@ urlpatterns = patterns('',
     url(r'^account/email/$', 'main.views.account_email', {'SSL': True}, name="account.email"),
     url(r'^account/password/$', 'main.views.account_password', {'SSL': True}, name="account.password"),
     url(r'^account/password/reset/$', 'main.views.account_password_reset', {'SSL': True}, name="account.password.reset"),
-    url(r'^account/password/reset/ok/$', direct_to_template, {'template': 'account/password_reset_ok.html', 'SSL': True}, name="account.password.reset.ok"),
-    url(r'^account/password/ok/$', direct_to_template, {'template': 'account/password_ok.html', 'SSL': True}, name="account.password.ok"),
 
     url(r'^landing/$', 'main.views.landing', name='landing'),
     url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),

@@ -1,19 +1,21 @@
 Release "Boten Anna" (Basshunter):
 Friday, August 20:
-* workbench tests
-  > test the billing, especially when it returns pending
-    - billing cron job
-    - /signup/*
-    - downgrading/upgrading
+* tests
+  > test_home
+  > test_dashbard
+  > test_landing
+  > test_account_plan
+  > test_account_plan_changed
+  > test_register
+  > test_signup_pending
+  > test_account_email
+  > test_plans
+  > test_article
+  > billing cron job
   > make sure a song's comment node is never null
   > make sure when a song is uploaded to the workbench, is_open_for_comments and is_open_source are False
-  > tests for account
   > take into account bytes used and whether bands are read only
-  > tests for upgrade page
-  > tests for password recovery
-  > tests for band settings -> membership management
-  > test for home page (just make sure it shows up)
-  > workbench.ajax_activity
+  > test workbench.ajax_activity
   > test sending emails when notifications are on/off
 
 Saturday, August 21:

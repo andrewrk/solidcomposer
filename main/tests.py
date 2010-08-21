@@ -88,7 +88,7 @@ class SimpleTest(TestCase):
         register_pending_url = reverse('register_pending')
 
         # how many emails in outbox
-        outboxCount = len(mail.outbox) #@UndefinedVariable
+        outbox_count = len(mail.outbox) #@UndefinedVariable
         # make sure the page loads
         response = self.client.get(register_url)
         self.assertEqual(response.status_code, 200)
@@ -122,7 +122,7 @@ class SimpleTest(TestCase):
         self.assertEqual(profile.activated, False)
 
         # make sure email sent
-        self.assertEqual(len(mail.outbox), outboxCount+1) #@UndefinedVariable
+        self.assertEqual(len(mail.outbox), outbox_count+1) #@UndefinedVariable
 
         # test register pending
         response = self.client.get(register_pending_url)
@@ -583,3 +583,79 @@ class SimpleTest(TestCase):
         target_comment = SongCommentNode.objects.get(pk=target_comment.id)
         self.assertEqual(target_comment.content, 'new')
 
+    def test_dashbard(self):
+        #url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
+        pass
+
+    def test_landing(self):
+        #url(r'^landing/$', 'main.views.landing', name='landing'),
+        pass
+
+    def test_account_plan(self):
+        #url(r'^account/plan/$', 'main.views.account_plan', {'SSL': True}, name="account.plan"),
+        pass
+
+    def test_account_plan_changed(self):
+        # url(r'^account/plan/changed/$', 'main.views.changed_plan_results', {'SSL': True}, name="account.plan_changed"),
+        pass
+    
+    def test_signup_pending(self):
+        # url(r'^signup/pending/$', 'main.views.register_pending', {'SSL': True}, name="register_pending"),
+        pass
+
+    def test_account_email(self):
+        # url(r'^account/email/$', 'main.views.account_email', {'SSL': True}, name="account.email"),
+        pass
+
+    def test_account_password(self):
+        # url(r'^account/password/$', 'main.views.account_password', {'SSL': True}, name="account.password"),
+        account_password = reverse('account.password')
+
+        # TODO: test failure conditions
+        
+        # change just64helpin's password to boobies
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.post(account_password, {
+            'old_password': 'temp1234',
+            'new_password': 'boobies',
+            'confirm_password': 'boobies',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.just64helpin = User.objects.get(pk=self.just64helpin.id)
+        self.client.logout()
+        self.client.login(username='just64helpin', password='boobies')
+
+    def test_account_password_reset(self):
+        # url(r'^account/password/reset/$', 'main.views.account_password_reset', {'SSL': True}, name="account.password.reset"),
+        account_password_reset = reverse('account.password.reset')
+
+        outbox_count = len(mail.outbox)
+        self.assertEqual(outbox_count, len(mail.outbox))
+
+        # TODO: test failure conditions
+        
+        self.client.logout()
+        self.staticPage(account_password_reset)
+
+        # reset skiessi's password
+        response = self.client.post(account_password_reset, {
+            'email': self.skiessi.email,
+        })
+        self.assertEqual(response.status_code, 200)
+        outbox_count += 1
+        self.assertEqual(outbox_count, len(mail.outbox))
+    
+    def test_plans(self):
+        # url(r'^plans/$', 'main.views.plans', name='plans'),
+        pass
+
+    def test_article(self):
+        # url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
+        pass
+
+        # should return 404 if template not found
+
+        # should return a static page if found
+        
+    def test_home(self):
+        pass

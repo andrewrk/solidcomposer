@@ -544,7 +544,7 @@ def account_password(request):
             if user.check_password(old_password):
                 user.set_password(form.cleaned_data.get('new_password'))
                 user.save()
-                return HttpResponseRedirect(reverse('account.password.ok'))
+                return render_to_response('account/password_ok.html', locals(), context_instance=RequestContext(request))
             else:
                 err_msg = design.invalid_old_password
     else:
@@ -582,7 +582,7 @@ def account_password_reset(request):
                 message_html = get_template('email/password_reset.html').render(context)
                 send_html_mail(subject, message_txt, message_html, [email])
 
-                return HttpResponseRedirect(reverse('account.password.reset.ok'))
+                return render_to_response('account/password_reset_ok.html', locals(), context_instance=RequestContext(request))
     else:
         form = PasswordResetForm()
 
