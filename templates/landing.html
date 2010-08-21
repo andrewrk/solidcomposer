@@ -2,12 +2,11 @@
 
 {% block title %}{{ block.super }} - Compete, collaborate, learn{% endblock %}
 
+{% block css %}landing.pre.css{% endblock %}
+
 {% block content %}
-    <h1>Unleash the Producer in You.</h1>
-    <p>
-        <strong>Backup.</strong> SolidComposer keeps track of every version of
-        your studio projects so that you can't lose them. <a href="{% url article 'introducing-solidcomposer' %}">How does this work?</a>
-    </p>
+    <h1>Unleash the producer in you.</h1>
+    <a id="right-sign-up" href="{% url plans %}"><img src="{{ MEDIA_URL }}img/sign-up-now-blue.png" alt="Sign up now"/></a>
     <p>
         <strong>Collaborate.</strong> Start a band with anybody! You can invite
         anyone to join your projects. SolidComposer protects you against clobbering
@@ -18,5 +17,13 @@
         SolidComposer will make sure you have the samples and generators you need to
         work on projects. <a href="{% url article 'introducing-solidcomposer' %}">How does this work?</a>
     </p>
-    <a href="{% url plans %}">Sign up!</a>
+    <ul>
+        <li><a href="http://flstudio.image-line.com/" title="FL Studio"><img src="{{ MEDIA_URL }}img/flstudio-logo-57x90.png" alt="FL Studio" /></a></li>
+        <li><a href="http://lmms.sourceforge.net/" title="LMMS"><img src="{{ MEDIA_URL }}img/lmms-logo-91x90.png" alt="LMMS" /></a></li>
+    </ul>
+    <p>
+        <strong>Backup.</strong> SolidComposer keeps track of every version of
+        your studio projects so that you can't lose them. <a href="{% url article 'introducing-solidcomposer' %}">How does this work?</a>
+    </p>
+    <a id="bottom-sign-up" href="{% url plans %}"><img src="{{ MEDIA_URL }}img/sign-up-now-black.png" alt="Sign up now"/></a>
 {% endblock %}

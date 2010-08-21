@@ -1,5 +1,24 @@
 @import "base.pre.css";
 
+h1 {
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 22px;
+    font-weight: bold;
+    color: #4079e3;
+    margin: 20px 0 8px 0;
+    padding: 0;
+}
+
+h2 {
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #d93027;
+    margin: 20px 0 8px 0;
+    padding: 0;
+}
+
+
 #compowrapper {
     max-width: 900px;
     margin: 0 auto;

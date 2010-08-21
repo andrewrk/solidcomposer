@@ -1,7 +1,6 @@
 Release "Boten Anna" (Basshunter):
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
-    - url(r'^$', 'main.views.home', name='home'),
     - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
     - url(r'^plans/$', 'main.views.plans', name='plans'),
     - url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
@@ -22,7 +21,6 @@ Release "Boten Anna" (Basshunter):
     - url(r'^account/email/$', 'main.views.account_email', {'SSL': True}, name="account.email"),
     - url(r'^account/password/$', 'main.views.account_password', {'SSL': True}, name="account.password"),
     - url(r'^account/password/reset/$', 'main.views.account_password_reset', {'SSL': True}, name="account.password.reset"),
-    - url(r'^landing/$', 'main.views.landing', name='landing'),
     - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
     - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
     - url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),

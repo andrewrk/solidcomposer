@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: Verdana, Arial, sans-serif;
+    font-family: Verdana, Geneva, sans-serif;
     font-size: 14px;
     margin: 0;
     padding: 0;
@@ -20,24 +20,6 @@ body {
     padding: 0;
     border-top:1px solid #24618e;
     border-bottom:1px solid #24618e;
-}
-
-h1 {
-    font-family: Arial, Verdana, sans-serif;
-    font-size: 22px;
-    font-weight: bold;
-    color: #4079e3;
-    margin: 20px 0 8px 0;
-    padding: 0;
-}
-
-h2 {
-    font-family: Arial, Verdana, sans-serif;
-    font-size: 16px;
-    font-weight: bold;
-    color: #d93027;
-    margin: 20px 0 8px 0;
-    padding: 0;
 }
 
 p {
@@ -174,9 +156,11 @@ a {
 #feedback-div a {
     font-size: 10px;
     color: #639fff !important;
-    margin: 10px 12px 0 0;
+    margin: 0;
     padding: 0;
-    float: right;
+    position: absolute;
+    right: 10px;
+    top: 50px;
 }
 
 .points {

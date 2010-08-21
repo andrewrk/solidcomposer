@@ -1,0 +1,39 @@
+@import "base.pre.css";
+
+h1 {
+    font-family: Impact, Impact, Charcoal, sans-serif;
+    font-size: 3em;
+    font-weight: normal;
+}
+
+#wrapper {
+    padding: 20px 0 0 40px;
+
+    ul {
+        list-style-type: none;
+
+        li {
+            display: inline;
+            margin: 0 0 0 20px;
+        }
+    }
+}
+
+p {
+    width: 315px;
+    font-size: 12px;
+    background-image: url({{ MEDIA_URL}}img/check.png);
+    background-position: left center;
+    background-repeat: no-repeat;
+    padding: 0 0 0 60px;
+    margin: 24px 0 0 0;
+}
+
+#bottom-sign-up img {
+    margin: 24px 0 0 37px;
+}
+
+#right-sign-up {
+    position: absolute;
+    left: 440px;
+}
