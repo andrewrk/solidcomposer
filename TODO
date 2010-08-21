@@ -1,7 +1,5 @@
 Release "Boten Anna" (Basshunter):
 * design iteration
-  > tip framework
-    - tips should show up where the tip element is but not on top of it.
   > pages - iterate through all of them. also test on 1024 page width
     - url(r'^$', 'main.views.home', name='home'),
     - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
@@ -42,7 +40,12 @@ Release "Boten Anna" (Basshunter):
     - url('^$', direct_to_template, {'template': 'arena/home.html'}, name="arena.home"),
     - url('^create/$', 'competitions.views.create', name="arena.create"),
     - url('^compete/(\d+)/$', 'competitions.views.competition', name="arena.compete"),
-  > maxWidth and maxHeight don't work in jquery dialog
+      # show gravatar in user list
+  > tip framework
+    - tips should show up where the tip element is but not on top of it.
+  > song player
+    - dialog should not cover up song playback
+    - maxWidth and maxHeight don't work in jquery dialog
 * in chrome, when you stop playing a song, it still thinks it's playing.
 
 Wednesday, September 1:

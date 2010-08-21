@@ -84,9 +84,6 @@ a {
     }
 
     #css-login {
-        float: right;
-        top: 0;
-        right: 0;
         margin: 20px 12px 0 0;
         padding: 0;
 
@@ -165,7 +162,21 @@ a {
         .selected.arena a {
             background-image: url({{ MEDIA_URL }}img/sword-dark-16x20.png);
         }
+
     }
+
+}
+
+#header-right {
+    float: right;
+}
+
+#feedback-div a {
+    font-size: 10px;
+    color: #639fff !important;
+    margin: 10px 12px 0 0;
+    padding: 0;
+    float: right;
 }
 
 .points {

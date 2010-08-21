@@ -20,9 +20,14 @@
                     <a href="{% url arena.home %}"><span>Arena</span></a>
                 </li>
             </ul>
-            {% block login %}
-                {% include 'login_area.html' %}
-            {% endblock %}
+            <div id="header-right">
+                {% block login %}
+                    {% include 'login_area.html' %}
+                {% endblock %}
+                <div id="feedback-div">
+                    <a href="http://solidcomposer.uservoice.com/">Feedback</a>
+                </div>
+            </div>
         </div>
         {% block nav %}
         {% endblock %}
