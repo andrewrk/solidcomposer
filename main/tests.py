@@ -658,4 +658,5 @@ class SimpleTest(TestCase):
         # should return a static page if found
         
     def test_home(self):
-        pass
+        self.staticPage('/') # make sure we have a home page.
+        self.staticPage(reverse('home'))

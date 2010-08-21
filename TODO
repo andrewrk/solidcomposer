@@ -1,7 +1,5 @@
 Release "Boten Anna" (Basshunter):
-Friday, August 20:
 * tests
-  > test_home
   > test_dashbard
   > test_landing
   > test_account_plan
@@ -17,39 +15,61 @@ Friday, August 20:
   > take into account bytes used and whether bands are read only
   > test workbench.ajax_activity
   > test sending emails when notifications are on/off
-
-Saturday, August 21:
-Sunday, August 22:
-Friday, August 27:
-Saturday, August 28:
-Sunday, August 29:
 * design iteration
-  > all of workbench
-  > landing page
-  > dashboard
-  > editor controls on fields that will be parsed by showdown.
-    - http://wmd-editor.com/
-    - also always show a preview when things will be parsed by showdown.
   > favicon
-  > new logo
-  > make header area take up less vertical room
-  > test on 1024 page width.
-  > arena home
-  > ajax login
+  > main design / navigation / new logo / login bar
+    - make header area take up less vertical room
   > tip framework
     - tips should show up where the tip element is but not on top of it.
-  > home page - if not logged in, it's an attractive pricing & signup page
+  > pages - iterate through all of them. also test on 1024 page width
+    - url(r'^$', 'main.views.home', name='home'),
+    - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
+    - url(r'^plans/$', 'main.views.plans', name='plans'),
+    - url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
+    - url(r'^band/(.+)/$', 'main.views.bandpage', name='bandpage'),
+    - url(r'^login/$', 'main.views.user_login', {'SSL': True}, name="user_login"),
+    - url(r'^logout/$', 'main.views.user_logout', name="user_logout"),
+    - url(r'^signup/$', 'main.views.user_register', {'SSL': True}, name="register"),
+    - url(r'^signup/pending/$', 'main.views.register_pending', {'SSL': True}, name="register_pending"),
+    - url(r'^signup/(.+)/$', 'main.views.user_register_plan', {'SSL': True}, name="register_plan"),
+    - url(r'^confirm/(.+)/(.+)/$', 'main.views.confirm', name="confirm"),
+    - url(r'^contact/$', 'main.views.contact', name="contact"),
+    - url(r'^contact/thanks/$', direct_to_template, {'template': 'contact_thanks.html'}, name="contact_thanks"),
+    - url(r'^privacy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),
+    - url(r'^terms/$', direct_to_template, {'template': 'terms.html'}, name="terms"),
+    - url(r'^account/$', 'main.views.account_plan', {'SSL': True}, name="account"),
+    - url(r'^account/plan/$', 'main.views.account_plan', {'SSL': True}, name="account.plan"),
+    - url(r'^account/plan/changed/$', 'main.views.changed_plan_results', {'SSL': True}, name="account.plan_changed"),
+    - url(r'^account/email/$', 'main.views.account_email', {'SSL': True}, name="account.email"),
+    - url(r'^account/password/$', 'main.views.account_password', {'SSL': True}, name="account.password"),
+    - url(r'^account/password/reset/$', 'main.views.account_password_reset', {'SSL': True}, name="account.password.reset"),
+    - url(r'^landing/$', 'main.views.landing', name='landing'),
+    - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
+    - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
+    - url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),
+    - url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),
+    - url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
+    - url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),
+    - url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
+    - url(r'^band/(\d+)/invite/$', 'workshop.views.band_invite', name="workbench.band_invite"),
+    - url(r'^download/zip/$', 'workshop.views.download_zip', name="workbench.download_zip"),
+    - url(r'^download/sample/(\d+)/(.+)/$', 'workshop.views.download_sample', name="workbench.download_sample"),
+    - url(r'^download/samples/$', 'workshop.views.download_sample_zip', name="workbench.download_sample_zip"),
+    - url(r'^plugin/(.+)/$', 'workshop.views.plugin', name="workbench.plugin"),
+    - url(r'^studio/(.+)/$', 'workshop.views.studio', name="workbench.studio"),
+    - url(r'^redeem/(.+)/$', 'workshop.views.redeem_invitation', name="workbench.redeem_invitation"),
+    - url('^$', direct_to_template, {'template': 'arena/home.html'}, name="arena.home"),
+    - url('^create/$', 'competitions.views.create', name="arena.create"),
+    - url('^compete/(\d+)/$', 'competitions.views.competition', name="arena.compete"),
   > maxWidth and maxHeight don't work in jquery dialog
-  > html email instead of txt
-
-Tuesday, August 31:
-* manually test all the features to make sure they work.
 
 Wednesday, September 1:
 * WE DO IT LIVE
   > shut down solidcomposer.com
+    - use a notice so people know there will be downtime.
   > migrate data to new place.
   > test everything
+  > get josh to pay money
   > change domain to new place
   > make sure email is working.
 * blog post announcing release
@@ -57,6 +77,9 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+ * editor controls on fields that will be parsed by showdown.
+   > http://wmd-editor.com/
+   > also always show a preview when things will be parsed by showdown.
  * caching
  * page for songs so people can link to them. put a button in the song player widget to get this link.
  * band meter on workbench page
