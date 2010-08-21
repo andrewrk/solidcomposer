@@ -3,7 +3,7 @@
     {% include 'loading.html' %}
     </div>
     <div style="display: none;" id="loginFormDiv">
-        <form id="loginForm" action="/login/">
+        <form id="loginForm" action="{% url user_login %}">
             <table>
                 <tr>
                     <td class="label">
@@ -23,8 +23,8 @@
                 </tr>
             </table>
             <div id="login-buttons">
-                <a href="#" id="loginButton">submit</a>
-                <a href="#" id="cancelLoginButton">cancel</a>
+                <a href="#" id="loginButton">Log in</a>
+                <a href="#" id="cancelLoginButton">Cancel</a>
             </div>
         </form>
     </div>

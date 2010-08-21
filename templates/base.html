@@ -2,61 +2,61 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {% spaceless %}
 <html>
-<head>
-<title>{% block title %}SolidComposer{% endblock %}</title>
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/{% block css %}base.pre.css{% endblock %}" />
-<link rel="shortcut icon" href="{{ MEDIA_URL }}img/favicon.ico" type="image/x-icon" />
-{% block extra_header %}{% endblock %}
-</head>
-<body>
-{% block extra_body %}{% endblock %}
-{% block login %}
-{% include 'login_area.html' %}
-{% endblock %}
-<div id="logo">
-    <a href="{% url home %}"><img src="{{ MEDIA_URL }}img/logo.png" alt="Solid Composer" /></a>
-</div>
-{% block nav %}
-<div id="tabsJ">
-    <p>A place for musicians to <strong>compete, collaborate, and learn</strong>. <a href="http://solidcomposer.uservoice.com/">Feedback</a></p>
-    <ul>
-        <li class="{% block nav_arena_li_class %}unselected{% endblock %}">
-            <a href="{% url arena.home %}"><span>Arena</span></a>
-        </li>
-        <li class="{% block nav_workbench_li_class %}unselected{% endblock %}">
-            <a href="{% url workbench.home %}"><span>Workbench</span></a>
-        </li>
-    </ul>
-</div>
-{% endblock %}
-<div id="wrapper">
-    <div class="clear"></div>
-    {% block content %}
-    {% endblock %}
-</div>
-<div id="footer">
-    <div id="copyright">
-        &copy; 2010 SolidComposer LLC
-    </div>
-    <div id="footer-links">
-        <a href="{% url policy %}">Privacy Policy</a> |
-        <a href="{% url terms %}">Terms of Use</a> |
-        <a href="{% url contact %}">Contact</a>
-    </div>
-</div>
-{% if not debug %}
-<script type="text/javascript">
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-17160931-1']);
-_gaq.push(['_trackPageview']);
+    <head>
+        <title>{% block title %}SolidComposer{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/{% block css %}base.pre.css{% endblock %}" />
+        <link rel="shortcut icon" href="{{ MEDIA_URL }}img/favicon.ico" type="image/x-icon" />
+        {% block extra_header %}{% endblock %}
+    </head>
+    <body>
+        {% block extra_body %}{% endblock %}
+        <div id="header">
+            <a id="logo-a" href="{% url home %}"><img src="{{ MEDIA_URL }}img/logo.png" alt="Solid Composer" /></a>
+            <ul id="nav">
+                <li class="workbench {% block nav_workbench_li_class %}unselected{% endblock %}">
+                    <a href="{% url workbench.home %}"><span>Workbench</span></a>
+                </li>
+                <li class="arena {% block nav_arena_li_class %}unselected{% endblock %}">
+                    <a href="{% url arena.home %}"><span>Arena</span></a>
+                </li>
+            </ul>
+            {% block login %}
+                {% include 'login_area.html' %}
+            {% endblock %}
+        </div>
+        {% block nav %}
+        {% endblock %}
+        <div id="wrapper">
+            <div class="clear"></div>
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div id="footer">
+            <div id="copyright">
+                &copy; 2010 SolidComposer LLC
+            </div>
+            <div id="footer-links">
+                <a href="{% url policy %}">Privacy Policy</a> |
+                <a href="{% url terms %}">Terms of Use</a> |
+                <a href="http://solidcomposer.uservoice.com/">Feedback</a> |
+                <a href="{% url contact %}">Contact</a> | 
+                <a href="http://www.facebook.com/pages/SolidComposer/122046227844475"><img src="{{ MEDIA_URL }}img/twitter-icon.png" alt="twitter" /></a> |
+                <a href="http://twitter.com/solidcomposer"><img src="{{ MEDIA_URL }}img/facebook-icon.png" alt="facebook" /></a>
+            </div>
+        </div>
+        {% if not debug %}
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-17160931-1']);
+            _gaq.push(['_trackPageview']);
 
-(function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
-</script>
-{% endif %}
-</body>
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+            </script>
+        {% endif %}
+    </body>
 </html>
 {% endspaceless %}

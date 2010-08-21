@@ -1,3 +1,10 @@
+@mixin rounded-corners($radius) {
+    -moz-border-radius: $radius;
+    -webkit-border-radius: $radius;
+    -khtml-border-radius: $radius;
+    border-radius: $radius;
+}
+
 body {
     font-family: Verdana, Arial, sans-serif;
     font-size: 14px;
@@ -11,6 +18,7 @@ body {
     background: #eeeeee;
     margin: 0;
     padding: 0;
+    border-top:1px solid #24618e;
     border-bottom:1px solid #24618e;
 }
 
@@ -60,25 +68,104 @@ fieldset {
 }
 
 a {
-   color: #4a62ff;
-   text-decoration: underline;
+    color: #4a62ff;
+    text-decoration: underline;
 }
 
-#css-login {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 10px 12px 0 0;
-    padding: 0;
+#header {
+    background-color: #292929;
+    color: #cacbcc;
+    height: 66px;
+    width: 100%;
+
+    a {
+        color: #cacbcc;
+        text-decoration: underline;
+    }
+
+    #css-login {
+        float: right;
+        top: 0;
+        right: 0;
+        margin: 20px 12px 0 0;
+        padding: 0;
+
+        a {
+            margin: 0 0 0 6px;
+            padding: 0;
+        }
+    }
 
     img {
         vertical-align: middle;
     }
-}
 
-#loginStatusDiv a {
-    margin: 0 0 0 6px;
-    padding: 0;
+    #logo-a {
+        float: left;
+
+        img {
+            margin: 4px;
+        }
+    }
+
+    #nav {
+        float: left;
+
+        li {
+            display: inline;
+
+            a {
+                float: left;
+                font-weight: bold;
+                font-family: Arial, sans-serif;
+                text-decoration: none;
+                letter-spacing: 0px;
+                border: 2px solid #cacbcc;
+                @include rounded-corners(10px);
+                margin: 2px 6px 0 0;
+                background-repeat: no-repeat;
+                background-position: 4px center;
+
+                &:hover {
+                    background-color: #cacbcc;
+                    color: #292929;
+                }
+
+                span {
+                    display: block;
+                    padding: 6px 6px 6px 24px;
+                }
+            }
+        }
+
+        .workbench a {
+            background-image: url({{ MEDIA_URL }}img/headphones-light-14x20.png);
+
+            &:hover {
+                background-image: url({{ MEDIA_URL }}img/headphones-dark-14x20.png);
+            }
+        }
+        .arena a {
+            background-image: url({{ MEDIA_URL }}img/sword-light-16x20.png);
+
+            &:hover {
+                background-image: url({{ MEDIA_URL }}img/sword-dark-16x20.png);
+            }
+        }
+
+        li.selected a {
+            background-color: #cacbcc;
+            color: #292929;
+        }
+
+        .selected.workbench a {
+            background-image: url({{ MEDIA_URL }}img/headphones-dark-14x20.png);
+        }
+
+        .selected.arena a {
+            background-image: url({{ MEDIA_URL }}img/sword-dark-16x20.png);
+        }
+    }
 }
 
 .points {
@@ -88,8 +175,13 @@ a {
 }
 
 #loginFormDiv {
+    color: #000000;
     background: #dadada;
     padding: 12px;
+
+    a {
+        color: #0000ff;
+    }
 }
 
 #login-buttons {
@@ -107,6 +199,10 @@ a {
     background: #ffffff;
     margin: 0;
     padding: 10px 0 0 0;
+
+    img {
+        vertical-align: middle;
+    }
 }
 
 div.textblock {
@@ -166,68 +262,3 @@ form {
     float: right;
     margin: 8px 14px 0 0;
 }
-
-/*- Menu Tabs J--------------------------- */
-
-#tabsJ {
-    float:left;
-    width:100%;
-    background:#ffffff;
-    font-size:93%;
-    line-height:normal;
-    border-bottom:1px solid #24618e;
-
-    p {
-        float: left;
-        font-size: 12px;
-        padding: 14px 0 0 16px;
-        margin: 0;
-    }
-
-    ul {
-        margin:0;
-        padding:10px 10px 0 50%;
-        list-style:none;
-    }
-
-    li {
-        display:inline;
-        margin:0;
-        padding:0;
-
-        a {
-            float:left;
-            background:url("../img/tableftJ.gif") no-repeat left top;
-            margin:0;
-            padding:0 0 0 5px;
-            text-decoration:none;
-
-            span {
-                float:none;
-                display:block;
-                background:url("../img/tabrightJ.gif") no-repeat right top;
-                padding:5px 15px 4px 6px;
-                color:#24618E;
-            }
-
-            &:hover {
-                background-position:0% -42px;
-
-                span {
-                    color:#FFF;
-                    background-position:100% -42px;
-                }
-            }
-        }
-
-        .selected a {
-            background-position:0% -42px;
-
-            span {
-                background-position:100% -42px;
-                color:#FFF;
-            }
-        }
-    }
-}
-

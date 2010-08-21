@@ -1,7 +1,5 @@
 Release "Boten Anna" (Basshunter):
 * design iteration
-  > main design / navigation / new logo / login bar
-    - make header area take up less vertical room
   > tip framework
     - tips should show up where the tip element is but not on top of it.
   > pages - iterate through all of them. also test on 1024 page width

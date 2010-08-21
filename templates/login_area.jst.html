@@ -2,13 +2,13 @@
     <div id="loginStatusDiv">
         <% var user = json.user; %>
         {% include 'username.jst.html' %}
-        <a href="{% url account %}">settings</a>
-        <a href="#" id="signOut">log out</a>
+        <a href="{% url account %}">Settings</a>
+        <a href="#" id="signOut">Log out</a>
     </div>
 <% } else { %>
     <div id="loginStatusDiv">
         Not logged in.
-        <a href="#" id="signIn">log in</a>
-        <a href="{% url plans %}">sign up</a>
+        <a href="#" id="signIn">Log in</a>
+        <a href="{% url plans %}">Sign up</a>
     </div>
 <% } %>
