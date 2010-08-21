@@ -4,7 +4,7 @@ from django.contrib.sites.models import Site
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from main.models import Song, TempFile, SongCommentNode
+from main.models import Song, TempFile, SongCommentNode, BandMember, Band
 from main import design
 from workshop.models import SampleFile, LogEntry
 import os
@@ -584,14 +584,97 @@ class SimpleTest(TestCase):
         self.assertEqual(target_comment.content, 'new')
 
     def test_dashbard(self):
-        return self.staticPage(reverse('dashboard'))
+        url = reverse('dashboard')
+        self.client.login(username="skiessi", password="temp1234")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse("user_login") + "?next=" + url)
 
     def test_landing(self):
         return self.staticPage(reverse('landing'))
 
     def test_account_plan(self):
-        #url(r'^account/plan/$', 'main.views.account_plan', {'SSL': True}, name="account.plan"),
-        pass
+        account_plan = reverse('account.plan')
+
+        # give skiessi an upgraded account
+        skiessi_profile = self.skiessi.get_profile()
+        skiessi_profile.purchased_bytes = 1000
+        skiessi_profile.save()
+        skiessi_solo = skiessi_profile.solo_band
+        skiessi_member = BandMember.objects.get(band=skiessi_solo, user=self.skiessi)
+
+        # skiessi create another band
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.post(reverse('workbench.create_band'), {
+            'band_name': 'Monkey Band',
+        })
+        self.assertEqual(response.status_code, 302)
+        monkey_band = Band.objects.order_by('-pk')[0]
+        monkey_member = BandMember.objects.order_by('-pk')[0]
+
+        log_entry_count = LogEntry.objects.count()
+
+        # anon
+        self.client.logout()
+        response = self.client.post(account_plan, {
+            'member-{0}-amt'.format(skiessi_member.id): 2000,
+        })
+        self.assertRedirects(response, reverse('user_login') + "?next=" + account_plan)
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+
+        # change band donation amount
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.post(account_plan, {
+            'member-{0}-amt'.format(skiessi_member.id): 500,
+            'member-{0}-amt'.format(monkey_member.id): 250,
+        })
+        self.assertRedirects(response, account_plan)
+        monkey_band = Band.objects.get(pk=monkey_band.id)
+        monkey_member = BandMember.objects.get(pk=monkey_member.id)
+        skiessi_solo = Band.objects.get(pk=skiessi_solo.id)
+        skiessi_member = BandMember.objects.get(pk=skiessi_member.id)
+        self.assertEqual(monkey_band.total_space, settings.BAND_INIT_SPACE + 250)
+        self.assertEqual(skiessi_solo.total_space, settings.BAND_INIT_SPACE + 500)
+        self.assertEqual(self.skiessi.get_profile().space_used(), 750)
+        self.assertEqual(self.skiessi.get_profile().purchased_bytes, 1000)
+        # verify that log entry was created
+        log_entry_count += 2
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        log_entry = LogEntry.objects.get(band=skiessi_solo)
+        self.assertEqual(log_entry.entry_type, LogEntry.SPACE_ALLOCATED_CHANGE)
+        self.assertEqual(log_entry.catalyst, self.skiessi)
+        self.assertEqual(log_entry.old_amount, 0)
+        self.assertEqual(log_entry.new_amount, 500)
+        log_entry = LogEntry.objects.get(band=monkey_band)
+        self.assertEqual(log_entry.entry_type, LogEntry.SPACE_ALLOCATED_CHANGE)
+        self.assertEqual(log_entry.catalyst, self.skiessi)
+        self.assertEqual(log_entry.old_amount, 0)
+        self.assertEqual(log_entry.new_amount, 250)
+
+        # try to give more bytes to a band than we can
+        response = self.client.post(account_plan, {
+            'member-{0}-amt'.format(skiessi_member.id): 1001,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['err_msg'], design.you_dont_have_enough_space_to_do_that)
+        self.assertEqual(log_entry_count, LogEntry.objects.count())
+        monkey_band = Band.objects.get(pk=monkey_band.id)
+        monkey_member = BandMember.objects.get(pk=monkey_member.id)
+        skiessi_solo = Band.objects.get(pk=skiessi_solo.id)
+        skiessi_member = BandMember.objects.get(pk=skiessi_member.id)
+        self.assertEqual(monkey_band.total_space, settings.BAND_INIT_SPACE + 250)
+        self.assertEqual(skiessi_solo.total_space, settings.BAND_INIT_SPACE + 500)
+        self.assertEqual(self.skiessi.get_profile().space_used(), 750)
+
+        # try to give bytes to a band that we're not a member of
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.post(account_plan, {
+            'member-{0}-amt'.format(skiessi_member.id): 500,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['err_msg'], design.can_only_edit_your_own_amount_donated)
 
     def test_account_plan_changed(self):
         # url(r'^account/plan/changed/$', 'main.views.changed_plan_results', {'SSL': True}, name="account.plan_changed"),

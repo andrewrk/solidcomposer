@@ -1,6 +1,5 @@
 Release "Boten Anna" (Basshunter):
 * tests
-  > test_account_plan
   > test_account_plan_changed
   > test_register
   > test_signup_pending

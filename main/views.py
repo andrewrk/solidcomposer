@@ -440,7 +440,7 @@ def contact(request):
 
 @login_required
 def account_plan(request):
-    """The page that shows the user what plan their on and wants them to click to the upgrade plans page."""
+    """The page that shows the user what plan they're on and wants them to click to the upgrade plans page."""
 
     err_msg = ""
     if request.method == 'POST':
@@ -450,29 +450,27 @@ def account_plan(request):
             # format: member-X-amt=Y
             # X = member id, Y = amount donated
             member_str, member_id, amt_str = key.split('-')
-            if member_str != 'member' or amt_str != 'amt':
-                err_msg = design.invalid_parameters
-                break
-            try:
-                member_id = int(member_id)
-                member = BandMember.objects.get(pk=member_id)
-            except ValueError, BandMember.DoesNotExist:
-                err_msg = design.bad_band_member_id
-                break
+            if member_str == 'member' and amt_str == 'amt':
+                try:
+                    member_id = int(member_id)
+                    member = BandMember.objects.get(pk=member_id)
+                except ValueError, BandMember.DoesNotExist:
+                    err_msg = design.bad_band_member_id
+                    break
 
-            # make sure the user is the band member
-            if member.user != request.user:
-                err_msg = design.can_only_edit_your_own_amount_donated
-                break
+                # make sure the user is the band member
+                if member.user != request.user:
+                    err_msg = design.can_only_edit_your_own_amount_donated
+                    break
 
-            try:
-                val = int(val)
-            except ValueError:
-                err_msg = design.invalid_amount
-                break
+                try:
+                    val = int(val)
+                except ValueError:
+                    err_msg = design.invalid_amount
+                    break
 
-            changes.append((member, val,))
-            space_total += val
+                changes.append((member, val,))
+                space_total += val
 
         if err_msg == "":
             if space_total <= request.user.get_profile().purchased_bytes:
