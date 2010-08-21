@@ -584,12 +584,10 @@ class SimpleTest(TestCase):
         self.assertEqual(target_comment.content, 'new')
 
     def test_dashbard(self):
-        #url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
-        pass
+        return self.staticPage(reverse('dashboard'))
 
     def test_landing(self):
-        #url(r'^landing/$', 'main.views.landing', name='landing'),
-        pass
+        return self.staticPage(reverse('landing'))
 
     def test_account_plan(self):
         #url(r'^account/plan/$', 'main.views.account_plan', {'SSL': True}, name="account.plan"),
@@ -646,8 +644,7 @@ class SimpleTest(TestCase):
         self.assertEqual(outbox_count, len(mail.outbox))
     
     def test_plans(self):
-        # url(r'^plans/$', 'main.views.plans', name='plans'),
-        pass
+        return self.staticPage(reverse('plans'))
 
     def test_article(self):
         # url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),

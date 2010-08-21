@@ -1,13 +1,10 @@
 Release "Boten Anna" (Basshunter):
 * tests
-  > test_dashbard
-  > test_landing
   > test_account_plan
   > test_account_plan_changed
   > test_register
   > test_signup_pending
   > test_account_email
-  > test_plans
   > test_article
   > billing cron job
   > make sure a song's comment node is never null
