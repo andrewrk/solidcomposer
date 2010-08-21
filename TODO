@@ -1,6 +1,5 @@
 Release "Boten Anna" (Basshunter):
 * tests
-  > make sure a song's comment node is never null
   > make sure when a song is uploaded to the workbench, is_open_for_comments and is_open_source are False
   > take into account bytes used and whether bands are read only
   > test workbench.ajax_activity

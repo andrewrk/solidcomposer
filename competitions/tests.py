@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from main.models import Song, SongCommentNode
+from workshop.models import ProjectVersion
 from main.tests import commonSetUp, commonTearDown, rm
 import os
 import simplejson as json
@@ -647,6 +648,8 @@ class SimpleTest(TestCase):
         #self.assertEqual(os.path.exists(os.path.join(settings.MEDIA_ROOT, entry.song.waveform_img)), True)
         self.assertEqual(entry.song.band.id, self.superjoe.get_profile().solo_band.id)
         self.assertEqual(entry.song.title, 'superjoe title 123')
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertNotEqual(version.song.comment_node, None)
 
         # submit a good file, provide source and comments. open source.
         # flstudio exported, tags
@@ -677,6 +680,8 @@ class SimpleTest(TestCase):
         self.assertEqual(SongCommentNode.objects.count(), 2)
         self.assertEqual(entry.song.comment_node.content, 'just64helpin comments 123')
         self.assertEqual(entry.song.is_open_source, True)
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertEqual(version.song.comment_node.content, 'just64helpin comments 123')
 
         # submit a good file, provide source but no comments. not open source.
         # no tags, vbr
@@ -705,6 +710,8 @@ class SimpleTest(TestCase):
         self.assertEqual(entry.song.band.id, self.skiessi.get_profile().solo_band.id)
         self.assertEqual(entry.song.title, 'skiessi title 123')
         self.assertEqual(entry.song.is_open_source, False)
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertNotEqual(version.song.comment_node, None)
 
         # resubmit
         mp3file = open(absolute('fixtures/silence10s-notags-vbr.mp3'),'rb')
@@ -731,6 +738,9 @@ class SimpleTest(TestCase):
         self.assertEqual(entry.song.band.id, self.skiessi.get_profile().solo_band.id)
         self.assertEqual(entry.song.title, 'skiessi title 123 v2')
         self.assertEqual(entry.song.comment_node.content, 'skiessi comments 123 v2')
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertEqual(version.song.comment_node.content, 'skiessi comments 123 v2')
+        self.assertEqual(version.version, 2)
 
         # check ajax_compo to make sure it gets the entry list right
         response = self.client.get(reverse(urlname_compo, args=[comp.id]))

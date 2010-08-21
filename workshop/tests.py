@@ -1682,6 +1682,8 @@ class SimpleTest(TestCase):
         self.assertEqual(dependency_count, SampleDependency.objects.count())
         version_count += 1
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertNotEqual(version.song.comment_node, None)
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         depend = SampleDependency.objects.order_by('-pk')[0]
@@ -1743,6 +1745,8 @@ class SimpleTest(TestCase):
         self.assertEqual(dependency_count, SampleDependency.objects.count())
         version_count += 1
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertNotEqual(version.song.comment_node, None)
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         depend = SampleDependency.objects.order_by('-pk')[0]
@@ -1785,6 +1789,8 @@ class SimpleTest(TestCase):
         self.assertEqual(dependency_count, SampleDependency.objects.count())
         version_count += 1
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertNotEqual(version.song.comment_node, None)
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "abc123")
@@ -1824,6 +1830,8 @@ class SimpleTest(TestCase):
         self.assertEqual(dependency_count, SampleDependency.objects.count())
         version_count += 1
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertNotEqual(version.song.comment_node, None)
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "unknown studio wtf")
@@ -1864,6 +1872,8 @@ class SimpleTest(TestCase):
         self.assertEqual(dependency_count, SampleDependency.objects.count())
         version_count += 1
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertNotEqual(version.song.comment_node, None)
         uploaded_sample_count += 1
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         sample_file_count += 1
@@ -1907,6 +1917,8 @@ class SimpleTest(TestCase):
         self.assertEqual(dependency_count, SampleDependency.objects.count())
         version_count += 1
         self.assertEqual(version_count, ProjectVersion.objects.count())
+        version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertNotEqual(version.song.comment_node, None)
         uploaded_sample_count += 3 # we're counting the studio here.
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         sample_file_count += 3
