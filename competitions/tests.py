@@ -650,6 +650,7 @@ class SimpleTest(TestCase):
         self.assertEqual(entry.song.title, 'superjoe title 123')
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertNotEqual(version.song.comment_node, None)
+        self.assertEqual(version.song.is_open_for_comments, True)
 
         # submit a good file, provide source and comments. open source.
         # flstudio exported, tags
@@ -682,6 +683,7 @@ class SimpleTest(TestCase):
         self.assertEqual(entry.song.is_open_source, True)
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertEqual(version.song.comment_node.content, 'just64helpin comments 123')
+        self.assertEqual(version.song.is_open_for_comments, True)
 
         # submit a good file, provide source but no comments. not open source.
         # no tags, vbr
@@ -712,6 +714,7 @@ class SimpleTest(TestCase):
         self.assertEqual(entry.song.is_open_source, False)
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertNotEqual(version.song.comment_node, None)
+        self.assertEqual(version.song.is_open_for_comments, True)
 
         # resubmit
         mp3file = open(absolute('fixtures/silence10s-notags-vbr.mp3'),'rb')
@@ -741,6 +744,7 @@ class SimpleTest(TestCase):
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertEqual(version.song.comment_node.content, 'skiessi comments 123 v2')
         self.assertEqual(version.version, 2)
+        self.assertEqual(version.song.is_open_for_comments, True)
 
         # check ajax_compo to make sure it gets the entry list right
         response = self.client.get(reverse(urlname_compo, args=[comp.id]))

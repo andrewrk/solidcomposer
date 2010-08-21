@@ -1684,6 +1684,8 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertNotEqual(version.song.comment_node, None)
+        self.assertEqual(version.song.is_open_for_comments, False)
+        self.assertEqual(version.song.is_open_source, False)
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         depend = SampleDependency.objects.order_by('-pk')[0]
@@ -1692,6 +1694,7 @@ class SimpleTest(TestCase):
         self.assertNotEqual(depend.song.comment_node, None)
         log_entry_count += 1
         self.assertEqual(log_entry_count, LogEntry.objects.count())
+        # make sure log entry is created
         log_entry = LogEntry.objects.order_by('-pk')[0]
         the_castle = Project.objects.get(pk=the_castle.id)
         self.assertEqual(log_entry.entry_type, LogEntry.SONG_CHECKED_IN)
@@ -1747,6 +1750,8 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertNotEqual(version.song.comment_node, None)
+        self.assertEqual(version.song.is_open_for_comments, False)
+        self.assertEqual(version.song.is_open_source, False)
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         depend = SampleDependency.objects.order_by('-pk')[0]
@@ -1791,6 +1796,8 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertNotEqual(version.song.comment_node, None)
+        self.assertEqual(version.song.is_open_for_comments, False)
+        self.assertEqual(version.song.is_open_source, False)
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "abc123")
@@ -1832,6 +1839,8 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertNotEqual(version.song.comment_node, None)
+        self.assertEqual(version.song.is_open_for_comments, False)
+        self.assertEqual(version.song.is_open_source, False)
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         self.assertEqual(sample_file_count, SampleFile.objects.count())
         self.assertEqual(Song.objects.order_by('-pk')[0].comment_node.content, "unknown studio wtf")
@@ -1874,6 +1883,8 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertNotEqual(version.song.comment_node, None)
+        self.assertEqual(version.song.is_open_for_comments, False)
+        self.assertEqual(version.song.is_open_source, False)
         uploaded_sample_count += 1
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         sample_file_count += 1
@@ -1919,6 +1930,8 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         version = ProjectVersion.objects.order_by('-pk')[0]
         self.assertNotEqual(version.song.comment_node, None)
+        self.assertEqual(version.song.is_open_for_comments, False)
+        self.assertEqual(version.song.is_open_source, False)
         uploaded_sample_count += 3 # we're counting the studio here.
         self.assertEqual(uploaded_sample_count, UploadedSample.objects.count())
         sample_file_count += 3
@@ -2093,6 +2106,8 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         project = Project.objects.order_by('-pk')[0]
         version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertEqual(version.song.is_open_for_comments, False)
+        self.assertEqual(version.song.is_open_source, False)
         self.assertEqual(version.project.id, project.id)
         self.assertEqual(version.version, 1)
         self.assertNotEqual(version.song.comment_node, None)
@@ -2126,6 +2141,8 @@ class SimpleTest(TestCase):
         self.assertEqual(version_count, ProjectVersion.objects.count())
         project = Project.objects.order_by('-pk')[0]
         version = ProjectVersion.objects.order_by('-pk')[0]
+        self.assertEqual(version.song.is_open_for_comments, False)
+        self.assertEqual(version.song.is_open_source, False)
         self.assertEqual(version.project.id, project.id)
         self.assertEqual(version.version, 1)
         self.assertNotEqual(version.song.comment_node, None)
