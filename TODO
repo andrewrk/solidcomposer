@@ -1,15 +1,9 @@
 Release "Boten Anna" (Basshunter):
 * tests
-  > test_account_plan_changed
-  > test_register
-  > test_signup_pending
-  > test_account_email
-  > billing cron job
   > make sure a song's comment node is never null
   > make sure when a song is uploaded to the workbench, is_open_for_comments and is_open_source are False
   > take into account bytes used and whether bands are read only
   > test workbench.ajax_activity
-  > test sending emails when notifications are on/off
 * design iteration
   > favicon
   > main design / navigation / new logo / login bar
@@ -72,6 +66,12 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* tests
+  > test_register
+  > billing cron job
+  > test_account_plan_changed
+  > test_signup_pending
+  > test sending emails when notifications are on/off
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
    > also always show a preview when things will be parsed by showdown.
@@ -291,3 +291,4 @@ Release "April Rain" (The Cynic Project)
   * vocoding drums
   * using noise, a flanger, and a cutoff to make wind
   * using noise, envelope, and cutoff to make a crash type sound
+  * creating good eurogates on any instrument

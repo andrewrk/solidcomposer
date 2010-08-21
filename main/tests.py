@@ -4,7 +4,8 @@ from django.contrib.sites.models import Site
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from main.models import Song, TempFile, SongCommentNode, BandMember, Band
+from main.models import Song, TempFile, SongCommentNode, BandMember, Band, \
+    Profile
 from main import design
 from main.common import superwalk
 from workshop.models import SampleFile, LogEntry
@@ -687,7 +688,37 @@ class SimpleTest(TestCase):
 
     def test_account_email(self):
         # url(r'^account/email/$', 'main.views.account_email', {'SSL': True}, name="account.email"),
-        pass
+        account_email_url = reverse('account.email')
+        profile = self.just64helpin.get_profile()
+
+        # anon
+        self.client.logout()
+        response = self.client.get(account_email_url)
+        self.assertRedirects(response, reverse('user_login') + "?next=" + account_email_url)
+        
+        # getting the page, logged in
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.get(account_email_url)
+        self.assertEqual(response.status_code, 200)
+
+        # turn off getting email
+        response = self.client.post(account_email_url, {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['success'], True)
+        profile = Profile.objects.get(pk=profile.id)
+        self.assertEqual(profile.email_notifications, False)
+        self.assertEqual(profile.email_newsletter, False)
+
+        # turn on getting email
+        response = self.client.post(account_email_url, {
+            'notifications': 'On',
+            'newsletter': 'On',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['success'], True)
+        profile = Profile.objects.get(pk=profile.id)
+        self.assertEqual(profile.email_notifications, True)
+        self.assertEqual(profile.email_newsletter, True)
 
     def test_account_password(self):
         # url(r'^account/password/$', 'main.views.account_password', {'SSL': True}, name="account.password"),
