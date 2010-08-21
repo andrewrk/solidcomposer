@@ -139,7 +139,11 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_home(self):
-        return self.staticPage(reverse('workbench.home'))
+        url = reverse('workbench.home')
+        self.client.login(username="skiessi", password="temp1234")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.checkLoginRedirect(url)
         
     def test_create_invite(self):
         ajax_create_invite = reverse("workbench.ajax_create_invite")
