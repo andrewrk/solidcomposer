@@ -1,6 +1,5 @@
 Release "Boten Anna" (Basshunter):
 * design iteration
-  > favicon
   > main design / navigation / new logo / login bar
     - make header area take up less vertical room
   > tip framework
@@ -46,6 +45,7 @@ Release "Boten Anna" (Basshunter):
     - url('^create/$', 'competitions.views.create', name="arena.create"),
     - url('^compete/(\d+)/$', 'competitions.views.competition', name="arena.compete"),
   > maxWidth and maxHeight don't work in jquery dialog
+* in chrome, when you stop playing a song, it still thinks it's playing.
 
 Wednesday, September 1:
 * WE DO IT LIVE
