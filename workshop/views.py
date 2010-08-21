@@ -1151,3 +1151,7 @@ def band_invite(request, band_id_str):
     band = get_object_or_404(Band, pk=int(band_id_str))
     permission = band.permission_to_invite(request.user)
     return render_to_response('workbench/band_invite.html', locals(), context_instance=RequestContext(request))
+
+@login_required
+def home(request):
+    return render_to_response('workbench/home.html', {}, context_instance=RequestContext(request))

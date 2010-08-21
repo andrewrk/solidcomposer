@@ -5,7 +5,7 @@ from django.views.generic.simple import direct_to_template
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
+    url(r'^$', 'workshop.views.home', name="workbench.home"),
 
     url(r'^ajax/home/$', 'workshop.views.ajax_home', name="workbench.ajax_home"),
     url(r'^ajax/activity/$', 'workshop.views.ajax_activity', name="workbench.ajax_activity"),
