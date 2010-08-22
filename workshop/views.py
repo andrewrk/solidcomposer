@@ -373,7 +373,7 @@ def ajax_email_invite(request):
 def band(request, band_id_str):
     band = get_object_or_404(Band, pk=int(band_id_str))
     permission = band.permission_to_critique(request.user)
-    return render_to_response('workbench/band.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('workbench/band/home.html', locals(), context_instance=RequestContext(request))
 
 @json_login_required
 @json_get_required
@@ -879,13 +879,13 @@ def band_settings(request, band_id_str):
     else:
         form = RenameBandForm()
 
-    return render_to_response('workbench/band_settings.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('workbench/band/settings.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def project(request, band_id_str, project_id_str):
     band = get_object_or_404(Band, id=int(band_id_str))
     project = get_object_or_404(Project, id=int(project_id_str))
-    return render_to_response('workbench/project.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('workbench/band/project.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def create_project(request, band_id_str):
@@ -950,7 +950,7 @@ def create_project(request, band_id_str):
                 return HttpResponseRedirect(reverse("workbench.project", args=[band.id, project.id]))
     else:
         form = NewProjectForm()
-    return render_to_response('workbench/new_project.html', {
+    return render_to_response('workbench/band/new_project.html', {
             'form': form,
             'err_msg': err_msg,
             'band': band,
@@ -1150,7 +1150,7 @@ def version_to_dict(version, user):
 def band_invite(request, band_id_str):
     band = get_object_or_404(Band, pk=int(band_id_str))
     permission = band.permission_to_invite(request.user)
-    return render_to_response('workbench/band_invite.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('workbench/band/invite.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def home(request):

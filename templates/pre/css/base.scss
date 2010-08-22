@@ -284,14 +284,26 @@ form {
 
 #tools {
     float: right;
-    margin: 8px 10px 0 0;
+    margin: 10px 2px 0 0;
     list-style-type: none;
+
+    li {
+        display: inline;
+        margin: 0 8px;
+
+        a {
+            background-repeat: no-repeat;
+            background-position: left center;
+            padding: 0 0 0 20px;
+        }
+    }
 
     li.plus a {
         background-image: url({{ MEDIA_URL }}img/add-16x16.png);
-        background-repeat: no-repeat;
-        background-position: left center;
-        padding: 0 0 0 20px;
+    }
+
+    li.wrench a {
+        background-image: url({{ MEDIA_URL }}img/wrench.png);
     }
 }
 

@@ -5,8 +5,6 @@
 {% block content %}
     <div class="textblock">
         <h1>Unable to Activate Account</h1>
-        <p class="err">
-            {{ err_msg }}
-        </p>
+        {% include 'form_errors.html' %}
     </div>
 {% endblock %}

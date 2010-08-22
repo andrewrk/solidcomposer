@@ -1,4 +1,4 @@
-{% extends 'workbench/base.html' %}
+{% extends 'workbench/band/base.html' %}
 
 {% block title %}{{ project.title }} - {{ block.super }}{% endblock %}
 
@@ -17,16 +17,13 @@
 {% endblock %}
 
 
+{% block bread_crumb %}
+    {{ block.super }}
+    &gt;
+    <span class="dest">{{ project.title }}</span>
+{% endblock %}
+
 {% block content %}
-    <div id="bread">
-        <a href="{% url home %}">Home</a>
-        &gt;
-        <a href="{% url workbench.home %}">Workbench</a>
-        &gt;
-        <a href="{% url workbench.band band.id %}">{{ band.title }}</a>
-        &gt;
-        <span class="dest">{{ project.title }}</span>
-    </div>
     <div id="projects">
         {% include 'loading.html' %}
     </div>

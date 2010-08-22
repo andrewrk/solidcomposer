@@ -6,14 +6,12 @@
     {% include 'login_area.html' %}
 {% endblock %}
 
+{% block bread_crumb %}
+    &gt;
+    <span class="dest">Redeem Invitation</span>
+{% endblock %}
+
 {% block content %}
-    <div id="bread">
-        <a href="{% url home %}">Home</a>
-        &gt;
-        <a href="{% url workbench.home %}">Workbench</a>
-        &gt;
-        <span class="dest">Redeem Invitation</span>
-    </div>
     <div class="textblock">
         {% if err_msg %}
             <h1>Invitation Expired</h1>

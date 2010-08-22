@@ -11,9 +11,7 @@
 {% block content %}
     <div class="textblock">
         <h1>Change account plan</h1>
-        {% if err_msg %}
-        <p>{{ err_msg }}</p>
-        {% endif %}
+        {% include 'form_errors.html' %}
         <form action="." method="post">
             <table class="form-table">
                 <tr>

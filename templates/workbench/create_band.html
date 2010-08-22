@@ -6,16 +6,15 @@
     {% include 'login_area.html' %}
 {% endblock %}
 
+{% block bread_crumb %}
+    &gt;
+    <span class="dest">Create Band</span>
+{% endblock %}
+
 {% block content %}
-    <div id="bread">
-        <a href="{% url home %}">Home</a>
-        &gt;
-        <a href="{% url workbench.home %}">Workbench</a>
-        &gt;
-        <span class="dest">Create Band</span>
-    </div>
     <div class="textblock">
         <h1>Create Band</h1>
+        {% include 'form_errors.html' %}
         {% if request.user.get_profile.bands_in_count >= request.user.get_profile.band_count_limit %}
             <p>
                 You have used up all {{ request.user.get_profile.band_count_limit }} of your bands.
@@ -24,11 +23,6 @@
                 Would you like to <a href="{% url plans %}">upgrade your account</a> and get a bunch more?
             </p>
         {% else %}
-            {% if err_msg %}
-                <div class="err">
-                    <p>{{ err_msg }}</p>
-                </div>
-            {% endif %}
             <form action="." method="post">
                 <table>
                     {{ form.as_table }}

@@ -11,7 +11,7 @@ var SCBand = function() {
     var template_filters_s = null;
     var template_project_list = "{% filter escapejs %}{% include 'workbench/project_list.jst.html' %}{% endfilter %}";
     var template_project_list_s = null;
-    var template_spacemeter = "{% filter escapejs %}{% include 'workbench/band_spacemeter.jst.html' %}{% endfilter %}";
+    var template_spacemeter = "{% filter escapejs %}{% include 'workbench/band/spacemeter.jst.html' %}{% endfilter %}";
     var template_spacemeter_s = null;
 
     var state = {

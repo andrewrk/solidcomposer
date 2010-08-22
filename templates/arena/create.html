@@ -22,6 +22,8 @@
 
 {% block content %}
     <div class="textblock">
+        <h1>Create a Public Competition</h1>
+        {% include 'form_errors.html' %}
         <form id="competition-form" method="post" action="." style="width: 500px;">
             {{ form.tz_offset }}
             <table>

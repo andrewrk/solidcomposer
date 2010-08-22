@@ -1,12 +1,10 @@
 Release "Boten Anna" (Basshunter):
-* edit comment button is broken in arena
-* gravatar and live comment feedback is broken in userpage/bandpage
 * design for comments
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
-      # show gravatar in user list
-    - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
+    - url('^$', direct_to_template, {'template': 'arena/home.html'}, name="arena.home"),
     - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
+    - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
     - url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),
     - url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),
     - url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
@@ -19,7 +17,6 @@ Release "Boten Anna" (Basshunter):
     - url(r'^plugin/(.+)/$', 'workshop.views.plugin', name="workbench.plugin"),
     - url(r'^studio/(.+)/$', 'workshop.views.studio', name="workbench.studio"),
     - url(r'^redeem/(.+)/$', 'workshop.views.redeem_invitation', name="workbench.redeem_invitation"),
-    - url('^$', direct_to_template, {'template': 'arena/home.html'}, name="arena.home"),
     - url('^create/$', 'competitions.views.create', name="arena.create"),
     - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
   > tip framework
@@ -27,6 +24,8 @@ Release "Boten Anna" (Basshunter):
   > song player
     - dialog should not cover up song playback
     - maxWidth and maxHeight don't work in jquery dialog
+* edit comment button is broken in arena
+* gravatar and live comment feedback is broken in userpage/bandpage
 * only one button on landing page
 
 Wednesday, September 1:
@@ -154,8 +153,6 @@ Release "April Rain" (The Cynic Project)
  * auto theme generator
  * arena - the competitions aren't updating on a second based timer
    > make it a second-based timer but not suck to click the link
- * if creating a competition fails, have a message at the top saying
-   "please correct these errors."
  * show upcoming/new competitions before old ones in bookmarked
    competitions. there should be a clear divide.
    > better competition ordering in arena

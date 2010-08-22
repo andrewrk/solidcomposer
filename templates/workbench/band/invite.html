@@ -1,4 +1,4 @@
-{% extends 'workbench/base.html' %}
+{% extends 'workbench/band/base.html' %}
 
 {% block extra_header %}
     {{ block.super }}
@@ -16,18 +16,15 @@
     {% include 'login_area.html' %}
 {% endblock %}
 
+{% block bread_crumb %}
+    &gt;
+    <a href="{% url workbench.band band.id %}">{{ band.title }}</a>
+    &gt;
+    <span class="dest">Add a Band Member</span>
+{% endblock %}
+
 {% block content %}
     {% if permission %}
-        {% include 'workbench/tools.html' %}
-        <div id="bread">
-            <a href="{% url home %}">Home</a>
-            &gt;
-            <a href="{% url workbench.home %}">Workbench</a>
-            &gt;
-            <a href="{% url workbench.band band.id %}">{{ band.title }}</a>
-            &gt;
-            <span class="dest">Add a Band Member</span>
-        </div>
         <div class="textblock">
             <div id="invite-link">
                 <h1><a href="#">Create Invitation Link</a></h1>

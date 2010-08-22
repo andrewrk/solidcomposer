@@ -1,4 +1,4 @@
-{% extends 'workbench/base.html' %}
+{% extends 'workbench/band/base.html' %}
 
 {% block title %}Settings - {{ band.title }} - {{ block.super }}{% endblock %}
 
@@ -6,26 +6,18 @@
     {% include 'login_area.html' %}
 {% endblock %}
 
+{% block bread_crumb %}
+    {{ block.super }}
+    &gt;
+    <span class="dest">Settings</span>
+{% endblock %}
+
 {% block content %}
-    {% include 'workbench/tools.html' %}
-    <div id="bread">
-        <a href="{% url home %}">Home</a>
-        &gt;
-        <a href="{% url workbench.home %}">Workbench</a>
-        &gt;
-        <a href="{% url workbench.band band.id %}">{{ band.title }}</a>
-        &gt;
-        <span class="dest">Settings</span>
-    </div>
     <div class="textblock">
         <h1>Band Settings</h1>
         {% if permission %}
             <h2>Rename Band</h2>
-            {% if err_msg %}
-                <div class="err">
-                    <p>{{ err_msg }}</p>
-                </div>
-            {% endif %}
+            {% include 'form_errors.html' %}
             <form action="." method="post">
                 <table>
                     {{ form.as_table }}
@@ -46,9 +38,7 @@
             {% endfor %}
             </ul>
         {% else %}
-            <p>
-                {{ err_msg }}
-            </p>
+            {% include 'form_errors.html' %}
         {% endif %}
     </div>
     

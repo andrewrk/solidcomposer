@@ -16,3 +16,21 @@
 
 {% block nav_workbench_li_class %}selected{% endblock %}
 
+{% block nav2 %}
+    {% block tools_wrapper %}
+        <ul id="tools">
+            {% block tools %}
+                <li class="plus"><a href="{% url workbench.create_band %}">Create a New Band</a></li>
+            {% endblock %}
+        </ul>
+    {% endblock %}
+    <div id="bread">
+        <a href="{% url home %}">Home</a>
+        &gt;
+        {% block bread_workbench %}
+            <a href="{% url workbench.home %}">Workbench</a>
+        {% endblock %}
+        {% block bread_crumb %}
+        {% endblock %}
+    </div>
+{% endblock %}

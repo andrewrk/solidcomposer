@@ -1,0 +1,12 @@
+{% extends 'workbench/base.html' %}
+
+{% block bread_crumb %}
+    {{ block.super }}
+    &gt;
+    <a href="{% url workbench.band band.id %}">{{ band.title }}</a>
+{% endblock %}
+
+{% block tools %}
+    <li class="wrench"><a href="{% url workbench.band_settings band.id %}">Band Settings</a></li>
+    <li class="plus"><a href="{% url workbench.band_invite band.id %}">Add Member</a></li>
+{% endblock %}

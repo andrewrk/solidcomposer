@@ -60,6 +60,11 @@ class CreateCompetitionForm(forms.Form):
         in_deadline = cleaned_data.get('submission_deadline_date')
         in_start_date = cleaned_data.get('start_date')
 
+        if in_start_date is None:
+            msg = design.this_field_is_required
+            self._errors['start_date'] = self.error_class([msg])
+            return cleaned_data
+
         # clean start_date
         if in_start_date <= datetime.now():
             msg = design.cannot_start_compo_in_the_past

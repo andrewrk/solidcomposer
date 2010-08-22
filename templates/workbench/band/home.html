@@ -1,4 +1,4 @@
-{% extends 'workbench/base.html' %}
+{% extends 'workbench/band/base.html' %}
 
 {% block css %}band.pre.css{% endblock %}
 
@@ -14,16 +14,13 @@
     {% endif %}
 {% endblock %}
 
+{% block bread_crumb %}
+    &gt;
+    <span class="dest">{{ band.title }}</span>
+{% endblock %}
+
 {% block content %}
     {% if permission %}
-        {% include 'workbench/tools.html' %}
-        <div id="bread">
-            <a href="{% url home %}">Home</a>
-            &gt;
-            <a href="{% url workbench.home %}">Workbench</a>
-            &gt;
-            <span class="dest">{{ band.title }}</span>
-        </div>
         <div id="band-spacemeter">
             {% include 'loading.html' %}
         </div>
