@@ -438,9 +438,12 @@ def contact(request):
             msg = EmailMessage(subject, message, from_email, [to_email], headers={'Reply-To': customer_email})
             msg.send(fail_silently=True)
 
-            return HttpResponseRedirect(reverse("contact_thanks"))
+            return render_to_response('contact_thanks.html', locals(), context_instance=RequestContext(request))
     else:
-        form = ContactForm()
+        if request.user.is_authenticated():
+            form = ContactForm(initial={'from_email': request.user.email})
+        else:
+            form = ContactForm()
 
     return render_to_response('contact.html', locals(), context_instance=RequestContext(request))
 

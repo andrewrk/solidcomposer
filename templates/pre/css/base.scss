@@ -283,7 +283,7 @@ ul.errorlist {
     padding: 4px;
     margin: 0;
     li {
-        background-image: url({{ MEDIA_URL }}img/error.png);
+        background-image: url({{ MEDIA_URL }}img/error.png) !important;
         background-repeat: no-repeat;
         background-position: left center;
         padding: 0 0 0 20px;
