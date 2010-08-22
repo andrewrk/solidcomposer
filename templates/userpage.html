@@ -2,7 +2,7 @@
 
 {% block title %}{{ user.username }} - {{ block.super }}{% endblock %}
 
-{% block css %}userpage.pre.css{% endblock %}
+{% block css %}bandpage.pre.css{% endblock %}
 
 {% block extra_header %}
     {{ block.super }}
@@ -11,17 +11,34 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}js/time.pre.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/userpage.pre.js"></script>
     <script type="text/javascript">
-var recent_song_data = ({% autoescape off %}{{ song_data }}{% endautoescape %});
-var user_data = ({% autoescape off %}{{ user_data }}{% endautoescape %});
+var recent_song_data = ({% autoescape off %}{{ song_data|fix_ampersands }}{% endautoescape %});
+var user_data = ({% autoescape off %}{{ user_data|fix_ampersands }}{% endautoescape %});
     </script>
 {% endblock %}
 
 {% block content %}
-    <div>
-        <img src="{{ user.get_profile.gravatar}}" alt="" />
-        <h1>{{ user.username }}</h1>
-        <p><img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" /> x {{ user.get_profile.get_points }}</p>
+    <div class="member">
+        <img class="gravatar" src="{{ user.get_profile.gravatar }}" alt="" />
+        <div class="info">
+            <div class="name">
+                {{ user.username }}
+            </div>
+            <div class="star">
+                <img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" /> x {{ user.get_profile.get_points }}
+            </div>
+            <div class="stat">
+                {% with user.get_profile.bands_in_count as bands_in_count %}
+                    {{ bands_in_count }} band{{ bands_in_count|pluralize}}
+                {% endwith %}
+            </div>
+            <div class="stat">
+                {% with user.competition_set.count as competitions_in_count %}
+                    {{ competitions_in_count }} competition{{ competitions_in_count|pluralize }}
+                {% endwith %}
+            </div>
+        </div>
     </div>
+    <div class="clear"></div>
     <h2>Bands</h2>
         {% if members %}
             <ul>

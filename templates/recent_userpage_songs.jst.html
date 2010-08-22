@@ -1,9 +1,9 @@
 <% if (songs.length > 0) { %>
-    <ul>
+    <div id="recent-songs">
         <% $.each(songs, function(index, song) { %>
             {% include 'player/player.jst.html' %}
         <% }); %>
-    </ul>
+    </div>
 <% } else { %>
-    <p>No songs</p>
+    <p>No public songs</p>
 <% } %>

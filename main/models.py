@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from main import design
 import workshop
+import competitions
 import hashlib
 
 class BandMember(SerializableModel):
@@ -31,6 +32,15 @@ class BandMember(SerializableModel):
     band = models.ForeignKey('main.Band')
     role = models.IntegerField(choices=ROLE_CHOICES, default=MANAGER)
     space_donated = models.IntegerField(default=0)
+
+    def percent_contrib(self):
+        "return the % of the number of projectversions are this member's"
+        total_set = workshop.models.ProjectVersion.objects.filter(project__band=self.band)
+        total_count = total_set.count()
+        if total_count == 0:
+            return 0
+        mine_count = total_set.filter(owner=self.user).count()
+        return float(mine_count) / float(total_count) * 100
 
     def __unicode__(self):
         return u'%s - %s: %s' % (str(self.band), dict(BandMember.ROLE_CHOICES)[self.role], str(self.user))

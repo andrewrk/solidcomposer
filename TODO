@@ -2,8 +2,6 @@ Release "Boten Anna" (Basshunter):
 * make both the buttons the same color
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
-    - url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
-    - url(r'^band/(.+)/$', 'main.views.bandpage', name='bandpage'),
     - url(r'^account/$', 'main.views.account_plan', {'SSL': True}, name="account"),
     - url(r'^account/plan/$', 'main.views.account_plan', {'SSL': True}, name="account.plan"),
     - url(r'^account/plan/changed/$', 'main.views.changed_plan_results', {'SSL': True}, name="account.plan_changed"),

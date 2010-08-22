@@ -11,27 +11,53 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}js/time.pre.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/userpage.pre.js"></script>
     <script type="text/javascript">
-var recent_song_data = ({% autoescape off %}{{ song_data }}{% endautoescape %});
-var user_data = ({% autoescape off %}{{ user_data }}{% endautoescape %});
+var recent_song_data = ({% autoescape off %}{{ song_data|fix_ampersands }}{% endautoescape %});
+var user_data = ({% autoescape off %}{{ user_data|fix_ampersands }}{% endautoescape %});
     </script>
 {% endblock %}
 
 {% block content %}
     <h1>{{ band.title }}</h1>
-    <h2>Members</h2>
-    <div>
-        {% for member in band.bandmember_set.all %}
-            <div>
-                <a href="{% url userpage member.user.username %}">
+    <h2>Musical Members</h2>
+    <div id="members">
+        {% for member in contributing_members %}
+            <div class="member">
+                <a class="gravatar" href="{% url userpage member.user.username %}">
                     <img src="{{ member.user.get_profile.gravatar }}" alt="" />
                 </a>
-                <a href="{% url userpage member.user.username %}">{{ member.user.username }}</a>
-                <p><img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" /> x {{ member.user.get_profile.get_points }}</p>
+                <div class="info">
+                    <div class="name">
+                        <a href="{% url userpage member.user.username %}">{{ member.user.username }}</a>
+                    </div>
+                    <div class="star">
+                        <img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" /> x {{ member.user.get_profile.get_points }}
+                    </div>
+                    <div class="stat">
+                        Contribution: {{ member.percent_contrib|floatformat:0 }}%
+                    </div>
+                    <div class="stat">
+                        Donation: {{ member.space_donated|filesizeformat }}
+                    </div>
+                </div>
             </div>
         {% endfor %}
     </div>
-    <h2>Recent Songs</h2>
+    <div class="clear"></div>
+    {% if other_members %}
+        <h2>Other members</h2>
+        <div id="other-members">
+            {% for member in other_members %}
+                <div class="member">
+                    {% with member.user as user %}
+                        {% include 'username.html' %}
+                    {% endwith %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="clear"></div>
+    {% endif %}
+    <h2>Recent Public Songs</h2>
     <div id="recent-songs">
-    {% include 'loading.html' %}
+        {% include 'loading.html' %}
     </div>
 {% endblock %}

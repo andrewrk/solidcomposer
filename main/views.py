@@ -419,6 +419,8 @@ def userpage(request, username):
 
 def bandpage(request, band_url):
     band = get_object_or_404(Band, url=band_url)
+    contributing_members = BandMember.objects.filter(band=band, role__in=(BandMember.BAND_MEMBER, BandMember.MANAGER))
+    other_members = BandMember.objects.filter(band=band).exclude(role__in=(BandMember.BAND_MEMBER, BandMember.MANAGER, BandMember.BANNED))
     songs = Song.objects.filter(Q(band=band), Q(is_open_for_comments=True)|Q(is_open_source=True)).order_by('-date_added')[:10]
     song_data = json_dump([song.to_dict(chains=['band', 'comment_node']) for song in songs])
     user_data = json_dump(request.user.get_profile().to_dict())

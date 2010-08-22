@@ -1,2 +1,44 @@
 @import "songplayer.pre.css";
 @import "base.pre.css";
+
+.member {
+    float: left;
+    margin: 20px;
+
+    .gravatar {
+        float: left;
+    }
+    .info {
+        float: left;
+
+        .stat, .name, .star {
+            margin: 4px;
+            padding: 0;
+        }
+
+        .name {
+            font-weight: bold;
+        }
+
+        .star {
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+
+        img {
+            vertical-align: middle;
+        }
+    }
+}
+
+#recent-songs {
+    .player-large {
+        margin: 20px 10px;
+    }
+}
+
+h1, h2 {
+    margin: 0 0 0 14px;
+    padding: 12px 0;
+}
