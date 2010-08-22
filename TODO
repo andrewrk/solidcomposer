@@ -4,8 +4,6 @@ Release "Boten Anna" (Basshunter):
   > pages - iterate through all of them. also test on 1024 page width
     - url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
     - url(r'^band/(.+)/$', 'main.views.bandpage', name='bandpage'),
-    - url(r'^login/$', 'main.views.user_login', {'SSL': True}, name="user_login"),
-    - url(r'^logout/$', 'main.views.user_logout', name="user_logout"),
     - url(r'^confirm/(.+)/(.+)/$', 'main.views.confirm', name="confirm"),
     - url(r'^contact/$', 'main.views.contact', name="contact"),
     - url(r'^contact/thanks/$', direct_to_template, {'template': 'contact_thanks.html'}, name="contact_thanks"),

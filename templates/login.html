@@ -5,9 +5,7 @@
 {% block content %}
     <div class="textblock">
         <h1>Log in</h1>
-        {% if err_msg %}
-        <p>{{ err_msg }}</p>
-        {% endif %}
+        {% include 'form_errors.html' %}
         <form action="." method="post">
             <table>
                 {{ form.as_table }}
@@ -17,13 +15,15 @@
                 </tr>
             </table>
         </form>
-        <h2>Don't have an account?</h2>
-        <p>
-            <a href="{% url register %}">Sign up!</a>
-        </p>
-        <h2>Forgot your password?</h2>
-        <p>
-            <a href="{% url account.password.reset %}">Reset your password.</a>
-        </p>
+        <ul>
+            <li>
+                Don't have an account?
+                <a href="{% url register %}">Sign up!</a>
+            </li>
+            <li>
+                Forgot your password?
+                <a href="{% url account.password.reset %}">Reset your password.</a>
+            </li>
+        </ul>
     </div>
 {% endblock %}

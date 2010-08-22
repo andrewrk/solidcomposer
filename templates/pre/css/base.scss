@@ -26,6 +26,20 @@ h1 {
     padding: 0;
     border-top:1px solid #24618e;
     border-bottom:1px solid #24618e;
+
+    ul {
+        list-style-type: none;
+        margin: 12px 0;
+        padding: 0;
+
+        li {
+            background-image: url({{ MEDIA_URL }}img/arrow-bullet.png);
+            background-repeat: no-repeat;
+            background-position: left center;
+            padding: 0 0 0 20px;
+            margin: 4px 0;
+        }
+    }
 }
 
 p {

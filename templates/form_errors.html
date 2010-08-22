@@ -1,0 +1,8 @@
+{% if err_msg %}
+    <p class="err">{{ err_msg }}</p>
+{% else %}
+    {% if form.errors %}
+        <p class="err">Please correct the errors below.</p>
+    {% endif %}
+{% endif %}
+
