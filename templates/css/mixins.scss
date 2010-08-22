@@ -1,0 +1,11 @@
+@mixin rounded-corners($radius) {
+    -moz-border-radius: $radius;
+    -webkit-border-radius: $radius;
+    -khtml-border-radius: $radius;
+    border-radius: $radius;
+}
+
+@mixin opacity($float) {
+    opacity: $float;
+    filter:alpha(opacity=$float*100);
+}

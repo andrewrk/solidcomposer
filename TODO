@@ -1,9 +1,9 @@
 Release "Boten Anna" (Basshunter):
-* make both the buttons the same color
+* only one button on landing page
+* use jquery and dropdowns for date picking rather than anytimec
+* protect against hitting /plan/changed/ twice in a row
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
-    - url(r'^account/$', 'main.views.account_plan', {'SSL': True}, name="account"),
-    - url(r'^account/plan/$', 'main.views.account_plan', {'SSL': True}, name="account.plan"),
     - url(r'^account/plan/changed/$', 'main.views.changed_plan_results', {'SSL': True}, name="account.plan_changed"),
     - url(r'^account/email/$', 'main.views.account_email', {'SSL': True}, name="account.email"),
     - url(r'^account/password/$', 'main.views.account_password', {'SSL': True}, name="account.password"),

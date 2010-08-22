@@ -3,39 +3,52 @@
 {% block extra_header %}
     {{ block.super }}
     {% include 'sc_script_framework.html' %}
+    <script type="text/javascript">
+var user_data = ({% autoescape off %}{{ user_data|fix_ampersands }}{% endautoescape %});
+var membership_data = ({% autoescape off %}{{ membership_data|fix_ampersands }}{% endautoescape %});
+    </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/account_plan.pre.js"></script>
 {% endblock %}
 
 {% block nav2_plan_li_class %}selected{% endblock %}
 
 {% block content %}
-    <h1>Account Plan</h1>
-    {% if err_msg %}
-    <p>{{ err_msg }}</p>
-    {% endif %}
-    <h2>Plan</h2>
-    {{ plan.title }}
-    {% if plan.usd_per_month == 0 %}
-        <a href="{% url plans %}">Upgrade</a>
-    {% else %}
-        <a href="{% url plans %}">Change</a>
-    {% endif %}
-    <h2>Space Used</h2>
-    {% with user.get_profile.space_used as used_space %}
-        {% with user.get_profile.purchased_bytes as total_space %}
-            {% include 'workbench/spacemeter.html' %}
-        {% endwith %}
-    {% endwith %}
-
-    <h2>Bands Used</h2>
-    {% with user.get_profile.bands_in_count as used_space %}
-        {% with plan.band_count_limit as total_space %}
-            {% include 'workbench/spacemeter.html' %}
-        {% endwith %}
-    {% endwith %}
-
-    <h1>Bands You Fund</h1>
-    <table>
+    {% include 'form_errors.html' %}
+    <table class="plan-table">
+        <tr>
+            <th>
+                Current Plan
+            </th>
+            <th>
+                Space Used
+            </th>
+            <th>
+                Bands Used
+            </th>
+        </tr>
+        <tr>
+            <td>
+                {{ plan.title }}
+                {% if plan.usd_per_month == 0 %}
+                    <a href="{% url plans %}">Upgrade</a>
+                {% else %}
+                    <a href="{% url plans %}">Change</a>
+                {% endif %}
+            </td>
+            <td>
+                <div id="user-spacemeter">
+                    {% include 'loading.html' %}
+                </div>
+            </td>
+            <td>
+                <div id="band-count-meter">
+                    {% include 'loading.html' %}
+                </div>
+            </td>
+        </tr>
+    </table>
+    <h2>Bands You Fund</h2>
+    <table class="fund-table">
         <tr>
             <th>Band</th>
             <th>Used Space</th>
@@ -45,29 +58,25 @@
             <tr>
                 <td>{{ member.band.title }}</td>
                 <td>
-                    {% with member.band.used_space as used_space %}
-                        {% with member.band.total_space as total_space %}
-                            {% include 'workbench/spacemeter.html' %}
-                        {% endwith %}
-                    {% endwith %}
+                    <div id="band-spacemeter-{{ member.id }}">
+                        {% include 'loading.html' %}
+                    </div>
                 </td>
-                <td>
-                    <input
-                        type="text"
-                        class="amt-donated"
-                        value="{{ member.space_donated }}"
-                        data-member-id="{{ member.id }}"
-                        data-init-amt="{{ member.space_donated }}"
-                    />
+                <td class="slider">
+                    <div id="amt-donated-{{ member.id }}"></div>
                 </td>
             </tr>
         {% endfor %}
     </table>
-    <form action="." method="post">
-        {% for member in memberships %}
-            <input type="hidden" id="member-{{ member.id }}-amt" name="member-{{ member.id }}-amt" value="{{ member.space_donated }}" />
-        {% endfor %}
-        <input type="button" value="Reset" id="reset-button" />
-        <input type="submit" value="Save" id="save-button" />
-    </form>
+    <div class="form-buttons">
+        <form action="." method="post">
+            <fieldset>
+                {% for member in memberships %}
+                    <input type="hidden" id="member-{{ member.id }}-amt" name="member-{{ member.id }}-amt" value="{{ member.space_donated }}" />
+                {% endfor %}
+                <input type="button" value="Reset" id="reset-button" />
+                <input type="submit" value="Save" id="save-button" />
+            </fieldset>
+        </form>
+    </div>
 {% endblock %}

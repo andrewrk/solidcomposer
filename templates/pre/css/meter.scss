@@ -1,0 +1,41 @@
+{% include 'css/mixins.scss' %}
+
+$meter-width: 180px;
+$meter-height: 24px;
+$corner-radius: 10px;
+
+.meter {
+    padding: 0;
+    margin: 0;
+
+    .bar {
+        width: $meter-width;
+        height: $meter-height;
+
+        .bg, .used, .border {
+            @include rounded-corners($corner-radius);
+            height: 100%;
+        }
+
+        .bg {
+            width: 100%;   
+            background-color: #ffffff;
+        }
+
+        .used {
+        }
+        
+        .border {
+            width: $meter-width - $corner-radius;
+            height: $meter-height - $corner-radius;
+            border: 1px solid #000000;
+            background-image: url({{ MEDIA_URL}}img/tick.png);
+            background-repeat: repeat-x;
+            background-position: left top;
+            font-weight: bold;
+            color: #000000;
+            padding: 4px;
+            text-align: center;
+        }
+    }
+}

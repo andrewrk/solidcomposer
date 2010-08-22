@@ -22,10 +22,7 @@ $arial: Arial, Verdana, sans-serif;
 $top_layer_height: $top_layer_icon_size + 3px;
 $comments_layer_height: $timed_comment_size + 1px;
 
-@mixin opacity($float) {
-    opacity: $float;
-    filter:alpha(opacity=$float*100);
-}
+{% include 'css/mixins.scss' %}
 
 .player-large {
     border: 1px solid $border_color;

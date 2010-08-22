@@ -2,18 +2,19 @@
 
 {% block title %}Account Settings - {{ block.super }}{% endblock %}
 
-{% block nav %}
-    {{ block.super }}
+{% block css %}account.pre.css{% endblock %}
+
+{% block nav2 %}
     <div id='nav-2'>
-        <ul>
+        <ul id="tabnav">
             <li class="{% block nav2_plan_li_class %}unselected{% endblock %}">
-                <a href="{% url account.plan %}"><span>Plan</span></a>
+                <a href="{% url account.plan %}">Account Plan</a>
             </li>
             <li class="{% block nav2_email_li_class %}unselected{% endblock %}">
-                <a href="{% url account.email %}"><span>Email Subscription</span></a>
+                <a href="{% url account.email %}">Email Subscription</a>
             </li>
             <li class="{% block nav2_password_li_class %}unselected{% endblock %}">
-                <a href="{% url account.password %}"><span>Change Password</span></a>
+                <a href="{% url account.password %}">Change Password</a>
             </li>
         </ul>
     </div>

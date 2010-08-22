@@ -208,6 +208,28 @@ var Time = function () {
             return n + " " + ((n == 1) ? singular : plural);
         },
 
+        // Formats the value like a 'human-readable' file size (i.e. 13 KB, 4.1 MB,
+        // 102 bytes, etc).
+        fileSizeFormat: function (bytes, digits) {
+            digits = digits || 1;
+
+            try {
+                bytes = parseFloat(bytes)
+            } catch (err) {
+                return "0 bytes"
+            }
+
+            if (bytes < 1024) {
+                return that.plural(bytes, "byte", "bytes");
+            } else if (bytes < 1024 * 1024) {
+                return Math.round(bytes / 1024, digits) + " KB";
+            } else if (bytes < 1024 * 1024 * 1024) {
+                return Math.round(bytes / (1024 * 1024), digits) + " MB";
+            } else {
+                return Math.round(bytes / (1024 * 1024 * 1024), digits) + " GB";
+            }
+        },
+
         secondsUntil: function (serverTime) {
             // convert to local time
             var local = this.localTime(serverTime);

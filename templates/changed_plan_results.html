@@ -9,6 +9,10 @@
         <p>
             Monthly payments were set up successfully. Thanks for joining the {{ plan.title }} plan.
         </p>
+        <p>
+            Head over to your <a href="{% url account.plan %}">Account Settings</a> to dole out space
+            to the bands you want to support.
+        </p>
     {% else %}{% if status == payment_result.FAILURE %}
         <h1>Unable to Change Account</h1>
         <p>

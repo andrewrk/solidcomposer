@@ -11,7 +11,6 @@
         var competition_id = {{ competition.id }};
         var chatroom_id = {% if competition.chat_room %}{{ competition.chat_room.id }}{% else %}null{% endif %};
     </script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/time.pre.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/login.pre.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/chat.pre.js"></script>
     {% include 'player/script_player.html' %}

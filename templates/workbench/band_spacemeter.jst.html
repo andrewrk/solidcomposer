@@ -1,5 +1,10 @@
-Used space: <%= band.used_space %> / <%= band.total_space %>{% include 'tips/spaceLeftMeter.html' %}
+<%
+    var numerator = band.used_space;
+    var denominator = band.total_space;
+    var number_formatter_func = Time.fileSizeFormat;
+%>
 {% include 'workbench/spacemeter.jst.html' %}
+{% include 'tips/spaceLeftMeter.html' %}
 <% if (band.used_space > band.total_space) { %>
     {% include 'workbench/space_warning.jst.html' %}
 <% } %>

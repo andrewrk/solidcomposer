@@ -1,3 +1,4 @@
+from base.models import SerializableModel
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -341,9 +342,8 @@ def changed_plan_results(request):
         profile.band_count_limit = plan.band_count_limit
         profile.usd_per_month = plan.usd_per_month
 
-        # give them a day while payment cron job runs
         now = datetime.now()
-        if profile.account_expire_date < now:
+        if profile.account_expire_date is None or profile.account_expire_date < now:
             profile.account_expire_date = now
         profile.active_transaction = transaction
         profile.save()
@@ -453,6 +453,8 @@ def contact(request):
 def account_plan(request):
     """The page that shows the user what plan they're on and wants them to click to the upgrade plans page."""
 
+    user = request.user
+    profile = user.get_profile()
     err_msg = ""
     if request.method == 'POST':
         changes = []
@@ -470,7 +472,7 @@ def account_plan(request):
                     break
 
                 # make sure the user is the band member
-                if member.user != request.user:
+                if member.user != user:
                     err_msg = design.can_only_edit_your_own_amount_donated
                     break
 
@@ -484,7 +486,7 @@ def account_plan(request):
                 space_total += val
 
         if err_msg == "":
-            if space_total <= request.user.get_profile().purchased_bytes:
+            if space_total <= profile.purchased_bytes:
                 # everything is good. apply the change.
                 # also create log entries for affected bands
                 for member, new_space in changes:
@@ -503,7 +505,7 @@ def account_plan(request):
                         entry = LogEntry()
                         entry.entry_type = LogEntry.SPACE_ALLOCATED_CHANGE
                         entry.band = member.band
-                        entry.catalyst = request.user
+                        entry.catalyst = user
                         entry.old_amount = old_space
                         entry.new_amount = new_space
                         entry.save()
@@ -512,8 +514,7 @@ def account_plan(request):
             else:
                 err_msg = design.you_dont_have_enough_space_to_do_that
 
-    user = request.user
-    plan = user.get_profile().plan
+    plan = profile.plan
     if plan is None:
         plan = {
             'title': 'Free',
@@ -521,7 +522,18 @@ def account_plan(request):
             'usd_per_month': 0,
             'total_space': 0,
         }
-    memberships = BandMember.objects.filter(user=user).order_by('-space_donated')
+    memberships = BandMember.objects.filter(user=user).exclude(role=BandMember.BANNED).order_by('-space_donated')
+
+    user_data = profile.to_dict(access=SerializableModel.OWNER)
+    user_data['space_used'] = profile.space_used()
+    user_data['bands_in_count'] = profile.bands_in_count()
+    user_data = json_dump(user_data);
+    def member_to_dict(member):
+        data = member.to_dict(access=SerializableModel.OWNER)
+        data['band'] = member.band.to_dict(access=SerializableModel.OWNER)
+        return data
+    membership_data = json_dump([member_to_dict(member) for member in memberships])
+
     return render_to_response('account/plan.html', locals(), context_instance=RequestContext(request))
 
 @login_required

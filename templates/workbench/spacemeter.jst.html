@@ -1,5 +1,24 @@
-<% (function (band) { %>
-    <div class="spacemeter">
-        <%= band.used_space %> / <%= band.total_space %> 
+<% (function (numerator, denominator, number_formatter_func) {
+    var percent = (denominator > 0) ? (numerator / denominator * 100) : 100;
+    if (percent > 100) { percent = 100; }
+%>
+    <div class="meter">
+        <div class="bar">
+            <div class="bg"> 
+                <div class="used" style="width: <%= percent %>%; background-color: <%
+                if (percent < 50) {
+                    %>#00bb35<%
+                } else if (percent < 75) {
+                    %>#e79c29<%
+                } else {
+                    %>#ff2b3b<%
+                }
+                %>;">
+                    <div class="border">
+                        <span><%= number_formatter_func(numerator) %> / <%= number_formatter_func(denominator) %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-<% })(band); %>
+<% })(numerator, denominator, number_formatter_func); %>

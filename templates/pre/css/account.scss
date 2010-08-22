@@ -1,0 +1,36 @@
+@import "base.pre.css";
+@import "meter.pre.css";
+@import "nav2.pre.css";
+
+.plan-table {
+    margin: 30px;
+    padding: 0;
+
+    th {
+        font-size: 16px;
+        font-weight: normal;
+    }
+
+    .meter {
+        padding: 20px;
+    }
+}
+
+.fund-table {
+    td {
+        padding: 18px;
+    }
+
+    .slider {
+        width: 200px;
+    }
+}
+
+h2 {
+    margin: 0 0 0 14px;
+    padding: 0 0 12px 0;
+}
+
+.form-buttons {
+    margin: 0 0 12px 260px;
+}
