@@ -2,12 +2,12 @@
     <div id="login">
     {% include 'loading.html' %}
     </div>
-    <div style="display: none;" id="loginFormDiv">
+    <div style="display: none;" id="loginFormDiv" class="ui-widget ui-widget-content">
         <form id="loginForm" action="{% url user_login %}">
             <table>
                 <tr>
                     <td class="label">
-                        <label for="loginName">username:</label>
+                        <label for="loginName">Username:</label>
                     </td>
                     <td>
                         <input type="text" id="loginName" value="" />
@@ -15,7 +15,7 @@
                 </tr>
                 <tr>
                     <td class="label">
-                        <label for="loginPassword">password:</label>
+                        <label for="loginPassword">Password:</label>
                     </td>
                     <td>
                         <input type="password" id="loginPassword" value="" />
@@ -23,8 +23,8 @@
                 </tr>
             </table>
             <div id="login-buttons">
-                <a href="#" id="loginButton">Log in</a>
-                <a href="#" id="cancelLoginButton">Cancel</a>
+                <input type="button" id="loginButton" value="Log in" />
+                <input type="button" id="cancelLoginButton" value="Cancel" />
             </div>
         </form>
     </div>

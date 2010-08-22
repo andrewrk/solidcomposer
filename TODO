@@ -26,6 +26,7 @@ Release "Boten Anna" (Basshunter):
     - dialog should not cover up song playback
     - maxWidth and maxHeight don't work in jquery dialog
 * only one button on landing page
+* feedback text overlaps login div 
 
 Wednesday, September 1:
 * WE DO IT LIVE

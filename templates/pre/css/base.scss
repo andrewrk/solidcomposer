@@ -170,16 +170,17 @@ a {
 
 #header-right {
     float: right;
+    height: 100%;
 }
 
-#feedback-div a {
-    font-size: 10px;
-    color: #639fff !important;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    right: 10px;
-    top: 50px;
+#feedback-div {
+    a {
+        font-size: 10px;
+        color: #639fff !important;
+        margin: 10px 10px 0 0;
+        padding: 0;
+        float: right;
+    }
 }
 
 .points {
@@ -189,17 +190,25 @@ a {
 }
 
 #loginFormDiv {
-    color: #000000;
-    background: #dadada;
     padding: 12px;
+    position: absolute;
+    right: 0;
 
     a {
         color: #0000ff;
+    }
+
+    label {
+        font-weight: bold;
     }
 }
 
 #login-buttons {
     text-align: right;
+
+    input {
+        margin: 0 2px;
+    }
 }
 
 #logo {
