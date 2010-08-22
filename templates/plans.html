@@ -2,61 +2,64 @@
 
 {% block title %}Pricing &amp; Signup - {{ block.super }}{% endblock %}
 
+{% block css %}plans.pre.css{% endblock %}
+
 {% block content %}
     <h1>Pricing &amp; Signup</h1>
-    <table>
-        <tr>
-            <th>Plan</th>
-            <th>Monthly Cost</th>
-            <th>Features</th>
-            <th></th>
-        </tr>
-        <tr>
-            <td>Free</th>
-            <td>Free</th>
-            <td>
-                <ul>
-                    <li>up to {{ free_plan.band_count_limit }} bands</li>
-                </ul>
-            </td>
-            <td>
-                {% if request.user.is_authenticated and request.user.get_profile.usd_per_month == 0 %}
-                    Your plan
-                {% else %}
-                    <a href="{% url register %}">Sign up!</a>
-                {% endif %}
-            </td>
-        </tr>
-        {% for plan in plans %}
+    <div id="plans">
+        <table>
             <tr>
-                <td>{{ plan.title }}</td>
-                <td>${{ plan.usd_per_month|floatformat:2 }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            {% if plan.total_space >= 1099511627776 %}
-                                Unlimited disk space
-                            {% else %}
-                                {{ plan.total_space|filesizeformat }} extra space
-                            {% endif %}
-                        </li>
-                        <li>
-                            {% if plan.band_count_limit >= 10000 %}
-                                Unlimited number of bands
-                            {% else %}
-                                up to {{ plan.band_count_limit }} bands
-                            {% endif %}
-                        </li>
-                    </ul>
-                </td>
-                <td>
-                    {% if request.user.is_authenticated and request.user.get_profile.plan == plan %}
-                        Your plan
-                    {% else %}
-                        <a href="{% url register_plan plan.url %}">Sign up!</a>
-                    {% endif %}
-                </td>
+                <th>Plan</th>
+                <th>Monthly Cost</th>
+                <th>Features</th>
+                <th></th>
             </tr>
-        {% endfor %}
-    </table>
+            {% for plan in plans %}
+                <tr>
+                    <td class="title">{{ plan.title }}</td>
+                    <td class="price">${{ plan.usd_per_month|floatformat:0 }}</td>
+                    <td class="features">
+                        <ul>
+                            <li>
+                                {% if plan.total_space >= 1099511627776 %}
+                                    Unlimited disk space
+                                {% else %}
+                                    {{ plan.total_space|filesizeformat }} extra space
+                                {% endif %}
+                            </li>
+                            <li>
+                                {% if plan.band_count_limit >= 10000 %}
+                                    Unlimited bands
+                                {% else %}
+                                    {{ plan.band_count_limit }} bands
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </td>
+                    <td class="button">
+                        {% if request.user.is_authenticated and request.user.get_profile.plan == plan %}
+                            Your plan
+                        {% else %}
+                            <a href="{% url register_plan plan.url %}"><img src="{{ MEDIA_URL }}img/signup-green.png" alt="Sign up" /></a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <p>
+            <a href="{% url article 'introducing-solidcomposer' %}">How does SolidComposer work?</a>
+        </p>
+    </div>
+    <p id="free">
+        Or, you can get {{ free_plan.band_count_limit }} bands for free.
+        {% if request.user.is_authenticated and request.user.get_profile.usd_per_month == 0 %}
+            This is your current plan.
+        {% else %}
+            {% if request.user.is_authenticated %}
+                <a href="{% url register %}">Downgrade to a free account</a>.
+            {% else %}
+                <a href="{% url register %}">Create a free account</a>.
+            {% endif %}
+        {% endif %}
+    </p>
 {% endblock %}

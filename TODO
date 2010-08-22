@@ -1,8 +1,7 @@
 Release "Boten Anna" (Basshunter):
+* make both the buttons the same color
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
-    - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
-    - url(r'^plans/$', 'main.views.plans', name='plans'),
     - url(r'^user/(.+)/$', 'main.views.userpage', name='userpage'),
     - url(r'^band/(.+)/$', 'main.views.bandpage', name='bandpage'),
     - url(r'^login/$', 'main.views.user_login', {'SSL': True}, name="user_login"),
@@ -39,6 +38,7 @@ Release "Boten Anna" (Basshunter):
     - url('^create/$', 'competitions.views.create', name="arena.create"),
     - url('^compete/(\d+)/$', 'competitions.views.competition', name="arena.compete"),
       # show gravatar in user list
+    - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
   > tip framework
     - tips should show up where the tip element is but not on top of it.
   > song player
