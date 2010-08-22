@@ -320,6 +320,7 @@ def changed_plan_results(request):
         'FAILURE': payment.FAILURE,
         'NO_PIPELINE': payment.NO_PIPELINE,
         'INVALID_SIGNATURE': payment.INVALID_SIGNATURE,
+        'DUPLICATE': payment.DUPLICATE,
     }
     if status == payment.SUCCESS:
         # change the user to the new account
@@ -347,6 +348,8 @@ def changed_plan_results(request):
             profile.account_expire_date = now
         profile.active_transaction = transaction
         profile.save()
+    elif status == payment.DUPLICATE:
+        plan = transaction.plan
     else:
         # TODO: send some kind of error email
         if request.user.is_authenticated():
@@ -361,6 +364,7 @@ def register_pending(request):
         'FAILURE': payment.FAILURE,
         'NO_PIPELINE': payment.NO_PIPELINE,
         'INVALID_SIGNATURE': payment.INVALID_SIGNATURE,
+        'DUPLICATE': payment.DUPLICATE,
     }
     if status == payment.SUCCESS:
         # give the user the premium account
@@ -374,6 +378,8 @@ def register_pending(request):
         profile.account_expire_date = datetime.now()
         profile.active_transaction = transaction
         profile.save()
+    elif status == payment.DUPLICATE:
+        plan = transaction.plan
 
     return render_to_response('pending.html', locals(), context_instance=RequestContext(request))
 

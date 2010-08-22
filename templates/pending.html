@@ -8,7 +8,7 @@
     <p>
         An email was sent to the address you provided to confirm your account. Please <strong>check your email</strong> right now!
     </p>
-    {% if status == payment_result.SUCCESS %}
+    {% if status == payment_result.SUCCESS or status == payment_result.DUPLICATE %}
         <p>
             Monthly payments were set up successfully. Thanks for joining the {{ plan.title }} plan.
         </p>

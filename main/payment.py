@@ -5,7 +5,7 @@ import sys
 
 from datetime import datetime, timedelta
 
-FAILURE, SUCCESS, NO_PIPELINE, INVALID_SIGNATURE = range(4)
+FAILURE, SUCCESS, NO_PIPELINE, INVALID_SIGNATURE, DUPLICATE = range(5)
 
 def _get_client():
     if settings.DEBUG or not settings.USE_AWS:
@@ -57,6 +57,10 @@ def process_pipeline_result(request):
             except Transaction.DoesNotExist, ValueError:
                 sys.stderr.write("Got transaction id {0} from amazon which we don't have in our records.".format(transaction_id))
                 return (FAILURE, None)
+
+            if transaction.token_id is not None:
+                # we've already processed this.
+                return (DUPLICATE, transaction)
 
             transaction.token_id = request.GET.get('tokenID')
             transaction.expiry = request.GET.get('expiry', '')

@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="textblock">
-    {% if status == payment_result.SUCCESS %}
+    {% if status == payment_result.SUCCESS or status == payment_result.DUPLICATE %}
         <h1>Account Plan Changed</h1>
         <p>
             Monthly payments were set up successfully. Thanks for joining the {{ plan.title }} plan.
