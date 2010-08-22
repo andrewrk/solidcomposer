@@ -31,7 +31,7 @@ class BandMember(SerializableModel):
     user = models.ForeignKey(User)
     band = models.ForeignKey('main.Band')
     role = models.IntegerField(choices=ROLE_CHOICES, default=MANAGER)
-    space_donated = models.IntegerField(default=0)
+    space_donated = models.BigIntegerField(default=0)
 
     def percent_contrib(self):
         "return the % of the number of projectversions are this member's"

@@ -476,8 +476,8 @@ class LogEntry(SerializableModel):
     project = models.ForeignKey('Project', null=True, blank=True)
 
     # the amount of space donated changed
-    old_amount = models.IntegerField(default=0)
-    new_amount = models.IntegerField(default=0)
+    old_amount = models.BigIntegerField(default=0)
+    new_amount = models.BigIntegerField(default=0)
 
     def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
         data = super(LogEntry, self).to_dict(access, chains)

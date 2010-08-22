@@ -64,7 +64,7 @@ class Competition(SerializableModel):
 
     # length of the voting period in seconds. Used to calculate vote_deadline
     # after listening party end date is computed.
-    vote_period_length = models.IntegerField()
+    vote_period_length = models.BigIntegerField()
 
     # one chat room per competition
     chat_room = models.ForeignKey('chat.ChatRoom', blank=True, null=True)
