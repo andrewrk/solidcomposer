@@ -4,10 +4,6 @@ Release "Boten Anna" (Basshunter):
 * protect against hitting /plan/changed/ twice in a row
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
-    - url(r'^account/plan/changed/$', 'main.views.changed_plan_results', {'SSL': True}, name="account.plan_changed"),
-    - url(r'^account/email/$', 'main.views.account_email', {'SSL': True}, name="account.email"),
-    - url(r'^account/password/$', 'main.views.account_password', {'SSL': True}, name="account.password"),
-    - url(r'^account/password/reset/$', 'main.views.account_password_reset', {'SSL': True}, name="account.password.reset"),
     - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
     - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
     - url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),

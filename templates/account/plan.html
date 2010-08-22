@@ -56,7 +56,9 @@ var membership_data = ({% autoescape off %}{{ membership_data|fix_ampersands }}{
         </tr>
         {% for member in memberships %}
             <tr>
-                <td>{{ member.band.title }}</td>
+                <td>
+                    <a href="{% url workbench.band member.band.id %}">{{ member.band.title }}</a>
+                </td>
                 <td>
                     <div id="band-spacemeter-{{ member.id }}">
                         {% include 'loading.html' %}
