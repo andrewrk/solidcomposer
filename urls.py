@@ -36,8 +36,10 @@ urlpatterns = patterns('',
 
     url(r'^contact/$', 'main.views.contact', name="contact"),
     
-    url(r'^privacy/$', direct_to_template, {'template': 'policy.html'}, name="policy"),
-    url(r'^terms/$', direct_to_template, {'template': 'terms.html'}, name="terms"),
+    url(r'^legal/$', direct_to_template, {'template': 'legal/home.html'}, name="legal"),
+    url(r'^legal/privacy/$', direct_to_template, {'template': 'legal/policy.html'}, name="policy"),
+    url(r'^legal/terms/$', direct_to_template, {'template': 'legal/terms.html'}, name="terms"),
+
     url(r'^account/$', 'main.views.account_plan', {'SSL': True}, name="account"),
     url(r'^account/plan/$', 'main.views.account_plan', {'SSL': True}, name="account.plan"),
     url(r'^account/plan/changed/$', 'main.views.changed_plan_results', {'SSL': True}, name="account.plan_changed"),

@@ -1,0 +1,23 @@
+{% extends 'legal/base.html' %}
+
+{% block content %}
+    <div class="textblock">
+        <h1>Legal Documents</h1>
+        <ul>
+            <li><a href="{% url policy %}">Privacy Policy</a></li>
+            <li><a href="{% url terms %}">Terms of Use</a></li>
+        </ul>
+        <h2>Lawsuits</h2>
+        <a
+            id="lol"
+            href="#lol"
+            onmouseover="this.style.left = Math.floor(Math.random() * 600) + 'px'; this.style.top = Math.floor(Math.random() * 400) + 'px';"
+            style="position: absolute;"
+        >
+            Click here if you want to sue us
+        </a>
+        <div>
+            <br />
+        </div>
+    </div>
+{% endblock %}

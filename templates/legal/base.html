@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Legal Documents - {{ block.super }}{% endblock %}
+
+{% block css %}legal.pre.css{% endblock %}
+
+{% block nav2 %}
+    <div id='nav-2'>
+        <ul id="tabnav">
+            <li class="{% block nav2_privacy_li_class %}unselected{% endblock %}">
+                <a href="{% url policy %}">Privacy Policy</a>
+            </li>
+            <li class="{% block nav2_terms_li_class %}unselected{% endblock %}">
+                <a href="{% url terms %}">Terms of Use</a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
