@@ -7,6 +7,7 @@
 var user_data = ({% autoescape off %}{{ user_data|fix_ampersands }}{% endautoescape %});
 var membership_data = ({% autoescape off %}{{ membership_data|fix_ampersands }}{% endautoescape %});
     </script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/tips.pre.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/account_plan.pre.js"></script>
 {% endblock %}
 
@@ -52,7 +53,7 @@ var membership_data = ({% autoescape off %}{{ membership_data|fix_ampersands }}{
         <tr>
             <th>Band</th>
             <th>Used Space</th>
-            <th>Amount Donated</th>
+            <th>Amount Donated {% include 'tips/usingDonationSliders.html' %}</th>
         </tr>
         {% for member in memberships %}
             <tr>
