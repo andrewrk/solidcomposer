@@ -56,38 +56,41 @@
             <fieldset>
             <input type="hidden" name="compo" value="{{ competition.id }}" />
                 <table>
-                <tr>
-                    <th><label for="entry-file-mp3">Your rendered song, in mp3 format:</label></th>
-                    <td><input type="file" name="entry-file-mp3" id="entry-file-mp3" /></td>
-                </tr>
-                <tr>
-                    <th><label for="entry-file-source">(optional) Source project file:</label></th>
-                    <td><input type="file" name="entry-file-source" id="entry-file-source" /></td>
-                </tr>
-                <tr>
+                    <tr>
+                        <th><label for="entry-file-mp3">Your rendered song, in mp3 format:</label></th>
+                        <td><input type="file" name="entry-file-mp3" id="entry-file-mp3" /></td>
+                    </tr>
+                    <tr>
+                        <th><label for="entry-file-source">(optional) Source project file:</label></th>
+                        <td><input type="file" name="entry-file-source" id="entry-file-source" /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            <input type="checkbox" name="entry-open-source" id="entry-open-source" value="1" />
+                            <label for="entry-open-source">Anyone can download my project file</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="entry-title">Song Title:</label></th>
+                        <td><input type="text" id="entry-title" name="entry-title" value="" maxlength="100" /></td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="entry-comments">(optional) Author's Comments:</label>
+                            <br/>(supports <a href="http://attacklab.net/showdown/">markdown</a>)
+                        </th>
+                        <td><textarea rows="10" cols="80" name="entry-comments" id="entry-comments"></textarea></td>
+                    </tr>
+                    <tr>
+                    <td></td>
                     <td>
+                        <input type="submit" value="Submit" />
+                        <input type="reset" value="Clear Form" />
+                        <input id="cancel-submission" type="button" value="Cancel" />
                     </td>
-                    <td>
-                        <input type="checkbox" name="entry-open-source" id="entry-open-source" value="1" />
-                        <label for="entry-open-source">Anyone can download my project file</label>
-                    </td>
-                </tr>
-                <tr>
-                    <th><label for="entry-title">Song Title:</label></th>
-                    <td><input type="text" id="entry-title" name="entry-title" value="" maxlength="100" /></td>
-                </tr>
-                <tr>
-                    <th><label for="entry-comments">(optional) Author's Comments:</label></th>
-                    <td><textarea rows="10" cols="80" name="entry-comments" id="entry-comments"></textarea></td>
-                </tr>
-                <tr>
-                <td></td>
-                <td>
-                    <input type="submit" value="Submit" />
-                    <input type="reset" value="Clear Form" />
-                    <input id="cancel-submission" type="button" value="Cancel" />
-                </td>
-                </tr>
+                    </tr>
                 </table>
             </fieldset>
             </form>

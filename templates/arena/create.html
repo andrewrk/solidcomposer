@@ -15,14 +15,12 @@
     {% include 'login_area.html' %}
 {% endblock %}
 
+{% block bread_crumb %}
+    &gt;
+    <span class="dest">Create Competition</span>
+{% endblock %}
+
 {% block content %}
-    <div id="bread">
-        <a href="{% url home %}">Home</a>
-        &gt;
-        <a href="{% url arena.home %}">Arena</a>
-        &gt;
-        <span class="dest">Create Competition</span>
-    </div>
     <div class="textblock">
         <form id="competition-form" method="post" action="." style="width: 500px;">
             {{ form.tz_offset }}
@@ -46,7 +44,7 @@
                     <td>{{ form.have_theme }}</td>
                 </tr>
                 <tr id="div_theme">
-                    <th><label for="id_theme">Theme:</label></th>
+                    <th><label for="id_theme">Theme:</label><br/>(supports <a href="http://attacklab.net/showdown/">markdown</a>)</th>
                     <td>{{ form.theme.errors }}{{ form.theme }}</td>
                 </tr>
                 <tr id="div_preview_theme">
@@ -63,7 +61,7 @@
                     <td>{{ form.have_rules.errors }}{{ form.have_rules }}</td>
                 </tr>
                 <tr id="div_rules">
-                    <th><label for="id_rules">Rules:</label></th>
+                    <th><label for="id_rules">Rules:</label><br/>(supports <a href="http://attacklab.net/showdown/">markdown</a>)</th>
                     <td>{{ form.rules.errors }}{{ form.rules }}</td>
                 </tr>
                 <tr id="div_preview_rules">
