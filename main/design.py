@@ -35,6 +35,7 @@ invalid_old_password = 'Invalid old password.'
 no_login_data_supplied = 'No login data supplied.'
 invalid_username_tips = 'Invalid username. Your account may have expired. You can try registering again.'
 invalid_activation_code = 'Invalid activation code. Nice try!'
+already_activated = "Your account is already activated."
 passwords_do_not_match = 'Your passwords do not match.'
 user_x_already_exists = 'The user "%s" already exists.'
 email_already_exists = 'This email address already exists.'

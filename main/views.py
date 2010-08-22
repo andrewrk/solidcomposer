@@ -385,6 +385,11 @@ def confirm(request, username, code):
         return render_to_response('confirm_failure.html', locals(), context_instance=RequestContext(request))
 
     profile = user.get_profile()
+
+    if profile.activated:
+        err_msg = design.already_activated
+        return render_to_response('confirm_failure.html', locals(), context_instance=RequestContext(request))
+
     real_code = profile.activate_code
 
     if real_code == code:
