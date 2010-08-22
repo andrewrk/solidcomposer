@@ -40,7 +40,7 @@ class RegisterForm(forms.Form):
         error_messages={'required': design.this_field_is_required})
 
     def clean_confirm_password(self):
-        password1 = self.cleaned_data['password']
+        password1 = self.cleaned_data.get('password', '')
         password2 = self.cleaned_data['confirm_password']
         if password1 != password2:
             raise forms.ValidationError(design.passwords_do_not_match)

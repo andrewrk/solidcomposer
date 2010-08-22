@@ -14,7 +14,7 @@
         </p>
     {% else %}{% if status == payment_result.FAILURE %}
         <p>
-            There was an error setting up mothly payments, so we've set you up with the free plan for now.
+            <strong>There was an error</strong> setting up mothly payments, so we've set you up with the <strong>free plan</strong> for now.
         </p>
     {% else %}{% if status == payment_result.NO_PIPELINE %}
     {% else %}{% if status == payment_result.INVALID_SIGNATURE %}

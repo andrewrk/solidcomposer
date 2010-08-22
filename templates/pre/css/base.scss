@@ -7,11 +7,17 @@
 
 body {
     font-family: Verdana, Geneva, sans-serif;
-    font-size: 14px;
+    font-size: 0.8em;
     margin: 0;
     padding: 0;
     background: #ffffff;
     color: #000000;
+}
+
+h1 {
+    color: #292929;
+    margin: 12px 0;
+    padding: 0;
 }
 
 #wrapper {
@@ -23,7 +29,7 @@ body {
 }
 
 p {
-    margin: 0 0 12px 0;
+    margin: 12px 0;
     padding: 0;
 }
 
@@ -256,4 +262,38 @@ form {
 #tools {
     float: right;
     margin: 8px 14px 0 0;
+}
+
+ul.errorlist {
+    list-style-type: none;
+    padding: 4px;
+    margin: 0;
+    li {
+        background-image: url({{ MEDIA_URL }}img/error.png);
+        background-repeat: no-repeat;
+        background-position: left center;
+        padding: 0 0 0 20px;
+    }
+}
+
+p.err {
+    color: #c01212;
+    font-weight: bold;
+    background-image: url({{ MEDIA_URL }}img/error.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding: 0 0 0 20px;
+}
+
+#tip-dialog {
+    h1 {
+        font-size: 1.4em;
+    }
+}
+
+.tip a {
+    background-image: url({{ MEDIA_URL }}img/tip-16x16.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding: 0 0 0 18px;
 }

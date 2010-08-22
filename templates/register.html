@@ -5,14 +5,20 @@
 {% block extra_header %}
     {{ block.super }}
     {% include 'sc_script_framework.html' %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/tips.pre.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/register.pre.js"></script>
 {% endblock %}
 
 {% block content %}
     <div class="textblock">
         <h1>Create an account</h1>
+        <p>Already have an account? <a href="{% url user_login %}">Log in</a>.</p>
         {% if err_msg %}
-        <p>{{ err_msg }}</p>
+            <p class="err">{{ err_msg }}</p>
+        {% else %}
+            {% if form.errors %}
+                <p class="err">Please correct the errors below.</p>
+            {% endif %}
         {% endif %}
         <form action="." method="post">
             <table class="form-table">
@@ -24,16 +30,14 @@
                         {{ form.username.errors }}{{ form.username }}
                     </td>
                 </tr>
-
                 <tr>
                     <th>
                         {{ form.artist_name.label }}:
                     </th>
                     <td>
-                        {{ form.artist_name.errors }}{{ form.artist_name }}
+                        {{ form.artist_name.errors }}{{ form.artist_name }}{% include 'tips/soloBandName.html' %}
                     </td>
                 </tr>
-
                 <tr>
                     <th>
                         {{ form.email.label }}:
@@ -42,7 +46,6 @@
                         {{ form.email.errors }}{{ form.email }}
                     </td>
                 </tr>
-
                 <tr>
                     <th>
                         {{ form.password.label }}:
@@ -71,7 +74,7 @@
                     <td></td>
                     <td>
                         {{ form.agree_to_terms.errors }}{{ form.agree_to_terms }}
-                        <label for="id_agree_to_terms">I agree to the </label><a href="{% url terms %}" target="_BLANK">Terms of Use</a>
+                        <label for="id_agree_to_terms">I agree to the </label><a href="{% url terms %}">Terms of Use</a>
                     </td>
                 </tr>
                 <tr class="ui-free">
@@ -84,7 +87,5 @@
                 </tr>
             </table>
         </form>
-        <h2>Already have an account?</h2>
-        <a href="{% url user_login %}">Log in.</a>
     </div>
 {% endblock %}
