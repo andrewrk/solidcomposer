@@ -1,7 +1,4 @@
 Release "Boten Anna" (Basshunter):
-* only one button on landing page
-* use jquery and dropdowns for date picking rather than anytimec
-* protect against hitting /plan/changed/ twice in a row
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
     - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
@@ -28,7 +25,8 @@ Release "Boten Anna" (Basshunter):
   > song player
     - dialog should not cover up song playback
     - maxWidth and maxHeight don't work in jquery dialog
-* in chrome, when you stop playing a song, it still thinks it's playing.
+* only one button on landing page
+* protect against hitting /plan/changed/ twice in a row
 
 Wednesday, September 1:
 * WE DO IT LIVE
@@ -44,6 +42,7 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* use jquery and dropdowns for date picking rather than anytimec
 * tests
   > contact page
   > take into account bytes used and whether bands are read only

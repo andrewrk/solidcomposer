@@ -214,7 +214,8 @@ var Player = function() {
                 readyActions = null;
             },
             swfPath: jPlayerSwfPath,
-            preload: 'auto'
+            preload: 'auto',
+            nativeSupport: false
         });
     }
 
