@@ -9,4 +9,12 @@
     .contents {
         font-size: 16px;
     }
+
+    li.facebook {
+        background-image: url({{ MEDIA_URL }}img/facebook-icon.png);
+    }
+
+    li.twitter {
+        background-image: url({{ MEDIA_URL }}img/twitter-icon.png);
+    }
 }

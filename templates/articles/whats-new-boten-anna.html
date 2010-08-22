@@ -1,0 +1,51 @@
+{% extends 'article.html' %}
+
+{% block title %}What's New - "Boten Anna" Release - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <div class="textblock">
+        <h1>What's New</h1>
+        <h2>"Boten Anna" Release <a href="http://www.youtube.com/watch?v=YcCVZeHJ8kw"><img src="{{ MEDIA_URL }}img/note-eighth-16x16.png" alt="" style="vertical-align: middle;" /></a></h2>
+        <p>
+            September 1st, 2010
+        </p>
+        <img src="{{ MEDIA_URL }}img/logo-gray-100x59.png" alt="" style="margin: 0 0 0 40px;" />
+        <p>
+            Thanks to <a href="http://99designs.com/people/jiip">JIIP</a> for the new logo!
+        </p>
+        <p>
+            The biggest new thing is the redesign and the <a href="{% url workbench.home %}">Workbench</a>, of course.
+            On top of that, SolidComposer is now on a <a href="http://www.linode.com/">more powerful server</a>.
+        </p>
+        <h3>New Features</h3>
+        <ul>
+            <li><strong>Workbench</strong> - Seriously, go <a href="{% url workbench.home %}">check it out</a>!</li>
+            <li><strong>Song Comments</strong> - You can now freely reply to any comment, as well as <em>timed song comments</em>.</li>
+            <li><strong>/me actions in chat</strong> - So now you can virtually <a href="http://www.youtube.com/watch?v=IhJQp-q1Y1s">slap people with a large trout</a>.</li>
+            <li><strong>Hyperlink support in chat</strong></li>
+            <li><strong>Tab-completion for usernames in chat</strong> - Start typing the beginning of someone's name and the rest will auto-fill.</li>
+            <li><strong>Page up/down to scroll in chat</strong> - the less mouse, the better.</li>
+            <li><strong>Markdown support</strong> - You can use <a href="http://daringfireball.net/projects/markdown/">markdown</a> to format comments, rules, themes, etc.</li>
+            <li><strong>Gravatar support</strong> - You can change your globally recognized avatar on <a href="http://gravatar.com/">gravatar.com</a><li>
+            <li><strong>UserVoice Feedback Forum</strong> - <a href="http://solidcomposer.uservoice.com/">voice your opinion</a>. This forum is for bug reports, feature requests, and suggestions. <li>
+            <li><strong>Password Recovery</strong> - making remembering passwords obsolete since 1999.<li>
+            <li><strong>Change Password</strong> - you can <a href="{% url account.password %}">change your password</a> now.<li>
+            <li><strong>Email Subscription Settings</strong> - SolidComposer will be sending more mail now. <a href="{% url account.email %}">Change your settings.</a><li>
+            <li>
+                <strong>User page and band page</strong> - 
+                {% if request.user.is_authenticated %}
+                    for example, here's your <a href="{% url userpage request.user.username %}">user page</a>
+                    and your <a href="{% url bandpage request.user.get_profile.solo_band.url %}">solo band page</a>.
+                {% else %}
+                    if you were logged in I'd show you.
+                {% endif %}
+            <li>
+        </ul>
+        <h3>Bug Fixes for Arena</h3>
+        <ul>
+            <li><strong>Chat bugs are fixed</strong>. - this includes double post, linebreak shenanigans, and general slowness.</li>
+            <li><strong>Entry list looks better</strong> with long song names.</li>
+            <li><strong>Entry list and chat fit side by side</strong> on 1024px monitors.</li>
+        </ul>
+    </div>
+{% endblock %}

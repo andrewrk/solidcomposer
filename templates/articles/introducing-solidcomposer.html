@@ -3,237 +3,254 @@
 {% block title %}Introducing SolidComposer - Compete, collaborate, learn{% endblock %}
 
 {% block content %}
-    <h1>Introducing SolidComposer</h1>
-    <ul>
-        <li><a href="#why-exist">Why do we exist?</a></li>
-        <li><a href="#how-does-it-work">How does it work?</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#supported-studios">Supported studios</a></li>
-        <li><a href="#arena">Arena</a></li>
-    </ul>
-    <h2><a id="why-exist">Why do we exist?</a></h2>
-    <p>
-        3 reasons.
-    </p>
-    <ol>
-        <li>To make you better at making music.</li>
-        <li>To help you <strong>waste less time</strong> messing with your computer and spend more time actually making music.</li>
-        <li>To make it convenient and fun to <strong>collaborate</strong> on musical projects.</li>
-    </ol>
-    <h2><a id="how-does-it-work">How does it work?</a></h2>
-    <p>
-        After you spend several hours in the studio working on a track,
-        you typically hit save, render the track and show a couple friends (or not), and go take a break.
-    </p>
-    <p>
-        Let's try something else.
-    </p>
-    <p>
-        Insert SolidComposer into your music-making workflow.
-        After you hit save and render the track, upload it to SolidComposer.
-        SolidComposer will store your project, create a beautiful song player which you can use to show your friends and get feedback,
-        and complain about "missing samples."
-        This is because it has noticed that your project depends on some audio files that you have not uploaded.
-    </p>
-    <h3>Dependencies</h3>
-    <p>
-        So if you upload the files that it complains about,
-        the red text goes away and you're left with a nice green check next to "dependencies."
-        If you click this, you'll see that it lists all the generators and effects you used in the project.
-    </p>
-    <p class="note">
-        By the way, if you're using FL Studio, you can skip all this by simply
-        exporting and uploading a .zip file.
-        And don't worry about duplicating sample files. SolidComposer will detect duplicate samples and only store one copy. 
-    </p>
-    <p>
-        At this point you are already preventing future headache by saving
-        every version of the project you make permanently and securely.
-        By uploading the samples for the project, you guarantee that you will
-        be able to edit the project any time in the future.
-        But what if you want to collaborate with other band members?
-    </p>
-    <p>
-        This is where SolidComposer shines.
-    </p>
-    <h3>Collaborating</h3>
-    <p>
-        Let's say the project was for your techno band, Psycho System.
-        Your band member, Vance, got an email saying that you uploaded a new project.
-        He clicks the link and begins listening to your song.
-        He thinks it's great, but you should fix the break at 0:34, so he adds a timed comment and says just that.
-    </p>
-    <p>
-        Now when you play the song back and listen to your genius track,
-        Vance's comment shows up at the appropriate position.
-    </p>
-    <p>
-        But Vance has always been a believer in <a href="http://www.youtube.com/watch?v=WcAFkYUnSjg">less talk, more rock</a>,
-        so he wants to start working on the song.
-        He clicks "Check Out" and now the song is his.
-        Nobody else can work on the song until he checks it back in.
-        This prevents you from clobbering each other's work and ending up with two conflicting versions. 
-    </p>
-    <p>
-        Anyways, Vance now owns the song until he checks it back in, but he still doesn't have the project files.
-        Luckily, that's the easiest part. Look at the red X next to Dependencies.
-        When he looks at the form, it's a little different.
-        Whereas SolidComposer assumed that you had all the generators and effects in your own song,
-        it doesn't assume that your band members do.
-    </p>
-    <p>
-        The form says he's missing 4FrontPiano.
-        Luckily, that plugin is free, so he can either say "don't worry, I already have this"
-        or he can click the link to go download it. As for downloading the project and samples,
-        there's a nice button that lets him download everything in a zip (which FL Studio an open directly).
-    </p>
-    <p>
-        So, in 4 minutes, Vance went from checking his email to collaborating on
-        your band's song. And he didn't even have one of the instruments you used, let alone all the samples.
-    </p>
-    <h3>Version Control</h3>
-    <p>
-        When Vance is done, he Checks In the new version of the project.
-        At this point you can see the history -
-        the first version and the second version that Vance just checked in.
-    </p>
-    <p>
-        This is powerful because
-    </p>
-    <ol>
-        <li>You can actually collaborate with people.</li>
-        <li>You'll never lose a project or deal with a corrupt file again.</li>
-        <li>Once you've worked on a new version of a song and have that urge to get feedback, you can get it in a quick and useful manner.</li>
-        <li>You'll never lose the samples you need to be able to work on your song. Your projects will survive wiped hard drives.</li>
-    </ol>
-    <h2><a id="features">Features</a></h2>
-    <p>
-        That was a quick story of one of the normal use cases for SolidComposer.
-        Here are some more of the features you get.
-    </p>
-    {% comment %}
-    <h3>Poke Lazy Band Members</h3>
-    <p>
-        You'll find that sometimes your band mates will check out a project and
-        then just play video games or something, which sucks when you want to
-        work on it. So you can "poke" someone when they have something checked out.
-        This sends a sufficiently annoying email telling them to put up or shut up.
-        You can do this once a day for each project they have checked out for best effect.
-    </p>
-    {% endcomment %}
-    <h3>Not All Your Band Members Are Producers</h3>
-    <p>
-        SolidComposer is for your vocalist and guitarist too. One of the actions
-        you can take on a project is "upload samples." Your beautiful female vocalist
-        can download the latest version you've uploaded in the project manager,
-        record vocals, and click Upload Samples. These samples are provided in the
-        project view for you to preview, download, and use in the song.
-    </p>
-    <h3>It's Super Easy to Start a Band</h3>
-    <p>
-        Start a band with someone you don't even know! You can invite someone
-        to join a band via an invitation link, by email, or directly inviting them on the site.
-        It is possible to, in 2 hours flat:
-    </p>
-    <ol>
-        <li>Meet someone on the internet.</li>
-        <li>Start a band.</li>
-        <li>Collaboratively create a song.</li>
-        <li>Have a link to the song to show friends.</li>
-    </ol>
-    <p>
-        Our goal is to make it possible to just start a band with anyone, anytime, anywhere.
-    </p>
-    {% comment %}
-    <h3>Collaboration Tools</h3>
-    <p>
-        We've put a lot of thought into the mechanics of organizing projects for
-        a band. For example you can internally promote songs or vote to scrap them.
-        The search box actually works. 
-    </p>
-    <h3>Band Transparency</h3>
-        You can decide how much the outside world is allowed to see the internal workings of your band. You can decide between:
+    <div class="textblock">
+        <h1>Introducing SolidComposer</h1>
+        <p>
+            September 1st, 2010
+        </p>
+        <ul class="contents">
+            <li><a href="#why-exist">Why do we exist?</a></li>
+            <li><a href="#how-does-it-work">How does it work?</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#supported-studios">Supported studios</a></li>
+            <li><a href="#arena">Arena</a></li>
+            <li><a href="#next-release">Next Release</a></li>
+        </ul>
+        <h2><a id="why-exist">Why do we exist?</a></h2>
+        <p>
+            3 reasons.
+        </p>
+        <ol>
+            <li>To make you better at making music.</li>
+            <li>To help you <strong>waste less time</strong> messing with your computer and spend more time actually making music.</li>
+            <li>To make it convenient and fun to <strong>collaborate</strong> on musical projects.</li>
+        </ol>
+        <h2><a id="how-does-it-work">How does it work?</a></h2>
+        <p>
+            After you spend several hours in the studio working on a track,
+            you typically hit save, render the track, show a couple friends (or not), and go take a break.
+        </p>
+        <p>
+            Let's try something else.
+        </p>
+        <p>
+            Insert SolidComposer into your music-making workflow.
+            After you hit save and render the track, upload it to SolidComposer.
+            SolidComposer will store your project, create a beautiful song player which you can use to show your friends and get feedback,
+            and complain about "missing samples."
+            This is because it has noticed that your project depends on some audio files that you have not uploaded.
+        </p>
+        <h3>Dependencies</h3>
+        <p>
+            So if you upload the files that it complains about,
+            the red text goes away and you're left with a nice green check next to "dependencies."
+            If you click this, you'll see that it lists all the generators and effects you used in the project.
+        </p>
+        <p class="note">
+            By the way, if you're using FL Studio, you can skip all this by simply
+            exporting and uploading a .zip file.
+            And don't worry about duplicating sample files. SolidComposer will detect duplicate samples and only store one copy. 
+        </p>
+        <p>
+            At this point you are already preventing future headache by saving
+            every version of the project you make permanently and securely.
+            By uploading the samples for the project, you guarantee that you will
+            be able to edit the project any time in the future.
+            But what if you want to collaborate with other band members?
+        </p>
+        <p>
+            This is where SolidComposer shines.
+        </p>
+        <h3>Collaborating</h3>
+        <p>
+            Let's say the project was for your techno band, Psycho System.
+            Your band member, Vance, got an email saying that you uploaded a new project.
+            He clicks the link and begins listening to your song.
+            He thinks it's great, but you should fix the break at 0:34, so he adds a timed comment and says just that.
+        </p>
+        <p>
+            Now when you play the song back and listen to your genius track,
+            Vance's comment shows up at the appropriate position.
+        </p>
+        <p>
+            But Vance has always been a believer in <a href="http://www.youtube.com/watch?v=WcAFkYUnSjg">less talk, more rock</a>,
+            so he wants to start working on the song.
+            He clicks "Check Out" and now the song is his.
+            Nobody else can work on the song until he checks it back in.
+            This prevents you from clobbering each other's work and ending up with two conflicting versions. 
+        </p>
+        <p>
+            Anyways, Vance now owns the song until he checks it back in, but he still doesn't have the project files.
+            Luckily, that's the easiest part. Look at the red X next to Dependencies.
+            When he looks at the form, it's a little different.
+            Whereas SolidComposer assumed that you had all the generators and effects in your own song,
+            it doesn't assume that your band members do.
+        </p>
+        <p>
+            The form says he's missing 4FrontPiano.
+            Luckily, that plugin is free, so he can either say "don't worry, I already have this"
+            or he can click the link to go download it. As for downloading the project and samples,
+            there's a nice button that lets him download everything in a zip (which FL Studio an open directly).
+        </p>
+        <p>
+            So, in 4 minutes, Vance went from checking his email to collaborating on
+            your band's song. And he didn't even have one of the instruments you used, let alone all the samples.
+        </p>
+        <h3>Version Control</h3>
+        <p>
+            When Vance is done, he Checks In the new version of the project.
+            At this point you can see the history -
+            the first version and the second version that Vance just checked in.
+        </p>
+        <p>
+            This is powerful because
+        </p>
+        <ol>
+            <li>You can actually collaborate with people.</li>
+            <li>You'll never lose a project or deal with a corrupt file again.</li>
+            <li>Once you've worked on a new version of a song and have that urge to get feedback, you can get it in a quick and useful manner.</li>
+            <li>You'll never lose the samples you need to be able to work on your song. Your projects will survive wiped hard drives.</li>
+        </ol>
+        <h2><a id="features">Features</a></h2>
+        <p>
+            That was a quick story of one of the normal use cases for SolidComposer.
+            Here are some more of the features you get.
+        </p>
+        {% comment %}
+        <h3>Poke Lazy Band Members</h3>
+        <p>
+            You'll find that sometimes your band mates will check out a project and
+            then just play video games or something, which sucks when you want to
+            work on it. So you can "poke" someone when they have something checked out.
+            This sends a sufficiently annoying email telling them to put up or shut up.
+            You can do this once a day for each project they have checked out for best effect.
+        </p>
+        {% endcomment %}
+        <h3>Not All Your Band Members Are Producers</h3>
+        <p>
+            SolidComposer is for your vocalist and guitarist too. One of the actions
+            you can take on a project is "upload samples." Your beautiful female vocalist
+            can download the latest version you've uploaded in the project manager,
+            record vocals, and click Upload Samples. These samples are provided in the
+            project view for you to preview, download, and use in the song.
+        </p>
+        <h3>It's Super Easy to Start a Band</h3>
+        <p>
+            Start a band with someone you don't even know! You can invite someone
+            to join a band via an invitation link, by email, or directly inviting them on the site.
+            It is possible to, in 2 hours flat:
+        </p>
+        <ol>
+            <li>Meet someone on the internet.</li>
+            <li>Start a band.</li>
+            <li>Collaboratively create a song.</li>
+            <li>Have a link to the song to show friends.</li>
+        </ol>
+        <p>
+            Our goal is to make it possible to just start a band with anyone, anytime, anywhere.
+        </p>
+        {% comment %}
+        <h3>Collaboration Tools</h3>
+        <p>
+            We've put a lot of thought into the mechanics of organizing projects for
+            a band. For example you can internally promote songs or vote to scrap them.
+            The search box actually works. 
+        </p>
+        <h3>Band Transparency</h3>
+            You can decide how much the outside world is allowed to see the internal workings of your band. You can decide between:
 
-        * open source
-        * critic aaeoua
-    {% endcomment %}
-    <h3>Solid Backup.</h3>
-    <p>
-        OK it's time for a test.
-    </p>
-    <p>
-        What do these two songs have in common?
-    </p>
-        [embedded player for groove basin] [link to rayza's site]
-        [embedded player for water on the dancefloor] [link to akumajobelmont's site]
-    <p>
-        The answer is: 
-    </p>
-    <ol>
-        <li>They both <em>rock</em>.</li>
-        <li>They are both "works in progress"</li>
-        <li>The authors have both reported that they have long since lost the source project files.</li>
-    </ol>
-    <p>
-        This brings sadness to my heart.
-    </p>
-    <p>
-        With SolidComposer, you have a backup of <em>every version</em> of every project,
-        along with each sample file that the projects depend on.
-    </p>
-    <p>
-        Your data is stored on Amazon S3. Guaranteed to be 99.99999% reliable. It is not going anywhere.
-    </p>
-    <h2><a id="supported-studios">Supported Studios</a></h2>
-    <ul>
-        <li><a href="http://flstudio.image-line.com/">FL Studio</a></li>
-        <li><a href="http://lmms.sourceforge.net/">LMMS</a></li>
-    </ul>
-    <p>
-        Currently, FL Studio and LMMS are supported. We plan on supporting other studios like Cakewalk, and even plain old MIDI files.
-        Cast your vote for what studio you want supported on <a href="http://solidcomposer.uservoice.com/">solidcomposer.uservoice.com</a>.
-    </p>
-    <h2><a name="arena">Arena</a></h2>
-    <p>
-        I mentioned that SolidComposer would make you a better musician, but
-        so far all I've shown is that it'll help you not want to throw your computer out the window.
-    </p>
-    <p>
-        Introducing the Arena.
-    </p>
-    <p>
-        In the arena, anyone can create a music competition. Competitions are great for 
-    </p>
-    <ul>
-        <li>Getting musicians together.</li>
-        <li>Giving you an excuse to just make a song real quick instead of playing video games.</li>
-        <li>Giving and receiving feedback.</li>
-    </ul>
-    <p>
-        It's really open ended. You can have a themed competition, free-for-all,
-        2-hour competition, 2-month competition. It's really your decision.
-        However what SolidComposer <em>does</em> do is make that competition a great experience.
-    </p>
-    <p>
-        <strong>Integrated chat room.</strong> This way anyone can jump right in and join the fun.
-    </p>
-    <p>
-        <strong>Automated listening party.</strong> 
-    </p>
-    <p>
-        <strong>Everything is live.</strong> You don't have to refresh the page or worry about time zones.
-    </p>
-    <p>
-        <strong>Relative time zone.</strong> No matter where you are, the time
-        is displayed in your own time zone, so you can compete with anyone
-        around the world without miscommunicating.
-    </p>
-    <h2>Next Release</h2>
-    <p>
-        This is currently the "<a href="http://www.youtube.com/watch?v=YcCVZeHJ8kw">Boten Anna</a>" release.
-        Many more features are planned. Help us prioritize and submit your own ideas on the <a href="http://solidcomposer.uservoice.com/">UserVoice feedback site.</a>
-    </p>
-    <div>
-        <a href="{% url plans %}">Sign up!</a>
+            * open source
+            * critic aaeoua
+        {% endcomment %}
+        <h3>Solid Backup.</h3>
+        <p>
+            OK it's time for a test.
+        </p>
+        <p>
+            What do these two songs have in common?
+        </p>
+            [embedded player for groove basin] [link to rayza's site]
+            [embedded player for water on the dancefloor] [link to akumajobelmont's site]
+        <p>
+            The answer is: 
+        </p>
+        <ol>
+            <li>They both <em>rock</em>.</li>
+            <li>They are both "works in progress"</li>
+            <li>The authors have both reported that they have long since lost the source project files.</li>
+        </ol>
+        <p>
+            This brings sadness to my heart.
+        </p>
+        <p>
+            With SolidComposer, you have a backup of <em>every version</em> of every project,
+            along with each sample file that the projects depend on.
+        </p>
+        <p>
+            Your data is stored on <a href="http://aws.amazon.com/s3/">Amazon S3</a>. Guaranteed to be <a href="http://aws.amazon.com/s3/faqs/#How_is_Amazon_S3_designed_to_achieve_99.999999999%_durability">99.999999999%</a> durable. It is not going anywhere.
+        </p>
+        <h2><a id="supported-studios">Supported Studios</a></h2>
+        <ul>
+            <li><a href="http://flstudio.image-line.com/">FL Studio</a></li>
+            <li><a href="http://lmms.sourceforge.net/">LMMS</a></li>
+        </ul>
+        <p>
+            Currently, FL Studio and LMMS are supported. We plan on supporting other studios like Cakewalk, and even plain old MIDI files.
+            Cast your vote for what studio you want supported on <a href="http://solidcomposer.uservoice.com/">solidcomposer.uservoice.com</a>.
+        </p>
+        <h2><a name="arena">Arena</a></h2>
+        <p>
+            I mentioned that SolidComposer would make you a better musician, but
+            so far all I've shown is that it'll help you not want to throw your computer out the window.
+        </p>
+        <p>
+            Introducing the <a href="{% url arena.home %}">Arena</a>.
+        </p>
+        <p>
+            In the arena, anyone can create a music competition. Competitions are great for 
+        </p>
+        <ul>
+            <li>Getting musicians together.</li>
+            <li>Giving you an excuse to just make a song real quick instead of playing video games.</li>
+            <li>Giving and receiving feedback.</li>
+        </ul>
+        <p>
+            It's really open ended. You can have a themed competition, free-for-all,
+            2-hour competition, 2-month competition. It's really your decision.
+            However what SolidComposer <em>does</em> do is make that competition a great experience.
+        </p>
+        <p>
+            <strong>Integrated chat room.</strong>
+            This way anyone can jump right in and join the fun.
+        </p>
+        <p>
+            <strong>Automated listening party.</strong>
+            After a competition is over, everyone listens to the entries, in order,
+            at the same time, providing valuable feedback.
+        </p>
+        <p>
+            <strong>Everything is live.</strong> You don't ever have to refresh the page.
+        </p>
+        <p>
+            <strong>Relative time zone.</strong> No matter where you are, the time
+            is displayed in your own time zone, so you can compete with anyone
+            around the world without miscommunicating.
+        </p>
+        <h2><a name="next-release">Next Release</a></h2>
+        <p>
+            This is currently the "<a href="{% url article 'whats-new-boten-anna' %}">Boten Anna</a>" release.
+            Many more features are planned. Help us prioritize and submit your own ideas on the <a href="http://solidcomposer.uservoice.com/">UserVoice feedback site.</a>
+        </p>
+        {% if not request.user.is_authenticated %}
+            <a id="bottom-sign-up" href="{% url plans %}"><img style="margin: 20px 80px;" src="{{ MEDIA_URL }}img/sign-up-now-black.png" alt="Sign up now"/></a>
+        {% endif %}
+        <ul>
+            <li class="twitter">
+                <a href="http://twitter.com/solidcomposer">Follow SolidComposer</a>
+            </li>
+            <li class="facebook">
+                <a href="http://www.facebook.com/pages/SolidComposer/122046227844475">'Like' SolidComposer</a>
+            </li>
+        </ul>
     </div>
 {% endblock %}
