@@ -284,7 +284,15 @@ form {
 
 #tools {
     float: right;
-    margin: 8px 14px 0 0;
+    margin: 8px 10px 0 0;
+    list-style-type: none;
+
+    li.plus a {
+        background-image: url({{ MEDIA_URL }}img/add-16x16.png);
+        background-repeat: no-repeat;
+        background-position: left center;
+        padding: 0 0 0 20px;
+    }
 }
 
 ul.errorlist {

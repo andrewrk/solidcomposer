@@ -1,6 +1,10 @@
 Release "Boten Anna" (Basshunter):
+* edit comment button is broken in arena
+* gravatar and live comment feedback is broken in userpage/bandpage
+* design for comments
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
+      # show gravatar in user list
     - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
     - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
     - url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),
@@ -17,8 +21,6 @@ Release "Boten Anna" (Basshunter):
     - url(r'^redeem/(.+)/$', 'workshop.views.redeem_invitation', name="workbench.redeem_invitation"),
     - url('^$', direct_to_template, {'template': 'arena/home.html'}, name="arena.home"),
     - url('^create/$', 'competitions.views.create', name="arena.create"),
-    - url('^compete/(\d+)/$', 'competitions.views.competition', name="arena.compete"),
-      # show gravatar in user list
     - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
   > tip framework
     - tips should show up where the tip element is but not on top of it.

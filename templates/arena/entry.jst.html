@@ -29,7 +29,7 @@
             </a>
         <% }%>
         <% if (mine && ! SCCompo.submissionActive()) { %>
-            <a href="<%=urls.project_version(json.user.solo_band, json.user_entry.project_id, json.user_entry.version_number)%>">&raquo;see this project in the workbench</a>
+            <a class="workbench-link" href="<%=urls.project_version(json.user.solo_band, user_entry.project_id, user_entry.version_number)%>">&raquo;see this project in the workbench</a>
         <% } %>
     </div>
 <% }(entry, i)); %>

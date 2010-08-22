@@ -2,6 +2,10 @@
 @import "chat.pre.css";
 @import "songplayer.pre.css";
 
+#wrapper {
+    border-top: none;
+}
+
 h1 {
     font-family: Arial, Verdana, sans-serif;
     font-size: 30px;
@@ -117,8 +121,37 @@ h4 {
 
 #entries-inside {
     overflow: auto;
-    width: 400px;
+    width: 360px;
     height: 300px;
+
+    .track {
+        overflow-y: hidden;
+    }
+
+    .entry .track {
+        color: #ffffff;
+        text-decoration: none;
+        display: block;
+        height: 32px;
+        padding: 10px 0 0 8px;
+        margin: 0;
+    }
+
+    .entry-user .track {
+        color: #000000;
+        background: #dbe4ff;
+    }
+
+    .entry-playing .track {
+        background: #ffb52b;
+        color: #000000;
+    }
+
+    .workbench-link {
+        font-weight: bold;
+        color: #9bb6ff;
+        float: right;
+    }
 }
 
 #entries {
@@ -167,26 +200,6 @@ h4 {
             background-image: url("../img/thumbsup.png");
         }
     }
-}
-
-.entry .track {
-    color: #ffffff;
-    text-decoration: none;
-    display: block;
-    height: 32px;
-    padding: 10px 0 0 8px;
-    margin: 0;
-    line-height: 0;
-}
-
-.entry-user .track {
-    color: #000000;
-    background: #dbe4ff;
-}
-
-.entry-playing .track {
-    background: #ffb52b;
-    color: #000000;
 }
 
 

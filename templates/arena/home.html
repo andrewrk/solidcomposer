@@ -6,21 +6,22 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}js/arena/home.pre.js"></script>
 {% endblock %}
 
+{% block tools %}
+    {{ block.super }}
+    <li class="plus"><a href="{% url arena.create %}">Create a Competition</a></li>
+{% endblock %}
+
+{% block bread_arena %}
+    <span class="dest">Arena</span>
+{% endblock %}
+
 {% block content %}
-    <div id="tools">
-        <a href="{% url arena.create %}">Create a Competition</a>
-    </div>
-    <div id="bread">
-        <a href="{% url home %}">Home</a>
-        &gt;
-        <span class="dest">Arena</span>
-    </div>
     <div id="compowrapper">
         <div id="owned">
-        {% include 'loading.html' %}
+            {% include 'loading.html' %}
         </div>
         <div id="available">
-        {% include 'loading.html' %}
+            {% include 'loading.html' %}
         </div>
         <div class="clear"></div>
     </div>

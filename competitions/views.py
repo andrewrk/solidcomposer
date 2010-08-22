@@ -203,14 +203,6 @@ def ajax_compo(request, compo_id):
         }
     }
 
-    def entry_to_dict(entry):
-        d = entry.to_dict(chains=['owner.solo_band'])
-        d['song'] = song_to_dict(entry.song, request.user)
-        return d
-
-    # entries. if competition is closed, sort by vote count.
-    data['entries'] = [entry_to_dict(x) for x in compo.entry_set.all()]
-
     if request.user.is_authenticated():
         max_votes = max_vote_count(compo.entry_set.count())
         used_votes = ThumbsUp.objects.filter(owner=request.user, entry__competition=compo)
@@ -223,13 +215,18 @@ def ajax_compo(request, compo_id):
         }
         user_entries = Entry.objects.filter(competition=compo, owner=request.user)
         data['submitted'] = (user_entries.count() > 0)
-        if user_entries.count() > 0:
-            user_entry_song = user_entries[0].song
-            data['user_entry'] = user_entry_song.to_dict()
 
-            version = ProjectVersion.objects.get(song=user_entry_song)
-            data['user_entry']['project_id'] = version.project.pk
-            data['user_entry']['version_number'] = version.version
+    def entry_to_dict(entry):
+        data = entry.to_dict(chains=['owner.solo_band'])
+        data['song'] = song_to_dict(entry.song, request.user)
+        if request.user.is_authenticated() and entry.owner == request.user:
+            version = ProjectVersion.objects.get(song=entry.song)
+            data['project_id'] = version.project.pk
+            data['version_number'] = version.version
+        return data
+
+    # entries. if competition is closed, sort by vote count.
+    data['entries'] = [entry_to_dict(x) for x in compo.entry_set.all()]
 
     return json_response(data)
 

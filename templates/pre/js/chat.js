@@ -512,6 +512,9 @@ var Chat = function() {
 
         // public functions:
         chatRoomActive: function (room) {
+            if (room === null) {
+                return false;
+            }
             var now = new Date();
             var local;
 

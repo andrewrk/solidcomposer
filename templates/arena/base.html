@@ -5,7 +5,7 @@
 {% block css %}arena.pre.css{% endblock %}
 
 {% block login %}
-{% include 'login_div.html' %}
+    {% include 'login_div.html' %}
 {% endblock %}
 
 {% block extra_header %}
@@ -14,3 +14,21 @@
 {% endblock %}
 
 {% block nav_arena_li_class %}selected{% endblock %}
+
+{% block nav2 %}
+    {% block tools_wrapper %}
+        <ul id="tools">
+            {% block tools %}
+            {% endblock %}
+        </ul>
+    {% endblock %}
+    <div id="bread">
+        <a href="{% url home %}">Home</a>
+        &gt;
+        {% block bread_arena %}
+            <a href="{% url arena.home %}">Arena</a>
+        {% endblock %}
+        {% block bread_crumb %}
+        {% endblock %}
+    </div>
+{% endblock %}

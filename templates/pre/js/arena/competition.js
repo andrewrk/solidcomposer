@@ -54,6 +54,9 @@ var SCCompo = function () {
 
     var ajaxForcePlayerUpdate = true;
 
+    // maps entry id to entry in state
+    var entries = {};
+
     function scrollToNowPlaying() {
         // scroll to new track in entry list
         var index;
@@ -203,8 +206,8 @@ var SCCompo = function () {
         // clicks for entry-area
         $("#resubmit").click(function(){
             state.resubmitting = ! state.resubmitting;
-            $("#entry-title").attr('value', state.json.user_entry.title);
-            $("#entry-comments").attr('value', state.json.user_entry.comments);
+            $("#entry-title").attr('value', state.user_entry.title);
+            $("#entry-comments").attr('value', state.user_entry.song.comment_node.content);
             updateCompo();
             return false;
         });
@@ -534,8 +537,14 @@ var SCCompo = function () {
 
                 sortEntries();
 
+                var entry;
                 for (var i=0; i<state.json.entries.length; ++i) {
-                    Player.processSong(state.json.entries[i].song);
+                    entry = state.json.entries[i];
+                    Player.processSong(entry.song);
+                    entries[entry.id] = entry;
+                    if (state.json.user.is_authenticated && entry.owner.id == state.json.user.id) {
+                        state.user_entry = entry;
+                    }
                 }
 
                 state.activity = getCurrentActivity();
