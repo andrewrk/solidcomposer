@@ -74,7 +74,7 @@ a {
 }
 
 #header {
-    background-color: #292929;
+    background: #292929 url({{ MEDIA_URL }}img/header-gradient.png) left top repeat-x;
     color: #cacbcc;
     height: 66px;
     width: 100%;
