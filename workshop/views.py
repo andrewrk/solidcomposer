@@ -205,15 +205,26 @@ def redeem_invitation(request, password_hash):
     """
     join the band if the invitation is valid
     """
-    err_msg = True
+    err_msg = ""
     try:
         invite = BandInvitation.objects.get(code=password_hash)
     except BandInvitation.DoesNotExist:
         invite = None
+        err_msg = design.invitation_expired
+        return render_to_response('workbench/redeem_invitation.html', locals(), context_instance=RequestContext(request))
 
-    if invite is not None and (invite.expire_date is None or (datetime.now() <= invite.expire_date and invite.count > 0)):
-        # make sure the band member doesn't already exist
-        if BandMember.objects.filter(user=request.user, band=invite.band, role=invite.role).count() == 0:
+    if invite.expire_date is None or (datetime.now() <= invite.expire_date and invite.count > 0):
+        # if the member exists, escalate the privileges to the new role.
+        try:
+            member = BandMember.objects.get(user=request.user, band=invite.band)
+            # if the role is the same or worse, error
+            if invite.role >= member.role:
+                err_msg = design.already_member_of_x.format(member.band.title)
+                return render_to_response('workbench/redeem_invitation.html', locals(), context_instance=RequestContext(request))
+            else:
+                member.role = invite.role
+                member.save()
+        except BandMember.DoesNotExist:
             # create a band member for the invitation
             member = BandMember()
             member.user = request.user
@@ -221,21 +232,22 @@ def redeem_invitation(request, password_hash):
             member.role = invite.role
             member.save()
 
-            createNewBandMemberLogEntry(member)
+        createNewBandMemberLogEntry(member)
 
-            # decrement the counter
-            invite.count -= 1
+        # decrement the counter
+        invite.count -= 1
 
-            if invite.count <= 0:
-                invite.delete()
-            else:
-                invite.save()
+        if invite.count <= 0:
+            invite.delete()
+        else:
+            invite.save()
 
-            invite.invitee = request.user # we fill this field for the sake of send_invitation_accepted_email
-            send_invitation_accepted_email(invite, request.get_host())
+        invite.invitee = request.user # we fill this field for the sake of send_invitation_accepted_email
+        send_invitation_accepted_email(invite, request.get_host())
 
-            band = invite.band
-            err_msg = False
+        band = invite.band
+    else:
+        err_msg = design.invitation_expired
 
     return render_to_response('workbench/redeem_invitation.html', locals(), context_instance=RequestContext(request))
 

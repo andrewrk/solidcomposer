@@ -23,6 +23,7 @@ only_managers_can_create_invitations = "Only band managers can create invitation
 you_must_supply_an_email_address = "You must supply an email address."
 invalid_email_address = "Invalid email address."
 x_already_in_band = "{0} is already in your band."
+already_member_of_x = "You are already a member of {0}"
 already_invited_x_to_your_band = "You already invited {0} to join your band."
 that_user_does_not_exist = "That user does not exist."
 x_is_inviting_you_to_join_y = "{0} is inviting you to join {1} on SolidComposer"

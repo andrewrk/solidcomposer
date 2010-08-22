@@ -13,15 +13,14 @@
 
 {% block content %}
     <div class="textblock">
-        {% if err_msg %}
-            <h1>Invitation Expired</h1>
+        <h1>Redeem Invitation</h1>
+        {% include 'form_errors.html' %}
+        {% if not err_msg %}
             <p>
-                The invitation is expired. Get your band manager to send you another invitation!
+                You are now a part of {{ band.title }}.
             </p>
-        {% else %}
-            <h1>You are now a part of {{ band.title }}</h1>
             <p>
-                Congrats! Now head over to the <a href="{% url workbench.band band.id %}">project manager</a> and get to work!
+                Congrats. Now head over to the <a href="{% url workbench.band band.id %}">project manager</a> and get to work!
             </p>
         {% endif %}
     </div>

@@ -667,7 +667,6 @@ class SimpleTest(TestCase):
         self.assertEqual(log_entry.catalyst, self.just64helpin)
         self.assertEqual(log_entry.band, invite.band)
 
-
         # band member exists already
         response = self.client.get(redeem_invitation(invite.code))
         self.assertEqual(response.status_code, 200)
