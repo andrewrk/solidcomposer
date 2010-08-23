@@ -1,5 +1,7 @@
 {% extends 'workbench/band/base.html' %}
 
+{% block title %}{{ band.title }} - {{ block.super }}{% endblock %}
+
 {% block css %}band.pre.css{% endblock %}
 
 {% block extra_header %}

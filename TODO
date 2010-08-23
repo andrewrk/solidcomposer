@@ -4,7 +4,6 @@ Release "Boten Anna" (Basshunter):
   > pages - iterate through all of them. also test on 1024 page width
     - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
     - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
-    - url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),
     - url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),
     - url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
     - url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),
@@ -15,8 +14,6 @@ Release "Boten Anna" (Basshunter):
     - url(r'^download/samples/$', 'workshop.views.download_sample_zip', name="workbench.download_sample_zip"),
     - url(r'^plugin/(.+)/$', 'workshop.views.plugin', name="workbench.plugin"),
     - url(r'^studio/(.+)/$', 'workshop.views.studio', name="workbench.studio"),
-    - url(r'^redeem/(.+)/$', 'workshop.views.redeem_invitation', name="workbench.redeem_invitation"),
-    - url('^create/$', 'competitions.views.create', name="arena.create"),
     - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
   > tip framework
     - tips should show up where the tip element is but not on top of it.
@@ -37,10 +34,20 @@ Wednesday, September 1:
   > change domain to new place
   > make sure email is working.
 * blog post announcing release
-  > movie showing off features
+* advertise
+  > jplayer sites list
+  > IRC
+  > oc remix
+  > email friends & family
+  > facebook, twitter
+  > send a newsletter to everyone registered at SC
+  > hacker news
+  > the 99 designs page
+* movie showing off features
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* ability to turn off tips
 * use jquery and dropdowns for date picking rather than anytimec
 * tests
   > contact page

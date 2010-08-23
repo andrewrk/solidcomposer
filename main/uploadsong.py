@@ -237,8 +237,6 @@ def handle_project_file(filename, user, song, filename_appendix=""):
         if dawExt:
             source_file_title += filename_appendix + "." + dawExt
 
-        profile.save()
-
         usingDaw = True
     except daw.exceptions.LoadError:
         usingDaw = False

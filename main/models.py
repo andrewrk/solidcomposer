@@ -73,7 +73,7 @@ class Band(SerializableModel):
         'total_space',
         'used_space',
     )
-    date_created = models.DateTimeField(null=True)
+    date_created = models.DateTimeField()
 
     # if you want to change the title, you need to do band.rename(new_title)
     title = models.CharField(max_length=100)
