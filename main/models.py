@@ -73,6 +73,7 @@ class Band(SerializableModel):
         'total_space',
         'used_space',
     )
+    date_created = models.DateTimeField(null=True)
 
     # if you want to change the title, you need to do band.rename(new_title)
     title = models.CharField(max_length=100)
@@ -102,6 +103,9 @@ class Band(SerializableModel):
         return self.used_space > self.total_space
 
     def save(self, *args, **kwargs):
+        if not self.id:
+            self.date_created = datetime.now()
+
         if self.used_space > self.total_space and self.abandon_date is None:
             self.abandon_date = datetime.now()
         elif self.used_space <= self.total_space and self.abandon_date is not None:
