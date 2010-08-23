@@ -1,5 +1,8 @@
 @import "base.pre.css";
 
+$active-title-color: #4388cc;
+$ended-title-color: #394047;
+
 h2 {
     margin: 16px 10px;
     padding: 0;
@@ -69,17 +72,19 @@ h2 {
 
 .active {
     background-color: #dae0e8;
+    border: 1px solid $active-title-color;
 
     h1 {
-        background: #134d77 url("../img/bluetitle.png") repeat-x left top;
+        background: $active-title-color url("../img/light-title.png") repeat-x left top;
     }
 }
 
 .ended {
     background-color: #c8d1db;
+    border: 1px solid $ended-title-color;
 
     h1 {
-        background: #394047 url("../img/graytitle.png") repeat-x left top;
+        background: $ended-title-color url("../img/light-title.png") repeat-x left top;
     }
 }
 

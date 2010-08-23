@@ -26,18 +26,19 @@ $border-color: #24618e;
             }
         }
     }
-}
 
-li.selected { /* settings for selected tab */
-    border-bottom: 1px solid #fff; /* set border color to page background color */
-    background-color: #fff; /* set background color to match above border color */
-    
-    a { /* settings for selected tab link */
-        background-color: #fff; /* set selected tab background color as desired */
-        color: #000 !important; /* set selected tab link color as desired */
-        position: relative;
-        top: 1px;
-        padding-top: $tab-height + 1px !important; /* must change with respect to padding (X) above and below */
+    li.selected { /* settings for selected tab */
+        border-bottom: 1px solid #fff; /* set border color to page background color */
+        background-color: #fff; /* set background color to match above border color */
+        
+        a { /* settings for selected tab link */
+            background-color: #fff; /* set selected tab background color as desired */
+            color: #000 !important; /* set selected tab link color as desired */
+            position: relative;
+            top: 1px;
+            padding-top: $tab-height + 1px !important; /* must change with respect to padding (X) above and below */
+        }
     }
+
 }
 

@@ -1,8 +1,138 @@
 @import "workbench.pre.css";
 @import "songplayer.pre.css";
 @import "meter.pre.css";
+@import "nav2.pre.css";
+
+$title-color: #394047;
 
 .inactive {
     color: #7d7d7d;
 }
 
+#band-spacemeter {
+    float: right;
+    margin: 10px 2px 0 0;
+
+    .tip {
+        float: left;
+        margin: 0 4px;
+    }
+    .meter {
+        float: left;
+        margin: 0 6px;
+    }
+}
+
+#new-project {
+    float: left;
+    margin: 6px 0 0 0;
+
+    a {
+        background-image: url(../img/add-16x16.png);
+        background-repeat: no-repeat;
+        background-position: left center;
+        padding: 0 0 0 20px;
+    }
+}
+
+#filters {
+    float: left;
+}
+
+#page-nav {
+    float: right;
+    margin: 10px 24px;
+
+    label {
+        font-size: 12px;
+        color: #383838;
+    }
+    input {
+        margin: 0 0 0 2px;
+    }
+}
+
+#project-list {
+    .nav {
+        margin: 10px 24px;
+    }
+
+    .project {
+        padding: 10px;
+        margin: 0 14px 14px;
+
+        h1 {
+            margin: 0;
+            padding: 0;
+
+            a {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 18px;
+                color: #ffffff;
+                background-color: $title-color;
+                background: $title-color url("../img/light-title.png") repeat-x left top;
+                text-decoration: none;
+                padding: 5px 0 6px 15px;
+                display: block;
+
+                .date {
+                    float: right;
+                    margin: 0 24px;
+                }
+            }
+        }
+
+        .inner {
+            background-color: #dae0e8;
+            border: 1px solid $title-color;
+
+            .player-large {
+                margin: 14px 14px 8px 14px;
+            }
+
+            .actions {
+                float: right;
+                margin: 0;
+                padding: 8px 24px;
+
+                li {
+                    margin: 0;
+                    padding: 0;
+                    background-image: none;
+
+                    a {
+                        background-image: url(../img/arrow-bullet.png);
+                        background-repeat: no-repeat;
+                        background-position: left center;
+                        padding: 0 0 0 20px;
+                    }
+                }
+            }
+
+            .status {
+                font-size: 14px;
+                font-weight: bold;
+                font-family: Arial, Helvetica, sans-serif;
+                margin: 0;
+                padding: 14px;
+
+                .mine, .out, .available {
+                    padding: 6px;
+                }
+
+                .mine {
+                    background-color: #258F29;
+                    color: #ffffff;
+                }
+                .out {
+                    background-color: #C72520;
+                    color: #ffffff;
+                }
+                .available {
+                    background-color: #F0F237;
+                    color: #000000;
+                }
+            }
+        }
+    }
+}

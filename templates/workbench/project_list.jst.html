@@ -2,49 +2,21 @@
     {% include 'workbench/project_list_nav.jst.html' %}
     <% for (var i=0; i<project_data.projects.length; ++i) { var project = project_data.projects[i]; %>
         <div class="project" id="project-<%=project.id%>">
-            <div class="header">
-                <span class="title">
-                    <a href="<%=urls.project(project.id)%>"><%=project.latest_version.song.title%></a>
-                </span>
-                {% include 'workbench/project_status.jst.html' %}
-                <span class="action">
-                    <% if (project.checked_out_to !== null) { %>
-                        <% if (project.checked_out_to.id === user.id) { %>
-                            <span class="checkin"><a href="#">Check in</a></span>
-                        <% } else { %>
-                            {% comment %} <span class="poke"><a href="#">Poke <%=project.checked_out_to.username%></a></span> {% endcomment %}
-                        <% } %>
-                    <% } else { %>
-                        <span class="checkout"><a href="#">Check out</a></span>
-                    <% } %>
-                </span>
-                {% comment %}
-                <span class="attributes">
-                    <div class="promote-votes">
-                        thumbs ups x <%=project.promote_voters.length%>
-                    </div>
-                    <div class="scrap-votes">
-                        trash x <%=project.scrap_voters.length%>
-                    </div>
-                </span>
-                {% endcomment %}
-            </div>
-            <div class="preview-player">
+            <h1><a href="<%= urls.project(project.id) %>">
+                <span class="date"><%= Time.printableTimeSince(project.latest_version.date_added) %> ago</span>
+                <%= project.title %> -
+                Version <%= project.latest_version.version %> by
+                <%= project.latest_version.song.owner.username %> 
+            </a></h1>
+            <div class="inner">
                 <% var song = project.latest_version.song; song.band = project_data.band; %>
                 {% include 'player/player.jst.html' %}
-            </div>
-            {% comment %}
-            <div class="action-list">
-                <ul>
-                    <li><a href="#">Promote</a></li>
-                    <li><a href="#">Vote to Scrap</a></li>
-                    <% if (project_data.band_member.role == {{ BAND_MEMBER_MANAGER }}) { %>
-                        <li><a href="#">Skip Vote and Scrap</a></li>
-                    <% } %>
-                    <li><a href="#">Subscribe to Changes</a></li>
+                <ul class="actions">
+                    <li><a href="<%= urls.project(project.id) %>">Go to project</a></li>
                 </ul>
+                {% include 'workbench/project_status.jst.html' %}
+                <div class="clear"></div>
             </div>
-            {% endcomment %}
         </div>
     <% } %>
     {% include 'workbench/project_list_nav.jst.html' %}

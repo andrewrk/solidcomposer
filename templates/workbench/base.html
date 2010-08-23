@@ -24,6 +24,7 @@
             {% endblock %}
         </ul>
     {% endblock %}
+    {% block middle_nav2 %}{% endblock %}
     <div id="bread">
         <a href="{% url home %}">Home</a>
         &gt;
@@ -33,4 +34,5 @@
         {% block bread_crumb %}
         {% endblock %}
     </div>
+    {% block extra_nav2 %}{% endblock %}
 {% endblock %}

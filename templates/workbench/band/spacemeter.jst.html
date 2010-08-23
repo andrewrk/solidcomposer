@@ -3,11 +3,6 @@
     var denominator = band.total_space;
     var number_formatter_func = Time.fileSizeFormat;
 %>
-{% include 'workbench/spacemeter.jst.html' %}
 {% include 'tips/spaceLeftMeter.html' %}
-<% if (band.used_space > band.total_space) { %>
-    {% include 'workbench/space_warning.jst.html' %}
-<% } %>
-<div>
-    <a href="{% url account.plan %}">Get more space</a>
-</div>
+{% include 'workbench/spacemeter.jst.html' %}
+<a href="{% url account.plan %}">Get more space</a>

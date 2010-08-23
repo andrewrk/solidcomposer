@@ -2,18 +2,14 @@ Release "Boten Anna" (Basshunter):
 * design for comments
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
-    - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
-    - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
     - url(r'^band/(\d+)/$', 'workshop.views.band', name="workbench.band"),
-    - url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
-    - url(r'^band/(\d+)/create/$', 'workshop.views.create_project', name="workbench.create_project"),
-    - url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
-    - url(r'^band/(\d+)/invite/$', 'workshop.views.band_invite', name="workbench.band_invite"),
-    - url(r'^download/zip/$', 'workshop.views.download_zip', name="workbench.download_zip"),
-    - url(r'^download/sample/(\d+)/(.+)/$', 'workshop.views.download_sample', name="workbench.download_sample"),
-    - url(r'^download/samples/$', 'workshop.views.download_sample_zip', name="workbench.download_sample_zip"),
-    - url(r'^plugin/(.+)/$', 'workshop.views.plugin', name="workbench.plugin"),
     - url(r'^studio/(.+)/$', 'workshop.views.studio', name="workbench.studio"),
+
+    - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
+    - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
+    - url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
+    - url(r'^band/(\d+)/invite/$', 'workshop.views.band_invite', name="workbench.band_invite"),
+    - url(r'^plugin/(.+)/$', 'workshop.views.plugin', name="workbench.plugin"),
     - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
   > tip framework
     - tips should show up where the tip element is but not on top of it.
@@ -23,6 +19,8 @@ Release "Boten Anna" (Basshunter):
 * edit comment button is broken in arena
 * gravatar and live comment feedback is broken in userpage/bandpage
 * only one button on landing page
+* handle back buttons in project manager for #filters
+* look at all the pages with browser maximized and make it also look good for that
 
 Wednesday, September 1:
 * WE DO IT LIVE

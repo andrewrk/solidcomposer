@@ -21,23 +21,35 @@
     <span class="dest">{{ band.title }}</span>
 {% endblock %}
 
-{% block content %}
+{% block middle_nav2 %}
     {% if permission %}
         <div id="band-spacemeter">
             {% include 'loading.html' %}
         </div>
-        <div id="filters">
-            {% include 'loading.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block extra_nav2 %}
+    <div id="filters">
+        {% include 'loading.html' %}
+    </div>
+    <div id="new-project">
+        <a href="{% url workbench.create_project band.id %}">New Project</a>
+    </div>
+    <div class="clear"></div>
+{% endblock %}
+
+{% block content %}
+    {% if permission %}
+        <div id="warning" style="display: none;">
         </div>
-        <div id="new_project">
-            <a href="{% url workbench.create_project band.id %}">New Project</a>
-        </div>
-        <div>
-            <input type="text" id="search" class="inactive" />
+        <div id="page-nav">
+            <label for="search">Search:</label><input type="text" id="search" class="inactive" />
         </div>
         <div id="project-list">
             {% include 'loading.html' %}
         </div>
+        <div class="clear"></div>
     {% else %}
         <p>
             Only {{ band.title }} band members can access this page.
