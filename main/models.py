@@ -116,7 +116,7 @@ class Band(SerializableModel):
         super(Band, self).save(*args, **kwargs)
 
     def create_url(self):
-        self.url = create_url(self.title, lambda proposed: Band.objects.filter(url=proposed).count() == 0)
+        self.url = create_url(self.title.lower(), lambda proposed: Band.objects.filter(url=proposed).count() == 0)
 
     def rename(self, new_name):
         # if it's the same, do nothing
