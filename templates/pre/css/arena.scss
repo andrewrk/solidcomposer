@@ -1,77 +1,86 @@
 @import "base.pre.css";
 
-h1 {
-    font-family: Arial, Verdana, sans-serif;
-    font-size: 22px;
-    font-weight: bold;
-    color: #4079e3;
-    margin: 20px 0 8px 0;
-    padding: 0;
-}
-
 h2 {
-    font-family: Arial, Verdana, sans-serif;
-    font-size: 16px;
-    font-weight: bold;
-    color: #d93027;
-    margin: 20px 0 8px 0;
+    margin: 16px 10px;
     padding: 0;
 }
 
-
-#compowrapper {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-div.compo {
-    background: #415d85;
-    width: 400px;
-    margin: 0 0 12px 0;
-    padding: 8px;
-    color: #ffffff;
-}
-
-.compo h4 a, .compo h4 {
-    display: block;
-    font-family: Arial, Verdana, sans-serif;
-    color: #ffffff;
-    font-size: 18px;
-    font-weight: bold;
-    text-decoration: none;
-    margin: 0;
+.compo {
+    width: 420px;
+    margin: 10px;
     padding: 0;
+
+    h1 {
+        margin: 0;
+        padding: 0;
+
+        a {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 18px;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 5px 0 6px 4px;
+            display: block;
+        }
+    }
+
+    td, th {
+        text-align: left;
+        font-size: 12px;
+    }
+
+    td {
+        width: 180px;
+    }
+
+    img {
+        vertical-align: middle;
+    }
+
+    table {
+        float: left;
+        margin: 4px;
+    }
+
+    .buttons {
+        float: right;
+        margin: 6px;
+    }
+
+    .bookmark, .unbookmark, .view {
+        background-image: none !important;
+        padding: 0 !important;
+    }
+    .bookmark a, .unbookmark a, .view a {
+        background-position: left center;
+        background-repeat: no-repeat;
+        padding: 0 0 0 20px;
+    }
+    .bookmark a {
+        background-image: url(../img/favorite.png);
+    }
+    .unbookmark a {
+        background-image: url(../img/favorite-x-16x16.png);
+    }
+    .view a {
+        background-image: url(../img/arrow-bullet.png);
+    }
 }
 
-.compo p {
-    margin: 0;
-    padding: 6px 0 0 0;
-    font-family: Verdana, sans-serif;
-    font-size: 12px;
+.active {
+    background-color: #dae0e8;
+
+    h1 {
+        background: #134d77 url("../img/bluetitle.png") repeat-x left top;
+    }
 }
 
-.compo-links {
-    text-align: right;
-    margin: 0;
-    padding: 0;
-}
+.ended {
+    background-color: #c8d1db;
 
-.compo a {
-    color: #ffad46;
-    margin: 0;
-    padding: 0;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-}
-
-.compo a:hover {
-    text-decoration: underline;
-}
-
-.compo img {
-    vertical-align: middle;
+    h1 {
+        background: #394047 url("../img/graytitle.png") repeat-x left top;
+    }
 }
 
 #public-competitions {
@@ -99,4 +108,3 @@ div.compo {
 .nav {
     margin: 0 0 24px 0;
 }
-

@@ -17,6 +17,7 @@ class Competition(SerializableModel):
         'vote_deadline',
         'vote_period_length',
         'chat_room',
+        'host',
     )
     OWNER_ATTRS = (
         'theme',

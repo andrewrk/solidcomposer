@@ -2,7 +2,6 @@ Release "Boten Anna" (Basshunter):
 * design for comments
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
-    - url('^$', direct_to_template, {'template': 'arena/home.html'}, name="arena.home"),
     - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
     - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
     - url(r'^create/$', 'workshop.views.create_band', name="workbench.create_band"),

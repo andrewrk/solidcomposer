@@ -1,39 +1,60 @@
 <% (function (compo) { %>
-    <div class="compo">
-        <% if (compo.user_entered && compo.vote_count > 0) { %>
-            <span class="vote-count">
-                <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="+" /><%= compo.vote_count %>
-            </span>
-        <% } %>
-        <h4><a href="<%=urls.compete(compo.id)%>" id="compo-<%= compo.id %>-view"><%= compo.title %></a></h4>
-        <% if (Time.secondsUntil(compo.start_date) > 0) { %>
-            <p>starts in <%= Time.printableTimeUntil(compo.start_date) %></p>
-        <% } else if (Time.secondsUntil(compo.submit_deadline) > 0) { %>
-            <p>submission deadline in <%= Time.printableTimeUntil(compo.submit_deadline) %></p>
-        <% } else if (compo.have_listening_party && Time.secondsUntil(compo.listening_party_end_date) > 0) { %>
-            <% if (Time.localTime(compo.listening_party_start_date) > (new Date())) { %> 
-                <p>listening party starting in
-                <%= Time.printableTimeUntil(compo.listening_party_start_date) %>
-                </p>
-            <% } else { %>
-                <p>Listening party
-                (<%= Time.timeDisplaySince(compo.listening_party_start_date) %> / 
-                <%= Time.timeDisplayUntil(compo.listening_party_end_date) %>)</p>
-            <% } %>
-        <% } else if (Time.secondsUntil(compo.vote_deadline) > 0) { %>
-            <p>voting ends in <%= Time.printableTimeUntil(compo.vote_deadline) %></p>
-        <% } else { %>
-            <p>ended on <%= Time.formatDate(Time.localTime(compo.submit_deadline)) %></p>
-        <% } %>
-        <div class="compo-links">
-            <a href="<%=urls.compete(compo.id)%>" id="compo-<%= compo.id %>-view">view</a>
-            <% if (user.is_authenticated) { %>
-                <% if (compo.bookmarked) { %>
-                    <a href="#" id="compo-<%= compo.id %>-remove"><img src="{{ MEDIA_URL }}img/close.png" alt="">remove</a>
-                <% } else { %>
-                    <a href="#" id="compo-<%= compo.id %>-bookmark"><img src="{{ MEDIA_URL }}img/favorite.png" alt="" />join</a>
+    <div class="compo <% if (Time.secondsUntil(compo.vote_deadline) > 0) { %>active<% } else { %>ended<% } %>" id="compo-<%=compo.id%>">
+        <h1><a href="<%=urls.compete(compo.id)%>"><%= compo.title %></a></h1>
+        <table>
+            <tr>
+                <th>Host:</th>
+                <td><a href="<%= urls.userpage(compo.host.username) %>"><%= compo.host.username %></a></td>
+            </tr>
+            <tr>
+                <th>Start Date:</th>
+                <td><%= compo.start_date %></td>
+            </tr>
+            <tr>
+                <th>Length:</th>
+                <td><%= Time.printableTimeDiff((Time.coerceDate(compo.submit_deadline) - Time.coerceDate(compo.start_date))/1000) %></td>
+            </tr>
+            <tr>
+                <th>Status:</th>
+                <td>
+                    <% if (Time.secondsUntil(compo.start_date) > 0) { %>
+                        Starts in <%= Time.printableTimeUntil(compo.start_date) %>
+                    <% } else if (Time.secondsUntil(compo.submit_deadline) > 0) { %>
+                        Submission deadline in <%= Time.printableTimeUntil(compo.submit_deadline) %>
+                    <% } else if (compo.have_listening_party && Time.secondsUntil(compo.listening_party_end_date) > 0) { %>
+                        <% if (Time.localTime(compo.listening_party_start_date) > (new Date())) { %> 
+                            Listening party starting in
+                            <%= Time.printableTimeUntil(compo.listening_party_start_date) %>
+                        <% } else { %>
+                            Listening party
+                            (<%= Time.timeDisplaySince(compo.listening_party_start_date) %> / 
+                            <%= Time.timeDisplayUntil(compo.listening_party_end_date) %>)
+                        <% } %>
+                    <% } else if (Time.secondsUntil(compo.vote_deadline) > 0) { %>
+                        Voting ends in <%= Time.printableTimeUntil(compo.vote_deadline) %>.
+                    <% } else { %>
+                        Ended on <%= Time.formatDate(Time.localTime(compo.submit_deadline)) %>.
+                    <% } %>
+                </td>
+            </tr>
+        </table>
+        <div class="buttons">
+            <ul>
+                <li class="view"><a href="<%=urls.compete(compo.id)%>">View competition</a></li>
+                <% if (user.is_authenticated) { %>
+                    <% if (compo.bookmarked) { %>
+                        <li class="unbookmark"><a href="#" id="compo-<%= compo.id %>-remove">Unbookmark</a></li>
+                    <% } else { %>
+                        <li class="bookmark"><a href="#" id="compo-<%= compo.id %>-bookmark">Bookmark</a></li>
+                    <% } %>
                 <% } %>
+            </ul>
+            <% if (compo.user_entered && compo.vote_count > 0) { %>
+                <span class="vote-count">
+                    <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="+" /><%= compo.vote_count %>
+                </span>
             <% } %>
         </div>
+        <div class="clear"></div>
     </div>
 <% }(compo)); %>

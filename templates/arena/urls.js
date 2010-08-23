@@ -28,5 +28,8 @@
     },
     project_version: function(band_id, project_id, version_number) {
         return this.project(band_id, project_id) + "#version" + version_number;
+    },
+    userpage: function (username) {
+        return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
     }
 }

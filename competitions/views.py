@@ -250,7 +250,7 @@ def ajax_bookmark(request, id):
     return json_response(data)
 
 def compo_to_dict(compo, user):
-    data = compo.to_dict()
+    data = compo.to_dict(chains=['host'])
 
     data['have_theme'] = compo.theme != ''
     data['have_rules'] = compo.rules != ''
