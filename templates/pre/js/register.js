@@ -17,7 +17,7 @@ SCRegister = function() {
 
     that = {
         initialize: function() {
-            $('#id_plan').change(refreshUi);
+            $('#id_plan').change(refreshUi).keypress(refreshUi);
             refreshUi();
         }
     };
