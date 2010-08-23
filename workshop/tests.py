@@ -622,7 +622,7 @@ class SimpleTest(TestCase):
         self.client.login(username='just64helpin', password='temp1234')
         response = self.client.get(redeem_invitation('aoeu'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['err_msg'], True)
+        self.assertEqual(response.context['err_msg'], design.invitation_expired)
         self.assertEqual(invite_count, BandInvitation.objects.count())
         self.assertEqual(member_count, BandMember.objects.count())
         self.assertEqual(log_entry_count, LogEntry.objects.count())
@@ -639,7 +639,7 @@ class SimpleTest(TestCase):
 
         response = self.client.get(redeem_invitation(invite.code))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['err_msg'], True)
+        self.assertEqual(response.context['err_msg'], design.invitation_expired)
         self.assertEqual(invite_count, BandInvitation.objects.count())
         self.assertEqual(member_count, BandMember.objects.count())
         self.assertEqual(log_entry_count, LogEntry.objects.count())
@@ -650,7 +650,7 @@ class SimpleTest(TestCase):
 
         response = self.client.get(redeem_invitation(invite.code))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['err_msg'], False)
+        self.assertEqual(response.context['err_msg'], "")
         self.assertEqual(invite_count, BandInvitation.objects.count())
         invite = BandInvitation.objects.get(pk=invite.id)
         self.assertEqual(invite.count, 1)
@@ -670,7 +670,7 @@ class SimpleTest(TestCase):
         # band member exists already
         response = self.client.get(redeem_invitation(invite.code))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['err_msg'], True)
+        self.assertEqual(response.context['err_msg'], design.already_member_of_x.format(invite.band.title))
         self.assertEqual(invite_count, BandInvitation.objects.count())
         self.assertEqual(member_count, BandMember.objects.count())
         self.assertEqual(log_entry_count, LogEntry.objects.count())
@@ -679,7 +679,7 @@ class SimpleTest(TestCase):
         self.client.login(username='superjoe', password='temp1234')
         response = self.client.get(redeem_invitation(invite.code))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['err_msg'], False)
+        self.assertEqual(response.context['err_msg'], "")
         invite_count -= 1
         self.assertEqual(invite_count, BandInvitation.objects.count())
         member_count += 1
