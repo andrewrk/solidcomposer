@@ -17,9 +17,9 @@ Release "Boten Anna" (Basshunter):
     - maxWidth and maxHeight don't work in jquery dialog
     - dependency dialog
     - download samples dialog
-* edit comment button is broken in arena
 * gravatar and live comment feedback is broken in userpage/bandpage
 * handle back buttons in project manager for #filters
+* still have the ability to view comments during song playback
 * look at all the pages with browser maximized and make it also look good for that
 
 Wednesday, September 1:

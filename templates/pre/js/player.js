@@ -249,6 +249,8 @@ var Player = function() {
             return;
         }
 
+        lastDialogComment = comments[lastDialogComment.id];
+
         dialogComment.html(Jst.evaluate(templateCommentDialogCompiled, {
             comment_node: lastDialogComment,
             user: user
