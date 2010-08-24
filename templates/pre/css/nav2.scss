@@ -32,7 +32,7 @@ $border-color: #24618e;
         background-color: #fff; /* set background color to match above border color */
         
         a { /* settings for selected tab link */
-            background-color: #fff; /* set selected tab background color as desired */
+            background-color: $bg-color; /* set selected tab background color as desired */
             color: #000 !important; /* set selected tab link color as desired */
             position: relative;
             top: 1px;

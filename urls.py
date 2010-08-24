@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^$', 'main.views.home', name='home'),
 
     url(r'^ajax/login_state/$', 'main.views.ajax_login_state', name="ajax_login_state"),
+    # if you change this, change LOGIN_URL in settings too.
     url(r'^ajax/login/$', 'main.views.ajax_login', name="ajax_login"),
     url(r'^ajax/logout/$', 'main.views.ajax_logout', name="ajax_logout"),
     url(r'^ajax/comment/$', 'main.views.ajax_comment', name="ajax_comment"),

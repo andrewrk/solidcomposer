@@ -40,17 +40,17 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 
 # amazon s3 details
-AWS_ACCESS_KEY_ID = 'xxxxxxxxxxxxxxxxxxxx'
-AWS_SECRET_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+#AWS_ACCESS_KEY_ID = 'xxxxxxxxxxxxxxxxxxxx'
+#AWS_SECRET_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 AWS_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 AWS_TEST_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 # copy and uncomment in settings_user.py to use s3 storage
 #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 # make sure DEBUG is set to the value you want and run ./setup_amazon_payments.py to get these values.
-AWS_RECIPIENT_INSTRUCTION_TOKEN_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-AWS_RECIPIENT_INSTRUCTION_REQUEST_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-AWS_CALLER_INSTRUCTION_TOKEN_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-AWS_CALLER_INSTRUCTION_REQUEST_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#AWS_RECIPIENT_INSTRUCTION_TOKEN_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#AWS_RECIPIENT_INSTRUCTION_REQUEST_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#AWS_CALLER_INSTRUCTION_TOKEN_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+#AWS_CALLER_INSTRUCTION_REQUEST_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 DEFAULT_FROM_EMAIL = 'admin@solidcomposer.com'
 MEDIA_ROOT = absolute('media')
@@ -135,7 +135,7 @@ ACTIVATION_EXPIRE_DAYS = 1
 
 # free acount info
 # how much disk space do bands get for freeeee
-BAND_INIT_SPACE = 300 * 1024 * 1024 * 0.5 # 300 MB
+BAND_INIT_SPACE = 300 * 1024 * 1024 # 300 MB
 # how many bands can free users create
 FREE_BAND_LIMIT = 2
 
@@ -145,10 +145,11 @@ URL_DISALLOWED_CHARS = r'\./?'
 # edit or delete comments
 COMMENT_EDIT_TIME_HOURS = 24
 
-
 # user defined settings
-if os.path.exists(absolute("settings_user.py")):
-    from settings_user import * #@UnusedWildImport
+try:
+    from settings_user import *
+except ImportError:
+    pass
 
 # Preparser
 
