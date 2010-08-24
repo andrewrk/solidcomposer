@@ -1,19 +1,31 @@
 {% extends 'base.html' %}
 
+{% block css %}studio.pre.css{% endblock %}
+
+{% block extra_header %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/showdown-0.9.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/render-showdown.pre.js"></script>
+{% endblock %}
+
 {% block title %}{{ studio.title }} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="textblock">
-    <h1>{{ studio.title }}</h1>
-    {% if studio.external_url %}
-        {% if studio.price %}
-            <h2><a href="{{ studio.external_url }}">Buy for ${{ studio.price|floatformat:2 }}</a></h2>
-        {% else %}
-            <h2><a href="{{ studio.external_url }}">Download for free</a></h2>
-        {% endif %}
-    {% endif %}
-    <p>
-        No studio description.
-    </p>
-</div>
+    <div class="textblock">
+        <h1>{{ studio.title }}</h1>
+        <ul>
+            <li>
+                {% if studio.external_url %}
+                    {% if studio.price %}
+                        <a href="{{ studio.external_url }}">Buy for ${{ studio.price|floatformat:2 }}</a>
+                    {% else %}
+                        <a href="{{ studio.external_url }}">Download for free</a>
+                    {% endif %}
+                {% endif %}
+            </li>
+        </ul>
+        <img class="logo" src="{{ studio.logo_large.url}}" alt="" />
+        <div class="showdown">{{ studio.info }}</div>
+    </div>
 {% endblock %}

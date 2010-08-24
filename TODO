@@ -2,8 +2,8 @@ Release "Boten Anna" (Basshunter):
 * design for comments
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
+    - url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
     - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
-    - url(r'^studio/(.+)/$', 'workshop.views.studio', name="workbench.studio"),
 
     - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
     - url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
@@ -45,6 +45,7 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* bug: if you delete a timed comment it still shows up during playback
 * ability to turn off tips
 * use jquery and dropdowns for date picking rather than anytimec
 * tests
