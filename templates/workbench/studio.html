@@ -14,18 +14,20 @@
 {% block content %}
     <div class="textblock">
         <h1>{{ studio.title }}</h1>
-        <ul>
-            <li>
-                {% if studio.external_url %}
+        {% if studio.external_url %}
+            <ul>
+                <li>
                     {% if studio.price %}
                         <a href="{{ studio.external_url }}">Buy for ${{ studio.price|floatformat:2 }}</a>
                     {% else %}
                         <a href="{{ studio.external_url }}">Download for free</a>
                     {% endif %}
-                {% endif %}
-            </li>
-        </ul>
-        <img class="logo" src="{{ studio.logo_large.url}}" alt="" />
+                </li>
+            </ul>
+        {% endif %}
+        {% if studio.logo_large %}
+            <img class="logo" src="{{ studio.logo_large.url}}" alt="" />
+        {% endif %}
         <div class="showdown">{{ studio.info }}</div>
     </div>
 {% endblock %}

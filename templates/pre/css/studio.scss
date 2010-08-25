@@ -1,6 +1,14 @@
 @import "base.pre.css";
 
+.textblock {
+    float: left;
+}
+
 .logo {
     float: right;
 }
 
+.screenshot {
+    float: left;
+    padding: 14px;
+}

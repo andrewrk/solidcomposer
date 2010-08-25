@@ -1,23 +1,29 @@
 <% (function (project_data) { %>
-    {% include 'workbench/project_list_nav.jst.html' %}
-    <% for (var i=0; i<project_data.projects.length; ++i) { var project = project_data.projects[i]; %>
-        <div class="project" id="project-<%=project.id%>">
-            <h1><a href="<%= urls.project(project.id) %>">
-                <span class="date"><%= Time.printableTimeSince(project.latest_version.date_added) %> ago</span>
-                <%= project.title %> -
-                Version <%= project.latest_version.version %> by
-                <%= project.latest_version.song.owner.username %> 
-            </a></h1>
-            <div class="inner">
-                <% var song = project.latest_version.song; song.band = project_data.band; %>
-                {% include 'player/player.jst.html' %}
-                <ul class="actions">
-                    <li><a href="<%= urls.project(project.id) %>">Go to project</a></li>
-                </ul>
-                {% include 'workbench/project_status.jst.html' %}
-                <div class="clear"></div>
+    <% if (project_data.projects.length > 0) { %>
+        {% include 'workbench/project_list_nav.jst.html' %}
+        <% for (var i=0; i<project_data.projects.length; ++i) { var project = project_data.projects[i]; %>
+            <div class="project" id="project-<%=project.id%>">
+                <h1><a href="<%= urls.project(project.id) %>">
+                    <span class="date"><%= Time.printableTimeSince(project.latest_version.date_added) %> ago</span>
+                    <%= project.title %> -
+                    Version <%= project.latest_version.version %> by
+                    <%= project.latest_version.song.owner.username %> 
+                </a></h1>
+                <div class="inner">
+                    <% var song = project.latest_version.song; song.band = project_data.band; %>
+                    {% include 'player/player.jst.html' %}
+                    <ul class="actions">
+                        <li><a href="<%= urls.project(project.id) %>">Go to project</a></li>
+                    </ul>
+                    {% include 'workbench/project_status.jst.html' %}
+                    <div class="clear"></div>
+                </div>
             </div>
-        </div>
+        <% } %>
+    <% } else { %>
+        <p>
+            Your band has no projects. Perhaps you should <a href="<%= urls.create_project(band.id) %>">add one</a>?
+        </p>
     <% } %>
     {% include 'workbench/project_list_nav.jst.html' %}
 <% }(projects)); %>

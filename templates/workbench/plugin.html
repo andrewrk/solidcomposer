@@ -1,19 +1,44 @@
 {% extends 'base.html' %}
 
+{% block css %}studio.pre.css{% endblock %}
+
+{% block extra_header %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/showdown-0.9.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/render-showdown.pre.js"></script>
+{% endblock %}
+
 {% block title %}{{ plugin.title }} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="textblock">
-    <h1>{{ plugin.title }}</h1>
-    {% if plugin.external_url %}
-        {% if plugin.price %}
-            <h2><a href="{{ plugin.external_url }}">Buy for ${{ plugin.price|floatformat:2 }}</a></h2>
-        {% else %}
-            <h2><a href="{{ plugin.external_url }}">Download for free</a></h2>
+    <div class="textblock">
+        <h1>{{ plugin.title }}</h1>
+        <p>
+            Type: {% if plugin.plugin_type == 0 %}Generator{% else %}Effect{% endif %}
+        </p>
+        {% if plugin.comes_with_studio %}
+            <p>
+                This plugin comes with <a href="{% url workbench.studio plugin.comes_with_studio.identifier %}">{{ plugin.comes_with_studio.title }}</a>.
+            </p>
         {% endif %}
+        {% if plugin.external_url %}
+            <ul>
+                <li>
+                    {% if plugin.price %}
+                        <a href="{{ plugin.external_url }}">Buy for ${{ plugin.price|floatformat:2 }}</a>
+                    {% else %}
+                        <a href="{{ plugin.external_url }}">Download for free</a>
+                    {% endif %}
+                </li>
+            </ul>
+        {% endif %}
+        {% if plugin.info %}
+            <div class="showdown">{{ plugin.info }}</div>
+        {% endif %}
+    </div>
+    {% if plugin.screenshot %}
+        <img class="screenshot" src="{{ plugin.screenshot.url }}" alt="" />
     {% endif %}
-    <p>
-        No plugin description.
-    </p>
-</div>
+    <div class="clear"></div>
 {% endblock %}

@@ -8,7 +8,6 @@ Release "Boten Anna" (Basshunter):
     - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
     - url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
     - url(r'^band/(\d+)/invite/$', 'workshop.views.band_invite', name="workbench.band_invite"),
-    - url(r'^plugin/(.+)/$', 'workshop.views.plugin', name="workbench.plugin"),
     - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
   > tip framework
     - tips should show up where the tip element is but not on top of it.

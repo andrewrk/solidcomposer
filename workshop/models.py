@@ -188,6 +188,12 @@ class PluginDepenency(SerializableModel):
     # if this plugin automatically comes with a studio, this links to that studio
     comes_with_studio = models.ForeignKey('Studio', null=True, blank=True)
 
+    # markdown format text to display on the plugin page
+    info = models.TextField(blank=True)
+
+    # display this on the plugin page
+    screenshot = models.ImageField(upload_to='img/studio', blank=True, null=True, max_length=512)
+
     def save(self, *args, **kwargs):
         if not self.url:
             self.url = create_url(self.title, lambda proposed: PluginDepenency.objects.filter(url=proposed).count() == 0)
