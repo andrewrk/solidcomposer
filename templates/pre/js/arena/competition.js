@@ -206,8 +206,9 @@ var SCCompo = function () {
         // clicks for entry-area
         $("#resubmit").click(function(){
             state.resubmitting = ! state.resubmitting;
-            $("#entry-title").attr('value', state.user_entry.title);
-            $("#entry-comments").attr('value', state.user_entry.song.comment_node.content);
+            $("#entry-title").val(state.user_entry.song.title);
+            $("#entry-comments").val(state.user_entry.song.comment_node.content);
+            $("#entry-open-source").attr('checked', state.user_entry.song.is_open_source);
             updateCompo();
             return false;
         });
