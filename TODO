@@ -37,6 +37,7 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* edit competition
 * if you enter a competition, automatically bookmark it
 * fix competition count on userpage. currently it's competitions hosted instead 
   of participated in
@@ -56,6 +57,7 @@ Release "April Rain" (The Cynic Project)
   > test_account_plan_changed
   > test_signup_pending
   > test sending emails when notifications are on/off
+  > test for date project checked out
  * editor controls on fields that will be parsed by showdown.
    > http://wmd-editor.com/
    > also always show a preview when things will be parsed by showdown.
@@ -75,7 +77,6 @@ Release "April Rain" (The Cynic Project)
  * login page should focus the username text box
  * support adding bands to the 'fund' list in account/plan
  * finish up TODOs in tests
- * edit competition
  * recent activty entry log:
    > band member leaving
    > trashed project
@@ -87,6 +88,7 @@ Release "April Rain" (The Cynic Project)
  * html emails as well as text.
  * spam protection on contact page
  * javascript tests
+ * when a new version is uploaded in the project page, scroll to it (it's a TODO)
  * have a progress bar during uploads
  * faster page loads by including the initial JSON request response in the served page
  * refactor: django already has a storage engine type thing. use it instead

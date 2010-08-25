@@ -23,6 +23,12 @@
     <span class="dest">{{ project.title }}</span>
 {% endblock %}
 
+{% block tools_wrapper %}
+    <div id="project-status">
+        {% include 'loading.html' %}
+    </div>
+{% endblock %}
+
 {% block content %}
     <div id="projects">
         {% include 'loading.html' %}

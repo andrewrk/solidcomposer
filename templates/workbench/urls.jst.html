@@ -18,5 +18,8 @@
     ajax_rename_project: "{% filter escapejs %}{% url workbench.ajax_rename_project %}{% endfilter %}",
     create_project: function(band_id) {
         return "{% filter escapejs %}{% url workbench.create_project 0 %}{% endfilter %}".replace('0', band_id);
+    },
+    userpage: function (username) {
+        return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
     }
 }

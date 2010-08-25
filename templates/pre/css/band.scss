@@ -114,30 +114,6 @@ p {
                 }
             }
 
-            .status {
-                font-size: 14px;
-                font-weight: bold;
-                font-family: Arial, Helvetica, sans-serif;
-                margin: 0;
-                padding: 14px;
-
-                .mine, .out, .available {
-                    padding: 6px;
-                }
-
-                .mine {
-                    background-color: #258F29;
-                    color: #ffffff;
-                }
-                .out {
-                    background-color: #C72520;
-                    color: #ffffff;
-                }
-                .available {
-                    background-color: #F0F237;
-                    color: #000000;
-                }
-            }
         }
     }
 }

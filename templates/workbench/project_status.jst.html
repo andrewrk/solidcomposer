@@ -1,11 +1,19 @@
 <div class="status">
     <% if (project.checked_out_to !== null) { %>
         <% if (project.checked_out_to.id === user.id) { %>
-            <span class="mine">Checked out to <strong>you</strong>.</span>
+            <span class="mine">Checked out to <strong>you</strong></span>
+            <span class="date"><%= Time.printableTimeSince(project.date_checked_out) %> ago</span>
         <% } else { %>
-            <span class="out">Checked out.</span>
+            <span class="out">Checked out</span> to
+            <%
+                (function () {
+                var user = project.checked_out_to;
+            %>
+                {% include 'username.jst.html' %}
+            <% })(); %>
+            <span class="date"><%= Time.printableTimeSince(project.date_checked_out) %> ago</span>
         <% } %>
     <% } else { %>
-        <span class="available">Available.</span>
+        <span class="available">Available</span>
     <% } %>
 </div>

@@ -11,6 +11,8 @@ var SCProject = function () {
     var template_footer_s = null;
     var template_sample_upload_row = "{% filter escapejs %}{% include 'workbench/sample_upload_row.jst.html' %}{% endfilter %}";
     var template_sample_upload_row_s = null;
+    var template_project_status = "{% filter escapejs %}{% include 'workbench/project_status.jst.html' %}{% endfilter %}";
+    var template_project_status_s = "{% filter escapejs %}{% include 'workbench/project_status.jst.html' %}{% endfilter %}";
 
     var state = {
         urls: {% include 'workbench/urls.jst.html' %},
@@ -35,7 +37,7 @@ var SCProject = function () {
 
     function addClicksToProjects() {
         function uploadSamplesStartCallback() {
-
+            // nothing to do
         }
 
         function uploadSamplesCompleteCallback(response) {
@@ -229,6 +231,8 @@ var SCProject = function () {
             return;
         }
 
+        $("#project-status").html(Jst.evaluate(template_project_status_s, state));
+
         $("#projects").html(Jst.evaluate(template_version_list_s, state));
         Player.addUi("#projects");
         Player.addCommentsUi("#projects");
@@ -248,6 +252,7 @@ var SCProject = function () {
         template_version_list_s = Jst.compile(template_version_list);
         template_footer_s = Jst.compile(template_footer);
         template_sample_upload_row_s = Jst.compile(template_sample_upload_row);
+        template_project_status_s = Jst.compile(template_project_status);
     }
     
     function scrollToNewestVersion() {
