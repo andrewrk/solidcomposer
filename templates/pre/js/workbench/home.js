@@ -24,6 +24,9 @@ var SCWorkbench = function () {
             userpage: function (username) {
                 return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
             },
+            bandpage: function (band_url) {
+                return "{% filter escapejs %}{% url bandpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", band_url);
+            },
             project: function(id, band_id) {
                 return "{% filter escapejs %}{% url workbench.project 0 1 %}{% endfilter %}".replace("0",
                     "[~~band_id~~]").replace("1", id).replace("[~~band_id~~]", band_id);
@@ -35,8 +38,8 @@ var SCWorkbench = function () {
         json: null,
         logEntries: [],
         roleNames: [
-            "Manager",
-            "Band member",
+            "Band Manager",
+            "Band Member",
             "Critic",
             "Fan",
             "Banned"
@@ -79,6 +82,7 @@ var SCWorkbench = function () {
                     if (data.success) {
                         state.json.invites.splice(index, 1);
                         updateHome();
+                        ajaxRequestHome();
                     } else {
                         alert(err_msg + data.reason);
                     }
@@ -111,12 +115,15 @@ var SCWorkbench = function () {
 
                 state.json = data;
 
-                {% include 'js/mergeLists.js' %}
+                if (state.json.user.is_authenticated) {
 
-                mergeLists(state.logEntries, data.activity);
+                    {% include 'js/mergeLists.js' %}
 
-                if (state.logEntries.length > 0) {
-                    lastActivityId = state.logEntries[state.logEntries.length-1].id;
+                    mergeLists(state.logEntries, data.activity);
+
+                    if (state.logEntries.length > 0) {
+                        lastActivityId = state.logEntries[state.logEntries.length-1].id;
+                    }
                 }
                 updateHome();
             }

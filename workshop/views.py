@@ -1161,6 +1161,5 @@ def band_invite(request, band_id_str):
     permission = band.permission_to_invite(request.user)
     return render_to_response('workbench/band/invite.html', locals(), context_instance=RequestContext(request))
 
-@login_required
 def home(request):
     return render_to_response('workbench/home.html', {}, context_instance=RequestContext(request))

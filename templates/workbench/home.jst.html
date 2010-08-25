@@ -4,21 +4,25 @@
         <ul>
             <% $.each(json.members, function(i, member){ var band = member.band; %>
                 <li class="band">
-                    <a href="<%=urls.band(band.id)%>"><%=band.title%></a>
-                </li>
-            <% }); %>
-            <% $.each(json.invites, function(i, item){ %>
-                <li class="invite">
-                    <span class="label">invitation</span>
-                    <a href="<%=urls.band(item.band.id)%>"><%=item.band.title%></a>
-                    <span class="role"><%=roleNames[item.role]%></span>
-                    <span class="action">
-                    <a href="#" class="accept" data-index="<%=i%>">accept</a>
-                    <a href="#" class="ignore" data-index="<%=i%>">ignore</a>
-                    </span>
+                    <a href="<%=urls.band(band.id)%>"><%=band.title%></a><span class="role"><%= roleNames[member.role] %></span>
                 </li>
             <% }); %>
         </ul>
+        <% if (json.invites.length > 0) { %>
+            <ul>
+                <% $.each(json.invites, function(i, item){ %>
+                    <li class="invite">
+                        <span class="label">invitation</span>
+                        <a class="band-name" href="<%=urls.bandpage(item.band.url)%>"><%=item.band.title%></a>
+                        <span class="role"><%=roleNames[item.role]%></span>
+                        <span class="action">
+                            <a href="#" class="accept" data-index="<%=i%>">Accept</a>
+                            <a href="#" class="ignore" data-index="<%=i%>">Ignore</a>
+                        </span>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } %>
     </div>
     <div id="activity">
         <h1>Recent Activity</h1>
@@ -27,13 +31,15 @@
         <% })(); %>
     </div>
 <% } else { %>
-    <p>
-        <strong>Workbench</strong> is a project manager, providing version control
-        and backups of your work. It makes collaboration with other people
-        a piece of cake.
-    </p>
-    <p>
-        <a id="workbenchSignIn" href="{% url user_login %}">Sign in</a> or
-        <a href="{% url register %}">register</a> to participate.
-    </p>
+    <div class="textblock">
+        <p>
+            <strong>Workbench</strong> is a project manager, providing version control
+            and backups of your work. It makes collaboration with other people
+            a piece of cake.
+        </p>
+        <p>
+            <a id="workbenchSignIn" href="{% url user_login %}">Log in</a> or
+            <a href="{% url plans %}">Sign up</a> to participate.
+        </p>
+    </div>
 <% } %>

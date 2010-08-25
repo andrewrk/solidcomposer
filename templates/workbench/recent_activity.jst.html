@@ -44,9 +44,9 @@
                             <% } %>
                             <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
                         <% } else if (entry.entry_type === entryTypeEnum.BAND_MEMBER_JOIN) { %>
-                            has joined the band.
+                            joined the band.
                         <% } else if (entry.entry_type === entryTypeEnum.BAND_MEMBER_QUIT) { %>
-                            has quit the band.
+                            quit the band.
                         <% } else if (entry.entry_type === entryTypeEnum.NEW_PROJECT) { %>
                             uploaded a new project 
                             <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.

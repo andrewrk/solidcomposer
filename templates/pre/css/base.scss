@@ -61,7 +61,7 @@ a:link, a:visited {
 }
 
 #header {
-    background: #292929 url({{ MEDIA_URL }}img/header-gradient.png) left top repeat-x;
+    background: #292929 url(../img/header-gradient.png) left top repeat-x;
     color: #cacbcc;
     height: 66px;
     width: 100%;
@@ -125,17 +125,17 @@ a:link, a:visited {
         }
 
         .workbench a {
-            background-image: url({{ MEDIA_URL }}img/headphones-light-14x20.png);
+            background-image: url(../img/headphones-light-14x20.png);
 
             &:hover {
-                background-image: url({{ MEDIA_URL }}img/headphones-dark-14x20.png);
+                background-image: url(../img/headphones-dark-14x20.png);
             }
         }
         .arena a {
-            background-image: url({{ MEDIA_URL }}img/sword-light-16x20.png);
+            background-image: url(../img/sword-light-16x20.png);
 
             &:hover {
-                background-image: url({{ MEDIA_URL }}img/sword-dark-16x20.png);
+                background-image: url(../img/sword-dark-16x20.png);
             }
         }
 
@@ -145,11 +145,11 @@ a:link, a:visited {
         }
 
         .selected.workbench a {
-            background-image: url({{ MEDIA_URL }}img/headphones-dark-14x20.png);
+            background-image: url(../img/headphones-dark-14x20.png);
         }
 
         .selected.arena a {
-            background-image: url({{ MEDIA_URL }}img/sword-dark-16x20.png);
+            background-image: url(../img/sword-dark-16x20.png);
         }
 
     }
@@ -227,7 +227,7 @@ div.textblock {
         padding: 0;
 
         li {
-            background-image: url({{ MEDIA_URL }}img/arrow-bullet.png);
+            background-image: url(../img/arrow-bullet.png);
             background-repeat: no-repeat;
             background-position: left center;
             padding: 0 0 0 20px;
@@ -300,11 +300,11 @@ form {
     }
 
     li.plus a {
-        background-image: url({{ MEDIA_URL }}img/add-16x16.png);
+        background-image: url(../img/add-16x16.png);
     }
 
     li.wrench a {
-        background-image: url({{ MEDIA_URL }}img/wrench.png);
+        background-image: url(../img/wrench.png);
     }
 }
 
@@ -313,7 +313,7 @@ ul.errorlist {
     padding: 4px;
     margin: 0;
     li {
-        background-image: url({{ MEDIA_URL }}img/error.png) !important;
+        background-image: url(../img/error.png) !important;
         background-repeat: no-repeat;
         background-position: left center;
         padding: 0 0 0 20px;
@@ -323,7 +323,7 @@ ul.errorlist {
 p.err {
     color: #c01212;
     font-weight: bold;
-    background-image: url({{ MEDIA_URL }}img/error.png);
+    background-image: url(../img/error.png);
     background-repeat: no-repeat;
     background-position: left center;
     padding: 0 0 0 20px;
@@ -337,7 +337,7 @@ p.err {
 }
 
 .tip a {
-    background-image: url({{ MEDIA_URL }}img/tip-16x16.png);
+    background-image: url(../img/tip-16x16.png);
     background-repeat: no-repeat;
     background-position: left center;
     padding: 0 0 0 18px;
