@@ -1,7 +1,7 @@
 var SCBandInvite = function() {
     var that;
 
-    var templateCopyArea = "{% filter escapejs %}{% include 'workbench/invite_copy_area.jst.html' %}{% endfilter %}";
+    var templateCopyArea = "{% filter escapejs %}{% include 'workbench/band/invite_copy_area.jst.html' %}{% endfilter %}";
     var templateCopyAreaCompiled = null;
 
     var urls = {
@@ -94,6 +94,7 @@ var SCBandInvite = function() {
         $("#email-box").keydown(function(e){
             if (e.keyCode === 13) {
                 inviteByEmail();
+                return false;
             }
         });
 
@@ -124,6 +125,7 @@ var SCBandInvite = function() {
         $("#local-box").keydown(function(e){
             if (e.keyCode === 13) {
                 inviteByUsername();
+                return false;
             }
         });
     }

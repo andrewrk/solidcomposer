@@ -31,9 +31,9 @@
             <ul>
             {% for member in band.bandmember_set.all %}
                 {% with member.user as user %}
-                    <div>
+                    <li>
                         {% include 'username.html' %}
-                    </div>
+                    </li>
                 {% endwith %}
             {% endfor %}
             </ul>

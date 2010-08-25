@@ -1,5 +1,7 @@
 {% extends 'workbench/band/base.html' %}
 
+{% block css %}band_invite.pre.css{% endblock %}
+
 {% block extra_header %}
     {{ block.super }}
     <script type="text/javascript">
@@ -37,20 +39,31 @@
             <div id="invite-email">
                 <h1><a href="#">Invite by Email</a></h1>
                 <div class="dropdown" style="display: none;">
-                    Band mate's email: <input type="text" id="email-box" value="" /><input type="button" value="Invite" id="email-button" />
-                    <div class="success" style="display: none;">
-                        {% include 'success.html' %}
-                    </div>
+                    <form action="">
+                        <fieldset>
+                            <label for="email-box">Band mate's email:</label>
+                            <input type="text" id="email-box" value="" />
+                            <input type="button" value="Invite" id="email-button" />
+                            <div class="success" style="display: none;">
+                                {% include 'success.html' %}
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
             </div>
             <div id="invite-local">
                 <h1><a href="#">Invite a SolidComposer User</a></h1>
                 <div class="dropdown" style="display: none;">
-                    User name: <input type="text" id="local-box" value="" /><input type="button" value="Invite" id="local-button" />
-                    {% include 'tips/inviteLocalUser.html' %}
-                    <div class="success" style="display: none;">
-                        {% include 'success.html' %}
-                    </div>
+                    <form action="">
+                        <fieldset>
+                        <label for="local-box">User name:</label>
+                        <input type="text" id="local-box" value="" />
+                        <input type="button" value="Invite" id="local-button" />
+                        <div class="success" style="display: none;">
+                            {% include 'success.html' %}
+                        </div>
+                        </fieldset>
+                    </form>
                 </div>
             </div>
         </div>
