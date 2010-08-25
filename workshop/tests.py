@@ -139,11 +139,7 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_home(self):
-        url = reverse('workbench.home')
-        self.client.login(username="skiessi", password="temp1234")
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.checkLoginRedirect(url)
+        return self.staticPage(reverse('workbench.home'))
         
     def test_create_invite(self):
         ajax_create_invite = reverse("workbench.ajax_create_invite")
@@ -1987,9 +1983,17 @@ class SimpleTest(TestCase):
         self.assertEqual(band_count, Band.objects.count())
 
     def test_band(self):
-        self.staticPage(reverse('workbench.band', args=[self.skiessi.get_profile().solo_band.id]))
-        self.staticPage(reverse('workbench.band', args=[self.superjoe.get_profile().solo_band.id]))
-        self.staticPage(reverse('workbench.band', args=[self.just64helpin.get_profile().solo_band.id]))
+        self.client.login(username='skiessi', password='temp1234')
+        response = self.client.get(reverse('workbench.band', args=[self.skiessi.get_profile().solo_band.id]))
+        self.checkLoginRedirect(reverse('workbench.band', args=[self.skiessi.get_profile().solo_band.id]))
+
+        self.client.login(username='superjoe', password='temp1234')
+        response = self.client.get(reverse('workbench.band', args=[self.superjoe.get_profile().solo_band.id]))
+        self.checkLoginRedirect(reverse('workbench.band', args=[self.superjoe.get_profile().solo_band.id]))
+
+        self.client.login(username='just64helpin', password='temp1234')
+        response = self.client.get(reverse('workbench.band', args=[self.just64helpin.get_profile().solo_band.id]))
+        self.checkLoginRedirect(reverse('workbench.band', args=[self.just64helpin.get_profile().solo_band.id]))
 
     def test_band_settings(self):
         band_settings = lambda band_id: reverse('workbench.band_settings', args=[band_id])
