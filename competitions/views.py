@@ -162,7 +162,10 @@ def max_vote_count(entry_count):
 def song_to_dict(song, user):
     d = song.to_dict(chains=['owner', 'studio', 'band', 'comment_node'])
     if song.studio is not None and d.has_key('studio'):
-        d['studio']['logo_16x16'] = song.studio.logo_16x16.url
+        if song.studio.logo_16x16 is not None:
+            d['studio']['logo_16x16'] = song.studio.logo_16x16.url
+        else:
+            d['studio']['logo_16x16'] = design.unknown_studio_icon
 
         if user.is_authenticated():
             profile = user.get_profile()

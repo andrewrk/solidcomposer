@@ -22,3 +22,5 @@ cannot_start_compo_in_the_past = 'You cannot start a competition in the past.'
 give_at_least_x_minutes_to_work = 'You have to give people at least %i minutes to work.' % settings.MINIMUM_COMPO_LENGTH
 if_you_want_lp_set_date = 'If you want a listening party, you need to set a date.'
 lp_gt_submission_deadline = 'Listening party must be after submission deadline.'
+
+unknown_studio_icon = settings.MEDIA_URL + "img/question-white.png"
