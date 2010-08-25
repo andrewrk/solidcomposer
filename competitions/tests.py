@@ -294,7 +294,6 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # submit the form, leave stuff blank
-        # also set a listening party before the submit deadline
         now = datetime.now()
         response = self.client.post(url, {
             'have_theme': 'on',
@@ -315,6 +314,25 @@ class SimpleTest(TestCase):
             design.this_field_is_required)
         self.assertFormError(response, 'form', 'tz_offset',
             design.this_field_is_required)
+
+        # submit the form, set a listening party before the submit deadline
+        response = self.client.post(url, {
+            'title': "test compo 123",
+            'have_theme': True,
+            #'preview_theme': False,
+            'theme': "test theme 123",
+            'have_rules': True,
+            'preview_rules': True,
+            'rules': "test rules 123",
+            'start_date': self.validTimeStr(now + timedelta(minutes=1)),
+            'submission_deadline_date': self.validTimeStr(now + timedelta(hours=1)),
+            'have_listening_party': True,
+            #'party_immediately': False,
+            'listening_party_date': self.validTimeStr(now + timedelta(minutes=50)),
+            'vote_time_quantity': 1,
+            'vote_time_measurement': TimeUnit.HOURS,
+            'tz_offset': 0,
+        })
         self.assertFormError(response, 'form', 'listening_party_date',
             design.lp_gt_submission_deadline)
 

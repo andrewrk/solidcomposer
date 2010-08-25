@@ -61,6 +61,11 @@ class CreateCompetitionForm(forms.Form):
         in_start_date = cleaned_data.get('start_date')
         in_tz_offset = cleaned_data.get('tz_offset')
 
+        if in_tz_offset is None:
+            msg = design.this_field_is_required
+            self._errors['tz_offset'] = self.error_class([msg])
+            return cleaned_data
+
         # adjust dates with tz_offset
         tz_delta = timedelta(hours=in_tz_offset)
 
