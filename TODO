@@ -1,6 +1,5 @@
 Release "Boten Anna" (Basshunter):
 * design iteration
-  > dashboard when there is no content yet
   > pages - iterate through all of them. also test on 1024 page width
     - url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
   > tip framework
@@ -38,6 +37,7 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* if you enter a competition, automatically bookmark it
 * fix competition count on userpage. currently it's competitions hosted instead 
   of participated in
 * use a new json serialization which returns a list of all the objects you're

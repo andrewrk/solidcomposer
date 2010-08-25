@@ -37,9 +37,15 @@
     h2 a {
         background-image: url(../img/sword-dark-16x20.png);
     }
+
 }
 
 #compos {
     margin: 0 0 0 -8px;
     padding: 0;
+
+    p {
+        margin: 0 10px;
+        padding: 0;
+    }
 }

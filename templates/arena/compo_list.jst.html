@@ -1,12 +1,16 @@
 <% (function (compo_list, list_name) { %>
-    <% for (var i=0; i<compo_list.compos.length; ++i) { %>
-        <% var compo = compo_list.compos[i]; %>
-        {% include 'arena/compo_block.jst.html' %}
+    <% if (compo_list.compos.length > 0) { %>
+        <% for (var i=0; i<compo_list.compos.length; ++i) { %>
+            <% var compo = compo_list.compos[i]; %>
+            {% include 'arena/compo_block.jst.html' %}
+        <% } %>
+        <div class="nav">
+            <span class="<%=list_name%>">
+                <% var pagination = {count: compo_list.page_count, number: compo_list.page_number}; %>
+                {% include 'page_nav.jst.html' %}
+            </span>
+        </div>
+    <% } else { %>
+        <p>You have not bookmarked or entered any competitions.</p>
     <% } %>
-    <div class="nav">
-        <span class="<%=list_name%>">
-            <% var pagination = {count: compo_list.page_count, number: compo_list.page_number}; %>
-            {% include 'page_nav.jst.html' %}
-        </span>
-    </div>
 <% }(compo_list, list_name)); %>

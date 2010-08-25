@@ -86,6 +86,9 @@ var SCDashboard = function() {
                 }
 
                 state.compo_list = data;
+                // hax!
+                state.compo_list.page_count = 1
+                state.compo_list.page_number = 1
 
                 updateCompos();
             }
