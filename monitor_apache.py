@@ -25,6 +25,9 @@ def examine_watchlist():
     new_item = False
     this_folder = os.path.abspath(os.path.dirname(__file__))
     for root, _dirs, files in os.walk(this_folder):
+        # stay out of media!
+        if '/media/' in root:
+            continue
         for file in files:
             _prefix, ext = os.path.splitext(file)
             if ext not in watched_extensions:
@@ -56,7 +59,7 @@ def main():
             sys.exit(0)
 
         try:
-            time.sleep(1)
+            time.sleep(2)
         except KeyboardInterrupt:
             sys.exit(0)
 

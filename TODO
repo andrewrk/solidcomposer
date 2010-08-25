@@ -1,5 +1,4 @@
 Release "Boten Anna" (Basshunter):
-* design for comments
 * design iteration
   > pages - iterate through all of them. also test on 1024 page width
     - url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
@@ -16,10 +15,10 @@ Release "Boten Anna" (Basshunter):
     - maxWidth and maxHeight don't work in jquery dialog
     - dependency dialog
     - download samples dialog
+  > design for comments
+  > look at all the pages with browser maximized and make it also look good for that
 * gravatar and live comment feedback is broken in userpage/bandpage
-* handle back buttons in project manager for #filters
 * still have the ability to view comments during song playback
-* look at all the pages with browser maximized and make it also look good for that
 
 Wednesday, September 1:
 * WE DO IT LIVE
@@ -44,6 +43,7 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* handle back buttons in project manager for #filters
 * bug: if you delete a timed comment it still shows up during playback
 * ability to turn off tips
 * use jquery and dropdowns for date picking rather than anytimec
