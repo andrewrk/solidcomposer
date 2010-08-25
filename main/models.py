@@ -314,7 +314,7 @@ class Profile(SerializableModel):
         self.plugins.remove(workshop.models.PluginDepenency.objects.filter(comes_with_studio=studio))
 
     def get_points(self):
-        return ThumbsUp.objects.filter(entry__owner=self).count()
+        return ThumbsUp.objects.filter(entry__owner=self.user).count()
 
     def save(self, *args, **kwargs):
         "Update auto-populated fields before saving"
