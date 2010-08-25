@@ -41,7 +41,7 @@
         <div class="buttons">
             <ul>
                 <li class="view"><a href="<%=urls.compete(compo.id)%>">View competition</a></li>
-                <% if (user.is_authenticated) { %>
+                <% if (user.is_authenticated && list_name != 'dashboard') { %> {% comment %} TODO: hax {% endcomment %}
                     <% if (compo.bookmarked) { %>
                         <li class="unbookmark"><a href="#" id="compo-<%= compo.id %>-remove">Unbookmark</a></li>
                     <% } else { %>

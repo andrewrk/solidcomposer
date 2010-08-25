@@ -3,8 +3,6 @@ Release "Boten Anna" (Basshunter):
   > pages - iterate through all of them. also test on 1024 page width
     - url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
     - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
-
-    - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
   > tip framework
     - tips should show up where the tip element is but not on top of it.
   > song player
@@ -16,16 +14,16 @@ Release "Boten Anna" (Basshunter):
   > look at all the pages with browser maximized and make it also look good for that
   > introducing solidcomposer article
 * still have the ability to view comments during song playback
+* test everything. especially uploading large files and The Sun.zip
 
 Wednesday, September 1:
 * WE DO IT LIVE
   > shut down solidcomposer.com
     - use a notice so people know there will be downtime.
   > migrate data to new place.
-  > test everything. especially uploading large files and The Sun.zip
-  > get josh to pay money
   > change domain to new place
   > make sure email is working.
+  > get josh to pay money
 * blog post announcing release
 * advertise
   > jplayer sites list
@@ -40,6 +38,12 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* fix competition count on userpage. currently it's competitions hosted instead 
+  of participated in
+* use a new json serialization which returns a list of all the objects you're
+  going to want to use, like SongCommentNode, Song, Entry, etc. Then just output
+  an array which is a list of ids. use the table to get the object for an id.
+  this saves on bandwidth.
 * handle back buttons in project manager for #filters
 * bug: if you delete a timed comment it still shows up during playback
 * ability to turn off tips

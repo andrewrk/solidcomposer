@@ -1,7 +1,7 @@
 var SCDashboard = function() {
     var that;
 
-    var templateCompoList = "{% filter escapejs %}{% include 'dashboard_compo_list.jst.html' %}{% endfilter %}";
+    var templateCompoList = "{% filter escapejs %}{% include 'arena/compo_list.jst.html' %}{% endfilter %}";
     var templateCompoListCompiled = null;
 
     var templateBandActivity = "{% filter escapejs %}{% include 'workbench/recent_activity.jst.html' %}{% endfilter %}";
@@ -31,7 +31,8 @@ var SCDashboard = function() {
         user: null,
         logEntries: [],
         entryTypeEnum: {% include 'workbench/entryTypeEnum.jst.html' %},
-        compo_list: null
+        compo_list: null,
+        list_name: 'dashboard'
     };
 
     var lastActivityId = null;
@@ -84,7 +85,7 @@ var SCDashboard = function() {
                     return;
                 }
 
-                state.compo_list = data.compos;
+                state.compo_list = data;
 
                 updateCompos();
             }

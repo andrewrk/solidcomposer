@@ -3,59 +3,62 @@
         <ul>
             <% for (var i=logEntries.length-1; i>=0; --i) { var entry = logEntries[i]; %>
                 <li>
-                    <span class="band-name"><%= entry.band.title %></span>
-                    <% if (entry.catalyst.id === user.id) { %>
-                        <strong>you</strong>
-                    <% } else { %>
-                        <a href="<%= urls.userpage(entry.catalyst.username) %>"><%=entry.catalyst.username%></a>
-                    <% } %>
-                    <% if (entry.entry_type === entryTypeEnum.SONG_CRITIQUE) { %>
-                        added
-                        <a href="<%= urls.project_version(entry.version.project.id, entry.band.id, entry.version.version) %>">a comment</a>
-                        to
-                        <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
-                    <% } else if (entry.entry_type === entryTypeEnum.SONG_CHECKED_IN) { %>
-                        checked in a
-                        <a href="<%= urls.project_version(entry.version.project.id, entry.band.id, entry.version.version) %>">new version</a>
-                        of
-                        <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
-                    <% } else if (entry.entry_type === entryTypeEnum.SONG_CHECKED_OUT) { %>
-                        checked out
-                        <a href="<%= urls.project(entry.project.id, entry.band.id) %>"><%= entry.project.title %></a>.
-                    <% } else if (entry.entry_type === entryTypeEnum.SAMPLES_UPLOADED) { %>
-                        <a href="<%= urls.project_version(entry.version.project.id, entry.band.id, entry.version.version) %>">uploaded samples</a>
-                        to
-                        <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
-                    <% } else if (entry.entry_type === entryTypeEnum.SONG_RENAMED) { %>
-                        renamed
-                        <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.old_title %></a>
-                        to
-                        <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
-                    <% } else if (entry.entry_type === entryTypeEnum.POKE) { %>
-                        wants
-                        <% if (entry.target.id === user.id) { %>
+                    <a class="band-name" href="<%= urls.band(entry.band.id) %>"><%= entry.band.title %></a>
+                    <span class="entry-info">
+                        <% if (entry.catalyst.id === user.id) { %>
                             <strong>you</strong>
-                            to hurry up and
-                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>">check in</a>.
                         <% } else { %>
-                            <a href="<%= urls.userpage(entry.target.username) %>"><%= entry.target.username %></a>
-                            to hurry up and check in
+                            <a href="<%= urls.userpage(entry.catalyst.username) %>"><%=entry.catalyst.username%></a>
                         <% } %>
-                        <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
-                    <% } else if (entry.entry_type === entryTypeEnum.BAND_MEMBER_JOIN) { %>
-                        has joined the band.
-                    <% } else if (entry.entry_type === entryTypeEnum.BAND_MEMBER_QUIT) { %>
-                        has quit the band.
-                    <% } else if (entry.entry_type === entryTypeEnum.NEW_PROJECT) { %>
-                        uploaded a new project 
-                        <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
-                    <% } else if (entry.entry_type === entryTypeEnum.SONG_JUST_CHECK_IN) { %>
-                        checked in
-                        <a href="<%= urls.project(entry.project.id, entry.band.id) %>"><%= entry.project.title %></a>.
-                    <% } else if (entry.entry_type === entryTypeEnum.SPACE_ALLOCATED_CHANGE) { %>
-                        went from donating <%= entry.old_amount %> bytes to <%= entry.new_amount %> bytes.
-                    <% } %>
-                    <span class="activity-date"><%= Time.printableTimeSince(entry.timestamp) %> ago</span>
+                        <% if (entry.entry_type === entryTypeEnum.SONG_CRITIQUE) { %>
+                            added
+                            <a href="<%= urls.project_version(entry.version.project.id, entry.band.id, entry.version.version) %>">a comment</a>
+                            to
+                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
+                        <% } else if (entry.entry_type === entryTypeEnum.SONG_CHECKED_IN) { %>
+                            checked in a
+                            <a href="<%= urls.project_version(entry.version.project.id, entry.band.id, entry.version.version) %>">new version</a>
+                            of
+                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
+                        <% } else if (entry.entry_type === entryTypeEnum.SONG_CHECKED_OUT) { %>
+                            checked out
+                            <a href="<%= urls.project(entry.project.id, entry.band.id) %>"><%= entry.project.title %></a>.
+                        <% } else if (entry.entry_type === entryTypeEnum.SAMPLES_UPLOADED) { %>
+                            <a href="<%= urls.project_version(entry.version.project.id, entry.band.id, entry.version.version) %>">uploaded samples</a>
+                            to
+                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
+                        <% } else if (entry.entry_type === entryTypeEnum.SONG_RENAMED) { %>
+                            renamed
+                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.old_title %></a>
+                            to
+                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
+                        <% } else if (entry.entry_type === entryTypeEnum.POKE) { %>
+                            wants
+                            <% if (entry.target.id === user.id) { %>
+                                <strong>you</strong>
+                                to hurry up and
+                                <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>">check in</a>.
+                            <% } else { %>
+                                <a href="<%= urls.userpage(entry.target.username) %>"><%= entry.target.username %></a>
+                                to hurry up and check in
+                            <% } %>
+                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
+                        <% } else if (entry.entry_type === entryTypeEnum.BAND_MEMBER_JOIN) { %>
+                            has joined the band.
+                        <% } else if (entry.entry_type === entryTypeEnum.BAND_MEMBER_QUIT) { %>
+                            has quit the band.
+                        <% } else if (entry.entry_type === entryTypeEnum.NEW_PROJECT) { %>
+                            uploaded a new project 
+                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
+                        <% } else if (entry.entry_type === entryTypeEnum.SONG_JUST_CHECK_IN) { %>
+                            checked in
+                            <a href="<%= urls.project(entry.project.id, entry.band.id) %>"><%= entry.project.title %></a>.
+                        <% } else if (entry.entry_type === entryTypeEnum.SPACE_ALLOCATED_CHANGE) { %>
+                            went from donating <%= Time.fileSizeFormat(entry.old_amount) %> to <%= Time.fileSizeFormat(entry.new_amount) %>.
+                        <% } %>
+                        <div class="activity-date"><%= Time.printableTimeSince(entry.timestamp) %> ago</div>
+                    </span>
+                    <div class="clear"></div>
                 </li>
             <% } %>
         </ul>

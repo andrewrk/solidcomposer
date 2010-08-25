@@ -17,15 +17,17 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Dashboard</h1>
-    <h2>Recent Band Activity</h2>
-    <p><a href="{% url workbench.home %}">Workbench</a></p>
-    <div id="activity">
-        {% include 'loading.html' %}
+    <div id="workbench-block">
+        <h2><a href="{% url workbench.home %}">Workbench</a>Recent Band Activity</h2>
+        <div id="activity">
+            {% include 'loading.html' %}
+        </div>
     </div>
-    <h2>Bookmarked Competitions</h2>
-    <p><a href="{% url arena.home %}">Arena</a></p>
-    <div id="compos">
-        {% include 'loading.html' %}
+    <div id="arena-block">
+        <h2><a href="{% url arena.home %}">Arena</a>Bookmarked Competitions</h2>
+        <div id="compos">
+            {% include 'loading.html' %}
+        </div>
     </div>
+    <div class="clear"></div>
 {% endblock %}

@@ -1,1 +1,45 @@
 @import "base.pre.css";
+@import "band-activity.pre.css";
+@import "compo-block.pre.css";
+
+#workbench-block, #arena-block {
+    float: left;
+    margin: 14px;
+
+    h2 a {
+        float: right;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 4px 4px 4px 20px;
+        text-decoration: none;
+        background-repeat: no-repeat;
+        background-position: left center;
+        color: #292929;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+}
+
+#workbench-block {
+    width: 500px;
+
+    h2 a {
+        background-image: url(../img/headphones-dark-14x20.png);
+    }
+}
+
+#arena-block {
+    width: 430px;
+    
+    h2 a {
+        background-image: url(../img/sword-dark-16x20.png);
+    }
+}
+
+#compos {
+    margin: 0 0 0 -8px;
+    padding: 0;
+}
