@@ -333,6 +333,7 @@ class Project(SerializableModel):
         'latest_version',
         'band',
         'date_activity',
+        'date_checked_out',
         'checked_out_to',
         'visible',
         'forked_from',
@@ -353,6 +354,7 @@ class Project(SerializableModel):
 
     # who has it checked out, null if nobody
     checked_out_to = models.ForeignKey(User, null=True, blank=True, related_name='checked_out_to')
+    date_checked_out = models.DateTimeField(null=True, blank=True)
 
     # False if scrapped
     visible = models.BooleanField(default=True)

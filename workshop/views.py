@@ -778,6 +778,7 @@ def ajax_checkout(request):
         return json_failure(design.this_project_already_checked_out)
 
     project.checked_out_to = request.user
+    project.date_checked_out = datetime.now()
     project.save()
 
     # create log entry
