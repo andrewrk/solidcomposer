@@ -59,6 +59,17 @@ class CreateCompetitionForm(forms.Form):
         in_have_party = cleaned_data.get('have_listening_party')
         in_deadline = cleaned_data.get('submission_deadline_date')
         in_start_date = cleaned_data.get('start_date')
+        in_tz_offset = cleaned_data.get('tz_offset')
+
+        # adjust dates with tz_offset
+        tz_delta = timedelta(hours=in_tz_offset)
+
+        if in_lp_date is not None:
+            in_lp_date += tz_delta
+        if in_deadline is not None:
+            in_deadline += tz_delta
+        if in_start_date is not None:
+            in_start_date += tz_delta
 
         if in_start_date is None:
             msg = design.this_field_is_required

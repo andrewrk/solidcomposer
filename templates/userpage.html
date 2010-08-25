@@ -10,8 +10,10 @@
     {% include 'player/script_player.html' %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/userpage.pre.js"></script>
     <script type="text/javascript">
-var recent_song_data = ({% autoescape off %}{{ song_data|fix_ampersands }}{% endautoescape %});
-var user_data = ({% autoescape off %}{{ user_data|fix_ampersands }}{% endautoescape %});
+{% autoescape off %}
+var recent_song_data = eval("({{ song_data|escapejs }})");
+var user_data = eval("({{ user_data|escapejs }})");
+{% endautoescape %}
     </script>
 {% endblock %}
 
@@ -39,6 +41,7 @@ var user_data = ({% autoescape off %}{{ user_data|fix_ampersands }}{% endautoesc
     </div>
     <div class="clear"></div>
     <h2>Bands</h2>
+    <div class="textblock">
         {% if members %}
             <ul>
                 {% for member in members %}
@@ -50,8 +53,9 @@ var user_data = ({% autoescape off %}{{ user_data|fix_ampersands }}{% endautoesc
         {% else %}
             <p>No bands</p>
         {% endif %}
+    </div>
     <h2>Recent Songs</h2>
     <div id="recent-songs">
-    {% include 'loading.html' %}
+        {% include 'loading.html' %}
     </div>
 {% endblock %}

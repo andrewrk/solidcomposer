@@ -5,8 +5,6 @@ Release "Boten Anna" (Basshunter):
     - url(r'^$', direct_to_template, {'template': 'workbench/home.html'}, name="workbench.home"),
 
     - url(r'^dashboard/$', 'main.views.dashboard', name='dashboard'),
-    - url(r'^band/(\d+)/settings/$', 'workshop.views.band_settings', name="workbench.band_settings"),
-    - url(r'^article/([\w\d-]+)/$', 'main.views.article', name='article'),
   > tip framework
     - tips should show up where the tip element is but not on top of it.
   > song player
@@ -16,7 +14,7 @@ Release "Boten Anna" (Basshunter):
     - download samples dialog
   > design for comments
   > look at all the pages with browser maximized and make it also look good for that
-* gravatar and live comment feedback is broken in userpage/bandpage
+  > introducing solidcomposer article
 * still have the ability to view comments during song playback
 
 Wednesday, September 1:

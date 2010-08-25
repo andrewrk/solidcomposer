@@ -3,6 +3,8 @@
 {% block title %}Page Not Found - {{ block.super }}{% endblock %}
 
 {% block content %}
-    <h1>Page Not Found</h1>
-    <p>You might try looking on the <a href="{% url home %}">home page</a>.</p>
+    <div class="textblock">
+        <h1>Page Not Found</h1>
+        <p>You might try looking on the <a href="{% url home %}">home page</a>.</p>
+    </div>
 {% endblock %}

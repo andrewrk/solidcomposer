@@ -89,6 +89,10 @@ $chatroom-width: 450px;
     height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
+    p {
+        margin: 0;
+        padding: 12px;
+    }
 }
 
 #chatroom-inner {

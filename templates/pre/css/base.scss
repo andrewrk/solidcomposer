@@ -26,19 +26,6 @@ h2 {
     border-top:1px solid #24618e;
     border-bottom:1px solid #24618e;
 
-    ul {
-        list-style-type: none;
-        margin: 12px 0;
-        padding: 0;
-
-        li {
-            background-image: url({{ MEDIA_URL }}img/arrow-bullet.png);
-            background-repeat: no-repeat;
-            background-position: left center;
-            padding: 0 0 0 20px;
-            margin: 4px 0;
-        }
-    }
 }
 
 p {
@@ -233,13 +220,27 @@ div.textblock {
     width: 500px;
     margin: 0 0 0 14px;
     padding: 0 0 12px 0;
-}
 
-.textblock form {
-    background: #f3f3f3;
-    border: 1px solid #e0e0e0;
-    border-width: 1px 0;
-    padding: 8px;
+    ul {
+        list-style-type: none;
+        margin: 12px 0;
+        padding: 0;
+
+        li {
+            background-image: url({{ MEDIA_URL }}img/arrow-bullet.png);
+            background-repeat: no-repeat;
+            background-position: left center;
+            padding: 0 0 0 20px;
+            margin: 4px 0;
+        }
+    }
+
+    form {
+        background: #f3f3f3;
+        border: 1px solid #e0e0e0;
+        border-width: 1px 0;
+        padding: 8px;
+    }
 }
 
 td.label {

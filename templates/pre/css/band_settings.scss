@@ -1,0 +1,15 @@
+@import "base.pre.css";
+
+.textblock .member-list {
+    margin: 14px;
+
+    li {
+        background-image: none;
+        padding: 0;
+
+        img {
+            vertical-align: middle;
+            padding: 0 4px;
+        }
+    }
+}

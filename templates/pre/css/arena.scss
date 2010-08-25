@@ -48,6 +48,16 @@ h2 {
     .buttons {
         float: right;
         margin: 6px;
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+
+            li {
+                margin: 4px 0;
+            }
+        }
     }
 
     .bookmark, .unbookmark, .view {

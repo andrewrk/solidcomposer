@@ -1,4 +1,10 @@
-<a href="http://gravatar.com" title="Change your gravatar"><img class="gravatar" src="{{ user.get_profile.gravatar_icon }}" alt="" /></a>
+{% if user == request.user %}
+    <a href="http://gravatar.com" title="Change your gravatar">
+{% else %}
+    <a href="{% url userpage user.username %}">
+{% endif %}
+        <img class="gravatar" src="{{ user.get_profile.gravatar_icon }}" alt="" />
+    </a>
 <a href="{% url userpage user.username %}">{{ user.username }}</a>
-<span class="points"><img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" />
+<span class="points"><img src="{{ MEDIA_URL }}img/star.png" alt="Star Points" title="Star Points" />
 x {{ user.get_profile.get_points }}</span>

@@ -10,8 +10,10 @@
     {% include 'player/script_player.html' %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/userpage.pre.js"></script>
     <script type="text/javascript">
-var recent_song_data = ({% autoescape off %}{{ song_data|fix_ampersands }}{% endautoescape %});
-var user_data = ({% autoescape off %}{{ user_data|fix_ampersands }}{% endautoescape %});
+{% autoescape off %}
+var recent_song_data = eval("({{ song_data|escapejs }})");
+var user_data = eval("({{ user_data|escapejs }})");
+{% endautoescape %}
     </script>
 {% endblock %}
 

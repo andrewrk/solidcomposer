@@ -389,7 +389,6 @@ class Studio(SerializableModel):
         'canReadFile',
         'canMerge',
         'canRender',
-        'info',
         'logo_large',
         'logo_16x16',
     )

@@ -1,6 +1,12 @@
 <% (function (user) { %>
-    <a href="http://gravatar.com" title="Change your gravatar"><img class="gravatar" src="<%=user.gravatar_icon%>" alt="" /></a>
+    <% if (user.hasOwnProperty('is_authenticated')) { %>
+        <a href="http://gravatar.com" title="Change your gravatar">
+    <% } else { %>
+        <a class="username" href="<%=urls.userpage(user.username)%>">
+    <% } %>
+        <img class="gravatar" src="<%=user.gravatar_icon%>" alt="" />
+    </a>
     <a class="username" href="<%=urls.userpage(user.username)%>"><%= user.username %></a>
-    <span class="points"><img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" />
+    <span class="points"><img src="{{ MEDIA_URL }}img/star.png" alt="Star Points" title="Star Points" />
     x <%= user.get_points %></span>
 <% })(user); %>

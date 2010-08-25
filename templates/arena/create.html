@@ -15,6 +15,8 @@
     {% include 'login_area.html' %}
 {% endblock %}
 
+{% block tools_wrapper %}{% endblock %}
+
 {% block bread_crumb %}
     &gt;
     <span class="dest">Create Competition</span>
@@ -25,6 +27,7 @@
         <h1>Create a Public Competition</h1>
         {% include 'form_errors.html' %}
         <form id="competition-form" method="post" action="." style="width: 500px;">
+            <fieldset>
             {{ form.tz_offset }}
             <table>
                 <tr>
@@ -96,7 +99,7 @@
                     <td>{{ form.have_listening_party.errors }}{{ form.have_listening_party }}</td>
                 </tr>
                 <tr id="div_immediately">
-                    <th><label for="id_party_immediately">Immediately:</th>
+                    <th><label for="id_party_immediately">Immediately:</label></th>
                     <td>{{ form.party_immediately.errors }}{{ form.party_immediately}}</td>
                 </tr>
                 <tr id="div_lp_date">
@@ -108,6 +111,7 @@
                     <td><input type="submit" value="Create Competition" /></td>
                 </tr>
             </table>
+            </fieldset>
         </form>
     </div>
 {% endblock %}

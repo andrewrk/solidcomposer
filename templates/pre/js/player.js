@@ -1080,7 +1080,7 @@ var Player = function() {
         
         // public methods
         initialize: function(readyFunc, _updateCallback) {
-            updateCallback = _updateCallback;
+            updateCallback = _updateCallback || function(){};
             compileTemplates();
             initializeJPlayer(readyFunc);
             cacheImages();

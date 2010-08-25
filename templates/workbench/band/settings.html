@@ -1,5 +1,7 @@
 {% extends 'workbench/band/base.html' %}
 
+{% block css %}band_settings.pre.css{% endblock %}
+
 {% block title %}Settings - {{ band.title }} - {{ block.super }}{% endblock %}
 
 {% block login %}
@@ -28,7 +30,7 @@
                 </table>
             </form>
             <h2>Members</h2>
-            <ul>
+            <ul class="member-list">
             {% for member in band.bandmember_set.all %}
                 {% with member.user as user %}
                     <li>
