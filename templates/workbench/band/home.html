@@ -30,13 +30,15 @@
 {% endblock %}
 
 {% block extra_nav2 %}
-    <div id="filters">
-        {% include 'loading.html' %}
-    </div>
-    <div id="new-project">
-        <a href="{% url workbench.create_project band.id %}">New Project</a>
-    </div>
-    <div class="clear"></div>
+    {% if permission %}
+        <div id="filters">
+            {% include 'loading.html' %}
+        </div>
+        <div id="new-project">
+            <a href="{% url workbench.create_project band.id %}">New Project</a>
+        </div>
+        <div class="clear"></div>
+    {% endif %}
 {% endblock %}
 
 {% block content %}

@@ -378,6 +378,7 @@ def ajax_email_invite(request):
 
         return json_success()
 
+@login_required
 def band(request, band_id_str):
     band = get_object_or_404(Band, pk=int(band_id_str))
     permission = band.permission_to_critique(request.user)
