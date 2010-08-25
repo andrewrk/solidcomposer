@@ -284,7 +284,7 @@ def user_register_plan(request, plan_url):
             # send an activation email
             subject = design.account_confirmation
             context = Context({
-                'user': user.username,
+                'user': user,
                 'activate_url': request.build_absolute_uri(reverse('confirm', args=[user.username, profile.activate_code])),
                 'host': request.get_host(),
             })
