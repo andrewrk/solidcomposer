@@ -51,7 +51,7 @@
             </ul>
             <% if (compo.user_entered && compo.vote_count > 0) { %>
                 <span class="vote-count">
-                    <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="+" /><%= compo.vote_count %>
+                    <img src="<%=media_url%>img/thumbsup.png" alt="+" /><%= compo.vote_count %>
                 </span>
             <% } %>
         </div>

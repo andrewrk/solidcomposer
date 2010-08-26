@@ -211,7 +211,7 @@
                         <% } %>
                     <% } else if (version.new_title) { %>
                         <span class="rename-from">"<%=version.old_title%>"</span>
-                        <img src="{{ MEDIA_URL }}img/rename-arrow.png" alt="renamed to"/>
+                        <img src="<%=media_url%>img/rename-arrow.png" alt="renamed to"/>
                         <span class="rename-to">"<%=version.new_title%>"</span>
                     <% } else if (version.provided_samples.length > 0) { %>
                         <div class="provided-samples">

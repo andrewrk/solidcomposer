@@ -54,7 +54,8 @@ AWS_TEST_STORAGE_BUCKET_NAME = 'solidcomposer-test'
 
 DEFAULT_FROM_EMAIL = 'admin@solidcomposer.com'
 MEDIA_ROOT = absolute('media')
-MEDIA_URL = 'http://localhost:8080/django/solidcomposer/'
+# media server must to support http and https at the same URL
+MEDIA_URL = 'http://localhost/media/'
 ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 
 # Make this unique, and don't share it with anybody.
@@ -87,6 +88,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.debug',
     'django.core.context_processors.media',
     'django.core.context_processors.request',
+    'context.ssl_media',
 )
 
 INSTALLED_APPS = (

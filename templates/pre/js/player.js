@@ -23,7 +23,6 @@ var Player = function() {
     var templateCommentUi = "{% filter escapejs %}{% include 'player/comment_ui.jst.html' %}{% endfilter %}";
     var templateCommentUiCompiled = null;
 
-    var media_url = "{{ MEDIA_URL }}";
     var jPlayerSwfPath = media_url + "swf";
     var jp = null; // jPlayer jQuery object
     var jPlayerReady = false;

@@ -6,6 +6,10 @@
         <title>{% block title %}SolidComposer{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/{% block css %}base.pre.css{% endblock %}" />
         <link rel="shortcut icon" href="{{ MEDIA_URL }}img/favicon.ico" type="image/x-icon" />
+
+        <script type="text/javascript">
+var media_url = "{{ MEDIA_URL|escapejs }}";
+        </script>
         {% block extra_header %}{% endblock %}
     </head>
     <body>

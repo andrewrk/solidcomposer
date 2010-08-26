@@ -11,10 +11,10 @@
     }
 
     li.facebook {
-        background-image: url({{ MEDIA_URL }}img/facebook-icon.png);
+        background-image: url(../img/facebook-icon.png);
     }
 
     li.twitter {
-        background-image: url({{ MEDIA_URL }}img/twitter-icon.png);
+        background-image: url(../img/twitter-icon.png);
     }
 }

@@ -3,9 +3,11 @@ Release "Boten Anna" (Basshunter):
   > song player
     - dialog should not cover up song playback
     - dependency dialog
+  > comments in arena
   > look at all the pages with browser maximized and make it also look good for that
   > introducing solidcomposer article
 * still have the ability to view comments during song playback
+* somehow use https for media when using SSL
 * test everything. 
 
 Wednesday, September 1:

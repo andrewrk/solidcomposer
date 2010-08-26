@@ -29,7 +29,7 @@ $corner-radius: 10px;
             width: $meter-width - $corner-radius;
             height: $meter-height - $corner-radius;
             border: 1px solid #000000;
-            background-image: url({{ MEDIA_URL}}img/tick.png);
+            background-image: url(../img/tick.png);
             background-repeat: repeat-x;
             background-position: left top;
             font-weight: bold;

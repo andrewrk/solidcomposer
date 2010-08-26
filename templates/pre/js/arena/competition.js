@@ -38,7 +38,7 @@ var SCCompo = function () {
                 load_percent: 0
             }
         },
-        media_url: "{{ MEDIA_URL }}",
+        media_url: media_url,
         activity: null,
         urls: {% include "arena/urls.js" %},
         theme_shown: true,

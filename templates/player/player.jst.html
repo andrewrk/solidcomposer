@@ -8,7 +8,7 @@
                     <% } else { %>
                         <span>
                     <% } %>
-                        <a href="{{ MEDIA_URL }}<%=song.source_file%>"
+                        <a href="<%=media_url%><%=song.source_file%>"
                             <% if (song.studio && song.studio.logo_16x16 !== null) { %>
                                 style="background-image: url(<%=song.studio.logo_16x16%>);"
                             <% } %>
@@ -23,7 +23,7 @@
                 <% } %>
             <% } %>
             <% if (song.mp3_file) { %>
-                <span class="dl-mp3"><a href="{{ MEDIA_URL }}<%=song.mp3_file%>">Download MP3</a></span>
+                <span class="dl-mp3"><a href="<%=media_url%><%=song.mp3_file%>">Download MP3</a></span>
             <% } %>
             <span class="title"><%=song.band.title%> - <%=song.title%></span>
         </div>
@@ -52,7 +52,7 @@
                 <div class="not-button-layer">
                     <div class="wave-layer">
                         <div class="wave-outer">
-                            <div class="wave" style="background-image: url({{ MEDIA_URL}}<% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
+                            <div class="wave" style="background-image: url(<%=media_url%><% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
                                 <div class="overlay-border" style="width: 0;">
                                     <div class="overlay">
                                     </div>

@@ -11,12 +11,12 @@
         <% } else { %>
             <a href="#" class="track" id="entry-<%= i %>">
         <% }%>
-        <% if (current) { %><img src="{{ MEDIA_URL }}img/play24.png" alt="" /><% } %>
+        <% if (current) { %><img src="<%=media_url%>img/play24.png" alt="" /><% } %>
         <span class="len"><%= Time.timeDisplay(entry.song.length) %></span>
         <span class="text"><%= entry.song.band.title %> - <%= entry.song.title %></span>
         <% if (SCCompo.compoClosed() && entry.vote_count > 0) { %>
             <span class="votes">
-                <img src="{{ MEDIA_URL }}img/thumbsup.png" alt="thumbs up" />
+                <img src="<%=media_url%>img/thumbsup.png" alt="thumbs up" />
                 <span class="xamt">x <%= entry.vote_count %></span>
             </span>
         <% } %>
