@@ -5,8 +5,6 @@ Release "Boten Anna" (Basshunter):
     - maxWidth and maxHeight don't work in jquery dialog
     - dependency dialog
     - download samples dialog
-  > design for comments
-    - dialog comments
   > look at all the pages with browser maximized and make it also look good for that
   > introducing solidcomposer article
 * still have the ability to view comments during song playback

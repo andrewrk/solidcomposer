@@ -338,7 +338,7 @@ $comments_layer_height: $timed_comment_size + 1px;
     }
 }
 
-.comment-ui {
+.comment-ui, .edit-content {
     textarea {
         width: 300px;
         height: 150px;
@@ -426,3 +426,23 @@ $comments_layer_height: $timed_comment_size + 1px;
     }
 }
 
+#comment-dialog {
+    .comment-area {
+        background-color: #0e0e0e;
+        border-color: #2f2f2f;
+
+        .comment {
+            border-color: #2f2f2f;
+
+            .timestamp {
+                color: #808080;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                color: #cacbcc;
+            }
+
+        }
+    }
+
+}
