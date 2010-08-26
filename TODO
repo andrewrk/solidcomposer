@@ -2,13 +2,11 @@ Release "Boten Anna" (Basshunter):
 * design iteration
   > song player
     - dialog should not cover up song playback
-    - maxWidth and maxHeight don't work in jquery dialog
     - dependency dialog
-    - download samples dialog
   > look at all the pages with browser maximized and make it also look good for that
   > introducing solidcomposer article
 * still have the ability to view comments during song playback
-* test everything. especially uploading large files and The Sun.zip
+* test everything. 
 
 Wednesday, September 1:
 * WE DO IT LIVE

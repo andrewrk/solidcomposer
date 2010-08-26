@@ -446,3 +446,29 @@ $comments_layer_height: $timed_comment_size + 1px;
     }
 
 }
+
+#dl-samples-dialog {
+    padding: 15px 10px 10px 10px;
+
+    .dl-all, .dl-selected {
+        background-image: url(../img/dl-zip-32x32.png);
+        background-repeat: no-repeat;
+        background-position: left center;
+        padding: 16px 0 16px 32px;
+        margin: 0;
+        color: 14px;
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    hr {
+        margin: 20px 0;
+    }
+    select {
+        margin: 0 0 15px;
+        max-width: 400px;
+        max-height: 200px;
+    }
+    .dl-selected {
+
+    }
+}

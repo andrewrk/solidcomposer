@@ -1,17 +1,11 @@
-<div class="all">
-    <a class="dl-all" href="#" data-songid="<%=song.id%>">Download All Samples + Project File</a>
-</div>
-<p>- OR -</p>
-<div class="select">
-    <select name="s" multiple="multiple">
-        <option value="project" selected="selected"><%=Player.fileTitle(song.source_file)%></option>
-        <% for (var sample_index=0; sample_index<song.samples.length; ++sample_index) { var sample = song.samples[sample_index]; %>
-            <% if (! sample.missing) { %>
-                <option value="<%=sample.id%>"><%=sample.title%></option>
-            <% } %>
+<a class="dl-all" href="#" data-songid="<%=song.id%>">Download All Samples + Project File</a>
+<hr />
+<select name="s" multiple="multiple">
+    <option value="project" selected="selected"><%=Player.fileTitle(song.source_file)%></option>
+    <% for (var sample_index=0; sample_index<song.samples.length; ++sample_index) { var sample = song.samples[sample_index]; %>
+        <% if (! sample.missing) { %>
+            <option value="<%=sample.id%>"><%=sample.title%></option>
         <% } %>
-    </select>
-    <p class="help">Hold down "Control", or "Command" on a Mac, to select more than one.</p>
-    <a class="dl-selected" href="#" data-songid="<%=song.id%>">Selected Files</a>
-</div>
-
+    <% } %>
+</select>
+<a class="dl-selected" href="#" data-songid="<%=song.id%>">Download Selected Files</a>

@@ -1010,8 +1010,10 @@ var Player = function() {
             closeOnEscape: true,
             title: "{{ STR_SAMPLES_DIALOG_TITLE }}",
             autoOpen: false,
-            maxWidth: 400,
-            maxHeight: 500
+            maxWidth: 430,
+            minWidth: 430,
+            maxHeight: 365,
+            minHeight: 365
         });
 
         // dependencies
