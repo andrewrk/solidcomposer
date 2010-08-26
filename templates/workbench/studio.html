@@ -5,7 +5,7 @@
 {% block extra_header %}
     {{ block.super }}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/showdown-0.9.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/wmd/showdown.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/render-showdown.pre.js"></script>
 {% endblock %}
 
@@ -30,4 +30,5 @@
         {% endif %}
         <div class="showdown">{{ studio.info }}</div>
     </div>
+    <div class="clear"></div>
 {% endblock %}
