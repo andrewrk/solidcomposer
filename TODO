@@ -1,7 +1,5 @@
 Release "Boten Anna" (Basshunter):
 * design iteration
-  > tip framework
-    - tips should show up where the tip element is but not on top of it.
   > song player
     - dialog should not cover up song playback
     - maxWidth and maxHeight don't work in jquery dialog
