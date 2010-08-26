@@ -8,12 +8,12 @@
                 <% if (! theme_shown) { %> style="display: none;"<% } %>
             >
             <% if (json.compo.preview_theme) { %>
-                <%+ Showdown.instance.makeHtml(json.compo.theme) %>
+                <%+ Showdown.makeHtml(json.compo.theme) %>
             <% } else { %>
                 <% if (Time.secondsUntil(json.compo.start_date) > 0) { %>
                     The theme will be announced as soon as the competition starts.
                 <% } else { %>
-                    <%+ Showdown.instance.makeHtml(json.compo.theme) %>
+                    <%+ Showdown.makeHtml(json.compo.theme) %>
                 <% } %>
             <% } %>
             </div>
@@ -27,12 +27,12 @@
                 <% if (! rules_shown) { %> style="display: none;"<% } %>
             >
             <% if (json.compo.preview_rules) { %>
-                <%+ Showdown.instance.makeHtml(json.compo.rules) %>
+                <%+ Showdown.makeHtml(json.compo.rules) %>
             <% } else { %>
                 <% if (Time.secondsUntil(json.compo.start_date) > 0) { %>
                     The rules will be announced as soon as the competition starts.
                 <% } else { %>
-                    <%+ Showdown.instance.makeHtml(json.compo.rules) %>
+                    <%+ Showdown.makeHtml(json.compo.rules) %>
                 <% } %>
             <% } %>
             </div>

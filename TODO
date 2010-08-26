@@ -6,8 +6,12 @@ Release "Boten Anna" (Basshunter):
     - dependency dialog
     - download samples dialog
   > design for comments
+    - create css rules for markdown so that comments and themes etc can't go crazy
   > look at all the pages with browser maximized and make it also look good for that
   > introducing solidcomposer article
+* reply to comment not working
+  > reply to rename version not working at all
+  > press reply button on child on version and cancel and then reply to parent.
 * still have the ability to view comments during song playback
 * test everything. especially uploading large files and The Sun.zip
 

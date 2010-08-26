@@ -29,7 +29,7 @@
                         <% if (node.deleted) { %>
                             [deleted]
                         <% } else { %>
-                            <%+ Showdown.instance.makeHtml(node.content) %>
+                            <%+ Showdown.makeHtml(node.content) %>
                         <% } %>
                     </div>
                 <% } %>
