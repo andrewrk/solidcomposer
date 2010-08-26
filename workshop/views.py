@@ -901,6 +901,7 @@ def band_settings(request, band_id_str):
 @login_required
 def project(request, band_id_str, project_id_str):
     band = get_object_or_404(Band, id=int(band_id_str))
+    permission = band.permission_to_critique(request.user)
     project = get_object_or_404(Project, id=int(project_id_str))
     return render_to_response('workbench/band/project.html', locals(), context_instance=RequestContext(request))
 

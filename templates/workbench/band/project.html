@@ -24,16 +24,26 @@
 {% endblock %}
 
 {% block tools_wrapper %}
-    <div id="project-status">
-        {% include 'loading.html' %}
-    </div>
+    {% if permission %}
+        <div id="project-status">
+            {% include 'loading.html' %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-    <div id="versions">
-        {% include 'loading.html' %}
-    </div>
-    <div id="footer-data">
-        {% include 'loading.html' %}
-    </div>
+    {% if permission %}
+        <div id="versions">
+            {% include 'loading.html' %}
+        </div>
+        <div id="footer-data">
+            {% include 'loading.html' %}
+        </div>
+    {% else %}
+        <div class="textblock">
+            <p>
+                You do not have permission to view this band's private projects.
+            </p>
+        </div>
+    {% endif %}
 {% endblock %}
