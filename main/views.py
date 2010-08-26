@@ -105,8 +105,12 @@ def ajax_comment(request):
         return json_failure(design.bad_song_comment_node_id)
 
     # make sure the user has permission to critique
-    if not parent.song.permission_to_critique(request.user):
-        return json_failure(design.you_dont_have_permission_to_comment)
+    if parent.song is not None:
+        if not parent.song.permission_to_critique(request.user):
+            return json_failure(design.you_dont_have_permission_to_comment)
+    else:
+        if not parent.version.project.band.permission_to_critique(request.user):
+            return json_failure(design.you_dont_have_permission_to_comment)
 
     # make sure the parent has enabled replies
     if parent.reply_disabled:
@@ -129,6 +133,7 @@ def ajax_comment(request):
 
     node = SongCommentNode()
     node.song = parent.song
+    node.version = parent.version
     node.parent = parent
     node.owner = request.user
     node.content = content

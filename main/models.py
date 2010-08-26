@@ -468,6 +468,7 @@ class SongCommentNode(SerializableModel):
     )
 
     song = models.ForeignKey('Song', null=True, blank=True)
+    version = models.ForeignKey('workshop.ProjectVersion', null=True, blank=True)
 
     # if null then this is the root.
     parent = models.ForeignKey('SongCommentNode', null=True, blank=True)
@@ -515,10 +516,16 @@ class SongCommentNode(SerializableModel):
             if self.parent != None:
                 entry = workshop.models.LogEntry()
                 entry.entry_type = workshop.models.LogEntry.SONG_CRITIQUE
-                entry.band = self.song.band
+                if self.song is not None:
+                    entry.band = self.song.band
+                else:
+                    entry.band = self.version.project.band
                 entry.catalyst = self.owner
                 entry.node = self
-                entry.version = self.song.projectversion_set.all()[0]
+                if self.song is not None:
+                    entry.version = self.song.projectversion_set.all()[0]
+                else:
+                    entry.version = self.version
                 entry.save()
 
         return self._save(*args, **kwargs)

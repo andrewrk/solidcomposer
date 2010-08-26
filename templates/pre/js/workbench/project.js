@@ -326,6 +326,8 @@ var SCProject = function () {
                     version = data.versions[i];
                     if (version.song) {
                         Player.processSong(version.song);
+                    } else {
+                        Player.processCommentNode(version.comment_node);
                     }
                     insertIndex = getVersionIndex(version.id);
                     if (insertIndex !== -1) {

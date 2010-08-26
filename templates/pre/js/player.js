@@ -314,11 +314,15 @@ var Player = function() {
             var timedComment = song.timed_comments[i];
             if (node.position < timedComment.position) {
                 song.timed_comments.splice(i, 0, node);
+                song.timed_comments_hash[node.id] = node;
                 updateCallback();
                 return;
             }
         }
-        song.timed_comments.push(node);
+        if (! song.timed_comments_hash.hasOwnProperty(node.id)) {
+            song.timed_comments.push(node);
+            song.timed_comments_hash[node.id] = node;
+        }
         updateCallback();
     }
 
@@ -352,6 +356,7 @@ var Player = function() {
                 for (i=0; i<song.timed_comments.length; ++i) {
                     if (song.timed_comments[i].id === node_id) {
                         song.timed_comments.splice(i, 1);
+                        delete song.timed_comments_hash[node_id];
                         return;
                     }
                 }
@@ -981,24 +986,6 @@ var Player = function() {
         templateCommentUiCompiled = Jst.compile(templateCommentUi);
     }
 
-    function processCommentNode(song, comment_node) {
-        comments[comment_node.id] = comment_node;
-
-        // sort the children
-        comment_node.children.sort(function(a,b){
-            return a.id - b.id;
-        });
-
-        // process the children
-        for (var i=0; i<comment_node.children.length; ++i) {
-            var node = comment_node.children[i];
-            if (node.position !== null) {
-                song.timed_comments.push(node);
-            }
-            processCommentNode(song, node);
-        }
-    }
-
     function createDialogs() {
         // insert comment tip
         $('body').prepend('<div id="comment-tip-dialog" style="display: none;"></div>');
@@ -1230,14 +1217,37 @@ var Player = function() {
             }
 
             // create a list of timed comments
-            song.timed_comments = []
-            processCommentNode(song, song.comment_node);
+            song.timed_comments = [];
+            song.timed_comments_hash = {};
+            that.processCommentNode(song.comment_node, song);
             song.timed_comments.sort(function(a,b){
                 return a.position - b.position;
             });
 
             song.comments_visible = true;
         },
+
+        processCommentNode: function(comment_node, song) {
+            comments[comment_node.id] = comment_node;
+
+            // sort the children
+            comment_node.children.sort(function(a,b){
+                return a.id - b.id;
+            });
+
+            // process the children
+            for (var i=0; i<comment_node.children.length; ++i) {
+                var node = comment_node.children[i];
+                if (node.position !== null) {
+                    if (! song.timed_comments_hash.hasOwnProperty(node.id)) {
+                        song.timed_comments.push(node);
+                        song.timed_comments_hash[node.id] = node;
+                    }
+                }
+                that.processCommentNode(node, song);
+            }
+        },
+
         // used for formatting source file to display to the user.
         fileTitle: function(path) {
             var parts = path.split('/');

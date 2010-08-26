@@ -637,6 +637,9 @@ def ajax_rename_project(request):
         version.old_title = project.title
         version.save()
 
+        node.version = version
+        node.save()
+
         project.title = new_title
         project.save()
 
@@ -676,6 +679,9 @@ def ajax_upload_samples_as_version(request):
     version.comment_node = node
     version.version = project.latest_version.version # no +1, only adding samples.
     version.save() # so we can add provided_samples
+
+    node.version = version
+    node.save()
     
     def add_sample_to_version(sample):
         version.provided_samples.add(sample)
