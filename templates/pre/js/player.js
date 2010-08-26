@@ -679,7 +679,7 @@ var Player = function() {
             var comment_id = parseInt($(this).closest('.comment').attr('data-commentid'));
             var comment = comments[comment_id];
             // insert comment ui below
-            var comment_ui = comment_dom.find('.comment-ui').first();
+            var comment_ui = $("#comment-ui-" + comment_id);
             if (comment_ui.size() > 0) {
                 // just show the one that already exists
                 comment_ui.show();

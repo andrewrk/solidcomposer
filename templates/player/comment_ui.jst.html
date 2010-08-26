@@ -1,5 +1,5 @@
 <% (function(position, parent_node){ %>
-    <div class="comment-ui">
+    <div class="comment-ui" id="comment-ui-<%=parent_node.id%>">
         <textarea rows="15" cols="48"></textarea>
         <div class="buttons">
             <input class="post" type="button" value="Post" data-parentid="<%=parent_node.id%>" />
