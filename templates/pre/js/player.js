@@ -351,6 +351,7 @@ var Player = function() {
     function deleteComment(node_id) {
         if (comments[node_id].children.length === 0) {
             // actually delete it
+            comments[node_id].js_deleted = true;
             $.each(songs, function(id, song) {
                 var i;
                 for (i=0; i<song.timed_comments.length; ++i) {

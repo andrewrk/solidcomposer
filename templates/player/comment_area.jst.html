@@ -46,7 +46,7 @@
                 <% } %>
                 <% for (var i=0; i<node.children.length; ++i) { %>
                     <% var child = node.children[i]; %>
-                    <% if (child.position === null || show_timed_comments) { %>
+                    <% if ((! child.js_deleted) && (child.position === null || show_timed_comments)) { %>
                         <% comment_block(child); %>
                     <% } %>
                 <% } %>

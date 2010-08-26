@@ -1,6 +1,4 @@
 Release "Boten Anna" (Basshunter):
-* comments are broken
-  > delete not refreshing
 * design iteration
   > song player
     - dialog should not cover up song playback
