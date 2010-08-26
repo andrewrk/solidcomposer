@@ -7,6 +7,8 @@
         <img class="gravatar" src="<%=user.gravatar_icon%>" alt="" />
     </a>
     <a class="username" href="<%=urls.userpage(user.username)%>"><%= user.username %></a>
-    <span class="points"><img src="<%=media_url%>img/star.png" alt="Star Points" title="Star Points" />
-    x <%= user.get_points %></span>
+    <% if (user.get_points > 0) { %>
+        <span class="points"><img src="<%=media_url%>img/star.png" alt="Star Points" title="Star Points" />
+        x <%= user.get_points %></span>
+    <% } %>
 <% })(user); %>

@@ -6,5 +6,9 @@
         <img class="gravatar" src="{{ user.get_profile.gravatar_icon }}" alt="" />
     </a>
 <a href="{% url userpage user.username %}">{{ user.username }}</a>
-<span class="points"><img src="{{ MEDIA_URL }}img/star.png" alt="Star Points" title="Star Points" />
-x {{ user.get_profile.get_points }}</span>
+{% with user.get_profile.get_points as points %}
+    {% if points > 0 %}
+        <span class="points"><img src="{{ MEDIA_URL }}img/star.png" alt="Star Points" title="Star Points" />
+        x {{ user.get_profile.get_points }}</span>
+    {% endif %}
+{% endwith %}
