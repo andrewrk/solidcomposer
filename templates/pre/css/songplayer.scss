@@ -315,6 +315,7 @@ $comments_layer_height: $timed_comment_size + 1px;
             height: 16px;
             background-repeat: no-repeat;
             background-position: center center;
+            margin: 0 4px 0 -5px;
 
             @include opacity(0.90);
 

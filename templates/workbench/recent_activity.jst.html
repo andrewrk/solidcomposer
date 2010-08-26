@@ -29,7 +29,7 @@
                             <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
                         <% } else if (entry.entry_type === entryTypeEnum.SONG_RENAMED) { %>
                             renamed
-                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.old_title %></a>
+                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.old_title %></a>
                             to
                             <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
                         <% } else if (entry.entry_type === entryTypeEnum.POKE) { %>

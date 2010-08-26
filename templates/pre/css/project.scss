@@ -1,8 +1,138 @@
 @import "workbench.pre.css";
 @import "songplayer.pre.css";
 
+$title-color: #394047;
+$action-title-color: #4388cc;
+
 #project-status {
     float: right;
     margin: -5px -4px 0 0;
     padding: 0;
+}
+
+#actions, .version {
+    margin: 14px;
+}
+
+#actions {
+    h1  {
+        margin: 0;
+        padding: 5px 0 6px 14px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+        color: #ffffff;
+        background: $action-title-color url("../img/light-title.png") repeat-x left top;
+        text-decoration: none;
+        display: block;
+    }
+    .inner {
+        background-color: #dae0e8;
+        border: 1px solid $action-title-color;
+        padding: 14px;
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+
+            li {
+                margin: 6px 0;
+
+                a {
+                    background-repeat: no-repeat;
+                    background-position: left center;
+                    padding: 0 0 0 20px;
+                }
+            }
+        }
+    }
+}
+
+.version {
+    h1 {
+        margin: 0;
+        padding: 5px 0 6px 14px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+        color: #ffffff;
+        background-color: $title-color;
+        background: $title-color url("../img/light-title.png") repeat-x left top;
+
+        .date {
+            float: right;
+            margin: 0 24px;
+        }
+    }
+
+    .inner {
+        background-color: #dae0e8;
+        border: 1px solid $title-color;
+        padding: 14px;
+
+        img {
+            vertical-align: middle;
+        }
+
+        .rename-from, .rename-to {
+            font-size: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .provided-samples {
+            .player-small {
+                margin: 6px;
+            }
+            .dl-zip {
+                background-repeat: no-repeat;
+                background-position: left center;
+                padding: 0 0 0 20px;
+                background-image: url(../img/dl-zip16.png);
+            }
+        }
+
+        .missing-thing {
+            h2 {
+                color: #f52213;
+                background-repeat: no-repeat;
+                background-position: left center;
+                padding: 0 0 0 20px;
+                background-image: url(../img/warning16.png);
+            }
+
+            ul {
+                list-style-type: none;
+                margin: 0 14px;
+                padding: 0;
+
+                li {
+                    background-repeat: no-repeat;
+                    background-position: left center;
+                    padding: 0 0 0 14px;
+                    background-image: url(../img/note16.png);
+                }
+            }
+        }
+    }
+}
+
+#upload-samples {
+    background-image: url(../img/upload.png);
+}
+
+#rename {
+    background-image: url(../img/rename.png);
+}
+
+#checkout {
+    background-image: url(../img/checkout.png);
+}
+
+#versions {
+    form {
+        width: 600px;
+        background-color: #f3f3f3;
+        border: 1px solid #b1b1b1;
+        padding: 8px;
+    }
 }

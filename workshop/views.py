@@ -634,6 +634,7 @@ def ajax_rename_project(request):
         version.comment_node = node
         version.version = project.latest_version.version # no +1 because only renaming
         version.new_title = new_title
+        version.old_title = project.title
         version.save()
 
         project.title = new_title
@@ -1138,6 +1139,7 @@ def version_to_dict(version, user):
     data = {
         'version': version.version,
         'new_title': version.new_title,
+        'old_title': version.old_title,
         'date_added': version.date_added,
         'id': version.id,
     }

@@ -1,7 +1,5 @@
 Release "Boten Anna" (Basshunter):
 * design iteration
-  > pages - iterate through all of them. also test on 1024 page width
-    - url(r'^band/(\d+)/project/(\d+)/$', 'workshop.views.project', name="workbench.project"),
   > tip framework
     - tips should show up where the tip element is but not on top of it.
   > song player

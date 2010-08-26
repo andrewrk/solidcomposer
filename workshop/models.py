@@ -223,6 +223,7 @@ class ProjectVersion(SerializableModel):
         'song',
         'version',
         'new_title',
+        'old_title',
         'provided_samples',
     )
 
@@ -241,6 +242,7 @@ class ProjectVersion(SerializableModel):
 
     # if it's not blank then this is a rename.
     new_title = models.CharField(max_length=100, blank=True, default='')
+    old_title = models.CharField(max_length=100, blank=True, default='')
 
     # if it's not null then this is a version to provide samples
     provided_samples = models.ManyToManyField('UploadedSample', blank=True, related_name='provided_samples')
@@ -485,14 +487,6 @@ class LogEntry(SerializableModel):
     # the amount of space donated changed
     old_amount = models.BigIntegerField(default=0)
     new_amount = models.BigIntegerField(default=0)
-
-    def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
-        data = super(LogEntry, self).to_dict(access, chains)
-        if self.entry_type == LogEntry.SONG_RENAMED:
-            # get the previous version
-            prev_version = ProjectVersion.objects.filter(project=self.version.project, pk__lt=self.version.id, song__isnull=False).order_by('-pk')[0]
-            data['old_title'] = prev_version.song.title
-        return data
 
     def save(self, *args, **kwargs):
         if not self.id:

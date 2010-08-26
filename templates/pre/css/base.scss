@@ -336,11 +336,20 @@ p.err {
     }
 }
 
-.tip a {
-    background-image: url(../img/tip-16x16.png);
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding: 0 0 0 18px;
+.tip {
+    margin: 4px;
+    padding: 0;
+
+    a {
+        background-image: url(../img/tip-16x16.png);
+        background-repeat: no-repeat;
+        background-position: left center;
+        padding: 0 0 0 18px;
+        color: #4a62ff;
+        font-weight: bold;
+        font-size: 12px;
+        text-decoration: none;
+    }
 }
 
 .username img, .points img {

@@ -3,56 +3,51 @@
         {% include 'workbench/space_warning.jst.html' %}
     <% } %>
     <% if (versions.length) { %>
-        <div id="next-version" class="version" data-projectid="<%=project.id%>">
-            <% if (project.checked_out_to !== null) { %>
-                <% var version_user = project.checked_out_to; %>
-                {% include 'workbench/version_owner.jst.html' %}
-            <% } else { %>
-                <% var version_user = user; %>
-                {% include 'workbench/version_owner.jst.html' %}
-            <% } %>
-            <div id="action">
+        <% var version_user = (project.checked_out_to !== null) ? project.checked_out_to : user; %>
+        <div id="actions">
+            <h1>Actions</h1>
+            <div class="inner">
                 <% if (project.checked_out_to !== null) { %>
                     <% if (project.checked_out_to.id === user.id) { %>
-                        <h1>Check in new version</h1>
-                        <div>
-                            <a href="#" id="just-check-in">Just check in.</a> {% include 'tips/justCheckIn.html' %}
-                        </div>
-                        <div>
-                            <form id="checkin-form" action="{% url workbench.ajax_checkin %}" enctype="multipart/form-data" method="post">
-                                <fieldset>
-                                    <input type="hidden" name="project" value="<%=project.id%>" />
-                                    <table>
-                                        <tr>
-                                            <th>Project file:</th>
-                                            <td><input type="file" name="project_file" /></td>
-                                            <td>{% include 'tips/uploadProjectFileInput.html' %}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>MP3 Preview:</th>
-                                            <td><input type="file" name="mp3_preview" /></td>
-                                            <td>{% include 'tips/uploadPreviewMp3.html' %}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                Describe your changes:
-                                                <br/>(supports <a href="http://attacklab.net/showdown/">markdown</a>)
-                                            </th>
-                                            <td>
-                                                <textarea id="version-comments" name="comments" rows="15" cols="48"></textarea>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th></th>
-                                            <td><input type="submit" value="Check in" /></td>
-                                        </tr>
-                                    </table>
-                                </fieldset>
-                            </form>
-                        </div>
+                        <form id="checkin-form" action="{% url workbench.ajax_checkin %}" enctype="multipart/form-data" method="post">
+                            <fieldset>
+                                <input type="hidden" name="project" value="<%=project.id%>" />
+                                <table>
+                                    <tr>
+                                        <th>Didn't do any work?</th>
+                                        <td>
+                                            <a href="#" id="just-check-in">Just check in.</a> {% include 'tips/justCheckIn.html' %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Project file:</th>
+                                        <td><input type="file" name="project_file" /></td>
+                                        <td>{% include 'tips/uploadProjectFileInput.html' %}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>MP3 Preview:</th>
+                                        <td><input type="file" name="mp3_preview" /></td>
+                                        <td>{% include 'tips/uploadPreviewMp3.html' %}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            Describe your changes:
+                                            <br/>(supports <a href="http://attacklab.net/showdown/">markdown</a>)
+                                        </th>
+                                        <td>
+                                            <textarea id="version-comments" name="comments" rows="15" cols="48"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <td><input type="submit" value="Check in" /></td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </form>
                     <% } else { %>
                         <ul>
-                            {# <li><a id="poke">Poke <%=project.checked_out_to.username%></a></li> #}
+                            {# TODO <li><a id="poke">Poke <%=project.checked_out_to.username%></a></li> #}
                             {% include 'workbench/action_upload_samples.jst.html' %}
                         </ul>
                     <% } %>
@@ -88,6 +83,7 @@
                                     </td>
                                     <td>
                                         <input type="submit" value="Upload" />
+                                        <input id="cancel-action-upload-samples" type="button" value="Cancel" />
                                     </td>
                                 </tr>
                             </table>
@@ -116,6 +112,7 @@
                                     <td></td>
                                     <td>
                                         <input type="submit" value="Rename" />
+                                        <input id="cancel-rename" type="button" value="Cancel" />
                                     </td>
                                 </tr>
                             </table>
@@ -124,103 +121,116 @@
                 </div>
             </div>
         </div>
-        <% for (var i=versions.length-1; i>=0; --i) { %>
-            <% var version = versions[i]; %>
+        <%
+            for (var i=versions.length-1; i>=0; --i) {
+                var version = versions[i];
+        %>
             <div id="version-<%=i%>" class="version">
-                <% var version_user = version.song ? version.song.owner : version.owner; %>
-                {% include 'workbench/version_owner.jst.html' %}
-                <div class="version-data">
-                    <% if (version.song) { %>
-                        <a name="version<%=version.version%>"></a>
-                        Version <%=version.version%> on <%=Time.formatDateTime(Time.localTime(version.song.date_added))%>
-                    <% } else if (version.new_title != '') { %>
-                        Renamed to <%=version.new_title%> on <%=Time.formatDateTime(Time.localTime(version.date_added))%>
-                    <% } else { %>
-                        Provided samples on <%=Time.formatDateTime(Time.localTime(version.date_added))%>
-                    <% } %>
-                </div>
+                <%
+                    var version_user = version.song ? version.song.owner : version.owner;
+                    var version_date = version.song ? version.song.date_added : version.date_added;
+                %>
                 <% if (version.song) { %>
-                    <% var song = version.song; song.band = project.band; %>
-                    {% include 'player/player.jst.html' %}
-                    <% if (! version.song.mp3_file) { %>
-                        <div id="missing-mp3-<%=i%>" class="missing-thing">
-                            <h2><a href="#">Missing MP3 File</a>{% include 'tips/missingMp3Render.html' %}</h2>
-                            <div class="missing-mp3-form">
-                                <form id="missing-mp3-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_provide_mp3 %}">
-                                    <% var upload_caption = "MP3 file"; %>
-                                    {% include 'workbench/missing_file_form.jst.html' %}
-                                </form>
-                            </div>
-                        </div>
-                    <% } %>
-                    <% if (! version.song.source_file) { %>
-                        <div id="missing-project-<%=i%>" class="missing-thing">
-                            <h2><a href="#">Missing Project File</a>{% include 'tips/missingProjectFile.html' %}</h2>
-                            <div class="missing-project-form">
-                                <form id="missing-project-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_provide_project %}">
-                                    <% var upload_caption = "Project file"; %>
-                                    {% include 'workbench/missing_file_form.jst.html' %}
-                                </form>
-                            </div>
-                        </div>
-                    <% } %>
-                    <% if (version.song.anyMissingSamples) { %>
-                        <div id="missing-samples-<%=i%>" class="missing-thing">
-                            <h2><a href="#">Missing Samples</a>{% include 'tips/missingSamples.html' %}</h2>
-                            <div class="missing-list">
-                                <ul>
-                                    <% for (var sampleIndex=0; sampleIndex<version.song.samples.length; ++sampleIndex) {
-                                       var sample = version.song.samples[sampleIndex]; %>
-                                        <% if (sample.missing) { %>
-                                            <li>
-                                                <%= sample.title %>
-                                            </li>
-                                        <% } %>
-                                    <% } %>
-                                </ul>
-                            </div>
-                            <p>Upload them here. Feel free to use a .zip file.</p>
-                            <div class="missing-samples-form">
-                                <form id="missing-samples-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_upload_samples %}">
-                                    <fieldset>
-                                        <input type="hidden" name="band" value="<%=project.band.id%>" />
-                                        <table>
-                                            {% include 'workbench/sample_upload_row.jst.html' %}
-                                            <tr>
-                                                <td>
-                                                    <a href="#" id="add-file-<%=i%>">Add another</a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                </td>
-                                                <td>
-                                                    <input type="submit" value="Upload" />
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </fieldset>
-                                </form>
-                            </div>
-                        </div>
-                    <% } %>
-                <% } else if (version.new_title) { %>
-                    <div class="project-renamed">
-                        Project renamed to <%=version.new_title%>
-                    </div>
-                <% } else if (version.provided_samples.length > 0) { %>
-                    <div class="provided-samples">
-                        <div class="provided-sample-list">
-                            <% for (var sample_i=0; sample_i<version.provided_samples.length; ++sample_i) { %>
-                                <% var sample = version.provided_samples[sample_i]; %>
-                                {% include 'player/sample-preview.jst.html' %}
-                            <% } %>
-                        </div>
-                        <a href="<%=urls.download_sample_zip%>?<% for (var sample_i=0; sample_i<version.provided_samples.length; ++sample_i) { provided_sample = version.provided_samples[sample_i]; %>s=<%=provided_sample.id%>&<% } %>">Download all as .zip</a>
-                    </div>
+                    <a name="version<%=version.version%>"></a>
                 <% } %>
-                <% var comment_node = version.song ? version.song.comment_node : version.comment_node; %>
-                {% include 'player/normal_comments.jst.html' %}
+                <h1>
+                    <span class="date"><%=Time.printableTimeSince(version_date)%> ago</span>
+                    <% if (version.song) { %>
+                        Version <%=version.version%> by <%=version.song.owner.username%>
+                    <% } else if (version.new_title != '') { %>
+                        Renamed to <%=version.new_title%>
+                    <% } else { %>
+                        Provided samples by <%=version_user.username%>
+                    <% } %>
+                </h1>
+                <div class="inner">
+                    <% if (version.song) { %>
+                        <% var song = version.song; song.band = project.band; %>
+                        {% include 'player/player.jst.html' %}
+                        <% if (! version.song.mp3_file) { %>
+                            <div id="missing-mp3-<%=i%>" class="missing-thing">
+                                <h2>Missing Rendered Preview{% include 'tips/missingMp3Render.html' %}</h2>
+                                <div class="missing-mp3-form">
+                                    <form id="missing-mp3-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_provide_mp3 %}">
+                                        <% var upload_caption = "MP3 file"; %>
+                                        {% include 'workbench/missing_file_form.jst.html' %}
+                                    </form>
+                                </div>
+                            </div>
+                        <% } %>
+                        <% if (! version.song.source_file) { %>
+                            <div id="missing-project-<%=i%>" class="missing-thing">
+                                <h2>Missing Project File{% include 'tips/missingProjectFile.html' %}</h2>
+                                <div class="missing-project-form">
+                                    <form id="missing-project-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_provide_project %}">
+                                        <% var upload_caption = "Project file"; %>
+                                        {% include 'workbench/missing_file_form.jst.html' %}
+                                    </form>
+                                </div>
+                            </div>
+                        <% } %>
+                        <% if (version.song.anyMissingSamples) { %>
+                            <div id="missing-samples-<%=i%>" class="missing-thing">
+                                <h2>Missing Samples{% include 'tips/missingSamples.html' %}</h2>
+                                <div class="missing-list">
+                                    <ul>
+                                        <% for (var sampleIndex=0; sampleIndex<version.song.samples.length; ++sampleIndex) {
+                                           var sample = version.song.samples[sampleIndex]; %>
+                                            <% if (sample.missing) { %>
+                                                <li>
+                                                    <%= sample.title %>
+                                                </li>
+                                            <% } %>
+                                        <% } %>
+                                    </ul>
+                                </div>
+                                <p>Upload them here. Feel free to use a .zip file.</p>
+                                <div class="missing-samples-form">
+                                    <form id="missing-samples-upload-<%=i%>" method="post" enctype="multipart/form-data" action="{% url workbench.ajax_upload_samples %}">
+                                        <fieldset>
+                                            <input type="hidden" name="band" value="<%=project.band.id%>" />
+                                            <table>
+                                                {% include 'workbench/sample_upload_row.jst.html' %}
+                                                <tr>
+                                                    <td>
+                                                        <a href="#" id="add-file-<%=i%>">Add another</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                    </td>
+                                                    <td>
+                                                        <input type="submit" value="Upload" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                            </div>
+                        <% } %>
+                    <% } else if (version.new_title) { %>
+                        <span class="rename-from">"<%=version.old_title%>"</span>
+                        <img src="{{ MEDIA_URL }}img/rename-arrow.png" alt="renamed to"/>
+                        <span class="rename-to">"<%=version.new_title%>"</span>
+                    <% } else if (version.provided_samples.length > 0) { %>
+                        <div class="provided-samples">
+                            <a class="dl-zip" href="<%=urls.download_sample_zip%>?<%
+                                for (var sample_i=0; sample_i<version.provided_samples.length; ++sample_i) {
+                                    provided_sample = version.provided_samples[sample_i];
+                                    %>s=<%=provided_sample.id%>&<%
+                                } %>">Download all as .zip</a>
+                            <div class="provided-sample-list">
+                                <% for (var sample_i=0; sample_i<version.provided_samples.length; ++sample_i) { %>
+                                    <% var sample = version.provided_samples[sample_i]; %>
+                                    {% include 'player/sample-preview.jst.html' %}
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                    <% var comment_node = version.song ? version.song.comment_node : version.comment_node; %>
+                    {% include 'player/normal_comments.jst.html' %}
+                </div>
             </div>
         <% } %>
     <% } %>

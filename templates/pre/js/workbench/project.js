@@ -159,7 +159,7 @@ var SCProject = function () {
             });
         });
 
-        $("#upload-samples").click(function(){
+        function toggleActionUploadSamples() {
             // toggle visibility
             var div = $("#action-upload-samples");
             if (div.is(':visible')) {
@@ -168,7 +168,10 @@ var SCProject = function () {
                 div.show();
             }
             return false;
-        });
+        }
+
+        $("#upload-samples").click(toggleActionUploadSamples);
+        $("#cancel-action-upload-samples").click(toggleActionUploadSamples);
 
         $("#action-upload-samples .add-file").click(add_file_f);
 
@@ -193,7 +196,7 @@ var SCProject = function () {
             });
         });
 
-        $("#rename").click(function(){
+        function toggleRename() {
             // toggle visibility
             var div = $("#action-rename");
             if (div.is(':visible')) {
@@ -202,7 +205,10 @@ var SCProject = function () {
                 div.show();
             }
             return false;
-        });
+        }
+
+        $("#rename").click(toggleRename);
+        $("#cancel-rename").click(toggleRename);
 
         $("#action-rename-form").submit(function(){
             return AIM.submit(this, {
@@ -233,10 +239,10 @@ var SCProject = function () {
 
         $("#project-status").html(Jst.evaluate(template_project_status_s, state));
 
-        $("#projects").html(Jst.evaluate(template_version_list_s, state));
-        Player.addUi("#projects");
-        Player.addCommentsUi("#projects");
-        SCTips.addUi("#projects");
+        $("#versions").html(Jst.evaluate(template_version_list_s, state));
+        Player.addUi("#versions");
+        Player.addCommentsUi("#versions");
+        SCTips.addUi("#versions");
         addClicksToProjects();
 
         $("#footer-data").html(Jst.evaluate(template_footer_s, state));
