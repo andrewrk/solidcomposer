@@ -1,6 +1,20 @@
 {% extends 'article.html' %}
 
+{% block css %}introducing.pre.css{% endblock %}
+
 {% block title %}Introducing SolidComposer - Compete, collaborate, learn{% endblock %}
+
+{% block extra_header %}
+    {{ block.super }}
+    {% include 'sc_script_framework.html' %}
+    {% include 'player/script_player.html' %}
+    <script type="text/javascript">
+$(document).ready(function(){
+    Player.initialize(null, null);
+    Player.addUi('body');
+});
+    </script>
+{% endblock %}
 
 {% block content %}
     <div class="textblock">
@@ -40,12 +54,14 @@
             and complain about "missing samples."
             This is because it has noticed that your project depends on some audio files that you have not uploaded.
         </p>
+        <img src="{{ MEDIA_URL }}img/screenshots/player.png" alt="" />
         <h3>Dependencies</h3>
         <p>
             So if you upload the files that it complains about,
             the red text goes away and you're left with a nice green check next to "dependencies."
             If you click this, you'll see that it lists all the generators and effects you used in the project.
         </p>
+        <img src="{{ MEDIA_URL }}img/screenshots/dependencies.png" alt="" />
         <p class="note">
             By the way, if you're using FL Studio, you can skip all this by simply
             exporting and uploading a .zip file.
@@ -68,6 +84,11 @@
             He clicks the link and begins listening to your song.
             He thinks it's great, but you should fix the break at 0:34, so he adds a timed comment and says just that.
         </p>
+        <img src="{{ MEDIA_URL }}img/screenshots/timed-comment.png" alt="" />
+        <p class="note">
+            If you're thinking, "Hey, that looks like <a href="http://soundcloud.com/">SoundCloud</a>'s song player!"
+            you are right. It's a great player and SolidComposer's player was inspired by it.
+        </p>
         <p>
             Now when you play the song back and listen to your genius track,
             Vance's comment shows up at the appropriate position.
@@ -79,19 +100,23 @@
             Nobody else can work on the song until he checks it back in.
             This prevents you from clobbering each other's work and ending up with two conflicting versions. 
         </p>
+        <img src="{{ MEDIA_URL }}img/screenshots/checked-out-status.png" alt="" />
         <p>
             Anyways, Vance now owns the song until he checks it back in, but he still doesn't have the project files.
-            Luckily, that's the easiest part. Look at the red X next to Dependencies.
-            When he looks at the form, it's a little different.
+            Luckily, that's the easiest part. Look at the warning sign next to Dependencies:
+            <img src="{{ MEDIA_URL }}img/screenshots/dependency-warning.png" alt="" style="vertical-align: middle;" />
+            When Vance looks at the form, it's a little different.
             Whereas SolidComposer assumed that you had all the generators and effects in your own song,
-            it doesn't assume that your band members do.
+            it did not assume that Vance did.
         </p>
+        <img src="{{ MEDIA_URL }}img/screenshots/dependencies.png" alt="" />
         <p>
-            The form says he's missing 4FrontPiano.
-            Luckily, that plugin is free, so he can either say "don't worry, I already have this"
+            The form says he's missing <a href="http://www.geocities.jp/daichi1969/softsynth/">Synth1 VST</a>.
+            Luckily, that plugin is free, so he can either click "don't worry, I actually do have this"
             or he can click the link to go download it. As for downloading the project and samples,
             there's a nice button that lets him download everything in a zip (which FL Studio an open directly).
         </p>
+        <img src="{{ MEDIA_URL }}img/screenshots/download-samples.png" alt="" />
         <p>
             So, in 4 minutes, Vance went from checking his email to collaborating on
             your band's song. And he didn't even have one of the instruments you used, let alone all the samples.
@@ -129,11 +154,14 @@
         <h3>Not All Your Band Members Are Producers</h3>
         <p>
             SolidComposer is for your vocalist and guitarist too. One of the actions
-            you can take on a project is "upload samples." Your beautiful female vocalist
-            can download the latest version you've uploaded in the project manager,
-            record vocals, and click Upload Samples. These samples are provided in the
+            you can take on a project is "Upload Samples."
+            Your <a href="http://www.ellynheald.com/">beautiful female vocalist</a>
+            can download the latest version you've uploaded in the project manager, record vocals, and click 
+            <img src="{{ MEDIA_URL }}img/screenshots/upload-samples.png" alt="Upload Samples" style="vertical-align: middle;" />.
+            These samples are provided in the
             project view for you to preview, download, and use in the song.
         </p>
+        <img src="{{ MEDIA_URL }}img/screenshots/provided-samples.png" alt="" />
         <h3>It's Super Easy to Start a Band</h3>
         <p>
             Start a band with someone you don't even know! You can invite someone
@@ -169,13 +197,30 @@
         <p>
             What do these two songs have in common?
         </p>
-            [embedded player for groove basin] [link to rayza's site]
-            [embedded player for water on the dancefloor] [link to akumajobelmont's site]
+        <div class="player-small" data-songurl="mp3/water-on-the-dancefloor.mp3">
+            <span class="button">
+                <span class="play"><a href="#"></a></span>
+            </span>
+            <span class="link">
+                <strong>Water on the Dancefloor</strong> by <a href="http://ocremix.org/artist/4660/akumajobelmont">AkumajoBelmont</a>
+            </span>
+        </div>
+        <div class="clear"></div>
+        <div class="player-small" data-songurl="mp3/groove-basin.mp3">
+            <span class="button">
+                <span class="play"><a href="#"></a></span>
+            </span>
+            <span class="link">
+                <strong>Groove Basin</strong> by <a href="http://ocremix.org/artist/4297/rayza">Rayza</a>
+            </span>
+        </div>
+        <div class="clear"></div>
         <p>
-            The answer is: 
+            The answer is:
         </p>
         <ol>
             <li>They both <em>rock</em>.</li>
+            <li><a href="http://sonichasajarofdirt.ytmnd.com/">Sonic the Frickin' Hedgehog</a>.</li>
             <li>They are both "works in progress"</li>
             <li>The authors have both reported that they have long since lost the source project files.</li>
         </ol>
@@ -187,15 +232,22 @@
             along with each sample file that the projects depend on.
         </p>
         <p>
-            Your data is stored on <a href="http://aws.amazon.com/s3/">Amazon S3</a>. Guaranteed to be <a href="http://aws.amazon.com/s3/faqs/#How_is_Amazon_S3_designed_to_achieve_99.999999999%_durability">99.999999999%</a> durable. It is not going anywhere.
+            Your data is stored on <a href="http://aws.amazon.com/s3/">Amazon S3</a>.
+            Guaranteed to be <a href="http://aws.amazon.com/s3/faqs/#How_is_Amazon_S3_designed_to_achieve_99.999999999%_durability">99.999999999%</a> durable. It is not going anywhere.
         </p>
         <h2><a id="supported-studios">Supported Studios</a></h2>
-        <ul>
-            <li><a href="http://flstudio.image-line.com/">FL Studio</a></li>
-            <li><a href="http://lmms.sourceforge.net/">LMMS</a></li>
+        <ul id="studios">
+            <li class="flp"><a href="http://flstudio.image-line.com/">FL Studio</a></li>
+            <li class="lmms"><a href="http://lmms.sourceforge.net/">LMMS</a></li>
         </ul>
         <p>
-            Currently, FL Studio and LMMS are supported. We plan on supporting other studios like Cakewalk, and even plain old MIDI files.
+            Currently, FL Studio and LMMS are supported. We plan on supporting other studios like
+            <a href="http://www.apple.com/logicstudio/">Logic</a>,
+            <a href="http://www.propellerheads.se/products/reason/">Reason</a>,
+            <a href="http://www.ableton.com/">Ableton</a>,
+            <a href="http://www.steinberg.net/en/products/cubase/start.html">Cubase</a>,
+            <a href="http://www.cakewalk.com/">Cakewalk</a>,
+            and even plain old MIDI files.
             Cast your vote for what studio you want supported on <a href="http://solidcomposer.uservoice.com/">solidcomposer.uservoice.com</a>.
         </p>
         <h2><a name="arena">Arena</a></h2>

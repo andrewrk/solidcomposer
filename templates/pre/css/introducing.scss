@@ -1,0 +1,29 @@
+@import "article.pre.css";
+@import "songplayer.pre.css";
+
+.player-small {
+    margin: 6px;
+    padding: 0;
+}
+
+#studios {
+    li {
+        background-image: none;
+        padding: 0;
+        margin: 2px 0;
+
+        a {
+            background-repeat: no-repeat;
+            background-position: left center;
+        }
+    }
+    .flp a {
+        background-image: url(../img/flp16.png);
+        padding: 0 0 0 14px;
+        margin: 0 0 0 4px;
+    }
+    .lmms a {
+        background-image: url(../img/lmms16.png);
+        padding: 0 0 0 18px;
+    }
+}
