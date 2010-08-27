@@ -520,6 +520,9 @@ var Player = function() {
             dialogDependencies.html(Jst.evaluate(templateDepsDialogCompiled, {song: song}));
             dialogDependencies.dialog('open');
 
+            dialogDependencies.dialog('option', 'width', 510);
+            dialogDependencies.dialog('option', 'height', 450);
+
             addUiToDependencyDialog(dialogDependencies, song);
 
             return false;
@@ -828,8 +831,8 @@ var Player = function() {
         var donothaves = dialog.find('.donothave');
         donothaves.unbind('click');
         donothaves.click(function(){
-            var dependency_id = parseInt($(this).parent().attr('data-dependencyid'));
-            var plugin_type = parseInt($(this).parent().attr('data-plugintype'));
+            var dependency_id = parseInt($(this).attr('data-dependencyid'));
+            var plugin_type = parseInt($(this).attr('data-plugintype'));
             $.post(urls.dependency_ownership, {
                 dependency_id: dependency_id,
                 dependency_type: plugin_type
@@ -861,8 +864,8 @@ var Player = function() {
         var haves = dialog.find('.have');
         haves.unbind('click');
         haves.click(function(){
-            var dependency_id = parseInt($(this).parent().attr('data-dependencyid'));
-            var plugin_type = parseInt($(this).parent().attr('data-plugintype'));
+            var dependency_id = parseInt($(this).attr('data-dependencyid'));
+            var plugin_type = parseInt($(this).attr('data-plugintype'));
 
             $.post(urls.dependency_ownership, {
                 dependency_id: dependency_id,
@@ -1022,8 +1025,10 @@ var Player = function() {
             modal: true,
             title: "{{ STR_DEPS_DIALOG_TITLE }}",
             autoOpen: false,
-            maxWidth: 400,
-            maxHeight: 500
+            minWidth: 510,
+            maxWidth: 510,
+            minHeight: 450,
+            maxHeight: 450
         });
 
         // comment dialog

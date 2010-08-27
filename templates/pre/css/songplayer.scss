@@ -472,3 +472,56 @@ $comments_layer_height: $timed_comment_size + 1px;
 
     }
 }
+
+#dependencies-dialog {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
+
+    h4 {
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        margin: 14px 0;
+        padding: 0;
+    }
+
+    .dep-name {
+        padding: 0 0 0 20px;
+        background-repeat: no-repeat;
+        background-position: left center;
+    }
+
+    td {
+        padding: 6px;
+    }
+
+    .good .dep-name {
+        background-image: url(../img/check16.png);   
+    }
+
+    .bad .dep-name {
+        background-image: url(../img/missing-16x16.png);   
+    }
+
+    a {
+        text-decoration: none;
+        border-bottom: 2px dotted #ffffff;
+        font-weight: bold;
+    }
+
+    .buy {
+        a {
+            border-color: #2EFF38;
+            color: #2EFF38;
+        }
+        padding: 0 0 0 16px;
+        background-repeat: no-repeat;
+        background-position: left center;
+        background-image: url(../img/dollar.png);   
+    }
+
+    .download {
+        border-color: #2E8FFF;
+        color: #2E8FFF;
+    }
+}

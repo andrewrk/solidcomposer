@@ -1,14 +1,16 @@
 <% (function (plugin_list) { %>
     <% if (plugin_list.list.length > 0) { %>
-        <h4><%=plugin_list.name%></h4>
-        <ul>
-            <% for (var i=0; i<plugin_list.list.length; ++i) { %>
-                <%
-                   var dependency = plugin_list.list[i];
-                   dependency.full_url = Player.urls.plugin(dependency.url);
-                %>
-                {% include 'player/dependency_line.jst.html' %}
-            <% } %>
-        </ul>
+        <tr>
+            <td colspan="3">
+                <h4><%=plugin_list.name%></h4>
+            </td>
+        </tr>
+        <% for (var i=0; i<plugin_list.list.length; ++i) { %>
+            <%
+               var dependency = plugin_list.list[i];
+               dependency.full_url = Player.urls.plugin(dependency.url);
+            %>
+            {% include 'player/dependency_line.jst.html' %}
+        <% } %>
     <% } %>
 <% }(plugin_list)); %>

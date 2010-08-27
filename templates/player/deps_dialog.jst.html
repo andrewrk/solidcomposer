@@ -1,18 +1,22 @@
 <% (function (song) { %>
     <% if (song.plugins.length > 0) { %>
-        <h4>Studio</h4>
-        <ul>
+        <table>
+            <tr>
+                <td colspan="3">
+                    <h4>Studio</h4>
+                </td>
+            </tr>
             <%
                 var dependency = song.studio;
                 dependency.full_url = Player.urls.studio(song.studio.identifier);
                 dependency.plugin_type = Player.pluginTypeEnum.STUDIO;
             %>
             {% include 'player/dependency_line.jst.html' %}
-        </ul>
-        <% var plugin_list = {name: "Generators", list: song.generators}; %>
-        {% include 'player/plugin_list.jst.html' %}
-        <% var plugin_list = {name: "Effects", list: song.effects}; %>
-        {% include 'player/plugin_list.jst.html' %}
+            <% var plugin_list = {name: "Generators", list: song.generators}; %>
+            {% include 'player/plugin_list.jst.html' %}
+            <% var plugin_list = {name: "Effects", list: song.effects}; %>
+            {% include 'player/plugin_list.jst.html' %}
+        </table>
     <% } else { %>
         <p>No plugin dependencies.</p>
     <% } %>

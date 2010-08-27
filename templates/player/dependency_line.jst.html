@@ -1,21 +1,33 @@
 <% (function (dependency) { %>
-    <li class="<% if (dependency.missing) { %>bad<% } else { %>good<% } %>"
-        data-plugintype="<%=dependency.plugin_type%>"
-        data-dependencyid="<%=dependency.id%>">
-        <a href="<%= dependency.full_url %>"><%= dependency.title %></a>
+    <tr class="<% if (dependency.missing) { %>bad<% } else { %>good<% } %>">
+        <td>
+            <span class="dep-name"><a href="<%= dependency.full_url %>"><%= dependency.title %></a></span>
+        </td>
         <% if (dependency.missing) { %>
             <% if (dependency.external_url) { %>
-                <% if (dependency.price === 0) { %>
-                    <a href="<%=dependency.external_url%>">Download (it's freeware)</a>
-                <% } else { %>
-                    <a href="<%=dependency.external_url%>">Buy for $<%=Player.formatCurrency(dependency.price)%></a>
-                <% } %>
-            <% } else { %>
-                <a href="<%= dependency.full_url %>">Help provide information</a>
+                <td>
+                    <% if (dependency.price === 0) { %>
+                        <a class="download" href="<%=dependency.external_url%>">Download (freeware)</a>
+                    <% } else { %>
+                        <span class="buy"><a href="<%=dependency.external_url%>">Buy for $<%=Player.formatCurrency(dependency.price)%></a></span>
+                    <% } %>
+                </td>
             <% } %>
-            <a class="have" href="#">I already have this</a>
+            <td>
+                <a
+                    class="have"
+                    href="#"
+                    data-plugintype="<%=dependency.plugin_type%>"
+                    data-dependencyid="<%=dependency.id%>">I have this</a>
+            </td>
         <% } else { %>
-            <a class="donothave" href="#">I don't have this</a>
+            <td>
+                <a
+                    class="donothave"
+                    href="#"
+                    data-plugintype="<%=dependency.plugin_type%>"
+                    data-dependencyid="<%=dependency.id%>">I don't have this</a>
+            </td>
         <% } %>
-    </li>
+    </tr>
 <% }(dependency)); %>
