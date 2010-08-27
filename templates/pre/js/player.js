@@ -856,13 +856,20 @@ var Player = function() {
                     return;
                 }
 
-                if (plugin_type === pluginTypeEnum.STUDIO) {
-                    song.studio.missing = true;
-                } else {
-                    song.pluginLink[dependency_id].missing = true;
-                }
+                // we need to re-process ALL the songs.
+                $.each(songs, function(id, song){
+                    if (plugin_type === pluginTypeEnum.STUDIO) {
+                        if (song.studio !== null && song.studio.id == dependency_id) {
+                            song.studio.missing = true;
+                        }
+                    } else {
+                        if (song.hasOwnProperty('pluginLink') && song.pluginLink.hasOwnProperty(dependency_id)) {
+                            song.pluginLink[dependency_id].missing = true;
+                        }
+                    }
 
-                that.processSong(song);
+                    that.processSong(song);
+                });
 
                 // re-render the dialog
                 dialog.html(Jst.evaluate(templateDepsDialogCompiled, {song: song}));
@@ -890,14 +897,21 @@ var Player = function() {
                 if (! data.success) {
                     return;
                 }
-                // replace the have link with the do not have link
-                if (plugin_type === pluginTypeEnum.STUDIO) {
-                    song.studio.missing = false;
-                } else {
-                    song.pluginLink[dependency_id].missing = false;
-                }
 
-                that.processSong(song);
+                // we need to re-process ALL the songs.
+                $.each(songs, function(id, song){
+                    if (plugin_type === pluginTypeEnum.STUDIO) {
+                        if (song.studio !== null && song.studio.id === dependency_id) {
+                            song.studio.missing = false;
+                        }
+                    } else {
+                        if (song.hasOwnProperty('pluginLink') && song.pluginLink.hasOwnProperty(dependency_id)) {
+                            song.pluginLink[dependency_id].missing = false;
+                        }
+                    }
+
+                    that.processSong(song);
+                });
 
                 // re-render the dialog
                 dialog.html(Jst.evaluate(templateDepsDialogCompiled, {song: song}));
