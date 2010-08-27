@@ -160,6 +160,9 @@ var SCProject = function () {
         });
 
         function toggleActionUploadSamples() {
+            // turn off rename
+            $("#action-rename").hide();
+
             // toggle visibility
             var div = $("#action-upload-samples");
             if (div.is(':visible')) {
@@ -197,6 +200,9 @@ var SCProject = function () {
         });
 
         function toggleRename() {
+            // turn off upload samples
+            $("#action-upload-samples").hide();
+
             // toggle visibility
             var div = $("#action-rename");
             if (div.is(':visible')) {

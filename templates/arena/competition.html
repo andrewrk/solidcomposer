@@ -58,11 +58,16 @@
                 <table>
                     <tr>
                         <th><label for="entry-file-mp3">Your rendered song, in mp3 format:</label></th>
-                        <td><input type="file" name="entry-file-mp3" id="entry-file-mp3" /></td>
+                        <td>
+                            <input type="file" name="entry-file-mp3" id="entry-file-mp3" />
+                        </td>
                     </tr>
                     <tr>
                         <th><label for="entry-file-source">(optional) Source project file:</label></th>
-                        <td><input type="file" name="entry-file-source" id="entry-file-source" /></td>
+                        <td>
+                            <input type="file" name="entry-file-source" id="entry-file-source" />
+                            {% include "tips/entrySourceProjectFile.html" %}
+                        </td>
                     </tr>
                     <tr>
                         <td>
@@ -70,6 +75,7 @@
                         <td>
                             <input type="checkbox" name="entry-open-source" id="entry-open-source" value="1" />
                             <label for="entry-open-source">Anyone can download my project file</label>
+                            {% include 'tips/openSource.html' %}
                         </td>
                     </tr>
                     <tr>

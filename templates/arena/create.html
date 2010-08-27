@@ -46,7 +46,7 @@
                 </tr>
                 <tr>
                     <th><label for="id_have_theme">Have theme:</label></th>
-                    <td>{{ form.have_theme }}</td>
+                    <td>{{ form.have_theme }}{% include 'tips/theme.html' %}</td>
                 </tr>
                 <tr id="div_theme">
                     <th><label for="id_theme">Theme:</label><br/>(supports <a href="http://attacklab.net/showdown/">markdown</a>)</th>
@@ -54,7 +54,7 @@
                 </tr>
                 <tr id="div_preview_theme">
                     <th><label for="id_preview_theme">Preview theme:</label></th>
-                    <td>{{ form.preview_theme.errors }}{{ form.preview_theme }}</td>
+                    <td>{{ form.preview_theme.errors }}{{ form.preview_theme }}{% include 'tips/previewTheme.html' %}</td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -80,7 +80,7 @@
                 </tr>
                 <tr>
                     <th><label for="id_start_date">Start date:</label></th>
-                    <td>{{ form.start_date.errors }}{{ form.start_date }}</td>
+                    <td>{{ form.start_date.errors }}{{ form.start_date }}{% include 'tips/timeZone.html' %}</td>
                 </tr><tr>
                     <th><label for="id_submission_deadline_date">Submission deadline date:</label></th>
                     <td>{{ form.submission_deadline_date.errors }}{{ form.submission_deadline_date }}</td>
@@ -96,7 +96,7 @@
                 </tr>
                 <tr>
                     <th><label for="id_have_listening_party">Have listening party:</label></th>
-                    <td>{{ form.have_listening_party.errors }}{{ form.have_listening_party }}</td>
+                    <td>{{ form.have_listening_party.errors }}{{ form.have_listening_party }}{% include 'tips/listeningParty.html' %}</td>
                 </tr>
                 <tr id="div_immediately">
                     <th><label for="id_party_immediately">Immediately:</label></th>

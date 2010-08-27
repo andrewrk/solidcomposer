@@ -21,13 +21,17 @@
                                     </tr>
                                     <tr>
                                         <th>Project file:</th>
-                                        <td><input type="file" name="project_file" /></td>
-                                        <td>{% include 'tips/uploadProjectFileInput.html' %}</td>
+                                        <td>
+                                            <input type="file" name="project_file" />
+                                            {% include 'tips/uploadProjectFileInput.html' %}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>MP3 Preview:</th>
-                                        <td><input type="file" name="mp3_preview" /></td>
-                                        <td>{% include 'tips/uploadPreviewMp3.html' %}</td>
+                                        <td>
+                                            <input type="file" name="mp3_preview" />
+                                            {% include 'tips/uploadPreviewMp3.html' %}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>
@@ -36,6 +40,9 @@
                                         </th>
                                         <td>
                                             <textarea id="version-comments" name="comments" rows="15" cols="48"></textarea>
+                                        </td>
+                                        <td>
+                                            {% include 'tips/commitMessage.html' %}
                                         </td>
                                     </tr>
                                     <tr>
