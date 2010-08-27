@@ -31,7 +31,7 @@ deps = [
     'south-0.7.1',
     'mutagen-1.19',
     'waveform-0.2',
-    'PyDaw-0.3.5',
+    'PyDaw-0.4.5',
     'django_extensions-0.4.1',
     'boto',
     'django-storages',
@@ -114,10 +114,10 @@ except ImportError:
 # PyDaw
 try:
     import daw
-    if daw.__version__ == '0.3.5':
-        deps.remove('PyDaw-0.3.5')
+    if daw.__version__ == '0.4.5':
+        deps.remove('PyDaw-0.4.5')
     else:
-        sys.stderr.write("installed PyDaw version %s does not equal %s\n" % (daw.__version__, '0.3.5'))
+        sys.stderr.write("installed PyDaw version %s does not equal %s\n" % (daw.__version__, '0.4.5'))
 except ImportError:
     pass
 
