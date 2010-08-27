@@ -137,6 +137,8 @@ var Player = function() {
 
     var highestZIndex = 2;
 
+    var comment_manual_override = false;
+
     function onSoundComplete() {
         currentMp3File = null;
         if (that.onSoundComplete) {
@@ -167,20 +169,22 @@ var Player = function() {
         updateCurrentPlayer();
 
         if (currentSong.comments_visible) {
-            // show the latest comment in time range commentLingerTime
-            var commentLingerTime = 8; // seconds
-            var selectedComment = null;
-            var i;
-            for (i=0; i<currentSong.timed_comments.length; ++i) {
-                comment = currentSong.timed_comments[i];
-                if (playedTime >= comment.position && playedTime < comment.position + commentLingerTime) {
-                    selectedComment = comment;
+            if (! comment_manual_override) {
+                // show the latest comment in time range commentLingerTime
+                var commentLingerTime = 8; // seconds
+                var selectedComment = null;
+                var i;
+                for (i=0; i<currentSong.timed_comments.length; ++i) {
+                    comment = currentSong.timed_comments[i];
+                    if (playedTime >= comment.position && playedTime < comment.position + commentLingerTime) {
+                        selectedComment = comment;
+                    }
                 }
-            }
-            if (selectedComment === null) {
-                hideCommentDialog();
-            } else {
-                showCommentDialog(selectedComment, currentPlayer, true);
+                if (selectedComment === null) {
+                    hideCommentDialog();
+                } else {
+                    showCommentDialog(selectedComment, currentPlayer, true);
+                }
             }
         }
 
@@ -221,6 +225,7 @@ var Player = function() {
     function hideCommentDialog() {
         lastDialogComment = null;
         dialogComment.dialog('close');
+        comment_manual_override = false;
     }
 
     function checkHideComment(e){
@@ -533,8 +538,13 @@ var Player = function() {
             e.preventDefault();
             var comment_id = parseInt($(this).attr('data-commentid'));
             showCommentDialog(comments[comment_id], $(this).closest('.player-large'), false);
+            comment_manual_override = true; 
             ++highestZIndex;
             $(this).closest('li').css('z-index', highestZIndex);
+
+            // don't let song playing close the box
+            comment_manual_override = true; 
+
             return false;
         });
 
@@ -544,6 +554,8 @@ var Player = function() {
             var comment_id = parseInt($(this).attr('data-commentid'));
             showCommentDialog(comments[comment_id], $(this).closest('.player-large'), true);
             makeCommentDialogSticky(true);
+            // don't let song playing close the box
+            comment_manual_override = true; 
             return false;
         });
 
@@ -1023,6 +1035,7 @@ var Player = function() {
         dialogDependencies = $('#dependencies-dialog');
         dialogDependencies.dialog({
             modal: true,
+            closeOnEscape: true,
             title: "{{ STR_DEPS_DIALOG_TITLE }}",
             autoOpen: false,
             minWidth: 510,
@@ -1044,6 +1057,7 @@ var Player = function() {
         });
         dialogComment.bind('dialogclose', function(event, ui) {
             lastDialogComment = null;
+            comment_manual_override = false;
         });
 
         // insert comment dialog

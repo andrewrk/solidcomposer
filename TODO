@@ -1,7 +1,6 @@
 Release "Boten Anna" (Basshunter):
 * if you check that you have something, it doesn't change everything on the
   same page
-* disable auto comments in song player
 * set up email correctly
 * test everything. 
 
@@ -34,7 +33,6 @@ Release "April Rain" (The Cynic Project)
 * admin module to list plugins that are missing information
 * song player - dialog should not cover up song playback
 * fix security hole: you can reply to renames/provided samples without having permission
-* still have the ability to view comments during song playback
 * fix security hole: you can reply to renames/provided samples without having permission
 * test commenting on non-songs
 * if you enter a competition, automatically bookmark it
@@ -191,8 +189,6 @@ Release "April Rain" (The Cynic Project)
  * don't cover up the waveform with the comment box
  * comments
    - handle the case when they're not logged in. it should guide them through the process smoothly
-   - glitchy behavior when trying to click the x on a comment box during song playback
-     > if they click the x during playback, take it as clicking the hide comments button.
    - if deleting a comment ends up meaning that you can delete a tree, do it. maybe do this on a cron job.
    click the download samples button. they're missing from the box.
  * download mp3: box instead of link
