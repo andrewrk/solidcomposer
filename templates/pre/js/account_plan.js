@@ -69,6 +69,9 @@ var SCAccountPlan = function() {
             $("#amt-donated-"+member.id).slider({
                 min: 0,
                 slide: function(event, ui) {
+                    if (user_data.purchased_bytes === 0) {
+                        return;
+                    }
                     new_member_space_donated[member.id] = ui.value / 100.0 * user_data.purchased_bytes;
                     new_space_used = calculateNewSpaceUsed();
                     if (new_space_used > user_data.purchased_bytes) {
