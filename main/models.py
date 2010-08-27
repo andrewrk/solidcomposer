@@ -255,6 +255,14 @@ class Profile(SerializableModel):
         'studios',
         'assume_uploaded_plugins_owned',
     )
+    GRAVATAR_DOMAIN = (
+        # SSL=False
+        "http://www.gravatar.com",
+        # SSL=True
+        "https://secure.gravatar.com",
+    )
+        
+
     user = models.ForeignKey(User, unique=True)
     solo_band = models.ForeignKey(Band)
     activated = models.BooleanField()
@@ -325,14 +333,17 @@ class Profile(SerializableModel):
         "Save without any auto field population"
         super(Profile, self).save(*args, **kwargs)
 
-    def gravatar_url(self, size):
-        return "http://www.gravatar.com/avatar/%s?s=%s&r=pg&d=identicon" % (hashlib.md5(self.user.email).hexdigest(), str(size))
+    def gravatar_url(self, size, ssl=False):
+        return "{0}/avatar/{1}?s={2}&r=pg&d=identicon".format(Profile.GRAVATAR_DOMAIN[{False: 0, True: 1}[ssl]], hashlib.md5(self.user.email).hexdigest(), str(size))
 
-    def gravatar_icon(self):
-        return self.gravatar_url(design.gravatar_icon_size)
+    def gravatar_icon(self, ssl=False):
+        return self.gravatar_url(design.gravatar_icon_size, ssl)
 
-    def gravatar(self):
-        return self.gravatar_url(design.gravatar_large_size)
+    def gravatar(self, ssl=False):
+        return self.gravatar_url(design.gravatar_large_size, ssl)
+
+    def gravatar_ssl_icon(self):
+        return self.gravatar_icon(True)
 
     def to_dict(self, access=SerializableModel.PUBLIC, chains=[]):
         data = super(Profile, self).to_dict(access, chains)

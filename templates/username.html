@@ -3,7 +3,7 @@
 {% else %}
     <a href="{% url userpage user.username %}">
 {% endif %}
-        <img class="gravatar" src="{{ user.get_profile.gravatar_icon }}" alt="" />
+        <img class="gravatar" src="{% if request.is_secure %}{{ user.get_profile.gravatar_ssl_icon }}{% else %}{{ user.get_profile.gravatar_icon }}{% endif %}" alt="" />
     </a>
 <a href="{% url userpage user.username %}">{{ user.username }}</a>
 {% with user.get_profile.get_points as points %}

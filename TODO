@@ -5,6 +5,7 @@ Release "Boten Anna" (Basshunter):
 * NaN's in account settings when amount donated is zero
 * change "scrapped" to "archived"
 * disable auto comments in song player
+* set up email correctly
 * test everything. 
 
 Wednesday, September 1:
@@ -31,6 +32,7 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* just hash user's emails once so we aren't doing it TWICE on every request.
 * edit competition
 * admin module to list plugins that are missing information
 * song player - dialog should not cover up song playback
