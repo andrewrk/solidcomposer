@@ -1,6 +1,6 @@
 <a class="dl-all" href="#" data-songid="<%=song.id%>">Download All Samples + Project File</a>
 <hr />
-<select name="s" multiple="multiple">
+<select id="dl-samples-select" name="s" multiple="multiple">
     <option value="project" selected="selected"><%=Player.fileTitle(song.source_file)%></option>
     <% for (var sample_index=0; sample_index<song.samples.length; ++sample_index) { var sample = song.samples[sample_index]; %>
         <% if (! sample.missing) { %>
@@ -8,4 +8,6 @@
         <% } %>
     <% } %>
 </select>
-<a class="dl-selected" href="#" data-songid="<%=song.id%>">Download Selected Files</a>
+<div>
+    <a class="dl-selected" href="#" data-songid="<%=song.id%>">Download Selected Files</a>
+</div>

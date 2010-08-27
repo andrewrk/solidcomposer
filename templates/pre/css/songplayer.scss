@@ -465,8 +465,11 @@ $comments_layer_height: $timed_comment_size + 1px;
     }
     select {
         margin: 0 0 15px;
-        max-width: 400px;
+        width: 410px;
         max-height: 200px;
+        background-color: #000000;
+        border: 1px solid #333333;
+        color: #ffffff;
     }
     .dl-selected {
 

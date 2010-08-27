@@ -503,7 +503,7 @@ var Player = function() {
             dlSelected.unbind('click');
             dlSelected.click(function(){
                 var song_id = parseInt($(this).attr('data-songid'));
-                var selectBox = $(this).closest(".select").find('select');
+                var selectBox = $("#dl-samples-select");
                 downloadZip(song_id, selectBox.serialize());
                 return false;
             });
