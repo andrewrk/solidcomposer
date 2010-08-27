@@ -11,7 +11,7 @@ from workshop.models import SampleFile, UploadedSample, SampleDependency, Studio
 import daw
 import os
 import tempfile
-import waveform
+import subprocess
 
 IGNORED_PLUGINS = (
     'Sampler',
@@ -30,9 +30,17 @@ def obfuscated_url(band):
 def generate_waveform(song, mp3_file, filename_appendix=""):
     suffix = '.png'
     png_tmp_handle = tempfile.NamedTemporaryFile(mode='r+b', suffix=suffix)
-    waveform.draw(mp3_file, png_tmp_handle.name, design.waveform_size,
-        fgGradientCenter=design.waveform_center_color,
-        fgGradientOuter=design.waveform_outer_color)
+
+    p = subprocess.Popen(['waveform',
+        mp3_file,
+        png_tmp_handle.name,
+        str(design.waveform_size[0]),
+        str(design.waveform_size[1]),
+        '0', '0', '0', '0', # bg color
+        str(design.waveform_center_color[0]), str(design.waveform_center_color[1]), str(design.waveform_center_color[2]), str(design.waveform_center_color[3]),   
+        str(design.waveform_outer_color[0]), str(design.waveform_outer_color[1]), str(design.waveform_outer_color[2]), str(design.waveform_outer_color[3]), 
+    ])
+    p.communicate()
     # move to storage
     song.waveform_img = os.path.join(obfuscated_url(song.band), clean_filename(song.displayString()) + filename_appendix + suffix)
     import storage
