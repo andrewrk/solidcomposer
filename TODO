@@ -1,6 +1,5 @@
 Release "Boten Anna" (Basshunter):
 * design iteration
-  > look at all the pages with browser maximized and make it also look good for that
   > introducing solidcomposer article
 * test everything. 
 
@@ -29,6 +28,7 @@ Release "April Rain" (The Cynic Project)
 * edit competition
 * admin module to list plugins that are missing information
 * song player - dialog should not cover up song playback
+* fix security hole: you can reply to renames/provided samples without having permission
 * still have the ability to view comments during song playback
 * fix security hole: you can reply to renames/provided samples without having permission
 * test commenting on non-songs

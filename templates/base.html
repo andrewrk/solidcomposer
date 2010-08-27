@@ -15,30 +15,35 @@ var media_url = "{{ MEDIA_URL|escapejs }}";
     <body>
         {% block extra_body %}{% endblock %}
         <div id="header">
-            <a id="logo-a" href="{% url home %}"><img src="{{ MEDIA_URL }}img/logo.png" alt="Solid Composer" /></a>
-            <ul id="nav">
-                <li class="workbench {% block nav_workbench_li_class %}unselected{% endblock %}">
-                    <a href="{% url workbench.home %}"><span>Workbench</span></a>
-                </li>
-                <li class="arena {% block nav_arena_li_class %}unselected{% endblock %}">
-                    <a href="{% url arena.home %}"><span>Arena</span></a>
-                </li>
-            </ul>
-            <div id="header-right">
-                {% block login %}
-                    {% include 'login_area.html' %}
-                {% endblock %}
-                <div id="feedback-div">
-                    <a href="http://solidcomposer.uservoice.com/">Feedback</a>
+            <div class="wide">
+                <a id="logo-a" href="{% url home %}"><img src="{{ MEDIA_URL }}img/logo.png" alt="Solid Composer" /></a>
+                <ul id="nav">
+                    <li class="workbench {% block nav_workbench_li_class %}unselected{% endblock %}">
+                        <a href="{% url workbench.home %}"><span>Workbench</span></a>
+                    </li>
+                    <li class="arena {% block nav_arena_li_class %}unselected{% endblock %}">
+                        <a href="{% url arena.home %}"><span>Arena</span></a>
+                    </li>
+                </ul>
+                <div id="header-right">
+                    {% block login %}
+                        {% include 'login_area.html' %}
+                    {% endblock %}
+                    <div id="feedback-div">
+                        <a href="http://solidcomposer.uservoice.com/">Feedback</a>
+                    </div>
                 </div>
             </div>
         </div>
-        {% block nav2 %}
-        {% endblock %}
+        <div class="wide">
+            {% block nav2 %}{% endblock %}
+        </div>
         <div id="wrapper">
             <div class="clear"></div>
-            {% block content %}
-            {% endblock %}
+            <div class="wide">
+                {% block content %}
+                {% endblock %}
+            </div>
         </div>
         <div id="footer">
             <div id="copyright">
