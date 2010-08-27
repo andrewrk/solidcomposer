@@ -3,6 +3,7 @@
         <% if (project.checked_out_to.id === user.id) { %>
             <span class="mine">Checked out to <strong>you</strong></span>
             <span class="date"><%= Time.printableTimeSince(project.date_checked_out) %> ago</span>
+            {% include 'tips/statusCheckedOutMine.html' %}
         <% } else { %>
             <span class="out">Checked out</span> to
             <%
@@ -12,8 +13,10 @@
                 {% include 'username.jst.html' %}
             <% })(); %>
             <span class="date"><%= Time.printableTimeSince(project.date_checked_out) %> ago</span>
+            {% include 'tips/statusCheckedOut.html' %}
         <% } %>
     <% } else { %>
         <span class="available">Available</span>
+        {% include 'tips/statusAvailable.html' %}
     <% } %>
 </div>

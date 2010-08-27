@@ -238,6 +238,7 @@ var SCProject = function () {
         }
 
         $("#project-status").html(Jst.evaluate(template_project_status_s, state));
+        SCTips.addUi("#project-status");
 
         $("#versions").html(Jst.evaluate(template_version_list_s, state));
         Player.addUi("#versions");
