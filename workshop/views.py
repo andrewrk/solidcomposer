@@ -38,22 +38,22 @@ JFILTERS = {
     'out': {
         'caption': "Checked out", 
     },
-    'scrapped': {
-        'caption': "Scrapped", 
+    'archived': {
+        'caption': "Archived", 
     },
 }
 
 def filterVisible(projects):
     return projects.filter(visible=True)
 
-def filterScrapped(projects):
+def filterArchived(projects):
     return projects.filter(visible=False)
 
 FILTERS = dict(JFILTERS)
 FILTERS['all']['func'] = filterVisible
 FILTERS['available']['func'] = lambda projects: filterVisible(projects).filter(checked_out_to=None)
 FILTERS['out']['func'] = lambda projects: filterVisible(projects).exclude(checked_out_to=None)
-FILTERS['scrapped']['func'] = filterScrapped
+FILTERS['archived']['func'] = filterArchived
 
 def activity_list(request):
     """
