@@ -69,7 +69,7 @@ python preparser.py parse
 
 # run test suite locally
 echo "Running test suite..."
-python manage.py test
+python manage.py test --failfast
 
 ######### deploy steps ###############
 echo
