@@ -133,7 +133,7 @@ var Player = function() {
 
     var dialogInsertComment = null;
     var dialogInsertCommentWidth = 300;
-    var dialogInsertCommentHeight = 200;
+    var dialogInsertCommentHeight = 210;
 
     var highestZIndex = 2;
 

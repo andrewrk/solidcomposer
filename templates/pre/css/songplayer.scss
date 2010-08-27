@@ -525,3 +525,18 @@ $comments_layer_height: $timed_comment_size + 1px;
         color: #2E8FFF;
     }
 }
+
+#insert-comment-dialog {
+    padding: 10px;
+
+    textarea {
+        width: 250px;
+        height: 100px;
+
+        padding: 10px;
+    }
+
+    input: {
+        margin: 4px;
+    }
+}
