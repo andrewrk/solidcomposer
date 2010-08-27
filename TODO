@@ -3,7 +3,6 @@ Release "Boten Anna" (Basshunter):
   same page
 * tip in download that you can use control to multi-select
 * NaN's in account settings when amount donated is zero
-* rename a song twice, the log entries aren't quite right
 * change "scrapped" to "archived"
 * disable auto comments in song player
 * test everything. 

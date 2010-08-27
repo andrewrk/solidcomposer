@@ -31,7 +31,7 @@
                             renamed
                             <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.old_title %></a>
                             to
-                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.project.title %></a>.
+                            <a href="<%= urls.project(entry.version.project.id, entry.band.id) %>"><%= entry.version.new_title %></a>.
                         <% } else if (entry.entry_type === entryTypeEnum.POKE) { %>
                             wants
                             <% if (entry.target.id === user.id) { %>
