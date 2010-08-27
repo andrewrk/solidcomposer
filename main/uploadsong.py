@@ -14,8 +14,8 @@ import tempfile
 import waveform
 
 IGNORED_PLUGINS = (
-    'sampler',
-    'fruity wrapper',
+    'Sampler',
+    'Fruity Wrapper',
 )
 
 def flatten_list(lst):
