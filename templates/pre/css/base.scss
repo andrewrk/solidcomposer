@@ -1,5 +1,21 @@
 {% include 'css/mixins.scss' %}
 
+html, body {
+    height: 100%;
+}
+
+#inner-body {
+    min-height: 100%;   
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -4em;
+}
+
+#footer, #inner-body-push {
+    height: 4em;
+    clear: both;
+}
+
 body {
     font-family: Verdana, Geneva, sans-serif;
     font-size: 0.8em;
@@ -25,7 +41,7 @@ h2 {
     padding: 0;
     border-top:1px solid #24618e;
     border-bottom:1px solid #24618e;
-
+    height: 100%;
 }
 
 .wide {
