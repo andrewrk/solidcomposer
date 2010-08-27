@@ -1,0 +1,38 @@
+{% extends 'account/base.html' %}
+
+{% block nav2_preferences_li_class %}selected{% endblock %}
+
+{% block extra_header %}
+    {{ block.super }}
+    {% include 'sc_script_framework.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="textblock">
+        <h1>Preferences</h1>
+        {% if success %}<p>Saved.</p>{% endif %}
+        {% include 'form_errors.html' %}
+        <form action="." method="post">
+            <table>
+                <tr>
+                    <th>
+                        <label for="id_show_tips">{{ form.show_tips.label }}:</label>
+                    </th>
+                    <td>
+                        {{ form.show_tips.errors }}
+                        {{ form.show_tips }}
+                    </td>
+                    <td>
+                        {% include 'tips/sillyTip.html' %}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Update" /></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+{% endblock %}
+
+

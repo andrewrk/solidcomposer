@@ -7,7 +7,6 @@
 var user_data = ({% autoescape off %}{{ user_data|fix_ampersands }}{% endautoescape %});
 var membership_data = ({% autoescape off %}{{ membership_data|fix_ampersands }}{% endautoescape %});
     </script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/tips.pre.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/account_plan.pre.js"></script>
 {% endblock %}
 

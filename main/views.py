@@ -17,7 +17,7 @@ from main.common import json_response, json_login_required, json_post_required, 
     send_html_mail, json_dump
 from main.forms import LoginForm, RegisterForm, ContactForm, \
     ChangePasswordForm, EmailSubscriptionsForm, PasswordResetForm, \
-    ChangePlanForm
+    ChangePlanForm, PreferencesForm
 from main.models import SongCommentNode, Band, Profile, BandMember, Song, \
     AccountPlan
 from workshop.models import LogEntry
@@ -560,10 +560,26 @@ def account_email(request):
             success = True
     else:
         form = EmailSubscriptionsForm(initial={
-            'notifications': user.get_profile().email_notifications,
-            'newsletter': user.get_profile().email_newsletter,
+            'notifications': profile.email_notifications,
+            'newsletter': profile.email_newsletter,
         })
     return render_to_response('account/email.html', locals(), context_instance=RequestContext(request))
+
+@login_required
+def account_preferences(request):
+    user = request.user
+    profile = request.user.get_profile()
+    if request.method == 'POST':
+        form = PreferencesForm(request.POST)
+        if form.is_valid():
+            profile.tips_on = form.cleaned_data.get('show_tips')
+            profile.save()
+            success = True
+    else:
+        form = PreferencesForm(initial={
+            'show_tips': profile.tips_on,
+        })
+    return render_to_response('account/preferences.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def account_password(request):

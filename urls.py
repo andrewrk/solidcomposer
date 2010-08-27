@@ -45,6 +45,7 @@ urlpatterns = patterns('',
     url(r'^account/plan/$', 'main.views.account_plan', {'SSL': True}, name="account.plan"),
     url(r'^account/plan/changed/$', 'main.views.changed_plan_results', {'SSL': True}, name="account.plan_changed"),
     url(r'^account/email/$', 'main.views.account_email', {'SSL': True}, name="account.email"),
+    url(r'^account/preferences/$', 'main.views.account_preferences', {'SSL': True}, name="account.preferences"),
     url(r'^account/password/$', 'main.views.account_password', {'SSL': True}, name="account.password"),
     url(r'^account/password/reset/$', 'main.views.account_password_reset', {'SSL': True}, name="account.password.reset"),
 

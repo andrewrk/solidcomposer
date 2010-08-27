@@ -9,6 +9,7 @@
 
         <script type="text/javascript">
 var media_url = "{{ MEDIA_URL|escapejs }}";
+var tips_on = {% if request.user.get_profile.tips_on %}true{% else %}false{% endif %};
         </script>
         {% block extra_header %}{% endblock %}
     </head>

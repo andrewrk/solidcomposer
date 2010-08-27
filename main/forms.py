@@ -107,3 +107,6 @@ class EmailSubscriptionsForm(forms.Form):
 
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(max_length=80, error_messages={'required': design.this_field_is_required})
+
+class PreferencesForm(forms.Form):
+    show_tips = forms.BooleanField(required=False)

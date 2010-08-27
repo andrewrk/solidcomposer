@@ -310,6 +310,9 @@ class Profile(SerializableModel):
     email_notifications = models.BooleanField(default=True)
     email_newsletter = models.BooleanField(default=True)
 
+    # whether to display tips
+    tips_on = models.BooleanField(default=True)
+
     def __unicode__(self):
         return self.user.username
 

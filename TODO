@@ -1,7 +1,9 @@
 Release "Boten Anna" (Basshunter):
+* tip in download that you can use control to multi-select
+* add tips to arena
+
 * if you check that you have something, it doesn't change everything on the
   same page
-* tip in download that you can use control to multi-select
 * change "scrapped" to "archived"
 * disable auto comments in song player
 * set up email correctly
@@ -48,7 +50,6 @@ Release "April Rain" (The Cynic Project)
   this saves on bandwidth.
 * handle back buttons in project manager for #filters
 * bug: if you delete a timed comment it still shows up during playback
-* ability to turn off tips
 * use jquery and dropdowns for date picking rather than anytimec
 * tests
   > contact page
@@ -135,7 +136,6 @@ Release "April Rain" (The Cynic Project)
    - by IP address?
 
 = arena =
- * add tips to arena
  * chrome bug: sometimes it plays the same song again during listening party
  * the listening party starts over after it ends. whoops.
  * listening party - make song comments during chat during listening party
