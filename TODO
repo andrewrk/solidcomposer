@@ -1,8 +1,3 @@
-Release "Boten Anna" (Basshunter):
-* email when there is a new comment
-
-Wednesday, September 1:
-* blog post announcing release
 * advertise
   > jplayer sites list
   > IRC
@@ -18,6 +13,7 @@ Wednesday, September 1:
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* email when there is a new comment
 * don't count the mp3 of competition entries against file size
 * just hash user's emails once so we aren't doing it TWICE on every request.
 * edit competition
