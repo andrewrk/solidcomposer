@@ -6,10 +6,10 @@
 andy_old_id, andy_new_id = (1, 1)
 tyler_old_id, tyler_new_id = (2, 20)
 casey_old_id, casey_new_id = (4, 45)
-# overwrite with localhost test environment (delete for production)
-andy_old_id, andy_new_id = (1, 32)
-tyler_old_id, tyler_new_id = (2, 34)
-casey_old_id, casey_new_id = (4, 33)
+starla_old_id, starla_new_id = (19, 16)
+frenzied_old_id, frenzied_new_id = (7,5)
+skiessi_old_id, skiessi_new_id = (12,6)
+
 # right from theburningawesome/settings.py
 tba_media_root = '/home/andy/dev/theburningawesome/media/'
 
@@ -41,6 +41,9 @@ tba_prof_to_sc_user_id = {
     andy_old_id: andy_new_id,
     tyler_old_id: tyler_new_id,
     casey_old_id: casey_new_id,
+    starla_old_id: starla_new_id,
+    frenzied_old_id: frenzied_new_id,
+    skiessi_old_id: skiessi_new_id,
 }
 tba_prof_to_sc_user = dict([(k, User.objects.get(pk=v)) for k,v in tba_prof_to_sc_user_id.iteritems()])
 andy = tba_prof_to_sc_user[andy_old_id]
