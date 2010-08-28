@@ -28,11 +28,12 @@ if [ -n "$MISSING" ]; then
     exit 1;
 fi
 
-# test the migrations
-echo "Testing migrations."
-cd $LIVE_CODE
-echo "Generating fixtures from live database..."
-python manage.py dumpdata >$MIGRATE_CODE/dump.json --exclude=contenttypes
+# don't test migrations, it takes too long
+## test the migrations
+#echo "Testing migrations."
+#cd $LIVE_CODE
+#echo "Generating fixtures from live database..."
+#python manage.py dumpdata >$MIGRATE_CODE/dump.json --exclude=contenttypes
 
 echo "Updating migrate code to live code revision..."
 cd $MIGRATE_CODE
@@ -48,9 +49,10 @@ python manage.py syncdb --noinput
 echo "Migrating the test database to the live database state..."
 python manage.py migrate
 
-# install fixtures from the server
-echo "Installing fixtures from the live database..."
-python manage.py loaddata dump.json
+# don't do this, it takes too long
+## install fixtures from the server
+#echo "Installing fixtures from the live database..."
+#python manage.py loaddata dump.json
 
 # ok now we can use the new code
 echo "Updating the migration code base to the newest version..."
