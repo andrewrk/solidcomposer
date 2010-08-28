@@ -1,0 +1,23 @@
+Hey {{ user.username }},
+
+The new SolidComposer is here!
+ * What's New: http://solidcomposer.com/article/whats-new-boten-anna/
+ * Introducing the Workbench: http://solidcomposer.com/article/introducing-solidcomposer/
+
+If you're socially inclined:
+ * Our Facebook: http://www.facebook.com/pages/SolidComposer/122046227844475
+ * Our Twitter: http://twitter.com/solidcomposer
+
+Since you were part of the beta, you get:
+ * 1GB into your account
+ * 1GB into your solo band
+ * 8 free bands
+
+Thanks for trying it out!
+
+Love,
+solidcomposer.com
+
+Unsubscribe:
+http://solidcomposer.com/account/email/
+
