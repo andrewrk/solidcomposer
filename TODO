@@ -1,7 +1,6 @@
 Release "Boten Anna" (Basshunter):
 * make lowercase urls for plugins
 * showdown error on studio page
-* typo in the band member uploaded a new project
 * fix the deploy script
 * email when there is a new comment
 

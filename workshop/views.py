@@ -962,7 +962,7 @@ def create_project(request, band_id_str):
                         })
                         message_txt = get_template('workbench/email/new_project.txt').render(context)
                         message_html = get_template('workbench/email/new_project.html').render(context)
-                        subject = design.x_uploaded_new_project_to_y.format(member.user.username, band.title)
+                        subject = design.x_uploaded_new_project_to_y.format(version.owner.username, band.title)
                         send_html_mail(subject, message_txt, message_html, [member.user.email])
 
                 return HttpResponseRedirect(reverse("workbench.project", args=[band.id, project.id]))
