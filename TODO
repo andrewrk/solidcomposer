@@ -1,15 +1,11 @@
 Release "Boten Anna" (Basshunter):
-* set up email correctly
-* test everything. 
+* make lowercase urls for plugins
+* showdown error on studio page
+* typo in the band member uploaded a new project
+* fix the deploy script
+* email when there is a new comment
 
 Wednesday, September 1:
-* WE DO IT LIVE
-  > shut down solidcomposer.com
-    - use a notice so people know there will be downtime.
-  > migrate data to new place.
-  > change domain to new place
-  > make sure email is working.
-  > get josh to pay money
 * blog post announcing release
 * advertise
   > jplayer sites list
