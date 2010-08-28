@@ -13,7 +13,7 @@ def create_url(title, is_unique=None):
 
     # break title into url safe string
     safe_title = ''
-    for c in title:
+    for c in title.lower():
         if c in allowed_chars:
             safe_title += c
         else:

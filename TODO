@@ -1,5 +1,4 @@
 Release "Boten Anna" (Basshunter):
-* make lowercase urls for plugins
 * fix the deploy script
 * email when there is a new comment
 
