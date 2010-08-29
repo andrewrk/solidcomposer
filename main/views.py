@@ -418,9 +418,9 @@ def confirm(request, username, code):
         return render_to_response('confirm_failure.html', locals(), context_instance=RequestContext(request))
 
 def userpage(request, username):
-    user = get_object_or_404(User, username=username)
-    members = BandMember.objects.filter(user=user).order_by('-space_donated')
-    songs = Song.objects.filter(Q(owner=user), Q(is_open_for_comments=True)|Q(is_open_source=True)).order_by('-date_added')[:10]
+    target_user = get_object_or_404(User, username=username)
+    members = BandMember.objects.filter(user=target_user).order_by('-space_donated')
+    songs = Song.objects.filter(Q(owner=target_user), Q(is_open_for_comments=True)|Q(is_open_source=True)).order_by('-date_added')[:10]
     song_data = json_dump([song.to_dict(chains=['band', 'comment_node', 'studio']) for song in songs])
     if request.user.is_authenticated():
         user_data = json_dump(request.user.get_profile().to_dict())

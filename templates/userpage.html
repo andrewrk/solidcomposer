@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ user.username }} - {{ block.super }}{% endblock %}
+{% block title %}{{ target_user.username }} - {{ block.super }}{% endblock %}
 
 {% block css %}bandpage.pre.css{% endblock %}
 
@@ -19,21 +19,21 @@ var user_data = eval("({{ user_data|escapejs }})");
 
 {% block content %}
     <div class="member">
-        <img class="gravatar" src="{{ user.get_profile.gravatar }}" alt="" />
+        <img class="gravatar" src="{{ target_user.get_profile.gravatar }}" alt="" />
         <div class="info">
             <div class="name">
-                {{ user.username }}
+                {{ target_user.username }}
             </div>
             <div class="star">
-                <img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" /> x {{ user.get_profile.get_points }}
+                <img src="{{ MEDIA_URL }}img/star.png" alt="points" title="points" /> x {{ target_user.get_profile.get_points }}
             </div>
             <div class="stat">
-                {% with user.get_profile.bands_in_count as bands_in_count %}
+                {% with target_user.get_profile.bands_in_count as bands_in_count %}
                     {{ bands_in_count }} band{{ bands_in_count|pluralize}}
                 {% endwith %}
             </div>
             <div class="stat">
-                {% with user.competition_set.count as competitions_in_count %}
+                {% with target_user.competition_set.count as competitions_in_count %}
                     {{ competitions_in_count }} competition{{ competitions_in_count|pluralize }}
                 {% endwith %}
             </div>

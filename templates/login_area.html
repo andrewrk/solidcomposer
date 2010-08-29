@@ -1,6 +1,6 @@
 <div id="css-login">
     <div id="loginStatusDiv">
-        {% if user.is_authenticated %}
+        {% if request.user.is_authenticated %}
             {% include 'username.html' %}
             <a href="{% url account %}">Settings</a>
             <a href="{% url user_logout %}" id="signOut">Log out</a>
