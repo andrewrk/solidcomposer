@@ -1,18 +1,15 @@
 * advertise
-  > jplayer sites list
-  > IRC
-  > oc remix
-  > email friends & family
-  > facebook, twitter
-  > send a newsletter to everyone registered at SC
-  > hacker news
-  > the 99 designs page
   > futureproducers.com
-  > lmms mailing list
 * movie showing off features
 
 Release "April Rain" (The Cynic Project)
 = sitewide =
+* sometimes the waveform doesn't get generated
+* you can sneaky preview songs before the listening party
+* record play counts
+* part messages don't scroll in chat
+* prevent voting twice - happens when you click fast
+* ability to search for other users
 * email when there is a new comment
 * don't count the mp3 of competition entries against file size
 * just hash user's emails once so we aren't doing it TWICE on every request.

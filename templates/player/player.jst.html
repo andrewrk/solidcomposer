@@ -10,7 +10,7 @@
                     <% } %>
                         <a href="<%=media_url%><%=song.source_file%>"
                             <% if (song.studio && song.studio.logo_16x16 !== null) { %>
-                                style="background-image: url(<%=song.studio.logo_16x16%>);"
+                                style="background-image: url('<%=song.studio.logo_16x16%>');"
                             <% } %>
                             >Download Project</a>
                     </span>
@@ -52,7 +52,7 @@
                 <div class="not-button-layer">
                     <div class="wave-layer">
                         <div class="wave-outer">
-                            <div class="wave" style="background-image: url(<%=media_url%><% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>);">
+                            <div class="wave" style="background-image: url('<%=media_url%><% if (song.waveform_img) { %><%=song.waveform_img%><% } else { %>img/waveform-not-available.png<% } %>');">
                                 <div class="overlay-border" style="width: 0;">
                                     <div class="overlay">
                                     </div>
@@ -75,7 +75,7 @@
                                     <% var comment = song.timed_comments[i]; %>
                                     <li style="left: <%= comment.position / song.length * {{ WAVEFORM_WIDTH }} %>px;">
                                         <div class="marker" unselectable="on"></div>
-                                        <a data-commentid="<%=comment.id%>" href="<%= Player.urls.userpage(comment.owner.username) %>" style="background-image: url(<%=comment.owner.gravatar_icon%>);"></a>
+                                        <a data-commentid="<%=comment.id%>" href="<%= Player.urls.userpage(comment.owner.username) %>" style="background-image: url('<%=comment.owner.gravatar_icon%>');"></a>
                                     </li>
                                 <% } %>
                             <% } %>
