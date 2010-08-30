@@ -6,13 +6,13 @@ TEST_CODE="/home/andy/apps/test-solidcomposer"
 MIGRATE_CODE="/home/andy/apps/migrate-solidcomposer"
 
 ######### initial checking before deploying #########
-echo "====== CHECKING ======="
+#echo "====== CHECKING ======="
 # stop on any error
 set -e
 
 # git the live code revision
-cd $LIVE_CODE
-LIVE_REV=$(git rev-parse HEAD)
+#cd $LIVE_CODE
+#LIVE_REV=$(git rev-parse HEAD)
 
 # update the test code to the newest release
 echo "Updating the test code base..."
@@ -35,19 +35,19 @@ fi
 #echo "Generating fixtures from live database..."
 #python manage.py dumpdata >$MIGRATE_CODE/dump.json --exclude=contenttypes
 
-echo "Updating migrate code to live code revision..."
-cd $MIGRATE_CODE
-git checkout release
-git pull
-git checkout $LIVE_REV
+#echo "Updating migrate code to live code revision..."
+#cd $MIGRATE_CODE
+#git checkout release
+#git pull
+#git checkout $LIVE_REV
 
-echo "Resetting the test database..."
-sudo -u postgres dropdb solidcomposer-test
-sudo -u postgres createdb solidcomposer-test
-python manage.py syncdb --noinput
+#echo "Resetting the test database..."
+#sudo -u postgres dropdb solidcomposer-test
+#sudo -u postgres createdb solidcomposer-test
+#python manage.py syncdb --noinput
 
-echo "Migrating the test database to the live database state..."
-python manage.py migrate
+#echo "Migrating the test database to the live database state..."
+#python manage.py migrate
 
 # don't do this, it takes too long
 ## install fixtures from the server
@@ -55,23 +55,23 @@ python manage.py migrate
 #python manage.py loaddata dump.json
 
 # ok now we can use the new code
-echo "Updating the migration code base to the newest version..."
-git checkout release
-git pull
+#echo "Updating the migration code base to the newest version..."
+#git checkout release
+#git pull
 
 # migrate to the latest migration
 # (this makes sure the server won't fail when migrating)
-echo "Migrating the test database to the latest version..."
-python manage.py migrate
+#echo "Migrating the test database to the latest version..."
+#python manage.py migrate
 
 # prepare to run test suite
-cd $TEST_CODE
-echo "Preparsing javascript for tests..."
-python preparser.py parse
+#cd $TEST_CODE
+#echo "Preparsing javascript for tests..."
+#python preparser.py parse
 
 # run test suite locally
-echo "Running test suite..."
-python manage.py test --failfast
+#echo "Running test suite..."
+#python manage.py test --failfast
 
 ######### deploy steps ###############
 echo
