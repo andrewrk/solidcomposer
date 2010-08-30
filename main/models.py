@@ -11,11 +11,11 @@ import hashlib
 class BandMember(SerializableModel):
     MANAGER, BAND_MEMBER, CRITIC, FAN, BANNED = range(5)
     ROLE_CHOICES = (
-        (MANAGER, 'Manager'), # full privileges
-        (BAND_MEMBER, 'Band member'), # full privileges except band admin
-        (CRITIC, 'Critic'), # can view and post comments in project manager
-        (FAN, 'Fan'), # regular site user
-        (BANNED, 'Banned'), # this person is blacklisted
+        (MANAGER, u'Manager'), # full privileges
+        (BAND_MEMBER, u'Band member'), # full privileges except band admin
+        (CRITIC, u'Critic'), # can view and post comments in project manager
+        (FAN, u'Fan'), # regular site user
+        (BANNED, u'Banned'), # this person is blacklisted
     )
 
     PUBLIC_ATTRS = (
@@ -43,7 +43,7 @@ class BandMember(SerializableModel):
         return float(mine_count) / float(total_count) * 100
 
     def __unicode__(self):
-        return u'%s - %s: %s' % (str(self.band), dict(BandMember.ROLE_CHOICES)[self.role], str(self.user))
+        return u'{0} - {1}: {2}'.format(self.band.title, dict(BandMember.ROLE_CHOICES)[self.role], self.user.username)
 
 
 class Band(SerializableModel):
