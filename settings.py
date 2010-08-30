@@ -137,9 +137,9 @@ ACTIVATION_EXPIRE_DAYS = 1
 
 # free acount info
 # how much disk space do bands get for freeeee
-BAND_INIT_SPACE = 300 * 1024 * 1024 # 300 MB
+BAND_INIT_SPACE = 500 * 1024 * 1024 # 500 MB
 # how many bands can free users create
-FREE_BAND_LIMIT = 2
+FREE_BAND_LIMIT = 10
 
 URL_DISALLOWED_CHARS = r'\./?'
 
