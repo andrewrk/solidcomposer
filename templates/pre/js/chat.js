@@ -420,9 +420,9 @@ var Chat = function() {
                     // if it's a join or part, affect state.onliners
                     if (last_message_id && state.onliners) {
                         if (data.messages[i].type === that.message_type.JOIN) {
-                            onlinerAction(data.messages[i].author.id, removeOnliner);
-                        } else if (data.messages[i].type === that.message_type.LEAVE) {
                             state.onliners.push(data.messages[i].author);
+                        } else if (data.messages[i].type === that.message_type.LEAVE) {
+                            onlinerAction(data.messages[i].author.id, removeOnliner);
                         }
                     }
                     insertIndex = getMessageIndex(data.messages[i].id);
@@ -442,7 +442,6 @@ var Chat = function() {
                         if (Time.isDifferentDay(data.messages[i].timestamp,
                             lastMessageDate))
                         {
-                            
                             state.messages.splice(insertIndex, 0, {
                                 id: (data.messages[i].id + prevId) / 2,
                                 type: that.message_type.HEADER,
