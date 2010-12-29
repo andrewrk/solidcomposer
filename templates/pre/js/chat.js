@@ -59,13 +59,14 @@ var Chat = function() {
     
     // private functions:
     function scrollToLastMessage() {
-        $("#chatroom-outer-box").animate({ scrollTop: $("#chatroom-outer-box").attr('scrollHeight')}, 500);
+        var container = $("#chatroom-outer-box");
+        container.animate({ scrollTop: container.attr('scrollHeight') - container.height()}, 200);
     }
 
     // returns true if chat box is scrolled to the bottom
     function scrolledToBottom() {
         var container = $("#chatroom-outer-box");
-        return (container.scrollTop() === container.attr('scrollHeight') - container.height());
+        return (container.scrollTop() >= container.attr('scrollHeight') - container.height());
     }
 
     function say(msg_to_post) {
@@ -294,6 +295,7 @@ var Chat = function() {
 
         if (scrolledToBottom()) {
             $("#chatroom-outer-box").html(Jst.evaluate(template_chat_s, state));
+            scrollToLastMessage();
         }
 
         // highlight messages that mention the user

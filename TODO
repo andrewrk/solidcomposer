@@ -2,7 +2,6 @@ Release "April Rain" (The Cynic Project)
 = sitewide =
 * test for start uploading, time to upload runs out, finish uploading
 * when a chat message shows up, put an asterisk in front of the title
-* leave messages don't auto-scroll
 * when you provide a missing project file and don't supply the project file, it crashes
 * show how much free space you get
 * the design of dependencies is messed up on compo page
