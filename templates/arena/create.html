@@ -1,6 +1,6 @@
 {% extends 'arena/base.html' %}
 
-{% block title %}Create a Competition - {{ block.super }}{% endblock %}
+{% block title %}{% block create_title %}Create a Competition - {% endblock %}{{ block.super }}{% endblock %}
 
 {% block css %}arena.pre.css{% endblock %}
 
@@ -24,7 +24,7 @@
 
 {% block content %}
     <div class="textblock">
-        <h1>Create a Public Competition</h1>
+        <h1>{% block h1_title %}Create a Public Competition{% endblock %}</h1>
         {% include 'form_errors.html' %}
         <form id="competition-form" method="post" action="." style="width: 500px;">
             <fieldset>
@@ -108,7 +108,7 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td><input type="submit" value="Create Competition" /></td>
+                    <td><input type="submit" value="{% block submit_text %}Create Competition{% endblock %}" /></td>
                 </tr>
             </table>
             </fieldset>

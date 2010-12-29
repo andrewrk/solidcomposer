@@ -8,6 +8,7 @@ var SCCompo = function () {
     // templates
     var template_status = "{% filter escapejs %}{% include 'arena/compo_status.jst.html' %}{% endfilter %}";
     var template_title = "{% filter escapejs %}{% include 'arena/compo_title.jst.html' %}{% endfilter %}";
+    var template_tools = "{% filter escapejs %}{% include 'arena/compo_tools.jst.html' %}{% endfilter %}";
     var template_info = "{% filter escapejs %}{% include 'arena/compo_info.jst.html' %}{% endfilter %}";
     var template_vote_status = "{% filter escapejs %}{% include 'arena/vote_status.jst.html' %}{% endfilter %}";
     var template_entries = "{% filter escapejs %}{% include 'arena/entry_list.jst.html' %}{% endfilter %}";
@@ -16,6 +17,7 @@ var SCCompo = function () {
     // pre-compiled templates
     var template_status_s = null;
     var template_title_s = null;
+    var template_tools_s = null;
     var template_info_s = null;
     var template_vote_status_s = null;
     var template_entries_s = null;
@@ -59,6 +61,10 @@ var SCCompo = function () {
 
     // maps entry id to entry in state
     var entries = {};
+
+    function updateTools() {
+        $("#tools-wrapper").html(Jst.evaluate(template_tools_s, state));
+    }
 
     function scrollToNowPlaying() {
         // scroll to new track in entry list
@@ -369,6 +375,7 @@ var SCCompo = function () {
     function compileTemplates() {
         template_status_s = Jst.compile(template_status);
         template_title_s = Jst.compile(template_title);
+        template_tools_s = Jst.compile(template_tools);
         template_info_s = Jst.compile(template_info);
         template_vote_status_s = Jst.compile(template_vote_status);
         template_entries_s = Jst.compile(template_entries);
@@ -467,6 +474,7 @@ var SCCompo = function () {
             state.base_title = document.title;
             Chat.initialize(chatroom_id);
             Login.addStateChangeCallback(that.ajaxRequest);
+            Login.addStateChangeCallback(updateTools);
             Player.initialize(onPlayerReady, forceUpdateCurrentEntry);
             Player.onSoundComplete = onSoundComplete;
             Player.onProgressChange = onProgressChange;
@@ -572,6 +580,7 @@ var SCCompo = function () {
                     }
                 }
                 updateCompo();
+                updateTools();
             });
         }
     };

@@ -16,5 +16,6 @@ urlpatterns = patterns('',
     url('^ajax/submit-entry/$', 'competitions.views.ajax_submit_entry', name="arena.ajax_submit_entry"),
 
     url('^create/$', 'competitions.views.create', name="arena.create"),
+    url('^edit/(\d+)/$', 'competitions.views.edit', name="arena.edit"),
     url('^compete/(\d+)/$', 'competitions.views.competition', name="arena.compete"),
 )

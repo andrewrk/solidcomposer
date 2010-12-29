@@ -31,5 +31,8 @@
     },
     userpage: function (username) {
         return "{% filter escapejs %}{% url userpage '[~~~~]' %}{% endfilter %}".replace("[~~~~]", username);
+    },
+    edit: function(compo_id) {
+        return "{% filter escapejs %}{% url arena.edit 0 %}{% endfilter %}".replace(0, compo_id);
     }
 }

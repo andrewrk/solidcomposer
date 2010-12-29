@@ -1,6 +1,6 @@
 from chat.models import ChatRoom
 from competitions import design
-from competitions.forms import CreateCompetitionForm, TimeUnit
+from competitions.forms import CreateCompetitionForm, EditCompetitionForm, TimeUnit
 from competitions.models import Competition, Entry, ThumbsUp
 from datetime import datetime, timedelta
 from django.conf import settings
@@ -338,13 +338,7 @@ def create(request):
             quantity = int(form.cleaned_data.get('vote_time_quantity'))
             quantifier = int(form.cleaned_data.get('vote_time_measurement'))
 
-            multiplier = {
-                TimeUnit.HOURS: 60*60,
-                TimeUnit.DAYS: 24*60*60,
-                TimeUnit.WEEKS: 7*24*60*60,
-            }
-            
-            comp.vote_period_length = quantity * multiplier[quantifier]
+            comp.vote_period_length = quantity * TimeUnit.seconds_multiplier[quantifier]
             vote_period_delta = timedelta(seconds=comp.vote_period_length)
 
             comp.have_listening_party = form.cleaned_data.get('have_listening_party', True)
@@ -398,6 +392,96 @@ def create(request):
 def competition(request, id):
     competition = get_object_or_404(Competition, id=int(id))
     return render_to_response('arena/competition.html', locals(),
+        context_instance=RequestContext(request))
+
+@login_required
+def edit(request, comp_id_str):
+    comp_id = int(comp_id_str)
+    comp = get_object_or_404(Competition, id=comp_id)
+    prof = request.user.get_profile()
+    err_msg = ""
+
+    # the person has to be the competition owner
+    if not request.user.is_authenticated() or request.user.id != comp.host.id:
+        err_msg = design.only_host_can_edit_compo
+        return render_to_response('arena/cannot_edit_competition.html',
+            locals(), context_instance=RequestContext(request))
+
+    if request.method == 'POST':
+        form = EditCompetitionForm(request.POST)
+        if form.is_valid():
+            # save edits to competition
+            comp.title = form.cleaned_data.get('title')
+
+            comp.preview_theme = form.cleaned_data.get('preview_theme', False)
+            if form.cleaned_data.get('have_theme', False):
+                comp.theme = form.cleaned_data.get('theme', '')
+            else:
+                comp.theme = ""
+
+            comp.preview_rules = form.cleaned_data.get('preview_rules', False)
+            if form.cleaned_data.get('have_rules', False):
+                comp.rules = form.cleaned_data.get('rules', '')
+            else:
+                comp.rules = ""
+
+            tz_offset = form.cleaned_data.get('tz_offset')
+            tz_delta = timedelta(hours=tz_offset)
+
+            comp.start_date = form.cleaned_data.get('start_date') + tz_delta
+            comp.submit_deadline = form.cleaned_data.get('submission_deadline_date') + tz_delta
+
+            # calculate vote deadline 
+            quantity = int(form.cleaned_data.get('vote_time_quantity'))
+            quantifier = int(form.cleaned_data.get('vote_time_measurement'))
+
+            comp.vote_period_length = quantity * TimeUnit.seconds_multiplier[quantifier]
+            vote_period_delta = timedelta(seconds=comp.vote_period_length)
+
+            if form.cleaned_data.get('have_listening_party', True):
+                if form.cleaned_data.get('party_immediately'):
+                    comp.changeListeningPartyStartDate(comp.submit_deadline)
+                else:
+                    comp.changeListeningPartyStartDate(form.cleaned_data.get('listening_party_date') + tz_delta)
+            else:
+                comp.changeListeningPartyStartDate(None)
+            comp.save()
+            
+            chatroom = comp.chat_room
+            # open the chat room an hour before the competition
+            chatroom.start_date = comp.start_date - timedelta(hours=1)
+            # chat room is open an hour before and after competition
+            chatroom.end_date = comp.listening_party_end_date + timedelta(hours=1)
+            chatroom.save()
+
+            return HttpResponseRedirect(reverse("arena.compete", args=[comp.id]))
+    else:
+        # compute vote time
+        for unit in sorted(TimeUnit.seconds_multiplier.keys(), reverse=True):
+            seconds_mult = TimeUnit.seconds_multiplier[unit]
+            if comp.vote_period_length >= seconds_mult:
+                vote_time_quantity = comp.vote_period_length / seconds_mult
+                vote_time_measurement = unit
+                break
+        initial = {
+            'title': comp.title,
+            'have_theme': comp.theme != "",
+            'preview_theme': comp.preview_theme,
+            'theme': comp.theme,
+            'have_rules': comp.rules != "",
+            'preview_rules': comp.preview_rules,
+            'rules': comp.rules,
+            'start_date': comp.start_date,
+            'submission_deadline_date': comp.submit_deadline,
+            'have_listening_party': comp.have_listening_party,
+            'party_immediately': comp.listening_party_start_date == comp.submit_deadline,
+            'listening_party_date': comp.listening_party_start_date,
+            'vote_time_quantity': vote_time_quantity,
+            'vote_time_measurement': vote_time_measurement,
+        }
+        form = EditCompetitionForm(initial=initial)
+    
+    return render_to_response('arena/edit.html', locals(),
         context_instance=RequestContext(request))
 
 @json_login_required

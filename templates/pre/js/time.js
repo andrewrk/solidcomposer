@@ -254,6 +254,23 @@ var Time = function () {
             return date1.getYear() !== date2.getYear() ||
                    date1.getMonth() !== date2.getMonth() ||
                    date1.getDate() !== date2.getDate();
+        },
+        fromDjangoDate: function (django_date) {
+            // 0123456789012345678
+            // yyyy-mm-dd hh:mm:ss
+            var year = parseInt(django_date.substring(0, 4));
+            var month = parseInt(django_date.substring(5, 7)) - 1;
+            var day = parseInt(django_date.substring(8, 10)) - 1;
+            var hour = parseInt(django_date.substring(11, 13));
+            var minute = parseInt(django_date.substring(14, 16));
+            var second = parseInt(django_date.substring(17, 19));
+            return new Date(year, month, day, hour, minute, second);
+        },
+
+        toDjangoDate: function (js_date) {
+            // yyyy-mm-dd hh:mm:ss
+            return js_date.getFullYear() + "-" + that.pad(js_date.getMonth() + 1) + "-" + that.pad(js_date.getDate() + 1) + " " +
+                that.pad(js_date.getHours()) + ":" + that.pad(js_date.getMinutes()) + ":" + that.pad(js_date.getSeconds());
         }
     };
     return that;

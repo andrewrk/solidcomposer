@@ -1,0 +1,8 @@
+<% if (json.user.id === json.compo.host.id) { %>
+    <ul id="tools">
+        <li class="wrench">
+            <a href="<%= urls.edit(json.compo.id) %>">Edit Competition</a>
+        </li>
+    </ul>
+<% } else { %>
+<% } %>

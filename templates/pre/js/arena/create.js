@@ -56,15 +56,36 @@ $(document).ready(function(){
     var dtpOptions = {
         format: "%Y-%m-%d %H:%i:%s"
     };
-    $("#id_start_date").AnyTime_picker(dtpOptions);
-    $("#id_submission_deadline_date").AnyTime_picker(dtpOptions);
-    $("#id_listening_party_date").AnyTime_picker(dtpOptions);
 
     // calculate time zone offset
     var ms = Time.coerceDate(server_time) - local_time;
     var hours = ms / 1000 / 60 / 60;
     var offset = Math.round(hours);
     $("#id_tz_offset").attr('value', offset);
+
+    var start_date_box = $("#id_start_date");
+    var submission_deadline_box = $("#id_submission_deadline_date");
+    var listening_party_date_box = $("#id_listening_party_date");
+    
+    // correct date text boxes for tz offset if they have values
+    var start_date_val = start_date_box.val();
+    var submission_deadline_val = submission_deadline_box.val();
+    var listening_party_date_val = listening_party_date_box.val();
+
+    if (start_date_val.length > 0) {
+        start_date_box.val(Time.toDjangoDate(Time.localTime(Time.fromDjangoDate(start_date_val))));
+    }
+    if (submission_deadline_val.length > 0) {
+        submission_deadline_box.val(Time.toDjangoDate(Time.localTime(Time.fromDjangoDate(submission_deadline_val))));
+    }
+    if (listening_party_date_val.length > 0) {
+        listening_party_date_box.val(Time.toDjangoDate(Time.localTime(Time.fromDjangoDate(listening_party_date_val))));
+    }
+
+    // use the any time picker ui
+    start_date_box.AnyTime_picker(dtpOptions);
+    submission_deadline_box.AnyTime_picker(dtpOptions);
+    listening_party_date_box.AnyTime_picker(dtpOptions);
 
     // show/hide ui elements
     SCCreateCompo.displayCorrectInputs();

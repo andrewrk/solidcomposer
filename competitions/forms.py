@@ -6,6 +6,12 @@ from django.conf import settings
 class TimeUnit:
     HOURS, DAYS, WEEKS = range(3)
 
+    seconds_multiplier = {
+        HOURS: 60*60,
+        DAYS: 24*60*60,
+        WEEKS: 7*24*60*60,
+    }
+
 class SubmitEntryForm(forms.Form):
     title = forms.CharField(max_length=100, error_messages={
         'required': design.this_field_is_required})
@@ -52,6 +58,11 @@ class CreateCompetitionForm(forms.Form):
     # add this many hours to the times to get the correct value
     tz_offset = forms.IntegerField(widget=forms.HiddenInput(), error_messages={'required': design.this_field_is_required})
 
+    def _clean_start_date(self, in_start_date):
+        if in_start_date <= datetime.now():
+            msg = design.cannot_start_compo_in_the_past
+            self._errors['start_date'] = self.error_class([msg])
+
     def clean(self):
         cleaned_data = self.cleaned_data
 
@@ -81,10 +92,7 @@ class CreateCompetitionForm(forms.Form):
             self._errors['start_date'] = self.error_class([msg])
             return cleaned_data
 
-        # clean start_date
-        if in_start_date <= datetime.now():
-            msg = design.cannot_start_compo_in_the_past
-            self._errors['start_date'] = self.error_class([msg])
+        self._clean_start_date(in_start_date)
 
         # clean submission_deadline_date
         min_deadline = in_start_date + timedelta(minutes=settings.MINIMUM_COMPO_LENGTH)
@@ -103,4 +111,8 @@ class CreateCompetitionForm(forms.Form):
                     self._errors['listening_party_date'] = self.error_class([msg])
         
         return cleaned_data
+
+class EditCompetitionForm(CreateCompetitionForm):
+    def _clean_start_date(self, in_start_date):
+        pass
 

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from base.models import SerializableModel
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class Competition(SerializableModel):
     PUBLIC_ATTRS = (
@@ -101,6 +101,24 @@ class Competition(SerializableModel):
         if self.rulesVisible():
             data['rules'] = self.rules
         return data
+
+    def changeListeningPartyStartDate(self, date):
+        """
+        Use this method to change the lp start date. It automatically updates
+        listening_party_end_date, vote_deadline, and have_listening_party
+        Use date=None to mean no listening party.
+        """
+        vote_period_delta = timedelta(seconds=self.vote_period_length)
+        if date is None:
+            self.have_listening_party = False
+            self.vote_deadline = self.submit_deadline + vote_period_delta
+            self.listening_party_start_date = date
+        else:
+            self.have_listening_party = True
+            lp_length = self.listening_party_end_date - self.listening_party_start_date
+            self.vote_deadline = self.listening_party_end_date + vote_period_delta
+            self.listening_party_start_date = date
+            self.listening_party_end_date = date + lp_length
 
 class ThumbsUp(SerializableModel):
     """
