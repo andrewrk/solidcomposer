@@ -439,8 +439,9 @@ var Chat = function() {
                             lastMessageDate = new Date("November 5, 1988 23:30:04");
                             prevId = -1;
                         }
-                        if (Time.isDifferentDay(data.messages[i].timestamp,
-                            lastMessageDate))
+                        if (Time.isDifferentDay(
+                                Time.localTime(data.messages[i].timestamp),
+                                Time.localTime(lastMessageDate)))
                         {
                             state.messages.splice(insertIndex, 0, {
                                 id: (data.messages[i].id + prevId) / 2,
