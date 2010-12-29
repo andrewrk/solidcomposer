@@ -2118,12 +2118,16 @@ class SimpleTest(TestCase):
         self.assertEqual(version.project.id, project.id)
         self.assertEqual(version.version, 1)
         self.assertNotEqual(version.song.comment_node, None)
-        plugin_deps_count += 1
+        plugin_deps_count += 3
         self.assertEqual(plugin_deps_count, PluginDepenency.objects.count())
-        plugin = PluginDepenency.objects.order_by('-pk')[0]
-        self.assertEqual(plugin.title, '4Front Piano')
+        plugins = [x.title for x in PluginDepenency.objects.order_by('-pk')[:3]]
+        plugin_ids = [x.id for x in PluginDepenency.objects.order_by('-pk')[:3]]
+        self.assertEqual(True, u'4Front Piano' in plugins)
+        self.assertEqual(True, u'sampler' in plugins)
+        self.assertEqual(True, u'fruity wrapper' in plugins)
         song = version.song
-        self.assertEqual(song.plugins.all()[0].id, plugin.id)
+        for song_plugin in song.plugins.all():
+            self.assertEqual(True, song_plugin.id in plugin_ids)
         log_entry_count += 1
         self.assertEqual(log_entry_count, LogEntry.objects.count())
         log_entry = LogEntry.objects.order_by('-pk')[0]
