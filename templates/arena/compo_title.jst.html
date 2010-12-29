@@ -1,0 +1,16 @@
+<% if (Time.secondsUntil(json.compo.start_date) > 0) { %>
+    <%= Time.timeDisplayUntil(json.compo.start_date) %> until start - 
+<% } else if (Time.secondsUntil(json.compo.submit_deadline) > 0) { %>
+    <%= Time.timeDisplayUntil(json.compo.submit_deadline) %> until deadline - 
+<% } else if (json.compo.have_listening_party && Time.secondsUntil(json.compo.listening_party_end_date) > 0) { %>
+    <% if (Time.localTime(json.compo.listening_party_start_date) > (new Date())) { %> 
+        <%= Time.timeDisplayUntil(json.compo.listening_party_start_date) %> until listening party -
+    <% } else { %>
+        <%= Time.timeDisplaySince(json.compo.listening_party_start_date) %> / 
+        <%= Time.timeDisplayUntil(json.compo.listening_party_end_date) %> listening party -
+    <% } %>
+<% } else if (Time.secondsUntil(json.compo.vote_deadline) > 0) { %>
+    <%= Time.timeDisplayUntil(json.compo.vote_deadline) %> until vote closes -
+<% } else { %>
+<% } %>
+<%= base_title %>

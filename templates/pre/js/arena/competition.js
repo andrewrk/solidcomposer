@@ -7,6 +7,7 @@ var SCCompo = function () {
 
     // templates
     var template_status = "{% filter escapejs %}{% include 'arena/compo_status.jst.html' %}{% endfilter %}";
+    var template_title = "{% filter escapejs %}{% include 'arena/compo_title.jst.html' %}{% endfilter %}";
     var template_info = "{% filter escapejs %}{% include 'arena/compo_info.jst.html' %}{% endfilter %}";
     var template_vote_status = "{% filter escapejs %}{% include 'arena/vote_status.jst.html' %}{% endfilter %}";
     var template_entries = "{% filter escapejs %}{% include 'arena/entry_list.jst.html' %}{% endfilter %}";
@@ -14,6 +15,7 @@ var SCCompo = function () {
 
     // pre-compiled templates
     var template_status_s = null;
+    var template_title_s = null;
     var template_info_s = null;
     var template_vote_status_s = null;
     var template_entries_s = null;
@@ -42,7 +44,8 @@ var SCCompo = function () {
         activity: null,
         urls: {% include "arena/urls.js" %},
         theme_shown: true,
-        rules_shown: true
+        rules_shown: true,
+        base_title: ""
     };
 
     var imagesToCache = [
@@ -165,6 +168,7 @@ var SCCompo = function () {
             return;
         }
         $("#status").html(Jst.evaluate(template_status_s, state));
+        document.title = Jst.evaluate(template_title_s, state);
     }
 
     // set forcePlayerUpdate to true to force the player to refresh
@@ -364,6 +368,7 @@ var SCCompo = function () {
 
     function compileTemplates() {
         template_status_s = Jst.compile(template_status);
+        template_title_s = Jst.compile(template_title);
         template_info_s = Jst.compile(template_info);
         template_vote_status_s = Jst.compile(template_vote_status);
         template_entries_s = Jst.compile(template_entries);
@@ -459,6 +464,7 @@ var SCCompo = function () {
 
     that = {
         initialize: function () {
+            state.base_title = document.title;
             Chat.initialize(chatroom_id);
             Login.addStateChangeCallback(that.ajaxRequest);
             Player.initialize(onPlayerReady, forceUpdateCurrentEntry);
