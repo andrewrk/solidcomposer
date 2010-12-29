@@ -8,7 +8,7 @@
             </tr>
             <tr>
                 <th>Start Date:</th>
-                <td><%= compo.start_date %></td>
+                <td><%= Time.formatDateTime(Time.localTime(compo.start_date)) %></td>
             </tr>
             <tr>
                 <th>Length:</th>
