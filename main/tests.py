@@ -678,10 +678,6 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['err_msg'], design.can_only_edit_your_own_amount_donated)
 
-    def test_account_plan_changed(self):
-        # url(r'^account/plan/changed/$', 'main.views.changed_plan_results', {'SSL': True}, name="account.plan_changed"),
-        pass
-    
     def test_signup_pending(self):
         # url(r'^signup/pending/$', 'main.views.register_pending', {'SSL': True}, name="register_pending"),
         pass

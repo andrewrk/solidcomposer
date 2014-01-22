@@ -19,7 +19,6 @@ it outpus a space separated list of missing dependencies.
  * PyDaw - http://github.com/superjoe30/PyDaw
  * django-storages - http://code.welldev.org/django-storages/wiki/S3Storage
  * boto - http://code.google.com/p/boto/
- * fpys - http://github.com/superjoe30/fpys
 """
 
 deps = [
@@ -33,7 +32,6 @@ deps = [
     'django_extensions-0.4.1',
     'boto',
     'django-storages',
-    'fpys-0.5.1',
 ]
 
 # python
@@ -116,16 +114,6 @@ try:
         deps.remove('django_extensions-0.4.1')
     else:
         sys.stderr.write("installed django_extensions version %s does not equal %s\n" % (django_extensions.__version__, '0.4.1'))
-except ImportError:
-    pass
-
-# fpys
-try:
-    import fpys
-    if fpys.__version__ == '0.5.1':
-        deps.remove('fpys-0.5.1')
-    else:
-        sys.stderr.write("installed fpys version %s does not equal %s\n" % (fpys.__version__, '0.5.1'))
 except ImportError:
     pass
 
