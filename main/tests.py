@@ -678,12 +678,8 @@ class SimpleTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['err_msg'], design.can_only_edit_your_own_amount_donated)
 
-    def test_signup_pending(self):
-        # url(r'^signup/pending/$', 'main.views.register_pending', {'SSL': True}, name="register_pending"),
-        pass
-
     def test_account_email(self):
-        # url(r'^account/email/$', 'main.views.account_email', {'SSL': True}, name="account.email"),
+        # url(r'^account/email/$', 'main.views.account_email', name="account.email"),
         account_email_url = reverse('account.email')
         profile = self.just64helpin.get_profile()
 
@@ -717,7 +713,7 @@ class SimpleTest(TestCase):
         self.assertEqual(profile.email_newsletter, True)
 
     def test_account_password(self):
-        # url(r'^account/password/$', 'main.views.account_password', {'SSL': True}, name="account.password"),
+        # url(r'^account/password/$', 'main.views.account_password', name="account.password"),
         account_password = reverse('account.password')
 
         # TODO: test failure conditions
@@ -735,7 +731,7 @@ class SimpleTest(TestCase):
         self.client.login(username='just64helpin', password='boobies')
 
     def test_account_password_reset(self):
-        # url(r'^account/password/reset/$', 'main.views.account_password_reset', {'SSL': True}, name="account.password.reset"),
+        # url(r'^account/password/reset/$', 'main.views.account_password_reset', name="account.password.reset"),
         account_password_reset = reverse('account.password.reset')
 
         outbox_count = len(mail.outbox)
