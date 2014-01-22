@@ -35,6 +35,7 @@ The first time you install this project, you need to:
       > configure the site to be the correct domain
     * make sure the wsgi process has permission to access the django project.
     * install the waveform app to /usr/local/bin
+      > https://github.com/superjoe30/waveform
 
 Whenever PyDaw is updated (and initially) you need to run
 

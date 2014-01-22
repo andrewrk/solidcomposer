@@ -35,7 +35,7 @@
 
         python preparser.py monitor
 
-        to make sure your preparsed
+        to make sure your preparsed files are continually updated.
 
  * Deploying
 

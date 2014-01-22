@@ -32,13 +32,13 @@ def generate_waveform(song, mp3_file, filename_appendix=""):
     png_tmp_handle = tempfile.NamedTemporaryFile(mode='r+b', suffix=suffix)
 
     p = subprocess.Popen(['waveform',
+        '--width', str(design.waveform_size[0]),
+        '--height', str(design.waveform_size[1]),
+        '--color-bg', '00000000',
+        '--color-center', design.waveform_center_color,
+        '--color-outer', design.waveform_outer_color,
         mp3_file,
         png_tmp_handle.name,
-        str(design.waveform_size[0]),
-        str(design.waveform_size[1]),
-        '0', '0', '0', '0', # bg color
-        str(design.waveform_center_color[0]), str(design.waveform_center_color[1]), str(design.waveform_center_color[2]), str(design.waveform_center_color[3]),   
-        str(design.waveform_outer_color[0]), str(design.waveform_outer_color[1]), str(design.waveform_outer_color[2]), str(design.waveform_outer_color[3]), 
     ])
     p.communicate()
     # move to storage
