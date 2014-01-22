@@ -16,7 +16,6 @@ it outpus a space separated list of missing dependencies.
  * simplejson
  * django extensions - http://code.google.com/p/django-command-extensions/
  * mutagen - http://code.google.com/p/mutagen/
- * PyWaveform - http://github.com/superjoe30/PyWaveform
  * PyDaw - http://github.com/superjoe30/PyDaw
  * django-storages - http://code.welldev.org/django-storages/wiki/S3Storage
  * boto - http://code.google.com/p/boto/
@@ -30,7 +29,6 @@ deps = [
     'django-1.2.1',
     'south-0.7.1',
     'mutagen-1.19',
-    'waveform-0.4',
     'PyDaw-0.4.6',
     'django_extensions-0.4.1',
     'boto',
@@ -98,16 +96,6 @@ try:
         deps.remove('mutagen-1.19')
     else:
         sys.stderr.write("installed mutagen version %s does not equal %s\n" % (mutagen.version_string, '1.19'))
-except ImportError:
-    pass
-
-# PyWaveform
-try:
-    import waveform
-    if waveform.__version__ == '0.4':
-        deps.remove('waveform-0.4')
-    else:
-        sys.stderr.write("installed waveform version %s does not equal %s\n" % (waveform.__version__, '0.4'))
 except ImportError:
     pass
 
