@@ -16,7 +16,7 @@ it outpus a space separated list of missing dependencies.
  * simplejson
  * django extensions - http://code.google.com/p/django-command-extensions/
  * mutagen - http://code.google.com/p/mutagen/
- * PyDaw - http://github.com/superjoe30/PyDaw
+ * PyDaw - http://github.com/andrewrk/PyDaw
  * django-storages - http://code.welldev.org/django-storages/wiki/S3Storage
  * boto - http://code.google.com/p/boto/
 """

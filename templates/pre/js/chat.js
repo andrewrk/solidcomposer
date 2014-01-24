@@ -2,7 +2,7 @@
  * chat.js - include this if you have a chat room on the page.
  *
  * Dependencies:
- *  jst-parser 0.4.0 - http://github.com/superjoe30/jst-parser
+ *  jst-parser 0.4.0 - http://github.com/andrewrk/jst-parser
  *  Time - needs to already be initialized
  *  jQuery 1.4.2
  *
